@@ -1,0 +1,108 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_getValueFromXML" path="/shared/ASAssets/Utilities/examples/repository/test_getValueFromXML" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/getValueFromXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="namespaces" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inXpath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inXml" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE test_getValueFromXML(	
+	OUT  result 		longvarchar
+)
+BEGIN
+	DECLARE myXML		XML;
+	DECLARE inXpath		VARCHAR(2048);
+	DECLARE namespaces	VARCHAR(4096);
+
+set myXML = &apos;
+&lt;resource:getResourceCacheConfigResponse xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+	&lt;resource:cacheConfig&gt;
+		&lt;resource:configured&gt;true&lt;/resource:configured&gt;
+		&lt;resource:enabled&gt;true&lt;/resource:enabled&gt;
+		&lt;resource:storage&gt;
+			&lt;resource:mode&gt;AUTOMATIC&lt;/resource:mode&gt;
+		&lt;/resource:storage&gt;
+		&lt;resource:refresh&gt;
+			&lt;resource:mode&gt;MANUAL&lt;/resource:mode&gt;
+		&lt;/resource:refresh&gt;
+		&lt;resource:expirationPeriod&gt;3600000&lt;/resource:expirationPeriod&gt;
+		&lt;resource:clearRule&gt;NONE&lt;/resource:clearRule&gt;
+	&lt;/resource:cacheConfig&gt;
+&lt;/resource:getResourceCacheConfigResponse&gt;
+&apos;;
+
+	-- Set specific SDR namesspaces that must be included in the XSLT to work properly
+	SET namespaces =
+	&apos;xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot; 
+	xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&apos;;
+
+	set inXpath = &apos;resource:getResourceCacheConfigResponse/resource:cacheConfig/resource:configured&apos;;
+	call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(&apos;Y&apos;, namespaces, inXpath, myXML, result);
+call print(&apos;##### resource:configured #####   &apos;|| inXpath);
+call print(result);
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">6/35</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">6/34</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

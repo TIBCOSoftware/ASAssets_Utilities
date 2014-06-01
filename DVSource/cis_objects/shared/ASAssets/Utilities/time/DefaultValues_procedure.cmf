@@ -1,0 +1,157 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="DefaultValues" path="/shared/ASAssets/Utilities/time/DefaultValues" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>DefaultValues:
+	DefaultValues is a vector of valid timestamp formats which is used by &quot;extractTimestamp&quot; to extract a 
+	date or timestamp from a string.   Add additional formats to the vector as needed.  Place the most 
+	common formats towards the top of the vector so that the extractTimestamp works as efficiently as it can.
+
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters></parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/* DefaultValues:
+	DefaultValues is a vector of valid timestamp formats which is used by &quot;extractTimestamp&quot; to extract a 
+	date or timestamp from a string.   Add additional formats to the vector as needed.  Place the most 
+	common formats towards the top of the vector so that the extractTimestamp works as efficiently as it can.
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Added &apos;dd MON yyyy&apos; entry in dateFormatVectorConst
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE DefaultValues()
+BEGIN
+	-- Used by &lt;Datasource_Tier/Procedures/extractTimestamp
+	-- For most efficient processing, move the pattern(s) to the top of the list that are the most common for your datasource
+	DECLARE PUBLIC timestampFormatVectorConst		CONSTANT VECTOR(varchar) DEFAULT  VECTOR [
+                        &apos;yyyymmddhh24miss&apos;,
+                        &apos;yyyymmdd&apos;,
+                        &apos;yyyymmddhh24&apos;,
+                        &apos;yyyymmddhh24mi&apos;,
+                        &apos;yyyymmddhh24miss.ff&apos;,
+
+                        &apos;MON dd yyyy&apos;,
+                        &apos;MON dd yyyy hh24&apos;,
+                        &apos;MON dd yyyy hh24:mi&apos;,
+                        &apos;MON dd yyyy hh24:mi:ss&apos;,
+                        &apos;MON dd yyyy hh24:mi:ss.ff&apos;,
+
+                        &apos;MON dd, yyyy&apos;,
+                        &apos;MON dd, yyyy hh24&apos;,
+                        &apos;MON dd, yyyy hh24:mi&apos;,
+                        &apos;MON dd, yyyy hh24:mi:ss&apos;,
+                        &apos;MON dd, yyyy hh24:mi:ss.ff&apos;,
+
+                        &apos;yyyy mm dd&apos;,
+                        &apos;yyyy mm dd hh24&apos;,
+                        &apos;yyyy mm dd hh24:mi&apos;,
+                        &apos;yyyy mm dd hh24:mi:ss&apos;,
+                        &apos;yyyy mm dd hh24:mi:ss.ff&apos;,
+
+                        &apos;MONTH dd, yyyy&apos;,
+                        &apos;MONTH dd, yyyy hh24&apos;,
+                        &apos;MONTH dd, yyyy hh24:mi&apos;,
+                        &apos;MONTH dd, yyyy hh24:mi:ss&apos;,
+                        &apos;MONTH dd, yyyy hh24:mi:ss.ff&apos;,
+
+                        &apos;MONTH dd yyyy&apos;,
+                        &apos;MONTH dd yyyy hh24&apos;,
+                        &apos;MONTH dd yyyy hh24:mi&apos;,
+                        &apos;MONTH dd yyyy hh24:mi:ss&apos;,
+                        &apos;MONTH dd yyyy hh24:mi:ss.ff&apos;,
+
+                        &apos;yyyy-mm-dd&apos;,
+                        &apos;yyyy-mm-dd hh24&apos;,
+                        &apos;yyyy-mm-dd hh24:mi&apos;,
+                        &apos;yyyy-mm-dd hh24:mi:ss&apos;,
+                        &apos;yyyy-mm-dd hh24:mi:ss.ff&apos;,
+
+                        &apos;yyyy/mm/dd&apos;,
+                        &apos;yyyy/mm/dd hh24&apos;,
+                        &apos;yyyy/mm/dd hh24:mi&apos;,
+                        &apos;yyyy/mm/dd hh24:mi:ss&apos;,
+                        &apos;yyyy/mm/dd hh24:mi:ss.ff&apos;,
+
+                        &apos;mm/dd/yyyy&apos;,
+                        &apos;mm/dd/yyyy hh24&apos;,
+                        &apos;mm/dd/yyyy hh24:mi&apos;,
+                        &apos;mm/dd/yyyy hh24:mi:ss&apos;,
+                        &apos;mm/dd/yyyy hh24:mi:ss.ff&apos;,
+
+                        &apos;mm-dd-yyyy&apos;,
+                        &apos;mm-dd-yyyy hh24&apos;,
+                        &apos;mm-dd-yyyy hh24:mi&apos;,
+                        &apos;mm-dd-yyyy hh24:mi:ss&apos;,
+                        &apos;mm-dd-yyyy hh24:mi:ss.ff&apos;,
+
+                        &apos;mm dd yyyy&apos;,
+                        &apos;mm dd yyyy hh24&apos;,
+                        &apos;mm dd yyyy hh24:mi&apos;,
+                        &apos;mm dd yyyy hh24:mi:ss&apos;,
+                        &apos;mm dd yyyy hh24:mi:ss.ff&apos;,
+
+						&apos;hh24:mi:ss.ff&apos;,
+						&apos;hh24:mi:ss&apos;,
+						&apos;hh24:mi&apos;,
+						&apos;hh24&apos;
+            ];
+	DECLARE PUBLIC dateFormatVectorConst		CONSTANT VECTOR(varchar) DEFAULT  VECTOR [
+                        &apos;yyyymmdd&apos;,
+                        &apos;dd MON yyyy&apos;,
+                        &apos;MON dd yyyy&apos;,
+                        &apos;MON dd, yyyy&apos;,
+                        &apos;yyyy mm dd&apos;,
+                        &apos;MONTH dd, yyyy&apos;,
+                        &apos;MONTH dd yyyy&apos;,
+                        &apos;yyyy-mm-dd&apos;,
+                        &apos;yyyy/mm/dd&apos;,
+                        &apos;mm/dd/yyyy&apos;,
+                        &apos;mm-dd-yyyy&apos;,
+                        &apos;mm dd yyyy&apos;
+             ];
+	DECLARE PUBLIC timeFormatVectorConst		CONSTANT VECTOR(varchar) DEFAULT  VECTOR [
+						&apos;hh24:mi:ss.ff&apos;,
+						&apos;hh24:mi:ss&apos;,
+						&apos;hh24:mi&apos;,
+						&apos;hh24&apos;
+            ];
+END</attribute>
+  <attribute name="creationDate" type="LONG">1383622342302</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1392758596937</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_constants" type="MAP">
+    <item>
+      <key type="STRING">timeFormatVectorConst</key>
+      <value type="BYTE_ARRAY">ECMGAgAVAHQAaQBtAGUARgBvAHIAbQBhAHQAVgBlAGMAdABvAHIAQwBvAG4AcwB0AxIAAAABBAQA
+AAAAAAAAAAgZEBsGAgAEAEMASABBAFIDEgAAAAIBOwAEBQAAAAAAAAAEBAQAAAAAAAAADQETAf//
+//8=</value>
+    </item>
+    <item>
+      <key type="STRING">dateFormatVectorConst</key>
+      <value type="BYTE_ARRAY">ECMGAgAVAGQAYQB0AGUARgBvAHIAbQBhAHQAVgBlAGMAdABvAHIAQwBvAG4AcwB0AxIAAAABBAQA
+AAAAAAAAAAgZEBsGAgAEAEMASABBAFIDEgAAAAIBOwAEBQAAAAAAAAAIBAQAAAAAAAAADgETAf//
+//8=</value>
+    </item>
+    <item>
+      <key type="STRING">timestampFormatVectorConst</key>
+      <value type="BYTE_ARRAY">ECMGAgAaAHQAaQBtAGUAcwB0AGEAbQBwAEYAbwByAG0AYQB0AFYAZQBjAHQAbwByAEMAbwBuAHMA
+dAMSAAAAAQQEAAAAAAAAAAAIGRAbBgIABABDAEgAQQBSAxIAAAACATsABAUAAAAAAAAABAQEAAAA
+AAAAABwBEwH/////</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

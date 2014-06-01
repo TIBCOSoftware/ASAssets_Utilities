@@ -1,0 +1,40 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="OriginalRequest" path="/shared/ASAssets/Utilities/request/RequestUtils/OriginalRequest" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>Original Request:
+
+Description:
+    Walks the stack of requests that resulted in the call to this CJP and
+    returns the original client request (SQL statement or procedure call.)
+
+Inputs:
+    N/A
+
+Outputs:
+    requestSrc - SQL source code of the request.
+
+Exceptions:
+    None
+
+Author:      Mike DeAngelo
+Date:        11/11/2011
+CSW Version: 6.0.0
+
+© 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="requestSrc" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.request.OriginalRequest</attribute>
+  <attribute name="creationDate" type="LONG">1383622342459</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754092387</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

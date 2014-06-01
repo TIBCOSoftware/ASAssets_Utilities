@@ -1,0 +1,198 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="extractDate" path="/shared/ASAssets/Utilities/time/extractDate" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>xtractDate:
+	This procedure takes an input string that is expected to contain a date value. It compares this string
+	against a (non-exhaustive) set of date formats, and extracts the date value.
+	The date formats supported in this procedure are defined as constants in DefaultValues.
+ 
+	Input:
+		indateStr - contains any varchar of length 255.  
+			Values: Any text value in a reasonable date or timestamp format such as ‘2010-07-27’
+		isMandatory - contains any varchar of length 255.  
+			Values: 0 means not mandatory, 1 means mandatory. No other values accepted
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+	Output:
+		extractDate - 1. contains a valid time
+				   2. null if isMandatory=0 and no time could be extracted
+				   3. Exception is thrown if isMandatory=1 and no timestamp could be extracted
+			Values: null or a time value such as 00:00:00
+
+	Exceptions:  InvalidDateException
+			If isMandatory=0 and no format could be found then return null.
+			If isMandatory=1 and no format could be found then an exception is thrown.
+
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+	Updated By:  Mike Tinius
+	Date:        10/29/2011
+	CSW Version: 5.1.0
+    Reason:      Fix a parsing issue
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inDateStr" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="isMandatory" direction="IN" nullable="true">
+      <datatype name="SMALLINT" type="INTEGER" minValue="-32768" maxValue="32767"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="extractDate" direction="OUT" nullable="true">
+      <datatype name="DATE" type="DATE"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/ExceptionDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/time/DefaultValues" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* extractDate:
+	This procedure takes an input string that is expected to contain a date value. It compares this string
+	against a (non-exhaustive) set of date formats, and extracts the date value.
+	The date formats supported in this procedure are defined as constants in DefaultValues.
+ 
+	Input:
+		indateStr - contains any varchar of length 255.  
+			Values: Any text value in a reasonable date or timestamp format such as ‘2010-07-27’
+		isMandatory - contains any varchar of length 255.  
+			Values: 0 means not mandatory, 1 means mandatory. No other values accepted
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+	Output:
+		extractDate - 1. contains a valid time
+				   2. null if isMandatory=0 and no time could be extracted
+				   3. Exception is thrown if isMandatory=1 and no timestamp could be extracted
+			Values: null or a time value such as 00:00:00
+
+	Exceptions:  InvalidDateException
+			If isMandatory=0 and no format could be found then return null.
+			If isMandatory=1 and no format could be found then an exception is thrown.
+
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+	Updated By:  Mike Tinius
+	Date:        10/29/2011
+	CSW Version: 5.1.0
+    Reason:      Fix a parsing issue
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE extractDate(
+	IN inDateStr 			VARCHAR(255), 
+    IN isMandatory 			SMALLINT,   -- 0 means not mandatory, 1 means mandatory. No other values accepted.
+	IN debug 				CHAR(1), -- true=&apos;Y&apos; and false=&apos;N&apos;	  
+	OUT extractDate		 	DATE
+)
+BEGIN
+ 	PATH /shared/ASAssets/Utilities;
+	DECLARE moduleName 			VARCHAR DEFAULT &apos;extractDate()&apos;;
+	DECLARE errorMessage		/shared/ASAssets/Utilities/TypeDefinitions.messageType DEFAULT &apos;&apos;;
+	DECLARE i					INTEGER DEFAULT 0;
+	DECLARE dateStr 			VARCHAR; 
+	DECLARE dateFormatVector 	VECTOR(varchar);
+	DECLARE pattern				VARCHAR;
+
+	set dateFormatVector = /shared/ASAssets/Utilities/&quot;time&quot;/DefaultValues.dateFormatVectorConst;
+	set dateStr = emptyStr(TRIM(inDateStr));
+	-- Initialize it.
+	SET extractDate = NULL;
+	SET pattern = &apos;&apos;;
+
+	IF (LENGTH(dateStr) &gt; 0) THEN
+	    set i = 1;
+	    dateLoop:
+	    While (i &lt;= CARDINALITY(dateFormatVector)) do
+	    	BEGIN
+		    SET pattern = dateFormatVector[i];
+		    SET extractDate = PARSE_DATE(dateStr, dateFormatVector[i]);
+		    leave dateLoop;
+	    	EXCEPTION
+		    else
+		    	set i = i + 1;
+	    	END;
+	    end while;
+	    if (i &gt; CARDINALITY(dateFormatVector)) then
+		set i = 0;
+		set pattern = &apos;&apos;;
+	    end if;
+	END IF;
+
+	IF (UPPER(debug) = &apos;Y&apos; or UPPER(debug) = &apos;T&apos;) THEN
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,
+			&apos;length=&apos;|| length(emptyStr(inDateStr)) || 
+			&apos;,  inDateStr=&apos;||emptyStr(inDateStr) || 
+			&apos;,  extractDate=&apos;||emptyStr(extractDate) || 
+			&apos;   Pattern[&apos;|| i || &apos;]=[&apos;|| pattern || &apos;]&apos;);	
+	END IF;
+	IF (extractDate is null) THEN
+            IF (isMandatory = 1) THEN
+            	-- Mandatory means if we cannot extract a valid time, then we have to raise an exception.
+	    	set errorMessage = &apos;ERROR: extractDate(): isMandatory=1. Unable to process date=[&apos;|| dateStr || &apos;]&apos;;
+	    	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,&apos;Y&apos;,errorMessage);	
+            	RAISE /shared/ASAssets/Utilities/ExceptionDefinitions.InvalidDateException value errorMessage;
+            ELSE
+            	-- Not mandatory means if we cannot produce a valid timestamp, just return NULL (which has been set already).
+            	-- Do not raise exception here.
+            	set errorMessage = &apos;WARNING: extractDate(): isMandatory=0 or null. Unable to process this date=[&apos;|| dateStr || &apos;]. NULL value returned.&apos;;
+		IF (UPPER(debug) = &apos;Y&apos; or UPPER(debug) = &apos;T&apos;) THEN
+		    	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,errorMessage);
+		END IF;
+            END IF;
+	END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

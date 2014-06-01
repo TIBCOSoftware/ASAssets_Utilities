@@ -1,0 +1,542 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getBasicResourceXSLT_PROCEDURE" path="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_PROCEDURE" type="PROCEDURE" subtype="XSLT_TRANSFORM_PROCEDURE" changeToken="0">
+  <annotation>getBasicResourceXSLT_PROCEDURE:
+	-- CIS Repository Helper Procedure --
+	This procedure transforms the XML resource response metadata for a given resource that contains a procedure object.
+	The procedure &apos;getBasicResourceCursor_PROCEDURE()&apos; invokes this procedure.  
+	Please use getBasicResourceCursor_PROCEDURE().
+
+	Input:
+		inXML - XML metadata containing the resource information  
+			Values: XML
+	Output:
+		resourceCursor  - response containing the resource metadata
+			CURSOR (
+				resourceName VARCHAR(255), 
+				resourcePath VARCHAR(4096), 
+				resourceType VARCHAR(40), 
+				subtype VARCHAR(40), 
+				enabled BIT, 
+				annotation VARCHAR(2147483647),
+				dataType VARCHAR(255),
+				parameterName VARCHAR(255), 
+				parameterType VARCHAR(255), 
+				parameterDirection VARCHAR(255),
+				parameterTypeName VARCHAR(255),
+				parameterTypeNamespace VARCHAR(32767),
+				parameterTypeReferencePath VARCHAR(32767)
+				)
+	Exceptions:  none
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/12/2011		Tony Young, Matt Lee 5.2.0			Created new
+	04/27/2012		Mike Tinius        	5.2.0			Expanded result cursor.
+	03/19/2013		Mike Tinius			5.2.0			Added annotation to result cursor
+	10/28/2013		Mike Tinius			6.2.0			B.P. 8.0: Added output for dataType, parameterTypeName, parameterTypeNamespace, parameterTypeReferencePath
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inXML" direction="IN" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+    </parameter>
+    <parameter name="outputs" direction="OUT" nullable="false">
+      <datatype name="outputs" type="TABLE" refId="1">
+        <element name="resourceName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="4096"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="40"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="40"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="annotation">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="dataType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="parameterName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="parameterType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="parameterDirection">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="parameterTypeName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="parameterTypeNamespace">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="parameterTypeReferencePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/xml/reverseXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inXML" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outXML" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">true</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="p:1:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="sourcePath" type="STRING">/shared/ASAssets/Utilities/xml/reverseXML</attribute>
+  <attribute name="sourceType" type="SHORT">3</attribute>
+  <attribute name="transformModel" type="STRING">
+&lt;transformModel customized=&quot;true&quot;&gt;
+  &lt;signature&gt;
+    &lt;datatype type=&quot;TREE&quot; refId=&quot;1&quot;&gt;
+      &lt;element name=&quot;inputs&quot;&gt;
+        &lt;datatype name=&quot;inputs&quot; type=&quot;TREE&quot; refId=&quot;2&quot;&gt;
+          &lt;element name=&quot;XML&quot; nullable=&quot;false&quot;&gt;
+            &lt;datatype name=&quot;XML&quot; type=&quot;XML&quot; contentConstraint=&quot;SEQUENCE&quot; schemaConstraint=&quot;ANY&quot; componentType=&quot;TYPE&quot; componentName=&quot;XML&quot;&gt;
+              &lt;schemaDatatype&gt;
+                &lt;datatype name=&quot;XML&quot; type=&quot;TREE&quot; refId=&quot;3&quot;&gt;&lt;/datatype&gt;
+              &lt;/schemaDatatype&gt;
+            &lt;/datatype&gt;
+          &lt;/element&gt;
+        &lt;/datatype&gt;
+      &lt;/element&gt;
+      &lt;element name=&quot;outputs&quot;&gt;
+        &lt;datatype type=&quot;PROCEDURE&quot; refId=&quot;4&quot;&gt;
+          &lt;element name=&quot;outputs&quot; direction=&quot;OUT&quot;&gt;
+            &lt;datatype name=&quot;outputs&quot; type=&quot;TABLE&quot; refId=&quot;5&quot;&gt;
+              &lt;element name=&quot;resourceName&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;255&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;resourcePath&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;4096&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;resourceType&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;40&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;subtype&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;40&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;enabled&quot;&gt;
+                &lt;datatype name=&quot;BIT&quot; type=&quot;INTEGER&quot; minValue=&quot;0&quot; maxValue=&quot;1&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;annotation&quot;&gt;
+                &lt;datatype name=&quot;LONGVARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;dataType&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;255&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;parameterName&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;255&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;parameterType&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;parameterDirection&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;255&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;parameterTypeName&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;255&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;parameterTypeNamespace&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;parameterTypeReferencePath&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+            &lt;/datatype&gt;
+          &lt;/element&gt;
+        &lt;/datatype&gt;
+      &lt;/element&gt;
+    &lt;/datatype&gt;
+  &lt;/signature&gt;
+  &lt;xslt&gt;&amp;lt;xslt:stylesheet xmlns:xslt=&amp;quot;http://www.w3.org/1999/XSL/Transform&amp;quot; xmlns:csw-xform=&amp;quot;http://www.compositesw.com/2003/xform&amp;quot; xmlns:ns1=&amp;quot;http://www.compositesw.com/services/system/admin/resource&amp;quot; xmlns:ns2=&amp;quot;http://www.compositesw.com/services/system/util/common&amp;quot; xmlns:xs=&amp;quot;http://www.w3.org/2001/XMLSchema&amp;quot; version=&amp;quot;1.0&amp;quot;&amp;gt;
+  &amp;lt;xslt:template match=&amp;quot;/&amp;quot;&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_resourceName&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_resourcePath&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_resourceType&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_subtype&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_enabled&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_annotation&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_dataType&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_parameterName&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_parameterType&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_parameterDirection&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_parameterTypeName&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_parameterTypeNamespace&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_parameterTypeReferencePath&amp;quot;/&amp;gt;
+    &amp;lt;xslt:element name=&amp;quot;results&amp;quot;&amp;gt;
+      &amp;lt;xslt:for-each select=&amp;quot;ns1:getResourceResponse&amp;quot;&amp;gt;
+        &amp;lt;xslt:for-each select=&amp;quot;ns1:resources&amp;quot;&amp;gt;
+          &amp;lt;xslt:for-each select=&amp;quot;ns1:resource&amp;quot;&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_resourceName&amp;quot; select=&amp;quot;ns1:name&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_resourcePath&amp;quot; select=&amp;quot;ns1:path&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_resourceType&amp;quot; select=&amp;quot;ns1:type&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_subtype&amp;quot; select=&amp;quot;ns1:subtype&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_enabled&amp;quot; select=&amp;quot;ns1:enabled&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_annotation&amp;quot; select=&amp;quot;ns1:annotation&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_dataType&amp;quot; select=&amp;quot;&amp;apos;&amp;apos;&amp;quot;/&amp;gt;
+            &amp;lt;xslt:element name=&amp;quot;result&amp;quot;&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;resourceName&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_resourceName&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;resourcePath&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_resourcePath&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;resourceType&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_resourceType&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;subtype&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_subtype&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;enabled&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_enabled&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;annotation&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_annotation&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;dataType&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_dataType&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;parameterName&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_parameterName&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;parameterType&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_parameterType&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;parameterDirection&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_parameterDirection&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;parameterTypeName&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_parameterTypeName&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;parameterTypeNamespace&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_parameterTypeNamespace&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;parameterTypeReferencePath&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_parameterTypeReferencePath&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+            &amp;lt;/xslt:element&amp;gt;
+            &amp;lt;xslt:for-each select=&amp;quot;ns1:parameters&amp;quot;&amp;gt;
+              &amp;lt;xslt:for-each select=&amp;quot;ns1:parameter&amp;quot;&amp;gt;
+                &amp;lt;xslt:variable name=&amp;quot;_parameterName&amp;quot; select=&amp;quot;ns1:name&amp;quot;/&amp;gt;
+                &amp;lt;xslt:variable name=&amp;quot;_annotation&amp;quot; select=&amp;quot;ns1:annotation&amp;quot;/&amp;gt;
+                &amp;lt;xslt:variable name=&amp;quot;_parameterDirection&amp;quot; select=&amp;quot;ns1:direction&amp;quot;/&amp;gt;
+                &amp;lt;xslt:for-each select=&amp;quot;ns1:dataType&amp;quot;&amp;gt;
+                  &amp;lt;xslt:for-each select=&amp;quot;ns2:sqlType&amp;quot;&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_dataType&amp;quot; select=&amp;quot;&amp;apos;sqlType&amp;apos;&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_parameterType&amp;quot; select=&amp;quot;ns2:definition&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_parameterTypeName&amp;quot; select=&amp;quot;ns2:name&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:element name=&amp;quot;result&amp;quot;&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;resourceName&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_resourceName&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;resourcePath&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_resourcePath&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;resourceType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_resourceType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;subtype&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_subtype&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;enabled&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_enabled&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;annotation&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_annotation&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;dataType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_dataType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterName&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterName&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterDirection&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterDirection&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterTypeName&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterTypeName&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterTypeNamespace&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterTypeNamespace&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterTypeReferencePath&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterTypeReferencePath&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                    &amp;lt;/xslt:element&amp;gt;
+                  &amp;lt;/xslt:for-each&amp;gt;
+                  &amp;lt;xslt:for-each select=&amp;quot;ns2:xmlType&amp;quot;&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_dataType&amp;quot; select=&amp;quot;&amp;apos;xmlType&amp;apos;&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_parameterType&amp;quot; select=&amp;quot;&amp;apos;&amp;apos;&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_parameterTypeName&amp;quot; select=&amp;quot;ns2:name&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_parameterTypeNamespace&amp;quot; select=&amp;quot;ns2:namespace&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_parameterTypeReferencePath&amp;quot; select=&amp;quot;ns2:referencePath&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:element name=&amp;quot;result&amp;quot;&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;resourceName&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_resourceName&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;resourcePath&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_resourcePath&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;resourceType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_resourceType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;subtype&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_subtype&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;enabled&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_enabled&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;annotation&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_annotation&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;dataType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_dataType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterName&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterName&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterDirection&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterDirection&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterTypeName&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterTypeName&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterTypeNamespace&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterTypeNamespace&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;parameterTypeReferencePath&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_parameterTypeReferencePath&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                    &amp;lt;/xslt:element&amp;gt;
+                  &amp;lt;/xslt:for-each&amp;gt;
+                &amp;lt;/xslt:for-each&amp;gt;
+              &amp;lt;/xslt:for-each&amp;gt;
+            &amp;lt;/xslt:for-each&amp;gt;
+          &amp;lt;/xslt:for-each&amp;gt;
+        &amp;lt;/xslt:for-each&amp;gt;
+      &amp;lt;/xslt:for-each&amp;gt;
+    &amp;lt;/xslt:element&amp;gt;
+  &amp;lt;/xslt:template&amp;gt;
+&amp;lt;/xslt:stylesheet&amp;gt;&lt;/xslt&gt;
+&lt;/transformModel&gt;</attribute>
+  <attribute name="xqueryModel" type="NULL"/>
+  <attribute name="xslt" type="STRING">&lt;xslt:stylesheet xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:ns2=&quot;http://www.compositesw.com/services/system/util/common&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;1.0&quot;&gt;
+  &lt;xslt:template match=&quot;/&quot;&gt;
+    &lt;xslt:variable name=&quot;_resourceName&quot;/&gt;
+    &lt;xslt:variable name=&quot;_resourcePath&quot;/&gt;
+    &lt;xslt:variable name=&quot;_resourceType&quot;/&gt;
+    &lt;xslt:variable name=&quot;_subtype&quot;/&gt;
+    &lt;xslt:variable name=&quot;_enabled&quot;/&gt;
+    &lt;xslt:variable name=&quot;_annotation&quot;/&gt;
+    &lt;xslt:variable name=&quot;_dataType&quot;/&gt;
+    &lt;xslt:variable name=&quot;_parameterName&quot;/&gt;
+    &lt;xslt:variable name=&quot;_parameterType&quot;/&gt;
+    &lt;xslt:variable name=&quot;_parameterDirection&quot;/&gt;
+    &lt;xslt:variable name=&quot;_parameterTypeName&quot;/&gt;
+    &lt;xslt:variable name=&quot;_parameterTypeNamespace&quot;/&gt;
+    &lt;xslt:variable name=&quot;_parameterTypeReferencePath&quot;/&gt;
+    &lt;xslt:element name=&quot;results&quot;&gt;
+      &lt;xslt:for-each select=&quot;ns1:getResourceResponse&quot;&gt;
+        &lt;xslt:for-each select=&quot;ns1:resources&quot;&gt;
+          &lt;xslt:for-each select=&quot;ns1:resource&quot;&gt;
+            &lt;xslt:variable name=&quot;_resourceName&quot; select=&quot;ns1:name&quot;/&gt;
+            &lt;xslt:variable name=&quot;_resourcePath&quot; select=&quot;ns1:path&quot;/&gt;
+            &lt;xslt:variable name=&quot;_resourceType&quot; select=&quot;ns1:type&quot;/&gt;
+            &lt;xslt:variable name=&quot;_subtype&quot; select=&quot;ns1:subtype&quot;/&gt;
+            &lt;xslt:variable name=&quot;_enabled&quot; select=&quot;ns1:enabled&quot;/&gt;
+            &lt;xslt:variable name=&quot;_annotation&quot; select=&quot;ns1:annotation&quot;/&gt;
+            &lt;xslt:variable name=&quot;_dataType&quot; select=&quot;&apos;&apos;&quot;/&gt;
+            &lt;xslt:element name=&quot;result&quot;&gt;
+              &lt;xslt:element name=&quot;resourceName&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_resourceName&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;resourcePath&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_resourcePath&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;resourceType&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_resourceType&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;subtype&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_subtype&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;enabled&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_enabled&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;annotation&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_annotation&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;dataType&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_dataType&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;parameterName&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_parameterName&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;parameterType&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_parameterType&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;parameterDirection&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_parameterDirection&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;parameterTypeName&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_parameterTypeName&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;parameterTypeNamespace&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_parameterTypeNamespace&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;parameterTypeReferencePath&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_parameterTypeReferencePath&quot;/&gt;
+              &lt;/xslt:element&gt;
+            &lt;/xslt:element&gt;
+            &lt;xslt:for-each select=&quot;ns1:parameters&quot;&gt;
+              &lt;xslt:for-each select=&quot;ns1:parameter&quot;&gt;
+                &lt;xslt:variable name=&quot;_parameterName&quot; select=&quot;ns1:name&quot;/&gt;
+                &lt;xslt:variable name=&quot;_annotation&quot; select=&quot;ns1:annotation&quot;/&gt;
+                &lt;xslt:variable name=&quot;_parameterDirection&quot; select=&quot;ns1:direction&quot;/&gt;
+                &lt;xslt:for-each select=&quot;ns1:dataType&quot;&gt;
+                  &lt;xslt:for-each select=&quot;ns2:sqlType&quot;&gt;
+                    &lt;xslt:variable name=&quot;_dataType&quot; select=&quot;&apos;sqlType&apos;&quot;/&gt;
+                    &lt;xslt:variable name=&quot;_parameterType&quot; select=&quot;ns2:definition&quot;/&gt;
+                    &lt;xslt:variable name=&quot;_parameterTypeName&quot; select=&quot;ns2:name&quot;/&gt;
+                    &lt;xslt:element name=&quot;result&quot;&gt;
+                      &lt;xslt:element name=&quot;resourceName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_resourceName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;resourcePath&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_resourcePath&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;resourceType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_resourceType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;subtype&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_subtype&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;enabled&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_enabled&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;annotation&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_annotation&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;dataType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_dataType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterDirection&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterDirection&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterTypeName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterTypeName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterTypeNamespace&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterTypeNamespace&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterTypeReferencePath&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterTypeReferencePath&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                    &lt;/xslt:element&gt;
+                  &lt;/xslt:for-each&gt;
+                  &lt;xslt:for-each select=&quot;ns2:xmlType&quot;&gt;
+                    &lt;xslt:variable name=&quot;_dataType&quot; select=&quot;&apos;xmlType&apos;&quot;/&gt;
+                    &lt;xslt:variable name=&quot;_parameterType&quot; select=&quot;&apos;&apos;&quot;/&gt;
+                    &lt;xslt:variable name=&quot;_parameterTypeName&quot; select=&quot;ns2:name&quot;/&gt;
+                    &lt;xslt:variable name=&quot;_parameterTypeNamespace&quot; select=&quot;ns2:namespace&quot;/&gt;
+                    &lt;xslt:variable name=&quot;_parameterTypeReferencePath&quot; select=&quot;ns2:referencePath&quot;/&gt;
+                    &lt;xslt:element name=&quot;result&quot;&gt;
+                      &lt;xslt:element name=&quot;resourceName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_resourceName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;resourcePath&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_resourcePath&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;resourceType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_resourceType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;subtype&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_subtype&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;enabled&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_enabled&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;annotation&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_annotation&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;dataType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_dataType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterDirection&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterDirection&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterTypeName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterTypeName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterTypeNamespace&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterTypeNamespace&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;parameterTypeReferencePath&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_parameterTypeReferencePath&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                    &lt;/xslt:element&gt;
+                  &lt;/xslt:for-each&gt;
+                &lt;/xslt:for-each&gt;
+              &lt;/xslt:for-each&gt;
+            &lt;/xslt:for-each&gt;
+          &lt;/xslt:for-each&gt;
+        &lt;/xslt:for-each&gt;
+      &lt;/xslt:for-each&gt;
+    &lt;/xslt:element&gt;
+  &lt;/xslt:template&gt;
+&lt;/xslt:stylesheet&gt;</attribute>
+</metadata>

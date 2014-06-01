@@ -1,0 +1,118 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="findStringInList" path="/shared/ASAssets/Utilities/string/findStringInList" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>findStringInList:
+	Given two input strings, this function returns an integer value representing the starting 
+	position of the first string within the second string.  The third parameter indicates which direction
+	to begin searching.  When &apos;F&apos;, begin searching forward from the beginning of the second string.
+ 
+	Input:
+		searchString - The search string is what you are looking for.  If this value is null, then the output is null
+						A blank (&apos;&apos;) non-null string for the search string always produces 1 for an output.
+			Values: Any text value
+		stringToSearch - The string to search within for the search string. If this value is null, then the output is null
+			Values: Any text value
+		delimiter - The delimiter by which to split/parse the stringToSearch prior to searching
+	Output:
+		pos - position in the list starting at 1.   0 was not found
+
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        12/7/2011
+	CSW Version: 6.0.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="searchString" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="inStringToSearch" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="delimiter" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="pos" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* findStringInList:
+	Given two input strings, this function returns an integer value representing the starting 
+	position of the first string within the second string.  The third parameter indicates which direction
+	to begin searching.  When &apos;F&apos;, begin searching forward from the beginning of the second string.
+ 
+	Input:
+		searchString - The search string is what you are looking for.  If this value is null, then the output is null
+						A blank (&apos;&apos;) non-null string for the search string always produces 1 for an output.
+			Values: Any text value
+		stringToSearch - The string to search within for the search string. If this value is null, then the output is null
+			Values: Any text value
+		delimiter - The delimiter by which to split/parse the stringToSearch prior to searching
+	Output:
+		pos - position in the list starting at 1.   0 was not found
+
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        12/7/2011
+	CSW Version: 6.0.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE findStringInList(
+	IN searchString		LONGVARCHAR,
+	IN inStringToSearch	LONGVARCHAR,
+	IN delimiter		VARCHAR,		-- delimiter to use to split
+	OUT pos				INTEGER	
+)
+BEGIN
+	DECLARE stringToSearch	LONGVARCHAR DEFAULT inStringToSearch;
+	DECLARE i			INTEGER DEFAULT 1;
+
+	set pos = 0;
+	splitLoop:
+	for r as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(stringToSearch,&apos;\&apos;||delimiter,0) do
+		IF (searchString = r.splitElement) then
+			set pos = i;
+			leave splitLoop;
+		END IF;
+		set i = i + 1;
+	end for;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

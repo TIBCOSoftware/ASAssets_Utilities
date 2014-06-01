@@ -1,0 +1,207 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_copyFile" path="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_copyFile" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="numTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/copyFile" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="filePath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="newFilePath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/existsFile" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="filePath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/getFileContentsAscii" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="filePath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="fileContent" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/getCisHome" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/getFileSeparator" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/existsFile" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisHome" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getFileContentsAscii" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getFileSeparator" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE Test_copyFile(
+    OUT numTests INTEGER,
+    OUT numErrors INTEGER,
+    OUT numSkipped INTEGER
+)
+BEGIN
+    -- a bug prevents putting these in a central script and declaring them public.
+    --
+    DECLARE CIS_HOME CONSTANT VARCHAR(4096) DEFAULT getCisHome();
+    DECLARE FS CONSTANT CHAR(1) DEFAULT getFileSeparator();
+    DECLARE NL CONSTANT CHAR(1) DEFAULT &apos;
+&apos;;
+
+    DECLARE test_name VARCHAR DEFAULT &apos;file/FileProcessingCJP/Test_copyFile&apos;;
+    DECLARE test_file VARCHAR(4096);
+    DECLARE test_file_copy VARCHAR(4096);
+    DECLARE args LONGVARCHAR;
+    DECLARE success BOOLEAN;
+
+    SET numTests = 0;
+    SET numErrors = 0;
+    SET numSkipped = 0;
+
+    -- start test
+    --
+    test_block_1: 
+    BEGIN
+        SET test_file = CIS_HOME || FS || &apos;tmp&apos; || FS || &apos;utils_test&apos; || FS || &apos;test1.txt&apos;;
+        SET test_file_copy = CIS_HOME || FS || &apos;tmp&apos; || FS || &apos;utils_test&apos; || FS || &apos;test2.txt&apos;;
+
+        SET args = &apos;&apos;&apos;&apos; || test_file || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || test_file_copy || &apos;&apos;&apos;&apos;;
+
+        SET numTests = numTests + 1;
+
+        IF (NOT existsFile(test_file)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, source file does not exist: SKIPPING&apos;);
+            SET numSkipped = numSkipped + 1;
+            LEAVE test_block_1;
+        END IF;
+    
+        CALL /shared/ASAssets/Utilities/file/FileProcessingCJP/copyFile(test_file, test_file_copy);    
+
+        IF (existsFile(test_file_copy)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: OK&apos;);
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+            LEAVE test_block_1;
+        END IF;
+
+        IF (getFileContentsAscii(test_file) = getFileContentsAscii(test_file_copy)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, contents: OK&apos;);
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, contents: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+        END IF;
+    EXCEPTION
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE);
+            SET numErrors = numErrors + 1;
+    END; -- test_block_1
+    --
+    -- end test
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">18/55</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/45</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/53</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/47</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/60</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/37</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

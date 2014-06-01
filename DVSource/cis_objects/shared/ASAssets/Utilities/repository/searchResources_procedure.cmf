@@ -1,0 +1,654 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="searchResources" path="/shared/ASAssets/Utilities/repository/searchResources" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>searchResources:
+
+	This procedure searches for keywords within the script text of a resource or attributes of a data source.
+	It returns a cursor of resource paths, types and subtypes for resources that contain the keywords.
+	It also returns the text position of the occurrence of any keyword matches and which keyword was matched.
+	It will not search a resource that is impacted.  The impactLevel may be &apos;NONE&apos; or &apos;SYNTAX_ERROR&apos;.  It will skip starting 
+	resource paths that do not exist.  
+
+ 	The following resource types and sub-types are supported:
+		resourceType = &apos;PROCEDURE&apos;
+			subtype = &apos;SQL_SCRIPT_PROCEDURE&apos; -- Get Regular Procedure
+			subtype = &apos;EXTERNAL_SQL_PROCEDURE&apos; -- Get Packaged Query Procedure
+			subtype = &apos;XSLT_TRANSFORM_PROCEDURE&apos; -- Get XSLT Transformation text
+			subtype = &apos;XQUERY_TRANSFORM_PROCEDURE&apos; -- Get XQuery Transformation text
+
+		resourceType = &apos;TABLE&apos;
+			subtype = &apos;SQL_TABLE&apos; -- Get Regular View
+
+		resourceType = &apos;DATA_SOURCE&apos;
+			subtype = all sub types -- Get data source attributes
+
+	This procedure uses RegexPosition which has the following rules:
+	-------------------------------------------------------
+	Finds an occurrence of a regular expression match in a VARCHAR and returns the position
+	of the match (similar to the SQL POSITION function, positions start at 1 with 0 indicating
+	a match was not found.) The value of the occurrence input value determines which 
+	occurrence to return (numbered starting at 1 from left to right. Use negative values to 
+	number occurrences from right to left.) If a NULL value is passed in as the value of 
+	any of the inputs, a NULL is returned. Zero may not be used as a value for an 
+	occurrence.
+
+	The regular expression language used is what is supported by the JDK used by CIS 
+	(currently 1.5 in CIS 4.0.1) See the javadoc for java.util.regex.Pattern for 
+	details on what is supported.
+
+
+	Input:
+
+		startingFolders - Comma separated list of starting folders to search within 
+			Values: /shared/Examples,/shared/test
+
+		keywordList - Comma separated list of keyword strings to search for. If the string 
+                      contains a comma then it must be enclosed in double quotes like 
+                      &quot;a,b&quot;,c,&quot;d,&quot;. The keyword list may also contain regular expressions.  
+                      For example to search for the data type &apos;Integer&apos; or &apos;integer&apos; but not 
+                      &apos;INTEGER&apos; use the regular expression [Ii]nteger in the keyword list.
+			Values: products.ProductName,&quot;CustomerName,&quot;,[Ii]nteger
+
+		keywordOccurrence - comma separated list of keyword occurrences which exactly match 
+                            the number of keywords. If this entry is left null then it is 
+                            assumed that the occurrence for each keyword is 1. The value of 
+                            the occurrence input value determines which occurrence to return 
+			                (numbered starting at 1 from left to right. Use negative values 
+                            to number occurrences from right to left.)
+
+        force - Indicates whether to examine impacted resources or not
+            Values: 0=(default) do not force search on impacted resources.  1=force the search 
+                    even when resources are impacted.
+            
+
+	Output:
+		OUT result PIPE (
+			startOrder		INTEGER,		-- The starting path execution order
+			startPath		VARCHAR(1024), 	-- The starting path
+			resourcePath 	VARCHAR(1024), 	-- The full path to the resource
+			resourceType 	VARCHAR(255),	-- The type of resource
+			subtype 		VARCHAR(255),	-- The sub-type of the resource
+			impactLevel		VARCHAR(255),	-- The impact level of the resource NONE and SYNTAX_ERROR are permitted.
+			pos				INTEGER,		-- The position of the first occurrence of any of the keywords
+			keyword			LONGVARCHAR,	-- The keyword that was found from the keyword list
+			keywordNum		INTEGER,		-- The keyword position number within the keyword list
+			occurrence		INTEGER			-- The occurrence of the keyword
+		)
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	01/21/2013		Mike Tinius			5.2.0			Created new
+	08/27/2013		Mike Tinius			6.1.0			Required for Best Practices 7.3: Return impactLevel in result and allow impactLevel=SYNTAX_ERROR.  
+														Invoking programs can filter on impactLevel=NONE to search for resources with no errors or impact being reported.
+	12/17/2013		Mike Tinius			6.2.0			Added &quot;force&quot; to allow the search to be forced when resources are impacted.  Added &quot;resourceText&quot; to the output cursor.
+
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="startingFolders" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="keywordList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="keywordOccurrence" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="force" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="startOrder">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="startPath">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="impactLevel">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="pos">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="keyword">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="keywordNum">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="occurrence">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="resourceText">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="path">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="type">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="id">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="changeid">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="ownerDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="ownerName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="impactLevel">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="scriptText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getDataSourceAttributes" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="dataSourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="attrName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="attrValue">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getDataSourceAttributes" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="resourceTreeList" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resPath">
+            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creationDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="creationDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="creatorUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creatorUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="lastModifiedDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="lastModifiedUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getScriptText" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getScriptText" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inSubType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="scriptText" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/ParseCSVLine" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="csvLine" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="separator" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="qualifier" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="CSValue">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/ParseCSVLine" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexPosition" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexPosition" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* searchResources:
+
+	This procedure searches for keywords within the script text of a resource or attributes of a data source.
+	It returns a cursor of resource paths, types and subtypes for resources that contain the keywords.
+	It also returns the text position of the occurrence of any keyword matches and which keyword was matched.
+	It will not search a resource that is impacted.  The impactLevel may be &apos;NONE&apos; or &apos;SYNTAX_ERROR&apos;.  It will skip starting 
+	resource paths that do not exist.  
+
+ 	The following resource types and sub-types are supported:
+		resourceType = &apos;PROCEDURE&apos;
+			subtype = &apos;SQL_SCRIPT_PROCEDURE&apos; -- Get Regular Procedure
+			subtype = &apos;EXTERNAL_SQL_PROCEDURE&apos; -- Get Packaged Query Procedure
+			subtype = &apos;XSLT_TRANSFORM_PROCEDURE&apos; -- Get XSLT Transformation text
+			subtype = &apos;XQUERY_TRANSFORM_PROCEDURE&apos; -- Get XQuery Transformation text
+
+		resourceType = &apos;TABLE&apos;
+			subtype = &apos;SQL_TABLE&apos; -- Get Regular View
+
+		resourceType = &apos;DATA_SOURCE&apos;
+			subtype = all sub types -- Get data source attributes
+
+	This procedure uses RegexPosition which has the following rules:
+	-------------------------------------------------------
+	Finds an occurrence of a regular expression match in a VARCHAR and returns the position
+	of the match (similar to the SQL POSITION function, positions start at 1 with 0 indicating
+	a match was not found.) The value of the occurrence input value determines which 
+	occurrence to return (numbered starting at 1 from left to right. Use negative values to 
+	number occurrences from right to left.) If a NULL value is passed in as the value of 
+	any of the inputs, a NULL is returned. Zero may not be used as a value for an 
+	occurrence.
+
+	The regular expression language used is what is supported by the JDK used by CIS 
+	(currently 1.5 in CIS 4.0.1) See the javadoc for java.util.regex.Pattern for 
+	details on what is supported.
+
+
+	Input:
+
+		startingFolders - Comma separated list of starting folders to search within 
+			Values: /shared/Examples,/shared/test
+
+		keywordList - Comma separated list of keyword strings to search for. If the string 
+                      contains a comma then it must be enclosed in double quotes like 
+                      &quot;a,b&quot;,c,&quot;d,&quot;. The keyword list may also contain regular expressions.  
+                      For example to search for the data type &apos;Integer&apos; or &apos;integer&apos; but not 
+                      &apos;INTEGER&apos; use the regular expression [Ii]nteger in the keyword list.
+			Values: products.ProductName,&quot;CustomerName,&quot;,[Ii]nteger
+
+		keywordOccurrence - comma separated list of keyword occurrences which exactly match 
+                            the number of keywords. If this entry is left null then it is 
+                            assumed that the occurrence for each keyword is 1. The value of 
+                            the occurrence input value determines which occurrence to return 
+			                (numbered starting at 1 from left to right. Use negative values 
+                            to number occurrences from right to left.)
+
+        force - Indicates whether to examine impacted resources or not
+            Values: 0=(default) do not force search on impacted resources.  1=force the search 
+                    even when resources are impacted.
+            
+
+	Output:
+		OUT result PIPE (
+			startOrder		INTEGER,		-- The starting path execution order
+			startPath		VARCHAR(1024), 	-- The starting path
+			resourcePath 	VARCHAR(1024), 	-- The full path to the resource
+			resourceType 	VARCHAR(255),	-- The type of resource
+			subtype 		VARCHAR(255),	-- The sub-type of the resource
+			impactLevel		VARCHAR(255),	-- The impact level of the resource NONE and SYNTAX_ERROR are permitted.
+			pos				INTEGER,		-- The position of the first occurrence of any of the keywords
+			keyword			LONGVARCHAR,	-- The keyword that was found from the keyword list
+			keywordNum		INTEGER,		-- The keyword position number within the keyword list
+			occurrence		INTEGER			-- The occurrence of the keyword
+		)
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	01/21/2013		Mike Tinius			5.2.0			Created new
+	08/27/2013		Mike Tinius			6.1.0			Required for Best Practices 7.3: Return impactLevel in result and allow impactLevel=SYNTAX_ERROR.  
+														Invoking programs can filter on impactLevel=NONE to search for resources with no errors or impact being reported.
+	12/17/2013		Mike Tinius			6.2.0			Added &quot;force&quot; to allow the search to be forced when resources are impacted.  Added &quot;resourceText&quot; to the output cursor.
+
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE searchResources(
+	IN startingFolders 		LONGVARCHAR, -- comma separated list of starting folder to begin searching
+	IN keywordList			LONGVARCHAR, -- comma separated list of keyword strings to search for. 
+	IN keywordOccurrence	LONGVARCHAR, -- comma separated list of keyword occurrences or null to default to 1.
+	IN force				INTEGER,	 -- 0=(default) do not force search on impacted resources.  1=force the search even when resources are impacted.
+	OUT result PIPE (
+		startOrder		INTEGER,		-- The start path execution order
+		startPath		VARCHAR(1024), 	-- The start path extracted from the comma separated startingFolders
+		resourcePath 	VARCHAR(1024), 	-- The full path to the resource
+		resourceType 	VARCHAR(255),	-- The type of resource
+		subtype 		VARCHAR(255),	-- The sub-type of the resource
+		impactLevel		VARCHAR(255),	-- The impact level of the resource NONE and SYNTAX_ERROR are permitted.
+		pos				INTEGER,		-- The position of the first occurrence of any of the keywords
+		keyword			LONGVARCHAR,	-- The keyword that was found from the keyword list
+		keywordNum		INTEGER,		-- The keyword position number within the keyword list
+		occurrence		INTEGER,		-- The occurrence of the keyword
+		resourceText	LONGVARCHAR		-- The resource text that where the keywordList was found
+	)
+)
+BEGIN
+	DEClARE moduleName			VARCHAR(255) DEFAULT &apos;searchResources&apos;;
+	DECLARE debug				CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	DECLARE startPath			VARCHAR(1024);
+	DECLARE startOrder			INTEGER DEFAULT 0;
+	DECLARE resourcePath		VARCHAR(1024);
+	DECLARE resourceType		VARCHAR;
+	DECLARE subtype				VARCHAR;
+	DECLARE scriptText			LONGVARCHAR;
+	DECLARE pos					INTEGER;
+	DECLARE keywordNum, i		INTEGER;
+	DECLARE occurrenceStr		VARCHAR;
+	DECLARE occurrence			INTEGER;
+
+	-- Continue if not empty
+	if (isEmpty(keywordList) = 0) then
+		for s as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(startingFolders, &apos;,&apos;, 0) do
+			set startPath = TRIM(s.splitElement);
+			set startOrder = startOrder + 1;
+
+			if (resourceExists(startPath, &apos;CONTAINER&apos;) &gt; 0) then
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;Starting Path to recurse through: &apos;||emptyStr(startPath));
+
+				-- Only return resource information for resource types TABLE and PROCEDURE since they have script text
+				for list as
+					select * from /shared/ASAssets/Utilities/repository/getResourceListRecursive(startPath,&apos;CONTAINER&apos;)
+					where resType = &apos;TABLE&apos; or resType = &apos;PROCEDURE&apos; or resType = &apos;DATA_SOURCE&apos;
+				do
+					set resourcePath = list.resPath;
+					set resourceType = list.resType;
+					set subtype = list.subtype;
+
+					-- Determine the impact level of the resource
+					for r as select * from /shared/ASAssets/Utilities/repository/getBasicResourceCursor(resourcePath, resourceType) do
+
+						-- Proceed only if there is no impact on the resource
+						if (r.impactLevel = &apos;NONE&apos; or r.impactLevel = &apos;SYNTAX_ERROR&apos; or (force is not null and force = 1)) then
+							call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;Resource: resourcePath=&apos;||resourcePath||&apos; resourceType=&apos;||emptyStr(resourceType)||&apos; subtype=&apos;||emptyStr(subtype)||&apos;   ImpactLevel=&apos;||emptyStr(r.impactLevel));
+
+							set scriptText = &apos;&apos;;
+							-- This is a best effort at retrieving the script text
+							BEGIN
+								if (resourceType = &apos;PROCEDURE&apos; or resourceType = &apos;TABLE&apos;) then
+									-- Get the script text for the resource
+									call /shared/ASAssets/Utilities/repository/getScriptText(resourcePath, resourceType, subtype, scriptText);
+								end if;
+								if (resourceType = &apos;DATA_SOURCE&apos;) then
+									set scriptText = &apos;&apos;;
+									for ds as select * from /shared/ASAssets/Utilities/repository/getDataSourceAttributes(resourcePath) do
+										set scriptText = scriptText || ds.attrName||&apos;=&apos;||emptyStr(ds.attrValue)||CHR(10);
+									end for;
+								end if;
+							EXCEPTION
+								ELSE
+							END;
+
+							-- Search this resource for all the keywords in the list
+							set keywordNum = 0;
+							keywordLoop:
+							for k as select * from /shared/ASAssets/Utilities/string/ParseCSVLine(keywordList, &apos;,&apos;, &apos;&quot;&apos;) do
+								set keywordNum = keywordNum + 1;
+
+								-- Extract the keyword occurrence for the respective keyword being searched and default to one to start out.
+								set occurrence = 1; -- default occurrence
+								set i = 0;
+								occurrenceLoop:
+								for o as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(keywordOccurrence, &apos;,&apos;, 0) do
+									set occurrenceStr = TRIM(o.splitElement);
+									set i = i + 1;
+									if (i = keywordNum) then
+										if (isEmpty(occurrenceStr) = 0) then
+											-- Make sure the occurrence is an integer value by removing any negative sign and looking for digits [0-9]
+											if (RegexPosition(REPLACE(occurrenceStr, &apos;-&apos;, &apos;&apos;), &apos;\D&apos;, 1) = 0) then
+												set occurrence = occurrenceStr;
+												leave occurrenceLoop;
+											end if;
+										end if;
+									end if;
+								end for;
+
+								-- Search for the position of the regular expression in the script text
+								call /shared/ASAssets/Utilities/string/TextUtils/RegexPosition(scriptText, k.CSValue, occurrence, pos);
+								if (pos &gt; 0) then
+									insert into result values (startOrder, startPath, resourcePath, resourceType, subtype, r.impactLevel, pos, k.CSValue, keywordNum, occurrence, scriptText);
+									leave keywordLoop;
+								end if;
+							end for;
+						else
+							call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;Resource: resourcePath=&apos;||resourcePath||&apos; resourceType=&apos;||emptyStr(resourceType)||&apos; subtype=&apos;||emptyStr(subtype)||&apos;   ImpactLevel=&apos;||emptyStr(r.impactLevel)||&apos;  (skipping resource)&apos;);
+						end if;
+					end for;
+				end for;
+			else
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;Path does not exist: &apos;||emptyStr(startPath));
+			end if;
+		end for;
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

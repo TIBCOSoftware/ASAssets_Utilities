@@ -1,0 +1,293 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="ParseCSVLine" path="/shared/ASAssets/Utilities/string/ParseCSVLine" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>ParseCSVLine:
+
+	This procedure parses a single line of CSV text and returns it as a cursor of parsed 
+    values. Since there&apos;s currently no way to create cursors of variable row width, this 
+    proc assumes the input is a single line of CSV data (line breaks in the input will be 
+    treated as any other whitespace character) and data will be returned as a single 
+    column cursor of values with no indication as to where any line breaks were.
+
+
+	Input:
+		csvLine - contains a line of CSV text. if the value is NULL, no rows will be
+                  returned.
+			Values: Any text value
+
+        separator - contains the character used to separate each field. defaults to &apos;,&apos; 
+                    if NULL or is empty string.
+            Values: Any single character (typically &apos;,&apos;).
+
+        qualifier - contains the character used to contain the value of each field (when 
+                    the value might contain a separator character as part of the value.)
+                    defaults to &apos;&quot;&apos; if NULL or is empty string.
+            Values: Any single character that isn&apos;t the sep (typically &apos;&quot;&apos;)
+
+
+	Output:
+		result - cursor containing the individual values
+			Values: Any text value
+
+
+	Exceptions:  
+        System.IllegalArgumentException - thrown when the separator and qualifier inputs
+                                          specify the same character.
+
+
+	Author:      Calvin Goodrich
+	Date:        11/1/2010
+	CSW Version: 5.1.0
+
+    Updated By:  Mike Tinius 
+    Date:        8/17/2011
+    CSW Version: 5.1.0
+    Reason:      Updated to properly support TAB characters as separators.
+
+    Updated By:  Calvin Goodrich 
+    Date:        8/26/2011
+    CSW Version: 5.1.0
+    Reason:      Updated to deal with outlier use cases of TAB characters as separators.
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="csvLine" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="separator" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="1"/>
+    </parameter>
+    <parameter name="qualifier" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="1"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="CSValue">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexFind" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexReplace" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Replacement Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexFind" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexReplace" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+    ParseCSVLine:
+
+	This procedure parses a single line of CSV text and returns it as a cursor of parsed 
+    values. Since there&apos;s currently no way to create cursors of variable row width, this 
+    proc assumes the input is a single line of CSV data (line breaks in the input will be 
+    treated as any other whitespace character) and data will be returned as a single 
+    column cursor of values with no indication as to where any line breaks were.
+
+
+	Input:
+		csvLine - contains a line of CSV text. if the value is NULL, no rows will be
+                  returned.
+			Values: Any text value
+
+        separator - contains the character used to separate each field. defaults to &apos;,&apos; 
+                    if NULL or is empty string.
+            Values: Any single character (typically &apos;,&apos;).
+
+        qualifier - contains the character used to contain the value of each field (when 
+                    the value might contain a separator character as part of the value.)
+                    defaults to &apos;&quot;&apos; if NULL or is empty string.
+            Values: Any single character that isn&apos;t the sep (typically &apos;&quot;&apos;)
+
+
+	Output:
+		result - cursor containing the individual values
+			Values: Any text value
+
+
+	Exceptions:  
+        System.IllegalArgumentException - thrown when the separator and qualifier inputs
+                                          specify the same character.
+
+
+	Author:      Calvin Goodrich
+	Date:        11/1/2010
+	CSW Version: 5.1.0
+
+    Updated By:  Mike Tinius 
+    Date:        8/17/2011
+    CSW Version: 5.1.0
+    Reason:      Updated to properly support TAB characters as separators.
+
+    Updated By:  Calvin Goodrich 
+    Date:        8/26/2011
+    CSW Version: 5.1.0
+    Reason:      Updated to deal with outlier use cases of TAB characters as separators.
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/ 
+PROCEDURE ParseCSVLine(
+	IN csvLine LONGVARCHAR,
+    IN separator VARCHAR(1),
+    IN qualifier VARCHAR(1),
+    OUT result PIPE (
+        CSValue VARCHAR(32768)
+    )
+)
+proc:
+BEGIN
+
+    --  test inputs
+    --
+    --DECLARE csvLine System.Text DEFAULT &apos;&quot;a,  &quot;&quot;1&quot;  ,  &quot;b&quot; , c,&quot;&quot;&quot;&quot;, &quot;d&quot;,,, &apos;; -- should result in 6 rows: &apos;a,  &quot;1&apos;, &apos;b&apos;, &apos;c&apos;, &apos;&quot;&apos;, &apos;d&apos;, &apos;&apos;, &apos;&apos;, and &apos;&apos;.
+    --DECLARE separator VARCHAR(1) DEFAULT &apos;&apos;;
+    --DECLARE qualifier VARCHAR(1) DEFAULT NULL;
+
+    -- constants
+    --
+    DECLARE DEF_SEP CONSTANT CHAR(1) DEFAULT &apos;,&apos;;
+    DECLARE DEF_QUAL CONSTANT CHAR(1) DEFAULT &apos;&quot;&apos;;
+
+    DECLARE ws VARCHAR DEFAULT &apos;\s&apos;; -- how the regular expressions below will look for white space
+    DECLARE findWQualRegex VARCHAR;
+    DECLARE findWOQualRegex VARCHAR;
+    DECLARE findEmptyRegex VARCHAR;
+    DECLARE findRegex VARCHAR(1024);
+    DECLARE removeSepQualRegex VARCHAR;
+
+    -- temporary variables
+    --
+    DECLARE csvLineTmp System.Text DEFAULT csvLine;
+    DECLARE tmp VARCHAR(32768);
+
+    -- declare variables for the separator and qualifier inputs (providing default values when NULL or empty string.)
+    --
+    DECLARE sep CHAR(1);
+    DECLARE qual CHAR(1) DEFAULT CASE COALESCE(qualifier, DEF_QUAL) WHEN &apos;&apos; THEN DEF_QUAL ELSE COALESCE(qualifier, DEF_QUAL) END;
+
+	IF (separator = CHR(9)) THEN
+		set sep = separator;
+        set ws = &apos;[ \n\x0B\f\r]&apos;; -- \s without the \t (tab) character
+	ELSE
+		IF (COALESCE(separator, DEF_SEP) = &apos;&apos;) THEN
+			set sep = DEF_SEP;
+		ELSE
+			set sep = COALESCE(separator, DEF_SEP);
+		END IF; 
+	END IF;
+
+    -- the guts of the parsing code. the first three variables are combined to produce the final
+    -- regular expression (findRegex) used for searching for CSV tokens. The last regex is used
+    -- to remove the separators and qualifiers from the resulting CSV tokens.
+    --
+    SET findWQualRegex = &apos;\&apos; || sep || &apos;?&apos; || ws ||&apos;*\&apos; || qual || &apos;(([^&apos; || qual || &apos;])|\&apos; || qual || &apos;\&apos; || qual || &apos;)*\&apos; || qual || &apos;&apos; || ws ||&apos;*&apos;;
+    SET findWOQualRegex = &apos;\&apos; || sep || &apos;?&apos; || ws ||&apos;*([^&apos; || sep || &apos;]+)&apos; || ws ||&apos;*&apos;;
+    SET findEmptyRegex = &apos;\&apos; || sep || ws ||&apos;*|\&apos; || sep || ws ||&apos;*$&apos;;
+    SET findRegex = findWQualRegex || &apos;|&apos; || findWOQualRegex || &apos;|&apos; || findEmptyRegex;
+    SET removeSepQualRegex = &apos;\A&apos; || ws ||&apos;*\&apos; || sep || &apos;?&apos; || ws ||&apos;*\&apos; || qual || &apos;?(.*?)\&apos; || qual || &apos;?&apos; || ws ||&apos;*\z&apos;;
+
+    IF (csvLine IS NULL) THEN
+        LEAVE proc;
+    END IF;
+
+    IF (sep = qual) THEN
+        RAISE System.IllegalArgumentException VALUE &apos;The separator and qualifier inputs may not be the same character: &apos; || sep;
+    END IF;
+
+    -- find the first occurrence of findRegex
+    --
+    SET tmp = RegexFind(csvLineTmp, findRegex, 1);
+
+    -- loop until no more occurrences are found.
+    --
+    WHILE (tmp IS NOT NULL) DO
+
+        -- trim off what we found so the next RegexFind locates the next occurrence of findRegex. this is
+        -- so that subsequent searches for the next occurrence don&apos;t have to keep scanning through tokens
+        -- that have already been found (meaning better performance.) the &apos;\Q&apos; and &apos;\E&apos; quote the text so 
+        -- any regex special characters are not accidently interpreted.
+        --
+        SET csvLineTmp = RegexReplace(csvLineTmp, &apos;\Q&apos; || tmp || &apos;\E&apos;, &apos;&apos;, 1); 
+
+        -- trim off the separators and qualifiers. replace any escaped qualifiers with a single
+        -- instance of the qualifier character.
+        --
+        SET tmp = RegexReplace (tmp, removeSepQualRegex, &apos;$1&apos;, 1);
+        SET tmp = REPLACE(tmp, qual || qual, qual);
+
+        INSERT INTO result VALUES (tmp);
+
+        -- find the next occurrence of findRegex
+        --
+        SET tmp = RegexFind(csvLineTmp, findRegex, 1);
+    END WHILE;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486501474</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">24/83</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/117</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

@@ -1,0 +1,625 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_getChildResourcesResponseXSLT" path="/shared/ASAssets/Utilities/repository/modelXSLT/modelChildResponse/test_getChildResourcesResponseXSLT" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="resourceName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="isNullable">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="columnName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="columnType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="nativeBaseType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="nativeType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/repository/modelXSLT/modelChildResponse/getChildResourcesResponseXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inXML" direction="IN" nullable="false">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT">
+        <datatype type="TABLE" refId="3">
+          <element name="resourceName">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="resourcePath">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="resourceType">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="subtype">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="isNullable">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="columnName">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="columnType">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="nativeBaseType">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="nativeType">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE test_getChildResourcesResponseXSLT(
+    OUT result CURSOR (
+        resourceName VARCHAR(32768), 
+        resourcePath VARCHAR(32768), 
+        resourceType VARCHAR(32768), 
+        subtype VARCHAR(32768), 
+        enabled BIT, 
+        isNullable VARCHAR(32768), 
+        columnName VARCHAR(32768), 
+        columnType VARCHAR(32768), 
+        nativeBaseType VARCHAR(32768), 
+        nativeType VARCHAR(32768)
+        )
+    )
+    BEGIN
+declare inXML XML;
+set inXML = &apos;&lt;resource:getChildResourcesResponse xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+  &lt;resource:resources&gt;
+    &lt;resource:resource xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:type=&quot;resource:tableResource&quot;&gt;
+      &lt;resource:name&gt;inventorytransactions&lt;/resource:name&gt;
+      &lt;resource:path&gt;/shared/BestPracticesSample/4_PhysicalViews/INVENTORY/ds_inventory/inventorytransactions&lt;/resource:path&gt;
+      &lt;resource:type&gt;TABLE&lt;/resource:type&gt;
+      &lt;resource:subtype&gt;DATABASE_TABLE&lt;/resource:subtype&gt;
+      &lt;resource:id&gt;424689&lt;/resource:id&gt;
+      &lt;resource:changeId&gt;10265&lt;/resource:changeId&gt;
+      &lt;resource:ownerDomain&gt;composite&lt;/resource:ownerDomain&gt;
+      &lt;resource:ownerName&gt;admin&lt;/resource:ownerName&gt;
+      &lt;resource:impactLevel&gt;NONE&lt;/resource:impactLevel&gt;
+      &lt;resource:enabled&gt;true&lt;/resource:enabled&gt;
+      &lt;resource:columns&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;TransactionID&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+          &lt;resource:isNullable&gt;IS_NOT_NULLABLE&lt;/resource:isNullable&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;TransactionDate&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;DATE&lt;/common:definition&gt;
+              &lt;common:name&gt;date&lt;/common:name&gt;
+              &lt;common:nativeType&gt;date&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJkYXRlIiBleHRlbmRlZE5hbWU9ImRhdGUiIHN1YlR5cGU9IkRBVEFT&amp;#13; T1VSQ0VfVFlQRSIgdHlwZT0iREFURSIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;ProductID&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;PurchaseOrderID&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;TransactionDescription&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(255)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(255)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoMjU1KSIgc3Vi&amp;#13; VHlwZT0iREFUQVNPVVJDRV9UWVBFIiB0eXBlPSJTVFJJTkciIG1heExlbmd0aD0iMjU1Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;UnitPrice&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;DECIMAL(19,0)&lt;/common:definition&gt;
+              &lt;common:name&gt;decimal&lt;/common:name&gt;
+              &lt;common:nativeType&gt;decimal(19,0)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJkZWNpbWFsIiBleHRlbmRlZE5hbWU9ImRlY2ltYWwoMTksMCkiIHN1&amp;#13; YlR5cGU9IkRBVEFTT1VSQ0VfVFlQRSIgdHlwZT0iREVDSU1BTCIgbWF4RGlnaXRzPSIxOSIgbWF4&amp;#13; RnJhY3Rpb25hbERpZ2l0cz0iMCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;UnitsOrdered&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;UnitsReceived&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;UnitsSold&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;UnitsShrinkage&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+      &lt;/resource:columns&gt;
+    &lt;/resource:resource&gt;
+    &lt;resource:resource xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:type=&quot;resource:tableResource&quot;&gt;
+      &lt;resource:name&gt;products&lt;/resource:name&gt;
+      &lt;resource:path&gt;/shared/BestPracticesSample/4_PhysicalViews/INVENTORY/ds_inventory/products&lt;/resource:path&gt;
+      &lt;resource:type&gt;TABLE&lt;/resource:type&gt;
+      &lt;resource:subtype&gt;DATABASE_TABLE&lt;/resource:subtype&gt;
+      &lt;resource:id&gt;424716&lt;/resource:id&gt;
+      &lt;resource:changeId&gt;10265&lt;/resource:changeId&gt;
+      &lt;resource:ownerDomain&gt;composite&lt;/resource:ownerDomain&gt;
+      &lt;resource:ownerName&gt;admin&lt;/resource:ownerName&gt;
+      &lt;resource:impactLevel&gt;NONE&lt;/resource:impactLevel&gt;
+      &lt;resource:enabled&gt;true&lt;/resource:enabled&gt;
+      &lt;resource:columns&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;ProductID&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+          &lt;resource:isNullable&gt;IS_NOT_NULLABLE&lt;/resource:isNullable&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;ProductName&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(50)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(50)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoNTApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSI1MCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;ProductDescription&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(255)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(255)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoMjU1KSIgc3Vi&amp;#13; VHlwZT0iREFUQVNPVVJDRV9UWVBFIiB0eXBlPSJTVFJJTkciIG1heExlbmd0aD0iMjU1Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;CategoryID&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;SerialNumber&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(50)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(50)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoNTApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSI1MCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;UnitPrice&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;DECIMAL(12,2)&lt;/common:definition&gt;
+              &lt;common:name&gt;decimal&lt;/common:name&gt;
+              &lt;common:nativeType&gt;decimal(12,2)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJkZWNpbWFsIiBleHRlbmRlZE5hbWU9ImRlY2ltYWwoMTIsMikiIHN1&amp;#13; YlR5cGU9IkRBVEFTT1VSQ0VfVFlQRSIgdHlwZT0iREVDSU1BTCIgbWF4RGlnaXRzPSIxMiIgbWF4&amp;#13; RnJhY3Rpb25hbERpZ2l0cz0iMiIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;ReorderLevel&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;LeadTime&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(30)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(30)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoMzApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSIzMCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+      &lt;/resource:columns&gt;
+    &lt;/resource:resource&gt;
+    &lt;resource:resource xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:type=&quot;resource:tableResource&quot;&gt;
+      &lt;resource:name&gt;purchaseorders&lt;/resource:name&gt;
+      &lt;resource:path&gt;/shared/BestPracticesSample/4_PhysicalViews/INVENTORY/ds_inventory/purchaseorders&lt;/resource:path&gt;
+      &lt;resource:type&gt;TABLE&lt;/resource:type&gt;
+      &lt;resource:subtype&gt;DATABASE_TABLE&lt;/resource:subtype&gt;
+      &lt;resource:id&gt;424702&lt;/resource:id&gt;
+      &lt;resource:changeId&gt;10265&lt;/resource:changeId&gt;
+      &lt;resource:ownerDomain&gt;composite&lt;/resource:ownerDomain&gt;
+      &lt;resource:ownerName&gt;admin&lt;/resource:ownerName&gt;
+      &lt;resource:impactLevel&gt;NONE&lt;/resource:impactLevel&gt;
+      &lt;resource:enabled&gt;true&lt;/resource:enabled&gt;
+      &lt;resource:columns&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;PurchaseOrderID&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+          &lt;resource:isNullable&gt;IS_NOT_NULLABLE&lt;/resource:isNullable&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;PONumber&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(30)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(30)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoMzApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSIzMCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;PurchaseOrderDescription&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(255)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(255)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoMjU1KSIgc3Vi&amp;#13; VHlwZT0iREFUQVNPVVJDRV9UWVBFIiB0eXBlPSJTVFJJTkciIG1heExlbmd0aD0iMjU1Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;SupplierID&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;EmployeeID&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;OrderDate&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;DATE&lt;/common:definition&gt;
+              &lt;common:name&gt;date&lt;/common:name&gt;
+              &lt;common:nativeType&gt;date&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJkYXRlIiBleHRlbmRlZE5hbWU9ImRhdGUiIHN1YlR5cGU9IkRBVEFT&amp;#13; T1VSQ0VfVFlQRSIgdHlwZT0iREFURSIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;DateRequired&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;DATE&lt;/common:definition&gt;
+              &lt;common:name&gt;date&lt;/common:name&gt;
+              &lt;common:nativeType&gt;date&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJkYXRlIiBleHRlbmRlZE5hbWU9ImRhdGUiIHN1YlR5cGU9IkRBVEFT&amp;#13; T1VSQ0VfVFlQRSIgdHlwZT0iREFURSIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;DatePromised&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;DATE&lt;/common:definition&gt;
+              &lt;common:name&gt;date&lt;/common:name&gt;
+              &lt;common:nativeType&gt;date&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJkYXRlIiBleHRlbmRlZE5hbWU9ImRhdGUiIHN1YlR5cGU9IkRBVEFT&amp;#13; T1VSQ0VfVFlQRSIgdHlwZT0iREFURSIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;ShipDate&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;DATE&lt;/common:definition&gt;
+              &lt;common:name&gt;date&lt;/common:name&gt;
+              &lt;common:nativeType&gt;date&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJkYXRlIiBleHRlbmRlZE5hbWU9ImRhdGUiIHN1YlR5cGU9IkRBVEFT&amp;#13; T1VSQ0VfVFlQRSIgdHlwZT0iREFURSIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;ShippingMethodID&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;FreightCharge&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;DECIMAL(12,2)&lt;/common:definition&gt;
+              &lt;common:name&gt;decimal&lt;/common:name&gt;
+              &lt;common:nativeType&gt;decimal(12,2)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJkZWNpbWFsIiBleHRlbmRlZE5hbWU9ImRlY2ltYWwoMTIsMikiIHN1&amp;#13; YlR5cGU9IkRBVEFTT1VSQ0VfVFlQRSIgdHlwZT0iREVDSU1BTCIgbWF4RGlnaXRzPSIxMiIgbWF4&amp;#13; RnJhY3Rpb25hbERpZ2l0cz0iMiIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+      &lt;/resource:columns&gt;
+    &lt;/resource:resource&gt;
+    &lt;resource:resource xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:type=&quot;resource:tableResource&quot;&gt;
+      &lt;resource:name&gt;suppliers&lt;/resource:name&gt;
+      &lt;resource:path&gt;/shared/BestPracticesSample/4_PhysicalViews/INVENTORY/ds_inventory/suppliers&lt;/resource:path&gt;
+      &lt;resource:type&gt;TABLE&lt;/resource:type&gt;
+      &lt;resource:subtype&gt;DATABASE_TABLE&lt;/resource:subtype&gt;
+      &lt;resource:id&gt;424727&lt;/resource:id&gt;
+      &lt;resource:changeId&gt;10265&lt;/resource:changeId&gt;
+      &lt;resource:ownerDomain&gt;composite&lt;/resource:ownerDomain&gt;
+      &lt;resource:ownerName&gt;admin&lt;/resource:ownerName&gt;
+      &lt;resource:impactLevel&gt;NONE&lt;/resource:impactLevel&gt;
+      &lt;resource:enabled&gt;true&lt;/resource:enabled&gt;
+      &lt;resource:columns&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;SupplierID&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;INTEGER&lt;/common:definition&gt;
+              &lt;common:name&gt;int&lt;/common:name&gt;
+              &lt;common:nativeType&gt;int(11)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJpbnQiIGV4dGVuZGVkTmFtZT0iaW50KDExKSIgc3ViVHlwZT0iREFU&amp;#13; QVNPVVJDRV9UWVBFIiB0eXBlPSJJTlRFR0VSIiBtaW5WYWx1ZT0iLTIxNDc0ODM2NDgiIG1heFZh&amp;#13; bHVlPSIyMTQ3NDgzNjQ3Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+          &lt;resource:isNullable&gt;IS_NOT_NULLABLE&lt;/resource:isNullable&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;SupplierName&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(50)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(50)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoNTApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSI1MCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;ContactName&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(50)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(50)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoNTApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSI1MCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;ContactTitle&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(50)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(50)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoNTApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSI1MCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;Address&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(255)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(255)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoMjU1KSIgc3Vi&amp;#13; VHlwZT0iREFUQVNPVVJDRV9UWVBFIiB0eXBlPSJTVFJJTkciIG1heExlbmd0aD0iMjU1Ii8+&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;City&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(50)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(50)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoNTApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSI1MCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;PostalCode&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(20)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(20)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoMjApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSIyMCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;StateOrProvince&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(20)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(20)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoMjApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSIyMCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;CountryRegion&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(50)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(50)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoNTApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSI1MCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;PhoneNumber&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(30)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(30)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoMzApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSIzMCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+        &lt;resource:column&gt;
+          &lt;resource:name&gt;FaxNumber&lt;/resource:name&gt;
+          &lt;resource:dataType&gt;
+            &lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+              &lt;common:definition&gt;VARCHAR(30)&lt;/common:definition&gt;
+              &lt;common:name&gt;varchar&lt;/common:name&gt;
+              &lt;common:nativeType&gt;varchar(30)&lt;/common:nativeType&gt;
+              &lt;common:proprietaryModel&gt;CjxkYXRhdHlwZSBuYW1lPSJ2YXJjaGFyIiBleHRlbmRlZE5hbWU9InZhcmNoYXIoMzApIiBzdWJU&amp;#13; eXBlPSJEQVRBU09VUkNFX1RZUEUiIHR5cGU9IlNUUklORyIgbWF4TGVuZ3RoPSIzMCIvPg==&lt;/common:proprietaryModel&gt;
+            &lt;/common:sqlType&gt;
+          &lt;/resource:dataType&gt;
+        &lt;/resource:column&gt;
+      &lt;/resource:columns&gt;
+    &lt;/resource:resource&gt;
+  &lt;/resource:resources&gt;
+&lt;/resource:getChildResourcesResponse&gt;
+&apos;;
+        OPEN result FOR 
+            SELECT 
+                *
+            FROM      
+                /shared/ASAssets/Utilities/repository/modelXSLT/modelChildResponse/getChildResourcesResponseXSLT(inXML) getChildResourcesResponseXSLT;
+    END</attribute>
+  <attribute name="creationDate" type="LONG">1383622341943</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="references" type="NULL"/>
+</metadata>

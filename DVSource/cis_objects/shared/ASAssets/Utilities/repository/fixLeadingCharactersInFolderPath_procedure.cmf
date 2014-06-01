@@ -1,0 +1,104 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="fixLeadingCharactersInFolderPath" path="/shared/ASAssets/Utilities/repository/fixLeadingCharactersInFolderPath" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>fixLeadingCharactersInFolderPath:
+	-- CIS Repository Helper Procedure --
+	This procedure is used to fix the leading characters in a folder path.  Any path that contains a 
+	leading underscore &apos;_&apos; or a number &apos;0123456789&apos; must have double quotes inserted around that portion
+	of the folder.  This procedure would be called in conjunction with other procedures.  For example,
+	when generating a view based off of another view, the SELECT statement&apos;s FROM clause would require
+	that the path to the underlying view be fixed with double quotes if it finds
+ 
+	Input:
+    		resourcePath - CIS source folder path to assess and fix
+			Values: e.g. /shared/Utilities/repository/examples/1folder/_folder
+	Output:
+		fixedResourcePath - Fixed CIS source folder path
+			Values: e.g. /shared/Utilities/repository/examples/&quot;1folder&quot;/&quot;_folder&quot;
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="fixedResourcePath" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* fixLeadingCharactersInFolderPath:
+	-- CIS Repository Helper Procedure --
+	This procedure is used to fix the leading characters in a folder path.  Any path that contains a 
+	leading underscore &apos;_&apos; or a number &apos;0123456789&apos; must have double quotes inserted around that portion
+	of the folder.  This procedure would be called in conjunction with other procedures.  For example,
+	when generating a view based off of another view, the SELECT statement&apos;s FROM clause would require
+	that the path to the underlying view be fixed with double quotes if it finds
+ 
+	Input:
+    		resourcePath - CIS source folder path to assess and fix
+			Values: e.g. /shared/Utilities/repository/examples/1folder/_folder
+	Output:
+		fixedResourcePath - Fixed CIS source folder path
+			Values: e.g. /shared/Utilities/repository/examples/&quot;1folder&quot;/&quot;_folder&quot;
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE fixLeadingCharactersInFolderPath(
+	IN resourcePath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	OUT fixedResourcePath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType
+)
+BEGIN
+	DECLARE i	 	INTEGER;
+	DECLARE tempPath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE foundChar	 BOOLEAN DEFAULT false;
+	DECLARE doubleQuote	CHAR(1) DEFAULT &apos;&quot;&apos;;
+
+	set tempPath = &apos;&apos;;
+	set i = 1;
+	WHILE (i &lt;= LENGTH(resourcePath) ) DO
+		IF ( foundChar and (SUBSTRING(resourcePath,i,1) = &apos;/&apos; or i = LENGTH(resourcePath)) ) THEN
+			set foundChar = false;
+			if (SUBSTRING(resourcePath,i,1) = &apos;/&apos;) THEN
+				set tempPath = tempPath || doubleQuote || SUBSTRING(resourcePath,i,1); -- closing double quote
+			else
+				set tempPath = tempPath || SUBSTRING(resourcePath,i,1) || doubleQuote; -- closing double quote at the very end of the path
+				set i = i + 1; -- need to increment by one to account for the extra &quot;
+			end if;
+		END IF;
+		-- If the char is an _ or a number and it is preceeded by a / then that portion of the path must be escaped with double quotes
+		IF ( ((SUBSTRING(resourcePath,i,1) = &apos;_&apos;) or POSITION(SUBSTRING(resourcePath,i,1) IN &apos;0123456789&apos;) &gt; 0) 
+			and (SUBSTRING(resourcePath,i-1,1) = &apos;/&apos; ) ) THEN
+			set foundChar = true;
+			set tempPath = tempPath || doubleQuote || SUBSTRING(resourcePath,i,1); -- opening double quote
+		ELSE
+			set tempPath = tempPath || SUBSTRING(resourcePath,i,1);	-- just any &apos;ole letter
+		END IF;
+		set i = i + 1;
+	END WHILE;
+	set fixedResourcePath = REPLACE(tempPath,&apos;//&apos;,&apos;/&apos;);
+END</attribute>
+  <attribute name="creationDate" type="LONG">1376679119330</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

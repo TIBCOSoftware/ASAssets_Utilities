@@ -1,0 +1,110 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="basename" path="/shared/ASAssets/Utilities/string/basename" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>basename:
+
+	Similar to the UNIX/Linux &quot;basename&quot; command, this procedure returns the resource name of a full resource path.
+
+
+	Input:
+
+		resourcePath - Absolute path to a resource.  
+			Values: /shared/examples/CompositeView
+
+
+	Output:
+
+		result - The name of the resource specified in the input.
+      Values: CompositeView
+
+
+	Exceptions:  none
+
+
+	Author:      Calvin Goodrich
+	Date:        10/13/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="ResourceName" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceName" type="STRING" maxLength="255"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexFind" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexFind" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexFind" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+  basename:
+
+	Similar to the UNIX/Linux &quot;basename&quot; command, this procedure returns the resource name of a full resource path.
+
+
+	Input:
+
+		resourcePath - Absolute path to a resource.  
+			Values: /shared/examples/CompositeView
+
+
+	Output:
+
+		result - The name of the resource specified in the input.
+      Values: CompositeView
+
+
+	Exceptions:  none
+
+
+	Author:      Calvin Goodrich
+	Date:        10/13/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE basename(
+    IN resourcePath /lib/resource/ResourceDefs.ResourcePath,
+    OUT result /lib/resource/ResourceDefs.ResourceName
+)
+BEGIN
+  SET result = RegexFind (resourcePath, &apos;(?&lt;=[/\\])[^/\\]+(?=[/\\]?)&apos;, -1);
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486501474</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

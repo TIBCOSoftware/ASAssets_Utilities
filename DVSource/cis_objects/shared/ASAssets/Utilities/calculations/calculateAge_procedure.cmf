@@ -1,0 +1,93 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="calculateAge" path="/shared/ASAssets/Utilities/calculations/calculateAge" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>calculateAge:
+	This procedure is used to calculate a person’s age given their birthday timestamp 
+	and the current timestamp at the time of calculation.
+ 
+	Input:
+		personBirthdayTimestamp - contains a timestamp value of a person&apos;s birthday.  
+			Values: &apos;1995-04-03 00:00:00&apos;
+			Format: &apos;YYYY-MM-DD HH24:MI:SS&apos;
+	Output:
+		age - an integer value representing the calculated age
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="personBirthdayTimestamp" direction="IN" nullable="true">
+      <datatype name="TIMESTAMP" type="DATETIME"/>
+    </parameter>
+    <parameter name="age" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/* calculateAge:
+	This procedure is used to calculate a person’s age given their birthday timestamp 
+	and the current timestamp at the time of calculation.
+ 
+	Input:
+		personBirthdayTimestamp - contains a timestamp value of a person&apos;s birthday.  
+			Values: &apos;1995-04-03 00:00:00&apos;
+			Format: &apos;YYYY-MM-DD HH24:MI:SS&apos;
+	Output:
+		age - an integer value representing the calculated age
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE calculateAge(
+	in personBirthdayTimestamp	TIMESTAMP,
+	out age				INTEGER
+)
+BEGIN
+	DECLARE BYR, BMO, BDY		INTEGER;
+	DECLARE CYR, CMO, CDY		INTEGER;
+	DECLARE currentTimestamp	TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+	set CYR = YEAR(currentTimestamp);
+	set CMO = MONTH(currentTimestamp);
+	set CDY = DAY(currentTimestamp);
+--	call print(&apos;CurrYear=&apos;||CYR);
+--	call print(&apos;CurrMonth=&apos;||CMO);
+--	call print(&apos;CurrDay=&apos;||CDY);
+
+	set BYR = YEAR(personBirthdayTimestamp);
+	set BMO = MONTH(personBirthdayTimestamp);
+	set BDY = DAY(personBirthdayTimestamp);
+--	call print(&apos;BirthYear=&apos;||BYR);
+--	call print(&apos;BirthMonth=&apos;||BMO);
+--	call print(&apos;BirthDay=&apos;||BDY);
+
+	set age = CYR - BYR - 1;
+	IF (BMO &lt; CMO) THEN
+		set age = age + 1;
+	ELSE
+		IF (BMO = CMO) THEN
+			IF (BDY &lt;= CDY) THEN
+				set age = age + 1;
+			END IF;
+		END IF;
+	END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1392746635624</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

@@ -1,0 +1,218 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="entityExtract" path="/shared/ASAssets/Utilities/string/entityExtract" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>entityExtract:
+	This is a procedure description that describes the purpose of this procedure.
+ 
+	Input:
+		inText - contains any text string.  
+			Values: Any text value
+		inDelimiter - Any single delimiting character that separates words in a text string.
+			Values: &apos; &apos;, &apos;|&apos; or &apos;,&apos; are common separators.
+		inNumWords - Number of words to extract  
+			Values: 0 or Null=extract all words, &gt;0 only extract to the number provided
+		random - A numerical bit (1 or 0) that defines whether to return words randomly or in sequence.  
+			 Random may be useful if you want to randomly skip over words to get a random extraction of words.
+			 Sequential will extract words in order of their appearance in the text.
+			Values: true(1)=random-produce a list randomly from the incoming text
+				false(0)=sequential-produce a list sequentially from the incoming text
+		removeSymbols - A numerical bit (1 or 0) that defines whether to remove all symbols before performing the extraction.  
+				The list of symbols are defined in entityConstants.
+			Values: true(1)=remove symbols and punctuation prior to extraction
+				false(0)=do not remove symbols and punctuation prior to extraction
+	Output:
+		entityVector - A vector of varchar(255) keyword entities
+			Values: Vector of any text value such as {keyword1,keyword2,keyword3}
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inText" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="inDelimiter" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="inNumWords" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="random" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="removeSymbols" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="entityVector" direction="OUT" nullable="true">
+      <datatype name="entityVector" type="ARRAY" maxLength="0">
+        <itemDatatype>
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </itemDatatype>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/entityConstants" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* entityExtract:
+	This is a procedure description that describes the purpose of this procedure.
+ 
+	Input:
+		inText - contains any text string.  
+			Values: Any text value
+		inDelimiter - Any single delimiting character that separates words in a text string.
+			Values: &apos; &apos;, &apos;|&apos; or &apos;,&apos; are common separators.
+		inNumWords - Number of words to extract  
+			Values: 0 or Null=extract all words, &gt;0 only extract to the number provided
+		random - A numerical bit (1 or 0) that defines whether to return words randomly or in sequence.  
+			 Random may be useful if you want to randomly skip over words to get a random extraction of words.
+			 Sequential will extract words in order of their appearance in the text.
+			Values: true(1)=random-produce a list randomly from the incoming text
+				false(0)=sequential-produce a list sequentially from the incoming text
+		removeSymbols - A numerical bit (1 or 0) that defines whether to remove all symbols before performing the extraction.  
+				The list of symbols are defined in entityConstants.
+			Values: true(1)=remove symbols and punctuation prior to extraction
+				false(0)=do not remove symbols and punctuation prior to extraction
+	Output:
+		entityVector - A vector of varchar(255) keyword entities
+			Values: Vector of any text value such as {keyword1,keyword2,keyword3}
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE entityExtract(
+	IN inText		LONGVARCHAR,
+	IN inDelimiter		CHAR(1),-- &apos; &apos;, &apos;|&apos; or any other single character delimiter
+	IN inNumWords		INTEGER,-- number of words to produce.  If 0 or null then produce all words
+	IN random		bit,	-- true(1)=random-produce a list randomly from the incoming text
+					-- false(0)=sequential-produce a list sequentially from the incoming text
+	IN removeSymbols	bit,	-- true(1)=remove symbols and punctuation prior to extraction
+					-- false(0)=do not remove symbols and punctuation prior to extraction
+	OUT entityVector	VECTOR(varchar)
+)
+BEGIN
+	DECLARE inTextTemp	LONGVARCHAR DEFAULT TRIM(inText);
+	DECLARE numWords	INTEGER DEFAULT inNumWords;
+	DECLARE nonEntityVector	VECTOR(varchar) DEFAULT /shared/ASAssets/Utilities/string/entityConstants.nonEntityVector;
+	DECLARE symbols1Vector 	VECTOR(varchar)DEFAULT /shared/ASAssets/Utilities/string/entityConstants.symbols1Vector;
+	DECLARE symbols2Vector 	VECTOR(varchar)DEFAULT /shared/ASAssets/Utilities/string/entityConstants.symbols2Vector;
+	DECLARE symbols3Vector 	VECTOR(INTEGER)DEFAULT /shared/ASAssets/Utilities/string/entityConstants.symbols3Vector;
+	DECLARE i,j		INTEGER DEFAULT 1;
+	DECLARE word		LONGVARCHAR;
+	DECLARE len, pos	INTEGER;
+	DECLARE delimiter	CHAR(1) DEFAULT inDelimiter;
+	DECLARE entityFound	BOOLEAN DEFAULT false;
+	DECLARE extractWords	BOOLEAN DEFAULT true;
+	DECLARE randomNum,mod	INTEGER;
+
+    if (numWords is null) then
+	set numWords = 0; -- extract all words
+    end if;
+    set len = LENGTH(inTextTemp);
+    if (inText is not null and len &gt; 0) then
+	if (delimiter is null) then 
+		set delimiter = &apos;|&apos;;
+	end if;
+--call print(&apos;inTextTemp=&apos;||inTextTemp);
+	-- Remmove the symbols and punctuation
+	if (removeSymbols = 1) then
+		set i=1;
+		-- remove single character symbols and punctuation like !,@,#,$ and many more.
+		WHILE (i &lt;= CARDINALITY(symbols1Vector)) DO
+			set inTextTemp = REPLACE(inTextTemp, symbols1Vector[i], &apos;&apos;);
+			set i = i + 1;
+		END WHILE;
+		set i=1;
+		-- remove multi-character strings like &apos; - &apos; and others
+		WHILE (i &lt;= CARDINALITY(symbols2Vector)) DO
+			set inTextTemp = REPLACE(inTextTemp, symbols2Vector[i], &apos; &apos;);
+			set i = i + 1;
+		END WHILE;
+		set i=1;
+		-- remove hidden characters like tabs, backspace, etc.
+		WHILE (i &lt;= CARDINALITY(symbols3Vector)) DO
+			set inTextTemp = REPLACE(inTextTemp, CHR(symbols3Vector[i]), &apos; &apos;);
+			set i = i + 1;
+		END WHILE;
+	end if;
+	set i = 1;
+	set entityVector = VECTOR[&apos;&apos;];
+	set len = LENGTH(inTextTemp);
+--call print(&apos;inTextTemp=&apos;||inTextTemp);
+	entityLoop:
+	WHILE (extractWords) DO
+		-- find the next word deliminited by space
+		set pos = POSITION(delimiter IN inTextTemp);
+		IF (pos = 0 and LENGTH(TRIM(inTextTemp)) = 0) THEN -- unless there is no more text left
+			leave entityLoop;
+		END IF;
+		IF (pos = 0 and LENGTH(TRIM(inTextTemp)) &gt; 0) THEN -- unless there is no more text left
+			set pos = LENGTH(TRIM(inTextTemp));
+			set word = TRIM(SUBSTRING(inTextTemp, 1, pos));
+			set inTextTemp = &apos;&apos;;
+			set extractWords = false; -- no more text so finish
+		ELSE
+			set word = TRIM(SUBSTRING(inTextTemp, 1, pos-1)); -- Don&apos;t extract the space
+			set inTextTemp = TRIM(SUBSTRING(inTextTemp, pos+1, LENGTH(inTextTemp)-pos));
+		END IF;
+--		call print(&apos;inTextTemp=&apos;||inTextTemp);
+
+		IF (emptyStr(word) &lt;&gt; &apos;&apos;) THEN
+			set j = 1;
+			set entityFound = true;
+			nonEntityLoop:
+			WHILE (j &lt;= CARDINALITY(nonEntityVector)) DO
+				if ( TRIM(UPPER(word)) = TRIM(UPPER(nonEntityVector[j])) ) THEN
+					set entityFound = false;
+					leave nonEntityLoop;
+				end if;
+				set j = j + 1;
+			END WHILE;
+			IF (random = 0 and i = numWords) THEN
+				set extractWords = false;
+			end if;
+			if (entityFound) then
+				set entityVector[i] = word;
+				set entityVector = extend(entityVector,1);
+				set i = i + 1;
+			end if;
+
+		END IF;
+	END WHILE;
+	set entityVector = truncate(entityVector,1);
+    end if;
+END
+</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

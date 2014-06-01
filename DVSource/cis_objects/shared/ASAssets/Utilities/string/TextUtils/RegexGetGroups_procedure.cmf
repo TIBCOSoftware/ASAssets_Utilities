@@ -1,0 +1,69 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="RegexGetGroups" path="/shared/ASAssets/Utilities/string/TextUtils/RegexGetGroups" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>Description:
+  Similar to RegexFind, RegexGetGroups finds an occurrence of a regular expression match in a 
+  VARCHAR and returns the matched groups (parenthesized groupings) as rows in a cursor. Group 
+  0 is traditionally the entire matched expression and will always be returned if the regular 
+  expression matches. The value of the occurrence input value determines which occurrence to 
+  return (numbered starting at 1 from left to right. Use negative values to number occurrences 
+  from right to left.) If no match is found, then a NULL is returned. If a NULL value is passed 
+  in as the value of any of the inputs, a NULL is returned. Zero may not be used as a value for 
+  an occurrence.
+
+  The regular expression language used is what is supported by the JDK used by CIS 
+  (currently 1.5 in CIS 4.0.1) See the javadoc for java.util.regex.Pattern for 
+  details on what is supported and how grouping works.
+
+Inputs:
+  Input Text         - The text to search
+  Regular Expression - The regular expression to search for
+  Occurrence         - The occurrance of the match (starting from 1 left to right or -1 right to left)
+
+Outputs:
+  result (           - A cursor containing a result set of the matched groups.
+    groupNumber      -   Number of the matched group (0 is the entire matched string.)
+    matchedGroup     -   Text of the group match (NULL if the group didn&apos;t match.)
+  )
+
+Exceptions:
+  None
+
+Author:      Calvin Goodrich
+Date:        8/11/2010
+CSW Version: 5.1.0
+
+© 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="Input Text" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="Regular Expression" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="Occurrence" direction="IN" nullable="true">
+      <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype subType="DATASOURCE_TYPE" type="TABLE" caseSensitive="false" refId="1">
+        <element name="groupNumber">
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="matchedGroup">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.RegexGetGroups</attribute>
+  <attribute name="creationDate" type="LONG">1383622340769</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754439519</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

@@ -1,0 +1,385 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="createAllFoldersPrivileges" path="/shared/ASAssets/Utilities/repository/createAllFoldersPrivileges" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>createAllFoldersPrivileges:
+	-- CIS Repository Helper Procedure --
+	This procedure is used to create all the CIS folders designated by the incoming folder path variable and copy privileges from the parent folder.
+	The parent folder is determined to be the last folder encountered in the path that exists.  All other folders beyond the existing folder are
+	considered children and must be created.
+ 
+	Input:
+		sourceFolderPath - CIS source folder path to be created.
+			Values: Any text value
+		updatePrivilegesRecursively - flag indicating whether to update the children of the given resources or not.
+			0 (false) or null - only update privileges for the given resource and not the children.
+			1 (true) - update privileges for children recursively
+		copyPrivilegeMode - flag indicating the mode in which to copy privileges
+			null (default) - do not set any privileges at all
+			0 - set mode to &quot;OVERWRITE_APPEND&quot; - merges and does not update privileges for users or groups not mentioned.
+			1 - set the mode to &quot;SET_EXACTLY&quot; - makes privileges look exactly like those provided in the call.
+	Output:
+		success	- true(1) or false(0)
+			Values: 1 or 0
+		faultResponse - null if succesful otherwise contains a fault resposne.
+			Values: Fault Resposne XML value
+	Exceptions:  ex - throws exception from copyResourcesPrivileges
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	05/06/2013		Mike Tinius			5.2.0			created new for Best Practices 7.1
+
+	CSW Version: 5.2.0
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="sourceFolderPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="updatePrivilegesRecursively" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="copyPrivilegeMode" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="faultResponse" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/copyResourcesPrivileges" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="updatePrivilegesRecursively" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="copyPrivilegeMode" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="copyPrivilegeEntry" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="copyPrivilegeEntryType" type="TREE" refId="2">
+              <element name="srcResource">
+                <datatype name="srcResource" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="resourceType" type="TREE" refId="3">
+                      <element name="path">
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                      </element>
+                      <element name="type">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="dstResource">
+                <datatype name="dstResource" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="resourceType" type="TREE" refId="4">
+                      <element name="path">
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                      </element>
+                      <element name="type">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="5"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/copyResourcesPrivileges" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createFolder" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="sourceFolderPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createFolder" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* createAllFoldersPrivileges:
+	-- CIS Repository Helper Procedure --
+	This procedure is used to create all the CIS folders designated by the incoming folder path variable and copy privileges from the parent folder.
+	The parent folder is determined to be the last folder encountered in the path that exists.  All other folders beyond the existing folder are
+	considered children and must be created.
+ 
+	Input:
+		sourceFolderPath - CIS source folder path to be created.
+			Values: Any text value
+		updatePrivilegesRecursively - flag indicating whether to update the children of the given resources or not.
+			0 (false) or null - only update privileges for the given resource and not the children.
+			1 (true) - update privileges for children recursively
+		copyPrivilegeMode - flag indicating the mode in which to copy privileges
+			null (default) - do not set any privileges at all
+			0 - set mode to &quot;OVERWRITE_APPEND&quot; - merges and does not update privileges for users or groups not mentioned.
+			1 - set the mode to &quot;SET_EXACTLY&quot; - makes privileges look exactly like those provided in the call.
+	Output:
+		success	- true(1) or false(0)
+			Values: 1 or 0
+		faultResponse - null if succesful otherwise contains a fault resposne.
+			Values: Fault Resposne XML value
+	Exceptions:  ex - throws exception from copyResourcesPrivileges
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	05/06/2013		Mike Tinius			5.2.0			created new for Best Practices 7.1
+
+	CSW Version: 5.2.0
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE createAllFoldersPrivileges(
+	-- /shared/AbstractViewGenerator/AbstractLayer/Inventory
+	IN sourceFolderPath 			/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	IN updatePrivilegesRecursively	BIT,
+		-- flag indicating whether to update the children of the given resources or not.
+		-- null (default) - do not set any privileges at all.
+		-- 0 (false) - only update privileges for the given resource and not the children.
+		-- 1 (true) - update privileges for children recursively
+	IN copyPrivilegeMode			BIT,
+		-- flag indicating the mode in which to copy privileges
+		-- null (default) - do not set any privileges at all
+		-- 0 - set mode to &quot;OVERWRITE_APPEND&quot; - merges and does not update privileges for users or groups not mentioned.
+		-- 1 - set the mode to &quot;SET_EXACTLY&quot; - makes privileges look exactly like those provided in the call.
+	OUT success						BIT,
+	OUT faultResponse				XML
+)
+BEGIN
+    PATH /shared/ASAssets/Utilities/repository;
+
+	DECLARE moduleName			VARCHAR DEFAULT &apos;createAllFoldersPrivileges&apos;;
+	DECLARE debug				CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	DECLARE notEmpty			INTEGER DEFAULT 0;
+	DECLARE folderName 			VARCHAR;
+	DECLARE folderPath 			/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE nextPath 			/shared/ASAssets/Utilities/TypeDefinitions.pathType DEFAULT null;
+	DECLARE parentPath			/shared/ASAssets/Utilities/TypeDefinitions.pathType DEFAULT null;
+	DECLARE copyPrivilegeEntry	/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.copyPrivilegeEntryVector;
+	DECLARE privilegeUpdated	BOOLEAN DEFAULT false;
+
+    set success = 1;
+	--Trim any leading or trailing spaces and Normalize separators to make it easier
+	set folderPath = REPLACE(TRIM(sourceFolderPath),&apos;\&apos;,&apos;/&apos;); 
+ 
+	-- A path should look like this: /shared/myfolder/subfolder/lastfolder
+	-- Add leading / but only if a windows drive is not present such as c:
+	if (SUBSTRING(folderPath,1,1) &lt;&gt; &apos;/&apos; and POSITION(&apos;:&apos; in folderPath) = 0) then
+		set folderPath = &apos;/&apos;||folderPath;
+	end if;
+	-- Remove trailing /
+	if (SUBSTRING(folderPath,length(folderPath),1) = &apos;/&apos;) then
+		set folderPath = SUBSTRING(folderPath,1,length(folderPath)-1);  
+	end if;
+	if (folderPath is null) then
+		set folderPath = &apos;&apos;;
+	end if;
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug,&apos;Input folder:  folderPath=[&apos;||folderPath||&apos;]&apos;);
+
+	for r as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(folderPath, &apos;\/&apos;, 0) do
+		set folderName = r.splitElement;
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug,&apos;folderName=[&apos;||emptyStr(folderName)||&apos;]&apos;);
+		if (isEmpty(folderName) = notEmpty) then
+
+			-- Initialize the next folder with the root folder path
+			if (nextPath is null) then
+				set nextPath = parentPath;
+			end if;
+
+			-- Set the next path to test for and potentially create
+			set nextPath = REPLACE(nextPath ||&apos;/&apos;||folderName,&apos;//&apos;,&apos;/&apos;);
+
+			-- Check for existence of the next path
+			if (resourceExists(nextPath, &apos;CONTAINER&apos;) = 0) then
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug,&apos;Creating folder:  folderPath=&apos;||emptyStr(nextPath));
+				call /shared/ASAssets/Utilities/repository/createFolder(nextPath, success, faultResponse);
+
+				-- Apply privileges to the folder
+				if (success = 1 and updatePrivilegesRecursively is not null and copyPrivilegeMode is not null and copyPrivilegeMode = 1) then
+					-- Only set the privilege of a folder when updatePrivilegesRecursively is set to 1 indicating to set privileges on all children folders
+					--     or only on the first child folder under the parent but do not set the other children recursively.
+					if (updatePrivilegesRecursively = 1 or (updatePrivilegesRecursively = 0 and not privilegeUpdated)) then
+						set copyPrivilegeEntry = VECTOR[(
+							VECTOR[(parentPath,&apos;CONTAINER&apos;)],
+							VECTOR[(nextPath,&apos;CONTAINER&apos;)]
+						)];
+						call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug,&apos;Apply privileges:  updatePrivilegesRecursively=&apos;||
+							updatePrivilegesRecursively||&apos;  copyPrivilegeMode=&apos;||copyPrivilegeMode);
+						-- Invoke the procedure to apply privileges
+						call /shared/ASAssets/Utilities/repository/copyResourcesPrivileges(
+							updatePrivilegesRecursively, copyPrivilegeMode, copyPrivilegeEntry, success, faultResponse);
+						set privilegeUpdated = true;
+					end if;
+				end if;
+			end if;
+
+			-- Set the parent path
+			set parentPath = REPLACE(parentPath ||&apos;/&apos;|| folderName,&apos;//&apos;,&apos;/&apos;);
+		else
+			set parentPath = &apos;/&apos;; -- set to root folder
+		end if;
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug,&apos;parentPath=[&apos;||emptyStr(parentPath)||&apos;]&apos;);
+	end for;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399565923676</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

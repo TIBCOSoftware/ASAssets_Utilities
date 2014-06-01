@@ -1,0 +1,123 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_pruneXML" path="/shared/ASAssets/Utilities/examples/xml/test_pruneXML" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="outXML" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/pruneXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="namespaces" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="retainXPathVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="VARCHAR" type="STRING" maxLength="2048"/>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="inXml" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outXml" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE test_pruneXML(
+	OUT outXML	XML
+/* sample output:
+&lt;rootnode xmlns:tns=&quot;http://mynamespace&quot;&gt;    
+   &lt;XYZ abc=&quot;def&quot;&gt;
+       &lt;A foo=&quot;&quot;&gt;aa&lt;/A&gt;
+       &lt;B&gt;bbb&lt;/B&gt;
+       &lt;C/&gt;
+   &lt;/XYZ&gt;
+&lt;/rootnode&gt;
+*/
+)
+BEGIN
+	DECLARE inXML varchar(100000);
+	DECLARE namespaces LONGVARCHAR;
+	DECLARE retainXPathVector VECTOR(VARCHAR(2048));
+
+	set inXML = 
+&apos;&lt;rootnode xmlns:tns=&quot;http://mynamespace&quot;&gt;
+	&lt;XYZ abc=&quot;def&quot; ghi=&quot;&quot;&gt;
+		&lt;A foo=&quot;&quot;&gt;aa&lt;/A&gt;
+		&lt;B&gt;bbb&lt;/B&gt;
+		&lt;C/&gt;
+	&lt;/XYZ&gt;
+&lt;/rootnode&gt;&apos;;
+
+	set namespaces = &apos;xmlns:tns=&quot;http://mynamespace&quot;
+			  xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+			  xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&apos;;
+
+	-- Derive the configurable list by considering what nodes in the XML are required but could have empty childeren due to no data found
+	SET retainXPathVector = VECTOR[
+		&apos;/rootnode/XYZ/A/@foo&apos;,
+		&apos;/rootnode/XYZ/C&apos;
+	];
+
+	call /shared/ASAssets/Utilities/&quot;xml&quot;/pruneXML(&apos;Y&apos;, namespaces, retainXPathVector, inXML, outXML);
+	call print(&apos;----- OUTPUT XML ------&apos;);
+	call print(cast(outXML as longvarchar));
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">7/38</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">7/39</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

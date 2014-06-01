@@ -1,0 +1,193 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getDocPreambleImpl1" path="/shared/ASAssets/Utilities/documentation/implementations/getDocPreambleImpl1" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getDocPreambleImpl1:
+
+	This procedure provides an implementation 1 for retrieving the preamble to the documentation.
+
+	This procedure is invoked by the getAllDocumentationAPI in a loop.  
+	The output of this procedure provides the formatting for the preample of the documentation.  
+	A user may wish to customize the preamble text for their specific project.
+	The idea behind this procedure is that it provides a template for an implementation.  
+	A user of the documentation utilities may choose to copy and create a new implementation and then customize it for their project.  
+	Any new implementation “must” follow the input and output interface definitions as shown below.
+
+	Input:
+		fullResourcePath - (optional) Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/examples
+		resourceType - (optional) Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. CONTAINER
+	Output: 
+		formattedText - formatted text is out output complete with a separator at the beginning of the resource.
+
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        7/25/2012
+	CSW Version: 6.1.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+
+	TYPES / SUBTYPES:
+	=================
+	The following resource types/subtypes are supported by this operation.  Resources
+	cannot be created under &quot;/services&quot; unless otherwise noted, and cannot be created
+	within a physical data source. 
+
+	(Basic CIS folder)
+	* CONTAINER / FOLDER_CONTAINER - A Composite folder.   Cannot be created anywhere under /services except in another FOLDER under /services/webservices.
+	* CONTAINER / DIRECTORY_CONTAINER - A Composite directory.
+	(Database)
+	* CONTAINER / CATALOG_CONTAINER - A Composite catalog folder under a data source.  Can only be created within a data source under /services/databases.
+	* CONTAINER / SCHEMA_CONTAINER - A Composite schema container.  Can only be created within a CATALOG that is under /services/databases.
+	(Web Services)
+	* CONTAINER / SERVICE_CONTAINER - A web service container for the service.  Can only be created within a Composite Web Services data source that is under /services/webservices.
+	* CONTAINER / OPERATIONS_CONTAINER - A web service container for the operations
+	* CONTAINER / PORT_CONTAINER - A Composite web service container for port.   Can only be created within a SERVICE under /services/webservices.
+	(Connectors)
+	* CONTAINER / CONNECTOR_CONTAINER - A Composite container for connectors.
+
+	* CONNECTOR / JMS - A Composite JMS Connector.  Created with no connection information
+	* CONNECTOR / HTTP - A Composite HTTP Connector.  Created with no connection information
+
+	* DATA_SOURCE / RELATIONAL_DATA_SOURCE - A relational database source.
+	* DATA_SOURCE / FILE_DATA_SOURCE - A comma separate file data source.
+	* DATA_SOURCE / XML_FILE_DATA_SOURCE - An XML file data source.
+	* DATA_SOURCE / WSDL_DATA_SOURCE - A Composite web service data source.
+	* DATA_SOURCE / XML_HTTP_DATA_SOURCE - An HTTP XML data source.
+	* DATA_SOURCE / NONE - A custom java procedure data source.
+
+	* DEFINITION_SET / SQL_DEFINITION_SET - A Composite SQL Definition set.
+	* DEFINITION_SET / XML_SCHEMA_DEFINITION_SET - A Composite XML Schema Defintion set.
+	* DEFINITION_SET / WSDL_DEFINITION_SET - A Composite WSDL Definition set.
+	* DEFINITION_SET / ABSTRACT_WSDL_DEFINITION_SET - A Composite Abstract WSDL Definition set such as the ones imported from Designer.
+	* DEFINITION_SET / SCDL_DEFINITION_SET - A Composite SCA composite Definition set imported from Designer.
+
+	* LINK / unknown at this time
+
+	(CIS procedures)
+	* PROCEDURE / SQL_SCRIPT_PROCEDURE - A Composite SQL Procedure.  Created with a simple default script body that is runnable.
+	(Custom procedures)
+	* PROCEDURE / JAVA_PROCEDURE - A Composite java data source procedure.  Created from a java data source (jar file).
+	(Database procedures)
+	* PROCEDURE / EXTERNAL_SQL_PROCEDURE - A Composite Packaged Query.  Created with no SQL text, so it is not runnable.  
+	* PROCEDURE / DATABASE_PROCEDURE - A database stored procedure.
+	(XML procedures)
+	* PROCEDURE / BASIC_TRANSFORM_PROCEDURE - A Composite Basic XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XSLT_TRANSFORM_PROCEDURE - A Composite XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / STREAM_TRANSFORM_PROCEDURE - A Composite XSLT Streaming Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XQUERY_TRANSFORM_PROCEDURE - A Composite XQUERY Transformation Procedure.  Created with no target schema and no model, so it is not runnable.
+	(Misc procedures)
+	* PROCEDURE / OPERATION_PROCEDURE - A Composite web service or HTTP procedure operation.
+
+	* TABLE / SQL_TABLE - A Composite View.  Created with no SQL text or model, so it is not runnable.  
+	* TABLE / DATABASE_TABLE - A Composite database table.
+	* TABLE / DELIMITED_FILE_TABLE - A Composite delimited file table
+	* TABLE / SYSTEM_TABLE - A Composite system table view.
+
+	* TREE / XML_FILE_TREE - The XML tree structure associated with a file-XML data source.
+
+	* TRIGGER / NONE - A Composite trigger.   Created disabled.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="constantPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="formattedText">
+          <datatype name="Text" referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="constantName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getDocConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getDocPreambleImpl1:
+
+	This procedure provides an implementation 1 for retrieving the preamble to the documentation.
+
+	This procedure is invoked by the getAllDocumentationAPI in a loop.  
+	The output of this procedure provides the formatting for the preample of the documentation.  
+	A user may wish to customize the preamble text for their specific project.
+	The idea behind this procedure is that it provides a template for an implementation.  
+	A user of the documentation utilities may choose to copy and create a new implementation and then customize it for their project.  
+	Any new implementation “must” follow the input and output interface definitions as shown below.
+
+	Input:
+		resourcePath - (optional) The starting folder path from which to start formatting the documentation.  It is always of type CONTAINER.
+							Values: e.g. /shared/examples
+		resourceType - 	The resource type of the resource path.
+							Values: e.g. CONTAINER
+		constantPath - 	This is the path to the constants file
+							Values: e.g. /shared/Utilities/documentation/constants()
+	Output: 
+		formattedText - formatted text is out output complete with a separator at the beginning of the resource.
+
+	Exceptions:  none
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	07/25/2012		Mike Tinius			5.2.0			Created new
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getDocPreambleImpl1(
+    IN resourcePath			/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+	IN resourceType			VARCHAR,
+	IN constantPath			/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	OUT result				PIPE (formattedText	/lib/util/System.Text)
+)
+BEGIN
+	DECLARE moduleName 		/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType DEFAULT &apos;geDocPreambleImpl1&apos;;
+	DECLARE debug 			VARCHAR(1) DEFAULT getDocConstant(constantPath, &apos;debug&apos;);
+	DECLARE formattedText	/lib/util/System.Text DEFAULT &apos;&apos;;
+	DECLARE beginSeparator	VARCHAR DEFAULT getDocConstant(constantPath, &apos;beginSeparator&apos;);
+	DECLARE endSeparator	VARCHAR DEFAULT getDocConstant(constantPath, &apos;endSeparator&apos;);
+	DECLARE minorSeparator 	VARCHAR DEFAULT getDocConstant(constantPath, &apos;minorSeparator&apos;);
+	DECLARE eol				VARCHAR DEFAULT getDocConstant(constantPath, &apos;eol&apos;);
+
+	-- Create a preamble for the documentation
+	set formattedText = formattedText || &apos;Composite Software Documentation&apos; || eol;
+	set formattedText = formattedText || eol || &apos;Generated on &apos;||CURRENT_TIMESTAMP || eol;
+
+	insert into result values(formattedText);
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

@@ -1,0 +1,180 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getDomainGroups" path="/shared/ASAssets/Utilities/repository/user/getDomainGroups" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getDomainGroups:
+
+	This procedure returns the groups contained in a domain.
+
+
+	Input:
+		inDomainName - The name of a domain defined in CIS.  
+			Values: Any text value
+
+
+	Output:
+		result - A cursor containing the domain&apos;s groups
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	02/04/2014		Scott Neustein		6.2.0			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inDomainName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="DomainGroupsResult" type="TABLE" refId="1">
+        <element name="name">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="domainName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="id">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="explicitRights">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="effectiveRights">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="inheritedRights">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="annotation">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getDomainGroupsXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getDomainGroups" direction="IN">
+        <datatype name="getDomainGroups" extendedName="{http://www.compositesw.com/services/system/admin/user}getDomainGroups" namespace="http://www.compositesw.com/services/system/admin/user" referenceDefinitionSet="/services/webservices/system/admin/user/operations/UserSchema" referenceType="{http://www.compositesw.com/services/system/admin/user}getDomainGroups" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/user}getDomainGroups">
+          <schemaDatatype>
+            <datatype name="getDomainGroups" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="getDomainGroupsRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/user" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="domainName" namespace="http://www.compositesw.com/services/system/admin/user">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="scope" namespace="http://www.compositesw.com/services/system/admin/user">
+                <datatype name="scopeValue" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="name">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="domainName">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="id">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="explicitRights">
+            <datatype namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="effectiveRights">
+            <datatype namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="inheritedRights">
+            <datatype namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="annotation">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+  getDomainGroups:
+
+	This procedure returns the groups contained in a domain.
+
+
+	Input:
+		inDomainName - The name of a domain defined in CIS.  
+			Values: Any text value
+
+
+	Output:
+		result - A cursor containing the domain&apos;s groups
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	02/04/2014		Scott Neustein		6.2.0			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getDomainGroups(
+	IN  inDomainName VARCHAR(255),
+    OUT result DomainGroupsResult
+)
+BEGIN
+    DECLARE PUBLIC TYPE DomainGroupsResult CURSOR (
+        name VARCHAR(32768), 
+        domainName VARCHAR(32768), 
+        id INTEGER, 
+        explicitRights VARCHAR(32768), 
+        effectiveRights VARCHAR(32768), 
+        inheritedRights VARCHAR(32768), 
+        annotation VARCHAR(32768)
+    );
+
+    OPEN result FOR 
+        SELECT 
+            *
+        FROM      
+            /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getDomainGroupsXSLT(
+			&apos;&lt;user:getDomainGroups xmlns:user=&quot;http://www.compositesw.com/services/system/admin/user&quot;&gt;
+					&lt;user:domainName&gt;&apos; || inDomainName || &apos;&lt;/user:domainName&gt;
+					&lt;user:scope&gt;LOCAL_ONLY&lt;/user:scope&gt;
+			&lt;/user:getDomainGroups&gt;&apos;) getDomainGroupsXSLT;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1391551687277</attribute>
+  <attribute name="creatorUserDomain" type="STRING">conoco</attribute>
+  <attribute name="creatorUserName" type="STRING">neusts</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_types" type="MAP">
+    <item>
+      <key type="STRING">DomainGroupsResult</key>
+      <value type="BYTE_ARRAY">EB4GAgASAEQAbwBtAGEAaQBuAEcAcgBvAHUAcABzAFIAZQBzAHUAbAB0BikAPAAvAHMAaABhAHIA
+ZQBkAC8AQQBTAEEAcwBzAGUAdABzAC8AVQB0AGkAbABpAHQAaQBlAHMALwByAGUAcABvAHMAaQB0
+AG8AcgB5AC8AIgB1AHMAZQByACIALwBnAGUAdABEAG8AbQBhAGkAbgBHAHIAbwB1AHAAcwYqABIA
+RABvAG0AYQBpAG4ARwByAG8AdQBwAHMAUgBlAHMAdQBsAHQDEgAAAAEDEgAAAAEBEwEJFAAAAAcQ
+IQYVAAQAbgBhAG0AZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBsGAgAH
+AFYAQQBSAEMASABBAFIDEgAAAAIEBAAAAAAAAIAAARMB/////xAhBhUACgBkAG8AbQBhAGkAbgBO
+AGEAbQBlAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVAAIA
+aQBkAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGQYCAAcASQBOAFQARQBH
+AEUAUgMSAAAAAwQH/////4AAAAAEBgAAAAB//////////xAhBhUADgBlAHgAcABsAGkAYwBpAHQA
+UgBpAGcAaAB0AHMDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAL//xAh
+BhUADwBlAGYAZgBlAGMAdABpAHYAZQBSAGkAZwBoAHQAcwMvAAAAAQMWAAAAAAMaAAAAAQMbAAAA
+AQMg/////wMiAAAAAAMSAAAAAv//ECEGFQAPAGkAbgBoAGUAcgBpAHQAZQBkAFIAaQBnAGgAdABz
+Ay8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVAAoAYQBuAG4A
+bwB0AGEAdABpAG8AbgMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAAAv//
+//8=</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

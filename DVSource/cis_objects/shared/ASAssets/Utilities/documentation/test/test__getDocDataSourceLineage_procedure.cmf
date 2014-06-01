@@ -1,0 +1,160 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_getDocDataSourceLineage" path="/shared/ASAssets/Utilities/documentation/test/test_getDocDataSourceLineage" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="formattedText" direction="OUT" nullable="true">
+      <datatype name="Text" referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="constantName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/modules/getDocDataSourceLineage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="commandOptionValueDsAccessed" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="commandOptionValueDsLineage" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="formattedText" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getDocConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE test_getDocDataSourceLineage(
+	OUT formattedText				/lib/util/System.Text
+)
+BEGIN
+	DECLARE moduleName 					/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType DEFAULT &apos;test_getDocDataSourceLineage&apos;;
+	DECLARE constantPath				/shared/ASAssets/Utilities/TypeDefinitions.pathType DEFAULT &apos;/shared/ASAssets/Utilities/documentation/constants&apos;;
+	DECLARE debug 						CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debug&apos;);
+ 	DECLARE moduleText					LONGVARCHAR;
+	DECLARE resPath						LONGVARCHAR;
+	DECLARE resType						VARCHAR;
+	DECLARE commandOptionValueDsAccessed INTEGER; --&apos;print_datasource_accessed&apos;
+	DECLARE commandOptionValueDsLineage INTEGER; --&apos;print_datasource_lineage&apos;
+	DECLARE startTime					TIMESTAMP;
+	DECLARE duration					INTERVAL DAY TO SECOND;
+	DECLARE i							INTEGER DEFAULT 1;
+	DECLARE eol							VARCHAR DEFAULT getDocConstant(constantPath, &apos;eol&apos;);
+
+	set resPath = &apos;/shared/examples/CompositeView&apos;;
+	set resType = &apos;TABLE&apos;;
+--	set resPath = &apos;/shared/ASAssets/BestPractices_v81/DataAbstractionSample/generationScripts/Generate/generateViews&apos;;
+--	set resType = &apos;PROCEDURE&apos;;
+
+	-- Parse the switches for the &apos;print_datasource_lineage&apos; option
+	set startTime = CURRENT_TIMESTAMP;
+	set commandOptionValueDsAccessed = 1;
+	set commandOptionValueDsLineage = 1;
+
+	set formattedText = &apos;&apos;;
+	if (commandOptionValueDsAccessed = 1 OR commandOptionValueDsLineage = 1) then
+		call /shared/ASAssets/Utilities/documentation/modules/getDocDataSourceLineage(
+			resPath,resType, constantPath, commandOptionValueDsAccessed, commandOptionValueDsLineage, moduleText);
+		if (moduleText is null) then
+			set moduleText = &apos;&apos;;
+		end if;
+		if (isEmpty(moduleText) = 0) then
+			set formattedText = formattedText || moduleText;
+		end if;
+	end if;
+	set duration = CURRENT_TIMESTAMP - startTime;
+	call print(&apos;moduleText=&apos;||emptyStr(moduleText));
+	call print(&apos;Datasource Documentation Duration=&apos;||emptyStr(duration)||eol);
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397496475992</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">7/41</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">7/40</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

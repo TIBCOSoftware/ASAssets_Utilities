@@ -1,0 +1,46 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="CCNumberFormatter" path="/shared/ASAssets/Utilities/string/TextUtils/CCNumberFormatter" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>CCNumberFormatter:
+
+Description:
+  Provides basic check and standard formatting of a Credit Card number.  
+  Validates the length of the supplied numeric field, tries matching it to 
+  one of the Visa, MC, AmEx or Discover card patterns, and performs Luhn&apos;s 
+  validation on the number.
+
+Inputs:
+  inNumber      - a 15- or 16-digit number, arbitrary formatted
+
+Output:
+  outNumber     - Input number formatted as it appears on the card - 4 (or 3) 
+                  groups separated by spaces. 
+
+Exceptions:
+  CustomProcedureException - if supplied input can not be formatted
+
+Author:      Alex Dedov
+Date:        9/21/2011
+CSW Version: 6.0.0
+
+© 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inCCNumber" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="outCCNumber" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.CCNumberFormatter</attribute>
+  <attribute name="creationDate" type="LONG">1383622340768</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754185030</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

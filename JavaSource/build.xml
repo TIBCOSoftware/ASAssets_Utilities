@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--(c) 2014 Cisco and/or its affiliates. All rights reserved.-->
+
+<project name="ASAssets_Utilities" default="default" basedir=".">
+    <target name="compile" description="compile the source " >
+        <subant target="default">
+            <fileset dir="." includes="*/build.xml"/>
+        </subant>
+    </target>
+
+    <target name="clean" description="clean up">
+        <subant target="clean">
+            <fileset dir="." includes="*/build.xml"/>
+        </subant>
+    </target>
+
+    <target name="default" depends="compile" description="Compile and package all CJP jars"/>
+</project>

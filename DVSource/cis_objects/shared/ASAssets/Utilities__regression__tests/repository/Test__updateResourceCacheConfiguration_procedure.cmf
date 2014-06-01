@@ -1,0 +1,512 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_updateResourceCacheConfiguration" path="/shared/ASAssets/Utilities_regression_tests/repository/Test_updateResourceCacheConfiguration" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="numTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/resource" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="version" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceVersion" type="STRING" maxLength="255"/>
+      </element>
+      <element name="exists" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceCacheConfigCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="inType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="configured">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="storageMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageDataSourcePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageTargetName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storagePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageType">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="refreshMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="scheduleMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="startTime">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="fromTimeInADay">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="endTimeInADay">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="recurringDay">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="interval">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="period">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="count">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="isCluster">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="expirationPeriod">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="clearRule">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="allOrNothing">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="incremental">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="storageBucketMode">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketCatalog">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketSchema">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketPrefix">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketNumBuckets">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="storageDropCreateIdx">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="firstRefreshCallback">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="secondRefreshCallback">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateResourceCacheConfiguration" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="inResourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="inConfigured" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="inEnabled" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="inStorageMode" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inStorageDataSourcePath" direction="IN">
+        <datatype type="STRING" maxLength="4096"/>
+      </element>
+      <element name="inStorageTargets" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="StorageTargetType" type="TREE" refId="2">
+              <element name="stName">
+                <datatype name="ResourceName" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceName" type="STRING" maxLength="255"/>
+              </element>
+              <element name="stPath">
+                <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+              </element>
+              <element name="stType">
+                <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="inRefreshMode" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inScheduleMode" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inStartTime" direction="IN">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="inPeriod" direction="IN">
+        <datatype type="STRING" maxLength="10"/>
+      </element>
+      <element name="inCount" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="inExpirationPeriod" direction="IN">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="inClearRule" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inIncremental" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="inStorageBucketMode" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inStorageBucketCatalog" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inStorageBucketSchema" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inStorageBucketPrefix" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inStorageBucketNumBuckets" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="inStorageDropCreateIdx" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="inFirstRefreshCallback" direction="IN">
+        <datatype type="STRING" maxLength="32768"/>
+      </element>
+      <element name="inSecondRefreshCallback" direction="IN">
+        <datatype type="STRING" maxLength="32768"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="updateResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="3"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="3"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/Constants" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE Test_updateResourceCacheConfiguration(
+    OUT numTests INTEGER,
+    OUT numErrors INTEGER,
+    OUT numSkipped INTEGER
+)
+proc:
+BEGIN
+    PATH /shared/ASAssets/Utilities_regression_tests;
+    PATH /lib/resource;
+
+    DECLARE test_name VARCHAR DEFAULT &apos;repository/Test_updateResourceCacheConfiguration&apos;;
+    DECLARE resourcePath ResourceDefs.ResourcePath;
+    DECLARE resourceType ResourceDefs.ResourceType;
+    DECLARE configured BIT;
+    DECLARE enabled BIT;
+    DECLARE storageMode, testStorageMode VARCHAR(255);
+    DECLARE storageDataSourcePath VARCHAR(255);
+    DECLARE storageTargetName VARCHAR(255);
+    DECLARE storageTargetPath VARCHAR(255);
+    DECLARE storageTargetType VARCHAR(255);
+    DECLARE refreshMode, testRefreshMode VARCHAR(255);
+    DECLARE scheduleMode VARCHAR(255);
+    DECLARE startTime TIMESTAMP;
+    DECLARE intervalPeriod VARCHAR(10);
+    DECLARE intervalCount INTEGER;
+    DECLARE expirationPeriod BIGINT;
+    DECLARE clearRule VARCHAR(255);
+    DECLARE success BIT;
+    DECLARE responseXML XML;
+    DECLARE faultXML XML;
+    DECLARE args System.Text;
+    DECLARE result System.Text;
+    DECLARE resourceExists BOOLEAN;
+
+-- Added by Niraj for regression test - 8/22/2013
+	DECLARE incremental BIT;
+	DECLARE storageBucketMode VARCHAR(255);
+	DECLARE storageBucketCatalog    VARCHAR(255);
+    DECLARE storageBucketSchema     VARCHAR(255); 
+    DECLARE storageBucketPrefix     VARCHAR(255); 
+    DECLARE storageBucketNumBuckets INTEGER;
+    DECLARE storageDropCreateIdx    BIT;
+    DECLARE firstRefreshCallBack    VARCHAR(32768); 
+    DECLARE secondRefreshCallBack   VARCHAR(32768);
+
+    SET numTests = 0;
+    SET numErrors = 0;
+    SET numSkipped = 0;
+
+    -- start test
+    --
+    test_block_1: 
+    BEGIN INDEPENDENT TRANSACTION
+        SET resourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;; -- created in Test_createResource
+        SET resourceType = ResourceDefs.RESOURCE_TYPE_TABLE;
+        SET configured = 1;
+        SET enabled = 1;
+        SET storageMode = &apos;AUTOMATIC&apos;;
+        SET storageDataSourcePath = NULL;
+        SET storageTargetName = NULL;
+        SET storageTargetPath = NULL;
+        SET storageTargetType = NULL;
+        SET refreshMode = &apos;MANUAL&apos;;
+        SET scheduleMode = NULL;
+        SET startTime = NULL;
+        SET intervalPeriod = NULL;
+        SET intervalCount = NULL;
+        SET expirationPeriod = 0;
+        SET clearRule = &apos;NONE&apos;;
+
+-- Added by Niraj 8/22/2013
+	SET incremental = NULL;
+	SET storageBucketMode = NULL;
+	SET storageBucketCatalog = NULL;
+    SET storageBucketSchema  = NULL; 
+    SET storageBucketPrefix  = NULL; 
+    SET storageBucketNumBuckets = 0; 
+    SET storageDropCreateIdx = 0;
+    SET firstRefreshCallBack  = NULL; 
+    SET secondRefreshCallBack  = NULL;
+
+        SET args = &apos;&apos;&apos;&apos; || resourcePath || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || resourceType || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos; || COALESCE(configured, &apos;NULL&apos;) || &apos;, &apos; ||
+                   &apos;&apos; || COALESCE(enabled, &apos;NULL&apos;) || &apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || storageMode || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos; || COALESCE(storageDataSourcePath, &apos;NULL&apos;) || &apos;, &apos; ||
+                   &apos;&apos; || COALESCE(storageTargetName, &apos;NULL&apos;) || &apos;, &apos; ||
+                   &apos;&apos; || COALESCE(storageTargetPath, &apos;NULL&apos;) || &apos;, &apos; ||
+                   &apos;&apos; || COALESCE(storageTargetType, &apos;NULL&apos;) || &apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || refreshMode || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos; || COALESCE(scheduleMode, &apos;NULL&apos;) || &apos;, &apos; ||
+                   &apos;&apos; || COALESCE(CAST(startTime AS VARCHAR), &apos;NULL&apos;) || &apos;, &apos; ||
+                   &apos;&apos; || COALESCE(CAST(intervalPeriod AS VARCHAR), &apos;NULL&apos;) || &apos;, &apos; ||
+                   &apos;&apos; || COALESCE(CAST(intervalCount AS VARCHAR), &apos;NULL&apos;) || &apos;, &apos; ||
+                   &apos;&apos; || expirationPeriod || &apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || clearRule || &apos;&apos;&apos;, &apos;  ||  -- Added by Niraj 08/22/2013
+				   &apos;&apos;&apos;&apos; || incremental || &apos;&apos;&apos;, &apos; ||
+				   &apos;&apos; || COALESCE(storageBucketMode, &apos;NULL&apos;) || &apos;, &apos; ||
+	 			   &apos;&apos; || COALESCE(storageBucketCatalog, &apos;NULL&apos;) || &apos;, &apos; ||
+				   &apos;&apos; || COALESCE(storageBucketSchema, &apos;NULL&apos;) || &apos;, &apos; ||
+				   &apos;&apos; || COALESCE(storageBucketPrefix, &apos;NULL&apos;) || &apos;, &apos; ||
+				   &apos;&apos;&apos;&apos; || storageBucketNumBuckets || &apos;&apos;&apos;, &apos; ||
+				   &apos;&apos;&apos;&apos; || storageDropCreateIdx || &apos;&apos;&apos;, &apos; ||
+				   &apos;&apos; || COALESCE(firstRefreshCallBack, &apos;NULL&apos;) || &apos;, &apos; ||
+				   &apos;&apos; || COALESCE(secondRefreshCallBack, &apos;NULL&apos;) || &apos;&apos;;
+
+        SET numTests = numTests + 1;
+
+        CALL /lib/resource/ResourceExists(
+             resourcePath,
+             resourceType,
+             NULL,
+             resourceExists
+        );
+
+        IF (NOT resourceExists) THEN
+            SET result = &apos;: SKIPPING, resource does not exist&apos;;
+            SET numSkipped = numSkipped + 1;
+            LEAVE test_block_1;
+        END IF;
+
+        CALL /shared/ASAssets/Utilities/repository/updateResourceCacheConfiguration(
+            resourcePath,
+            resourceType,
+            configured,
+            enabled,
+            storageMode,
+            storageDataSourcePath,
+			VECTOR [(
+                storageTargetName,
+                storageTargetPath,
+                storageTargetType
+            )],
+            refreshMode,
+            scheduleMode,
+            startTime,
+            intervalPeriod,
+			intervalCount,
+            expirationPeriod,
+            clearRule,
+			incremental, -- Added by Niraj on 8/22/2013
+			storageBucketMode,
+			storageBucketCatalog, 
+    		storageBucketSchema, 
+    		storageBucketPrefix, 
+    		storageBucketNumBuckets, 
+    		storageDropCreateIdx, 
+    		firstRefreshCallBack, 
+    		secondRefreshCallBack, -- Add ended - 8/22/2013
+            success,
+            responseXML,
+            faultXML
+        );
+
+        SET testStorageMode = NULL;
+        SET testRefreshMode = NULL;
+
+        expecting_single_row:
+        FOR r AS
+            SELECT
+                storageMode,
+                refreshMode
+            FROM
+                /shared/ASAssets/Utilities/repository/getResourceCacheConfigCursor(
+                    resourcePath,
+                    resourceType
+                )
+        DO
+            SET testStorageMode = r.storageMode;
+            SET testRefreshMode = r.refreshMode;
+            LEAVE expecting_single_row;
+        END FOR;
+
+        IF (success = 1 AND testStorageMode = storageMode AND testRefreshMode = refreshMode) THEN
+            SET result = &apos;OK&apos;;
+        ELSE
+            SET result = &apos;FAILED: ex storage = &apos; || storageMode || &apos;, act storage = &apos; || coalesce(testStorageMode, &apos;NULL&apos;) || &apos;; ex refresh = &apos; || refreshMode || &apos;, act refresh = &apos; || coalesce(testRefreshMode, &apos;NULL&apos;);
+            SET numErrors = numErrors + 1;
+        END IF;
+    EXCEPTION
+        ELSE
+            SET result = &apos;EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE;
+            SET numErrors = numErrors + 1;
+    END;
+
+    CALL PRINT (test_name || &apos;: args = &apos; || COALESCE(args, &apos;NULL&apos;) || &apos;: &apos; || COALESCE(result, &apos;NULL&apos;));
+    --
+    -- end test
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">20/32</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">26/13</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">26/12</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/31</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">28/55</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/187</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

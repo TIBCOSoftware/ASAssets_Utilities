@@ -1,0 +1,420 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="copyResourcesPrivileges" path="/shared/ASAssets/Utilities/repository/copyResourcesPrivileges" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>copyResourcesPrivileges:
+	-- CIS Repository Helper Procedure --
+	This is a procedure is used to copy resource privileges from one resource to another.
+ 
+	This procedure enables changes to resource privileges for users and groups, by copying
+	privileges from other resources. Changes can be made to one or more resources with
+	different source resource for one or many users and groups. Resource privileges
+	can be set for a specified set of users and groups without modifying any
+	existing privileges for other users and groups, or the procedure can set resource
+	privileges restrictively to only privileges of source resource explicitly.
+
+	Only a user with GRANT privilege on a resource can modify the privileges for that
+	resource. The owner of a resource always has GRANT privilege, as do users with the
+	MODIFY_ALL_RESOURCES right.
+
+	When &quot;mode&quot; is &quot;OVERWRITE_APPEND&quot;, or is not supplied, privileges are applied on a
+	per-user or per-group basis, so that updating privileges for one user or group does not
+	alter privileges from any other user or group.  The privileges applied for a user or
+	group replace the previous value for that user or group. 
+
+	When &quot;mode&quot; is &quot;SET_EXACTLY&quot;, all privileges on the resource are made to look exactly like 
+	the privileges of source resource.
+
+	When &quot;updateRecursively&quot; is &quot;false&quot;, the privileges are applied only to the specified
+	resources.  When it is &quot;true&quot;, the privileges are recursively applied into any CONTAINER
+	or DATA_SOURCE resource specified.  When recursively applying privileges, the privilege
+	change is ignored for any resource the user lacks owner privileges for.
+
+	Privileges that are not applicable for a given resource type are automatically stripped
+	down to the set that is legal for each resource.  TABLE resources support NONE, READ,
+	WRITE, SELECT, INSERT, UPDATE, and DELETE.  PROCEDURE resources support NONE, READ,
+	WRITE, and EXECUTE.  All other resource types only support NONE, READ, and WRITE.
+
+	Request Elements:
+	------------------
+    updateRecursively: If &quot;true&quot;, then all children of the given resources will
+       recursively be updated with the privileges assigned to their parent.
+    copyPrivilegeEntry: Source resource and list of destination resources.
+       Privileges of the source resource will be copied over to destination resources.
+    mode (optional): Determines whether privileges are merged with existing ones,
+       default is &quot;OVERWRITE_APPEND&quot;, which merges and does not update privileges for
+       users or groups not mentioned.  &quot;SET_EXACTLY&quot; makes privileges look exactly like
+       those provided in the call.
+
+	Input:
+		updatePrivilegesRecursively - flag indicating whether to update the children of the given resources or not.
+			0 (false) or null - only update the given resource and not the children.
+			1 (true) - update children recursively
+		copyPrivilegeEntry - a vector array of source and destination resources
+			srcResources - a vector of &quot;path&quot; and &quot;type&quot; which allows a max of 1 entry
+			dstResources - a vector of &quot;path&quot; and &quot;type&quot; which allows an unbounded number of destination resources to be set.
+		copyPrivilegeMode - 
+			null - optional parameter that may not be set.
+			0 or null (default) - set mode to &quot;OVERWRITE_APPEND&quot; - merges and does not update privileges for
+       			users or groups not mentioned.
+			1 - set the mode to &quot;SET_EXACTLY&quot; - makes privileges look exactly like those provided in the call.
+	Output:
+		success	- true(1) or false(0)
+
+	Exceptions:  ex
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	05/06/2013		Mike Tinius			5.2.0			Created new for Best Practices 7.1
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="updatePrivilegesRecursively" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="copyPrivilegeMode" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="copyPrivilegeEntry" direction="IN" nullable="true">
+      <datatype name="copyPrivilegeEntryVector" type="ARRAY" maxLength="0">
+        <itemDatatype>
+          <datatype name="copyPrivilegeEntryType" type="TREE" refId="1">
+            <element name="srcResource">
+              <datatype name="srcResource" type="ARRAY" maxLength="0">
+                <itemDatatype>
+                  <datatype name="resourceType" type="TREE" refId="2">
+                    <element name="path">
+                      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                    </element>
+                    <element name="type">
+                      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                    </element>
+                  </datatype>
+                </itemDatatype>
+              </datatype>
+            </element>
+            <element name="dstResource">
+              <datatype name="dstResource" type="ARRAY" maxLength="0">
+                <itemDatatype>
+                  <reference refId="2"/>
+                </itemDatatype>
+              </datatype>
+            </element>
+          </datatype>
+        </itemDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="faultResponse" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/services/webservices/system/admin/resource/operations/copyResourcePrivileges" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="copyResourcePrivileges" direction="IN">
+        <datatype name="copyResourcePrivileges" extendedName="{http://www.compositesw.com/services/system/admin/resource}copyResourcePrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}copyResourcePrivileges" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}copyResourcePrivileges">
+          <schemaDatatype>
+            <datatype name="copyResourcePrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="copyResourcePrivilegesRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="updateRecursively" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+              <element name="copyPrivilegeEntries" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                  <element name="copyPrivilegeEntry" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                    <datatype name="copyPrivilegeEntryType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                      <element name="srcResource" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="pathTypeOrColumnPair" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
+                          <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="resourceOrColumnType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                          </element>
+                        </datatype>
+                      </element>
+                      <element name="dstResource" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647">
+                        <reference refId="5"/>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+              <element name="mode" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="updatePrivilegesMode" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="copyResourcePrivilegesResponse" direction="OUT">
+        <datatype name="copyResourcePrivilegesResponse" extendedName="{http://www.compositesw.com/services/system/admin/resource}copyResourcePrivilegesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}copyResourcePrivilegesResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}copyResourcePrivilegesResponse">
+          <schemaDatatype>
+            <datatype name="copyResourcePrivilegesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="copyResourcePrivilegesResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="6"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="fault" direction="OUT">
+        <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
+          <schemaDatatype>
+            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="7">
+              <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="8">
+                  <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="message" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="detail" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="severity" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="messageSeverity" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* copyResourcesPrivileges:
+	-- CIS Repository Helper Procedure --
+	This is a procedure is used to copy resource privileges from one resource to another.
+ 
+	This procedure enables changes to resource privileges for users and groups, by copying
+	privileges from other resources. Changes can be made to one or more resources with
+	different source resource for one or many users and groups. Resource privileges
+	can be set for a specified set of users and groups without modifying any
+	existing privileges for other users and groups, or the procedure can set resource
+	privileges restrictively to only privileges of source resource explicitly.
+
+	Only a user with GRANT privilege on a resource can modify the privileges for that
+	resource. The owner of a resource always has GRANT privilege, as do users with the
+	MODIFY_ALL_RESOURCES right.
+
+	When &quot;mode&quot; is &quot;OVERWRITE_APPEND&quot;, or is not supplied, privileges are applied on a
+	per-user or per-group basis, so that updating privileges for one user or group does not
+	alter privileges from any other user or group.  The privileges applied for a user or
+	group replace the previous value for that user or group. 
+
+	When &quot;mode&quot; is &quot;SET_EXACTLY&quot;, all privileges on the resource are made to look exactly like 
+	the privileges of source resource.
+
+	When &quot;updateRecursively&quot; is &quot;false&quot;, the privileges are applied only to the specified
+	resources.  When it is &quot;true&quot;, the privileges are recursively applied into any CONTAINER
+	or DATA_SOURCE resource specified.  When recursively applying privileges, the privilege
+	change is ignored for any resource the user lacks owner privileges for.
+
+	Privileges that are not applicable for a given resource type are automatically stripped
+	down to the set that is legal for each resource.  TABLE resources support NONE, READ,
+	WRITE, SELECT, INSERT, UPDATE, and DELETE.  PROCEDURE resources support NONE, READ,
+	WRITE, and EXECUTE.  All other resource types only support NONE, READ, and WRITE.
+
+	Request Elements:
+	------------------
+    updateRecursively: If &quot;true&quot;, then all children of the given resources will
+       recursively be updated with the privileges assigned to their parent.
+    mode (optional): Determines whether privileges are merged with existing ones,
+       default is &quot;OVERWRITE_APPEND&quot;, which merges and does not update privileges for
+       users or groups not mentioned.  &quot;SET_EXACTLY&quot; makes privileges look exactly like
+       those provided in the call.
+    copyPrivilegeEntry: Source resource and list of destination resources.
+       Privileges of the source resource will be copied over to destination resources.
+
+	Input:
+		updatePrivilegesRecursively - flag indicating whether to update the children of the given resources or not.
+			0 (false) or null - only update the given resource and not the children.
+			1 (true) - update children recursively
+		copyPrivilegeMode - flag indicating the mode in which to copy privileges
+			flag indicating the mode in which to copy privileges
+			null (default) - do not set any privileges at all
+			0 - set mode to &quot;OVERWRITE_APPEND&quot; - merges and does not update privileges for
+       			users or groups not mentioned.
+			1 - set the mode to &quot;SET_EXACTLY&quot; - makes privileges look exactly like those provided in the call.
+		copyPrivilegeEntry - a vector array of source and destination resources
+			srcResources - a vector of &quot;path&quot; and &quot;type&quot; which allows a max of 1 entry
+			dstResources - a vector of &quot;path&quot; and &quot;type&quot; which allows an unbounded number of destination resources to be set.
+	Output:
+		success	- true(1) or false(0)
+		faultResponse - null if succesful otherwise contains a fault response.
+			Values: Fault Resposne XML value
+
+	Exceptions:  ex
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	05/06/2013		Mike Tinius			5.2.0			Created new for Best Practices 7.1
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE copyResourcesPrivileges(
+	IN updatePrivilegesRecursively	BIT,
+	IN copyPrivilegeMode			INTEGER,
+		-- flag indicating the mode in which to copy privileges
+		-- null (default) - do not set any privileges at all
+		-- 0 - set mode to &quot;OVERWRITE_APPEND&quot; - merges and does not update privileges for users or groups not mentioned.
+		-- 1 - set the mode to &quot;SET_EXACTLY&quot; - makes privileges look exactly like those provided in the call.
+	IN copyPrivilegeEntry			/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.copyPrivilegeEntryVector,
+	OUT success						BIT, -- true(1) or false(0)
+	OUT faultResponse 				XML
+)
+BEGIN
+    PATH /shared/ASAssets/Utilities/log;
+    PATH /shared/ASAssets/Utilities/repository;
+
+    DECLARE moduleName          VARCHAR DEFAULT &apos;copyResourcesPrivileges&apos;;
+	DECLARE debug				CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	DECLARE updateRecursively_	BIT DEFAULT updatePrivilegesRecursively;
+	DECLARE	mode				VARCHAR;
+	DECLARE i					INTEGER DEFAULT 1;
+	DECLARE Empty				INTEGER DEFAULT 1;
+	DECLARE createInput 		LONGVARCHAR DEFAULT &apos;&apos;;
+	DECLARE dstResource			LONGVARCHAR DEFAULT &apos;&apos;;
+	DECLARE createResponse 		XML;
+	DECLARE ex 					EXCEPTION;
+
+    set success = 1;
+ 
+	if (copyPrivilegeMode is not null and copyPrivilegeMode = 1) then
+
+		-- Translate the copy privilege mode
+		if (copyPrivilegeMode is null or copyPrivilegeMode = 0) then
+			set mode = &apos;OVERWRITE_APPEND&apos;;
+		elseif copyPrivilegeMode = 1 then
+			set mode = &apos;SET_EXACTLY&apos;;
+		else
+			raise ex value &apos;Invlalid copy mode=[&apos;||copyPrivilegeMode||&apos;]&apos;;
+		end if;
+
+		-- Check the update recursive flag for null
+		if (updateRecursively_ is null) then
+			set updateRecursively_ = 0;
+		end if;
+
+		-- Validate copyPrivilegeEntry
+		-- Make sure the source resource path and type are not empty.
+		if (copyPrivilegeEntry is null) then
+			raise ex value &apos;copyPrivilegeEntry may not be blank or empty.&apos;;
+		end if;
+		if (copyPrivilegeEntry[1].srcResource is null) then
+			raise ex value &apos;copyPrivilegeEntry source resource not be blank or empty.&apos;;
+		end if;
+		if (isEmpty(copyPrivilegeEntry[1].srcResource[1].&quot;path&quot;) = Empty) then
+			raise ex value &apos;copyPrivilegeEntry source resource path may not be blank or empty.&apos;;
+		end if;
+		if (isEmpty(copyPrivilegeEntry[1].srcResource[1].&quot;type&quot;) = Empty) then
+			raise ex value &apos;copyPrivilegeEntry source resource type may not be blank or empty.&apos;;
+		end if;
+
+		-- Validate and set copyPrivilegeEntry destination resources
+		if (copyPrivilegeEntry[1].dstResource is null) then
+			raise ex value &apos;copyPrivilegeEntry destination resource not be blank or empty.&apos;;
+		end if;
+		while (i &lt;= CARDINALITY(copyPrivilegeEntry[1].dstResource)) do
+			if (isEmpty(copyPrivilegeEntry[1].dstResource[i].&quot;path&quot;) = Empty) then
+				raise ex value &apos;copyPrivilegeEntry destination resource path may not be blank or empty.&apos;;
+			end if;
+			if (isEmpty(copyPrivilegeEntry[1].dstResource[i].&quot;type&quot;) = Empty) then
+				raise ex value &apos;copyPrivilegeEntry destination resource type may not be blank or empty.&apos;;
+			end if;
+				set dstResource = dstResource || &apos;
+				  &lt;resource:dstResource&gt;
+					&lt;resource:path&gt;&apos; || CAST(XMLTEXT(copyPrivilegeEntry[1].dstResource[i].&quot;path&quot;) AS LONGVARCHAR) || &apos;&lt;/resource:path&gt;
+					&lt;resource:type&gt;&apos; || CAST(XMLTEXT(copyPrivilegeEntry[1].dstResource[i].&quot;type&quot;) AS LONGVARCHAR) || &apos;&lt;/resource:type&gt;
+				  &lt;/resource:dstResource&gt;&apos;;
+			set i = i + 1;
+		end while;
+
+		-- Create the web service input request for copyResourcePrivileges
+		set createInput = 
+			&apos;&lt;resource:copyResourcePrivileges xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+			  &lt;resource:updateRecursively&gt;&apos; || CAST(XMLTEXT(updateRecursively_) AS LONGVARCHAR) || &apos;&lt;/resource:updateRecursively&gt;
+			  &lt;resource:copyPrivilegeEntries&gt;
+				&lt;resource:copyPrivilegeEntry&gt;
+				 &lt;resource:srcResource&gt;
+					&lt;resource:path&gt;&apos; || CAST(XMLTEXT(copyPrivilegeEntry[1].srcResource[1].&quot;path&quot;) AS LONGVARCHAR) || &apos;&lt;/resource:path&gt;
+					&lt;resource:type&gt;&apos; || CAST(XMLTEXT(copyPrivilegeEntry[1].srcResource[1].&quot;type&quot;) AS LONGVARCHAR) || &apos;&lt;/resource:type&gt;
+				  &lt;/resource:srcResource&gt;&apos;;
+
+		set createInput = createInput || dstResource || &apos;
+				&lt;/resource:copyPrivilegeEntry&gt;
+			  &lt;/resource:copyPrivilegeEntries&gt;
+			  &lt;resource:mode&gt;&apos; || CAST(XMLTEXT(mode) AS LONGVARCHAR) || &apos;&lt;/resource:mode&gt;
+			&lt;/resource:copyResourcePrivileges&gt;&apos;;
+
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;				&apos; || createInput);
+
+		-- Invoke copyResourcePrivileges
+		Call /services/webservices/system/admin/resource/operations/copyResourcePrivileges(createInput, createResponse, faultResponse);
+		if (faultResponse is not null) then
+			raise ex value CAST(faultResponse as LONGVARCHAR);
+		end if;	
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399565923676</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:1:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:2:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

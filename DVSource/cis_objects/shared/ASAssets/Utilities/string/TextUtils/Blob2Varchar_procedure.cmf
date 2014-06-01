@@ -1,0 +1,46 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Blob2Varchar" path="/shared/ASAssets/Utilities/string/TextUtils/Blob2Varchar" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>Blob2Varchar:
+
+Description:
+  Converts a BLOB data type to a VARCHAR. Use CAST to cast CLOB data types to VARCHAR.
+
+
+Inputs:
+  BlobVal      - A BLOB value to convert.
+
+
+Output:
+  result       - The result of conversion to VARCHAR. 
+
+
+Exceptions:
+  CustomProcedureException - If supplied input can not be converted
+
+
+Modified Date:	Modified By:		CSW Version:	Reason:
+09/22/2010		Kevin O&apos;Brien		5.1.0			Created new
+
+
+© 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="BlobVal" direction="IN" nullable="true">
+      <datatype name="BLOB" subType="DATASOURCE_TYPE" type="BLOB" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.Blob2Varchar</attribute>
+  <attribute name="creationDate" type="LONG">1399486545165</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1399511318407</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

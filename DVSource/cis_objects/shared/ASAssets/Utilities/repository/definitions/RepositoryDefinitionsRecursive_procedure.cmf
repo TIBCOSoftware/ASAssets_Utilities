@@ -1,0 +1,161 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="RepositoryDefinitionsRecursive" path="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>RepositoryDefinitionsRecursive:
+	Provides global type definitions for the recursive procedures in the /shared/ASAssets/Utilities/repository directory.
+
+	If an ***error*** is encountered in the &apos;RepositoryDefinitionsRecursive&apos; file and you get a java memory error when 
+	trying to save this file, it is because CIS cannot save the file due to the recursive nature of 
+	the procedure &apos;getResourceTreeList&apos;.  
+
+	Go to &apos;getResourceTreeList&apos; and read the comments in the procedure body regarding the temporary
+	commenting of the recursive section until you can properly save the &apos;RepositoryDefinitionsRecursive&apos; file.  
+	Once you save this file, you can then uncomment and save the &apos;getResourceTreeList&apos; procedure.
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0+/6.1.0+	1) expanded columns for lineageTreeType, 2) moved getUsedResourcesResponseType to RepositoryDefinitions
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters></parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* RepositoryDefinitionsRecursive:
+	Provides global type definitions for the recursive procedures in the /shared/ASAssets/Utilities/repository directory.
+
+	If an ***error*** is encountered in the &apos;RepositoryDefinitionsRecursive&apos; file and you get a java memory error when 
+	trying to save this file, it is because CIS cannot save the file due to the recursive nature of 
+	the procedure &apos;getResourceTreeList&apos;.  
+
+	Go to &apos;getResourceTreeList&apos; and read the comments in the procedure body regarding the temporary
+	commenting of the recursive section until you can properly save the &apos;RepositoryDefinitionsRecursive&apos; file.  
+	Once you save this file, you can then uncomment and save the &apos;getResourceTreeList&apos; procedure.
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0+/6.1.0+	1) expanded columns for lineageTreeType, 2) moved getUsedResourcesResponseType to RepositoryDefinitions
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE RepositoryDefinitionsRecursive()
+BEGIN
+	PATH /shared/ASAssets/Utilities;
+
+	DECLARE PUBLIC TYPE resourceTreeType ROW (
+		name					VARCHAR(255),
+		resPath					/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+		resType					VARCHAR(255),
+		subType					VARCHAR(255),
+		creationDate			TIMESTAMP,
+		creationDateBigint		BIGINT,
+		creatorUserDomain		VARCHAR(255),
+		creatorUserName			VARCHAR(255),
+		lastModifiedDate		TIMESTAMP,
+		lastModifiedDateBigint	BIGINT,
+		lastModifiedUserDomain	VARCHAR(255),
+		lastModifiedUserName	VARCHAR(255)
+	);
+
+	DECLARE PUBLIC TYPE lineageTreeType ROW (
+		seqNum					INTEGER,
+		resourceID				INTEGER,
+		parentID				INTEGER,
+		resDepth				INTEGER,
+		treeType				VARCHAR(255), -- Parent, Child
+		resName 				VARCHAR(255), 
+		resPath 				/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+		resType					VARCHAR(255),
+		subType					VARCHAR(255),
+		enabled					BIT,
+		dsID					INTEGER,
+		dsResName				VARCHAR(255),
+		dsResPath				/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+		dsResType 				VARCHAR(255),
+		dsResSubType			VARCHAR(255),
+		dsEnabled				BIT,
+		dsChildCount			INTEGER
+	);
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397496793696</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_types" type="MAP">
+    <item>
+      <key type="STRING">resourceTreeType</key>
+      <value type="BYTE_ARRAY">EB8GAgAQAHIAZQBzAG8AdQByAGMAZQBUAHIAZQBlAFQAeQBwAGUGKQBQAC8AcwBoAGEAcgBlAGQA
+LwBBAFMAQQBzAHMAZQB0AHMALwBVAHQAaQBsAGkAdABpAGUAcwAvAHIAZQBwAG8AcwBpAHQAbwBy
+AHkALwBkAGUAZgBpAG4AaQB0AGkAbwBuAHMALwBSAGUAcABvAHMAaQB0AG8AcgB5AEQAZQBmAGkA
+bgBpAHQAaQBvAG4AcwBSAGUAYwB1AHIAcwBpAHYAZQYqABAAcgBlAHMAbwB1AHIAYwBlAFQAcgBl
+AGUAVAB5AHAAZQMSAAAAAQMSAAAAAQETAQkUAAAADBAhBhUABABuAGEAbQBlAy8AAAABAxYAAAAA
+AxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAcAVgBBAFIAQwBIAEEAUgMSAAAAAgQEAAAA
+AAAAAP8BEwH/////ECEGFQAHAHIAZQBzAFAAYQB0AGgDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAED
+IP////8DIgAAAAAIGRAbBgIABwBWAEEAUgBDAEgAQQBSBikAKgAvAHMAaABhAHIAZQBkAC8AQQBT
+AEEAcwBzAGUAdABzAC8AVQB0AGkAbABpAHQAaQBlAHMALwBUAHkAcABlAEQAZQBmAGkAbgBpAHQA
+aQBvAG4AcwYqAAgAcABhAHQAaABUAHkAcABlAxIAAAADBAQAAAAAAAAD6AETAf////8QIQYVAAcA
+cgBlAHMAVAB5AHAAZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAAAv//
+ECEGFQAHAHMAdQBiAFQAeQBwAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAD
+EgAAAAL//xAhBhUADABjAHIAZQBhAHQAaQBvAG4ARABhAHQAZQMvAAAAAQMWAAAAAAMaAAAAAQMb
+AAAAAQMg/////wMiAAAAAAgZEBYGAgAJAFQASQBNAEUAUwBUAEEATQBQAxIAAAAE/////xAhBhUA
+EgBjAHIAZQBhAHQAaQBvAG4ARABhAHQAZQBCAGkAZwBpAG4AdAMvAAAAAQMWAAAAAAMaAAAAAQMb
+AAAAAQMg/////wMiAAAAAAgZEBkGAgAGAEIASQBHAEkATgBUAxIAAAAFBAeAAAAAAAAAAP////8Q
+IQYVABEAYwByAGUAYQB0AG8AcgBVAHMAZQByAEQAbwBtAGEAaQBuAy8AAAABAxYAAAAAAxoAAAAB
+AxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVAA8AYwByAGUAYQB0AG8AcgBVAHMAZQByAE4A
+YQBtAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAL//xAhBhUAEABs
+AGEAcwB0AE0AbwBkAGkAZgBpAGUAZABEAGEAdABlAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/
+////AyIAAAAAAxIAAAAE//8QIQYVABYAbABhAHMAdABNAG8AZABpAGYAaQBlAGQARABhAHQAZQBC
+AGkAZwBpAG4AdAMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABf//ECEG
+FQAWAGwAYQBzAHQATQBvAGQAaQBmAGkAZQBkAFUAcwBlAHIARABvAG0AYQBpAG4DLwAAAAEDFgAA
+AAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAL//xAhBhUAFABsAGEAcwB0AE0AbwBkAGkA
+ZgBpAGUAZABVAHMAZQByAE4AYQBtAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAA
+AAADEgAAAAL/////</value>
+    </item>
+    <item>
+      <key type="STRING">lineageTreeType</key>
+      <value type="BYTE_ARRAY">EB8GAgAPAGwAaQBuAGUAYQBnAGUAVAByAGUAZQBUAHkAcABlBikAUAAvAHMAaABhAHIAZQBkAC8A
+QQBTAEEAcwBzAGUAdABzAC8AVQB0AGkAbABpAHQAaQBlAHMALwByAGUAcABvAHMAaQB0AG8AcgB5
+AC8AZABlAGYAaQBuAGkAdABpAG8AbgBzAC8AUgBlAHAAbwBzAGkAdABvAHIAeQBEAGUAZgBpAG4A
+aQB0AGkAbwBuAHMAUgBlAGMAdQByAHMAaQB2AGUGKgAPAGwAaQBuAGUAYQBnAGUAVAByAGUAZQBU
+AHkAcABlAxIAAAABAxIAAAABARMBCRQAAAARECEGFQAGAHMAZQBxAE4AdQBtAy8AAAABAxYAAAAA
+AxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGQYCAAcASQBOAFQARQBHAEUAUgMSAAAAAgQH////
+/4AAAAAEBgAAAAB//////////xAhBhUACgByAGUAcwBvAHUAcgBjAGUASQBEAy8AAAABAxYAAAAA
+AxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVAAgAcABhAHIAZQBuAHQASQBEAy8A
+AAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVAAgAcgBlAHMARABl
+AHAAdABoAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVAAgA
+dAByAGUAZQBUAHkAcABlAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYC
+AAcAVgBBAFIAQwBIAEEAUgMSAAAAAwQEAAAAAAAAAP8BEwH/////ECEGFQAHAHIAZQBzAE4AYQBt
+AGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAP//xAhBhUABwByAGUA
+cwBQAGEAdABoAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAcAVgBB
+AFIAQwBIAEEAUgYpACoALwBzAGgAYQByAGUAZAAvAEEAUwBBAHMAcwBlAHQAcwAvAFUAdABpAGwA
+aQB0AGkAZQBzAC8AVAB5AHAAZQBEAGUAZgBpAG4AaQB0AGkAbwBuAHMGKgAIAHAAYQB0AGgAVAB5
+AHAAZQMSAAAABAQEAAAAAAAAA+gBEwH/////ECEGFQAHAHIAZQBzAFQAeQBwAGUDLwAAAAEDFgAA
+AAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAP//xAhBhUABwBzAHUAYgBUAHkAcABlAy8A
+AAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAD//8QIQYVAAcAZQBuAGEAYgBs
+AGUAZAMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBkGAgADAEIASQBUAxIA
+AAAFBAcAAAAAAAAAAAQGAAAAAAAAAAH/////ECEGFQAEAGQAcwBJAEQDLwAAAAEDFgAAAAADGgAA
+AAEDGwAAAAEDIP////8DIgAAAAADEgAAAAL//xAhBhUACQBkAHMAUgBlAHMATgBhAG0AZQMvAAAA
+AQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAAA///ECEGFQAJAGQAcwBSAGUAcwBQ
+AGEAdABoAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8QIQYVAAkA
+ZABzAFIAZQBzAFQAeQBwAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAA
+AAP//xAhBhUADABkAHMAUgBlAHMAUwB1AGIAVAB5AHAAZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAA
+AQMg/////wMiAAAAAAMSAAAAA///ECEGFQAJAGQAcwBFAG4AYQBiAGwAZQBkAy8AAAABAxYAAAAA
+AxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAF//8QIQYVAAwAZABzAEMAaABpAGwAZABDAG8A
+dQBuAHQDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAL/////</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

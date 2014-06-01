@@ -1,0 +1,50 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="MD5Hash" path="/shared/ASAssets/Utilities/encoding/EncodingCJP/MD5Hash" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>MD5Hash:
+
+    Accepts a string as input and returns the MD5 hash value of the string.
+
+
+	Input:
+		inputString - The string to apply the MD5 hash to.  
+			Values: Any text value
+
+
+	Output:
+		result - The input string with the MD5 hash applied
+			Values: An MD5 hash string.
+
+
+	Exceptions:  none
+
+
+	Author:      Gordon Rose
+	Date:        10/18/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inputString" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+      <attribute name="selectionState" type="INTEGER">2</attribute>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+      <attribute name="selectionState" type="INTEGER">2</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.encoding.MD5Hash</attribute>
+  <attribute name="creationDate" type="LONG">1383622340458</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392747305167</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="p:0:selectionState" type="INTEGER">2</attribute>
+  <attribute name="p:1:selectionState" type="INTEGER">2</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

@@ -1,0 +1,202 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="createAllFolders" path="/shared/ASAssets/Utilities/repository/createAllFolders" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>createAllFolders:
+	-- CIS Repository Helper Procedure --
+	This procedure is used to create all the CIS folders designated by the incoming folder path variable.
+ 
+	Input:
+		sourceFolderPath - CIS source folder path to be created.
+			Values: Any text value
+	Output:
+		success	- true(1) or false(0)
+			Values: 1 or 0
+		faultResponse - null if succesful otherwise contains a fault resposne.
+			Values: Fault Resposne XML value
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="sourceFolderPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="faultResponse" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createFolder" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="sourceFolderPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="mode" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="folderName" direction="OUT">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="folderPath" direction="OUT">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* createAllFolders:
+	-- CIS Repository Helper Procedure --
+	This procedure is used to create all the CIS folders designated by the incoming folder path variable.
+ 
+	Input:
+		sourceFolderPath - CIS source folder path to be created.
+			Values: Any text value
+	Output:
+		success	- true(1) or false(0)
+			Values: 1 or 0
+		faultResponse - null if succesful otherwise contains a fault resposne.
+			Values: Fault Resposne XML value
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE createAllFolders(
+	-- /shared/AbstractViewGenerator/AbstractLayer/Inventory
+	IN sourceFolderPath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	OUT success		BIT,
+	OUT faultResponse	XML
+)
+BEGIN
+	DECLARE moduleName	VARCHAR DEFAULT &apos;createAllFolders&apos;;
+	DECLARE debug		CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	DECLARE folderName 	VARCHAR;
+	DECLARE folderPath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE currFolderPath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType DEFAULT &apos;&apos;;
+	DECLARE nextFolderPath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType DEFAULT &apos;&apos;;
+	DECLARE parsedFolderPath /shared/ASAssets/Utilities/TypeDefinitions.pathType DEFAULT &apos;&apos;;
+	DECLARE i 		INTEGER;
+
+    set success = 1;
+    set folderPath = sourceFolderPath;
+    set folderPath = TRIM(folderPath); 	     	   -- Trim any leading or trailing spaces
+    set folderPath = REPLACE(folderPath,&apos;\&apos;,&apos;/&apos;);  -- Normalize separators to make it easier
+	-- A path should look like this: /shared/myfolder/subfolder/lastfolder
+	-- Add leading / but only if a windows drive is not present such as c:
+    if (SUBSTRING(folderPath,1,1) &lt;&gt; &apos;/&apos; and POSITION(&apos;:&apos; in folderPath) = 0) then
+	set folderPath = &apos;/&apos;||folderPath;
+    end if;
+    -- Remove trailing /
+    if (SUBSTRING(folderPath,length(folderPath),1) = &apos;/&apos;) then
+	set folderPath = SUBSTRING(folderPath,1,length(folderPath)-1);  
+    end if;
+    if (folderPath is null) then
+	set folderPath = &apos;&apos;;
+    end if;
+
+    createFolderLoop:
+    while (true) do
+	if (folderPath is null or length(folderPath) = 0) then
+		leave createFolderLoop;
+	end if;
+
+	set folderPath = REPLACE(folderPath,&apos;//&apos;,&apos;/&apos;); -- Make sure there is only a single separator
+	if (SUBSTRING(folderPath,1,1) = &apos;/&apos;) then
+		set folderPath = SUBSTRING(folderPath,2,LENGTH(folderPath));
+	end if;
+	set i = POSITION(&apos;/&apos; IN folderPath);
+	if (i &gt; 0) then
+		set currFolderPath = &apos;/&apos;||SUBSTRING(folderPath, 1, i);
+		set folderPath = SUBSTRING(folderPath, i+1, length(folderPath));
+	else
+		set currFolderPath = &apos;/&apos;||folderPath;
+		set folderPath = null;
+	end if;
+	set nextFolderPath = REPLACE(nextFolderPath || currFolderPath,&apos;//&apos;,&apos;/&apos;);-- Make sure there is only a single separator
+
+    	if (resourceExists(nextFolderPath,&apos;CONTAINER&apos;) &lt;&gt; 1) then
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug,&apos;Creating folder:  folderPath=&apos;||nextFolderPath);
+		call /shared/ASAssets/Utilities/repository/createFolder(nextFolderPath, success, faultResponse);
+		-- Extract the next level of folders to create
+		call /shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath(nextFolderPath, &apos;E&apos;, folderName, parsedFolderPath);
+	end if;
+    end while;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399565923676</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:2:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

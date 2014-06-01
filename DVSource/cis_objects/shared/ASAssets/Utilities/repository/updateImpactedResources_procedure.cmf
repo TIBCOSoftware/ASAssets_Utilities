@@ -1,0 +1,249 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="updateImpactedResources" path="/shared/ASAssets/Utilities/repository/updateImpactedResources" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>updateImpactedResources:
+
+	-- CIS Repository Helper Procedure --
+	This procedure crawls through a starting folder and attempts to update a VIEW or PROCEDURE resource that is impacted.  
+	There are some errors that can be resolved that are not syntax related errors.  There are some Composite versions 
+	that will mark a resource as impacted.  Simply reading those resources and saving them back out fixes the impacted issue.
+	This procedure attempts to automate that process. An example of an error is &quot;session is null&quot;.  This type of error
+	can be fixed simply by reading and writing the resource.
+ 
+	Input:
+		debug					CHAR(1),		- Y=debug, N=do not debug
+		inStartingFolders 		LONGVARCHAR, 	- a comma separated list of startingFolder paths like: /shared/&quot;_deployment&quot;
+		inExcludePathsKeywords	LONGVARCHAR, 	- exclude paths containing these keywords (case insensitive)
+											 	-   examples: Analysis,Archive,save,validation
+	Output:
+		success					BIT
+
+	Exceptions: N/A
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	07/31/2013		Mike Tinius			6.0.0			Best Practices 7.3:  created new
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="inStartingFolders" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="inExcludePathsKeywords" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/impactedTargetsList" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="inStartingFolders" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inExcludePathsKeywords" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourcePath">
+            <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+          </element>
+          <element name="resourceType">
+            <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+          </element>
+          <element name="subType">
+            <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+          </element>
+          <element name="impactLevel">
+            <datatype type="STRING" maxLength="1024"/>
+          </element>
+          <element name="impactMessage">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="scriptText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateSqlScript" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="scripttext" direction="INOUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateSqlTable" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="inScripttext" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* updateImpactedResources:
+
+	-- CIS Repository Helper Procedure --
+	This procedure crawls through a starting folder and attempts to update a VIEW or PROCEDURE resource that is impacted.  
+	There are some errors that can be resolved that are not syntax related errors.  There are some Composite versions 
+	that will mark a resource as impacted.  Simply reading those resources and saving them back out fixes the impacted issue.
+	This procedure attempts to automate that process. An example of an error is &quot;session is null&quot;.  This type of error
+	can be fixed simply by reading and writing the resource.
+ 
+	Input:
+		debug					CHAR(1),		- Y=debug, N=do not debug
+		inStartingFolders 		LONGVARCHAR, 	- a comma separated list of startingFolder paths like: /shared/&quot;_deployment&quot;
+		inExcludePathsKeywords	LONGVARCHAR, 	- exclude paths containing these keywords (case insensitive)
+											 	-   examples: Analysis,Archive,save,validation
+	Output:
+		success					BIT
+
+	Exceptions: N/A
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	07/31/2013		Mike Tinius			6.0.0			Best Practices 7.3:  created new
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/ 
+PROCEDURE updateImpactedResources(
+	IN debug					CHAR(1),
+	IN inStartingFolders 		LONGVARCHAR, -- a comma separated list of startingFolder paths like: /shared/&quot;_deployment&quot;
+	IN inExcludePathsKeywords	LONGVARCHAR, -- exclude paths containing these keywords (case insensitive)
+											 --   examples: Analysis,Archive,save,validation
+	OUT  success				BIT
+)
+BEGIN
+	DECLARE moduleName			VARCHAR(255) DEFAULT &apos;updateImpactedResources&apos;;
+	DECLARE resourcePath		/lib/resource/ResourceDefs.ResourcePath;
+	DECLARE resourceType		/lib/resource/ResourceDefs.ResourceType;
+	DECLARE scriptText			LONGVARCHAR;
+	DECLARE createResponse 		XML;
+	DECLARE faultResponse		XML;
+	DECLARE ex					EXCEPTION;
+
+	set success = 1;
+	BEGIN
+		for r as 
+			select * 
+			from /shared/ASAssets/Utilities/repository/impactedTargetsList(debug, inStartingFolders,inExcludePathsKeywords)
+		do
+			-- Read in the sript text
+			set scriptText = r.scriptText;
+
+			-- Write out the script text for TABLE
+			if (r.resourceType = &apos;TABLE&apos;) then
+				call /shared/ASAssets/Utilities/repository/updateSqlTable(r.resourcePath,scriptText,success,createResponse,faultResponse);
+			end if;
+
+			-- Write out the script text for PROCEDURE
+			if (r.resourceType = &apos;PROCEDURE&apos;) then
+				call /shared/ASAssets/Utilities/repository/updateSqlScript(r.resourcePath,scriptText,success,createResponse,faultResponse);
+			end if;
+
+			if (faultResponse is not null) then
+				raise ex value cast(faultResponse as longvarchar);
+			end if;
+				
+			-- Print result
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;&apos;);
+			call/shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;Update impacted target complete for &apos;||emptyStr(r.resourcePath));
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;------------------------------------------------------&apos;);
+		end for;
+
+	EXCEPTION
+		ELSE
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;  Exception occurred while updating impacted target resources.   ERROR=&apos;||emptyStr(CAST(CURRENT_EXCEPTION.TRACE AS LONGVARCHAR)));
+		raise ex value CAST(CURRENT_EXCEPTION.TRACE AS LONGVARCHAR);
+	END;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

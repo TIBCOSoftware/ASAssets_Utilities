@@ -1,0 +1,44 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="GenerateGuid" path="/shared/ASAssets/Utilities/string/TextUtils/GenerateGuid" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>GenerateGuid
+
+    Description:
+        Generates a random GUID value.
+    
+    
+    Inputs:
+        N/A
+    
+    
+    Outputs:
+        result - The GUID.
+            Values: A GUID value.
+   
+    
+    Exceptions:
+        N/A
+   
+    
+    Author:      Jatin Shah
+    Date:        10/11/2012
+    CSW Version: 5.2.0
+    
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.GenerateGuid</attribute>
+  <attribute name="creationDate" type="LONG">1383622340770</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754288643</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

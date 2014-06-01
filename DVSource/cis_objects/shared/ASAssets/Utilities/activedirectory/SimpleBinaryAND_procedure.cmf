@@ -1,0 +1,165 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="SimpleBinaryAND" path="/shared/ASAssets/Utilities/activedirectory/SimpleBinaryAND" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>SimpleBinaryAND:
+
+  Accepts a BIGINT and a power of 2 (e.g. 2, 4, 8, etc.) and ANDs the two numbers 
+  to indicate whether the bit in the BIGINT at the position of the power of 2 is 
+  1 or 0. It is a simple function originally created for determining whether or 
+  not an Active Directory user is enabled or disabled, which is stored in a bit 
+  mask in Active Directory. The function works for numbers 2 ^ 31 and smaller. 
+
+
+	Input:
+		Num - A BIGINT value  
+			Values: Any integer value up to 2 ^ 31
+
+		PowerOfTwo - The position of the bit to be examined.  
+			Values: 0 to 31
+
+
+	Output:
+		Result - The value of the bit at the input position
+			Values: 1 or 0
+
+
+	Exceptions:
+    /shared/Utilities/activedirectory/SimpleBinaryAND.NumberTooLarge - Thrown if
+       the input value &quot;Num&quot; is larger than 2 ^ 31.
+
+
+	Author:      Gordon Rose
+	Date:        10/18/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="Num" direction="IN" nullable="true">
+      <datatype name="BIGINT" type="INTEGER"/>
+    </parameter>
+    <parameter name="PowerOfTwo" direction="IN" nullable="true">
+      <datatype name="BIGINT" type="INTEGER"/>
+    </parameter>
+    <parameter name="Result" direction="OUT" nullable="true">
+      <datatype name="BIGINT" type="INTEGER"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/* 
+  SimpleBinaryAND:
+
+  Accepts a BIGINT and a power of 2 (e.g. 2, 4, 8, etc.) and ANDs the two numbers 
+  to indicate whether the bit in the BIGINT at the position of the power of 2 is 
+  1 or 0. It is a simple function originally created for determining whether or 
+  not an Active Directory user is enabled or disabled, which is stored in a bit 
+  mask in Active Directory. The function works for numbers 2 ^ 31 and smaller. 
+
+
+	Input:
+		Num - A BIGINT value  
+			Values: Any integer value up to 2 ^ 31
+
+		PowerOfTwo - The position of the bit to be examined.  
+			Values: 0 to 31
+
+
+	Output:
+		Result - The value of the bit at the input position
+			Values: 1 or 0
+
+
+	Exceptions:
+    /shared/Utilities/activedirectory/SimpleBinaryAND.NumberTooLarge - Thrown if
+       the input value &quot;Num&quot; is larger than 2 ^ 31.
+
+
+	Author:      Gordon Rose
+	Date:        10/18/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE SimpleBinaryAND(
+  IN Num bigint,
+  IN PowerOfTwo bigint,
+  OUT Result bigint
+)
+BEGIN
+  
+  /*
+
+  Note, this was originally created for use with active directory to determine
+  if an account were disabled or not. The recipe is
+
+  case ... 
+      -- the second bit in the userAccountControl bitmask indicates account is disabled if bit is on
+      -- second arg is the power of two, as in 2 = 2 ^ 1, where the first bit is 0, making 1 the second bit
+      when SimpleBinaryAND(userAccountControl, 2) = 2 then
+        &apos;TRUE&apos;
+      else
+        &apos;FALSE&apos;
+    end accountIsDisabled
+
+  */
+
+  declare PUBLIC NumberTooLarge EXCEPTION;
+  declare i bigint;
+  declare temp bigint;
+  declare Pwr bigint;
+
+  -- We&apos;ll only handle 32-bits. We test 2 ^ 31 as first power is 0.
+  if Num &gt; power(2, 31) then
+    raise NumberTooLarge value &apos;This function operates on a maximum of 32-bits&apos;;
+  end if;
+
+  set temp = Num;
+  set Result = 0;
+  
+  set i = 31;
+  DoLoop:
+  While i &gt;= 0 Do
+
+    set Pwr = cast(power(2, i) as bigint);
+
+    if Pwr &gt; PowerOfTwo then
+      if temp &gt;= Pwr then     
+        set temp = temp - Pwr; 
+        if temp = 0 then
+          -- no need to look further 
+          leave DoLoop;
+        end if;
+      End If;        
+    else
+      -- as we&apos;re decrementing i, then Pwr must = PowerOfTwo here
+      if temp &gt;= Pwr then 
+--        set Result = PowerOfTwo;
+        set Result = 1;
+      else 
+        set Result = 0;
+      end if; 
+      leave DoLoop;
+    end if;
+
+    set i = i - 1;
+    iterate DoLoop;
+
+  End While;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1392746617227</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_exceptions" type="STRING_ARRAY">
+    <item>NumberTooLarge</item>
+  </attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

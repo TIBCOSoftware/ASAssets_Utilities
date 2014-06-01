@@ -1,0 +1,57 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="URLDecode" path="/shared/ASAssets/Utilities/string/TextUtils/URLDecode" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>Description:
+  Decodes a URL encoded string.
+
+  Valid character encodings:
+
+    US-ASCII    Seven-bit ASCII, a.k.a. ISO646-US, a.k.a. the Basic Latin block of the Unicode character set
+    ISO-8859-1  ISO Latin Alphabet No. 1, a.k.a. ISO-LATIN-1
+    UTF-8       Eight-bit UCS Transformation Format
+    UTF-16BE    Sixteen-bit UCS Transformation Format, big-endian byte order
+    UTF-16LE    Sixteen-bit UCS Transformation Format, little-endian byte order
+    UTF-16 	    Sixteen-bit UCS Transformation Format, byte order identified by an optional byte-order mark
+
+
+
+
+Inputs:
+  InputText         - The text to decode
+  CharacterEncoding - The name of a valid character encoding. &apos;ISO-8859-1&apos; if NULL.
+
+Outputs:
+  result            - The decoded text. NULL if InputText is NULL.
+
+Exceptions:
+  None
+
+Author:      Calvin Goodrich
+Date:        2/15/2013
+CSW Version: 6.0.0
+
+© 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="InputText" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="CharacterEncoding" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.URLDecode</attribute>
+  <attribute name="creationDate" type="LONG">1383622340768</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754594684</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+  <attribute name="transactionCached" type="STRING">true</attribute>
+</metadata>

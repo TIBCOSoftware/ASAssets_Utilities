@@ -1,0 +1,390 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getResourceCacheConfigCursor" path="/shared/ASAssets/Utilities/repository/getResourceCacheConfigCursor" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getResourceCacheConfigCursor:
+
+This procedure returns a cursor containing all the cache configuration information. 
+A public row type is provided for defining cursors in the calling procedure.
+
+
+Input:
+
+  inResourcePath - Path to the cached resource.  
+    Values: Any valid path to a cached resource.
+
+  inType         - Resource type of the cached resource.  
+    Values: See &quot;Constants&quot; tab of /lib/resource/ResourceDefs for constants starting with &quot;RESOURCE_TYPE&quot;.
+
+
+Output:
+
+  result - Contains a cursor with the cache configuration. 
+    Values: Any text value
+
+
+Exceptions:  none
+
+
+    Author:      Calvin Goodrich
+    Date:        9/11/2010
+    CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inResourcePath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="inType" direction="IN" nullable="true">
+      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="configured">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="storageMode">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="storageDataSourcePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="storageTargetName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="storagePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="storageType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="refreshMode">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="scheduleMode">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="startTime">
+          <datatype name="TIMESTAMP" type="DATETIME"/>
+        </element>
+        <element name="fromTimeInADay">
+          <datatype name="BIGINT" type="INTEGER"/>
+        </element>
+        <element name="endTimeInADay">
+          <datatype name="BIGINT" type="INTEGER"/>
+        </element>
+        <element name="recurringDay">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="interval">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="period">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="count">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="isCluster">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="expirationPeriod">
+          <datatype name="BIGINT" type="INTEGER"/>
+        </element>
+        <element name="clearRule">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="allOrNothing">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="incremental">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="storageBucketMode">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="storageBucketCatalog">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="storageBucketSchema">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="storageBucketPrefix">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="storageBucketNumBuckets">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="storageDropCreateIdx">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="firstRefreshCallback">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="secondRefreshCallback">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getResourceCacheConfig621XSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getResourceCacheConfig" direction="IN">
+        <datatype name="getResourceCacheConfig" extendedName="{http://www.compositesw.com/services/system/admin/resource}getResourceCacheConfig" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getResourceCacheConfig" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getResourceCacheConfig">
+          <schemaDatatype>
+            <datatype name="getResourceCacheConfig" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="getResourceCacheConfigRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="resourceType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="configured">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="storageMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageDataSourcePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageTargetName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storagePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageType">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="refreshMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="scheduleMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="startTime">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="fromTimeInADay">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="endTimeInADay">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="recurringDay">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="interval">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="period">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="count">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="isCluster">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="expirationPeriod">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="clearPeriod">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="allOrNothing">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="incremental">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="storageBucketMode">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketCatalog">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketSchema">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketPrefix">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketNumBuckets">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="storageDropCreateIdx">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="firstRefreshCallback">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="secondRefreshCallback">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+    getResourceCacheConfigCursor:
+    
+    This procedure returns a cursor containing all the cache configuration information. 
+    A public row type is provided for defining cursors in the calling procedure.
+    
+    
+    Input:
+    
+      inResourcePath - Path to the cached resource.  
+        Values: Any valid path to a cached resource.
+    
+      inType         - Resource type of the cached resource.  
+        Values: See &quot;Constants&quot; tab of /lib/resource/ResourceDefs for constants starting with &quot;RESOURCE_TYPE&quot;.
+    
+    
+    Output:
+    
+      result - Contains a cursor with the cache configuration. 
+    
+    
+    Exceptions:  none
+    
+    
+    Author:      Calvin Goodrich
+    Date:        9/11/2010
+    CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getResourceCacheConfigCursor(
+    IN inResourcePath /lib/resource/ResourceDefs.ResourcePath, 
+    IN inType /lib/resource/ResourceDefs.ResourceType, 
+    OUT result CURSOR CacheConfigRowType
+)
+BEGIN
+    DECLARE PUBLIC TYPE CacheConfigRowType ROW (
+        configured              BIT, 
+        enabled                 BIT, 
+        storageMode             VARCHAR(32768), 
+        storageDataSourcePath   VARCHAR(32768), 
+        storageTargetName       VARCHAR(32768), 
+        storagePath             VARCHAR(32768), 
+        storageType             VARCHAR(32768), 
+        refreshMode             VARCHAR(32768), 
+        scheduleMode            VARCHAR(32768), 
+        startTime               TIMESTAMP, 
+        fromTimeInADay          BIGINT, 
+        endTimeInADay           BIGINT, 
+        recurringDay            INTEGER, 
+        &quot;interval&quot;              INTEGER, 
+        period                  VARCHAR(32768), 
+        &quot;count&quot;                 INTEGER, 
+        isCluster               BIT, 
+        expirationPeriod        BIGINT, 
+        clearRule               VARCHAR(255), 
+        allOrNothing            BIT, 
+        incremental             BIT, 
+        storageBucketMode       VARCHAR(255), 
+        storageBucketCatalog    VARCHAR(255), 
+        storageBucketSchema     VARCHAR(255), 
+        storageBucketPrefix     VARCHAR(255), 
+        storageBucketNumBuckets INTEGER, 
+        storageDropCreateIdx    BIT, 
+        firstRefreshCallback    VARCHAR(32768), 
+        secondRefreshCallback   VARCHAR(32768)
+    );
+
+    OPEN result FOR 
+        SELECT 
+            *
+        FROM      
+            /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getResourceCacheConfig621XSLT(
+                &apos;&lt;ns1:getResourceCacheConfig xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+                    &lt;ns1:path&gt;&apos; || CAST(XMLTEXT(inResourcePath) AS VARCHAR(2147483647)) || &apos;&lt;/ns1:path&gt;
+                    &lt;ns1:type&gt;&apos; || CAST(XMLTEXT(inType) AS VARCHAR(2147483647)) || &apos;&lt;/ns1:type&gt;
+                &lt;/ns1:getResourceCacheConfig&gt;&apos;
+            ) getResourceCacheConfigXSLT;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1358189884226</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_types" type="MAP">
+    <item>
+      <key type="STRING">CacheConfigRowType</key>
+      <value type="BYTE_ARRAY">EB8GAgASAEMAYQBjAGgAZQBDAG8AbgBmAGkAZwBSAG8AdwBUAHkAcABlBikAQgAvAHMAaABhAHIA
+ZQBkAC8AQQBTAEEAcwBzAGUAdABzAC8AVQB0AGkAbABpAHQAaQBlAHMALwByAGUAcABvAHMAaQB0
+AG8AcgB5AC8AZwBlAHQAUgBlAHMAbwB1AHIAYwBlAEMAYQBjAGgAZQBDAG8AbgBmAGkAZwBDAHUA
+cgBzAG8AcgYqABIAQwBhAGMAaABlAEMAbwBuAGYAaQBnAFIAbwB3AFQAeQBwAGUDEgAAAAEDEgAA
+AAEBEwEJFAAAAB0QIQYVAAoAYwBvAG4AZgBpAGcAdQByAGUAZAMvAAAAAQMWAAAAAAMaAAAAAQMb
+AAAAAQMg/////wMiAAAAAAgZEBkGAgADAEIASQBUAxIAAAACBAcAAAAAAAAAAAQGAAAAAAAAAAH/
+////ECEGFQAHAGUAbgBhAGIAbABlAGQDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAA
+AAADEgAAAAL//xAhBhUACwBzAHQAbwByAGEAZwBlAE0AbwBkAGUDLwAAAAEDFgAAAAADGgAAAAED
+GwAAAAEDIP////8DIgAAAAAIGRAbBgIABwBWAEEAUgBDAEgAQQBSAxIAAAADBAQAAAAAAACAAAET
+Af////8QIQYVABUAcwB0AG8AcgBhAGcAZQBEAGEAdABhAFMAbwB1AHIAYwBlAFAAYQB0AGgDLwAA
+AAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAP//xAhBhUAEQBzAHQAbwByAGEA
+ZwBlAFQAYQByAGcAZQB0AE4AYQBtAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAA
+AAADEgAAAAP//xAhBhUACwBzAHQAbwByAGEAZwBlAFAAYQB0AGgDLwAAAAEDFgAAAAADGgAAAAED
+GwAAAAEDIP////8DIgAAAAADEgAAAAP//xAhBhUACwBzAHQAbwByAGEAZwBlAFQAeQBwAGUDLwAA
+AAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAP//xAhBhUACwByAGUAZgByAGUA
+cwBoAE0AbwBkAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAP//xAh
+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
+AAAAAAMSAAAAA/////8=</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

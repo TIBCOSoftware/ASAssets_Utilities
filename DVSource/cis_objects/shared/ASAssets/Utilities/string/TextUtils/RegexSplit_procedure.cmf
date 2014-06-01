@@ -1,0 +1,80 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="RegexSplit" path="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>Description:
+  This function uses Java&apos;s String.split() method to split a string using a regular expression and a limit.
+
+  Paraphrased from String&apos;s javadoc:
+
+  The cursor returned by this function contains each substring of this string that is terminated 
+  by another substring that matches the given expression or is terminated by the end of the 
+  string. The substrings in the cursor are in the order in which they occur in this string. If 
+  the expression does not match any part of the input then the resulting cursor has just one 
+  row, namely this string.
+
+  The limit parameter controls the number of times the pattern is applied and therefore affects 
+  the length of the resulting cursor. If the limit n is greater than zero then the pattern will 
+  be applied at most n - 1 times, the cursor&apos;s cardinality will be no greater than n, and the cursor&apos;s 
+  last row will contain all input beyond the last matched delimiter. If n is non-positive 
+  then the pattern will be applied as many times as possible and the cursor can have any number of rows. 
+  If n is zero then the pattern will be applied as many times as possible, the cursor can have 
+  any number of rows, and trailing empty strings will be discarded.
+
+  The string &apos;boo:and:foo&apos;, for example, yields the following results with these parameters:
+
+  Regex   Limit   Result 
+    :       2     &apos;boo&apos;, &apos;and:foo&apos; 
+    :       5     &apos;boo&apos;, &apos;and&apos;, &apos;foo&apos; 
+    :      -2     &apos;boo&apos;, &apos;and&apos;, &apos;foo&apos; 
+    o       5     &apos;b&apos;, &apos;&apos;, &apos;:and:f&apos;, &apos;&apos;, &apos;&apos; 
+    o      -2     &apos;b&apos;, &apos;&apos;, &apos;:and:f&apos;, &apos;&apos;, &apos;&apos; 
+    o       0     &apos;b&apos;, &apos;&apos;, &apos;:and:f&apos;
+
+Inputs:
+  Input Text         - The text to search
+  Regular Expression - The regular expression to search for
+  Limit              - The upper limit to the number of times to apply the split
+
+Outputs:
+  result (           - A cursor containing a result set of the split string.
+    splitElement     -   Text of a split element
+  )
+
+Exceptions:
+  None
+
+Author:      Calvin Goodrich
+Date:        8/11/2010
+CSW Version: 5.1.0
+
+© 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="Input Text" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="Regular Expression" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="Limit" direction="IN" nullable="true">
+      <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype subType="DATASOURCE_TYPE" type="TABLE" caseSensitive="false" refId="1">
+        <element name="splitElement">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.RegexSplit</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754473367</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

@@ -1,0 +1,58 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="GetUserGroups" path="/shared/ASAssets/Utilities/repository/RepoUtils/GetUserGroups" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>GetUserGroups
+
+Description:
+    Returns all the groups that a user belongs to.
+
+Inputs:
+    DomainName - The user&apos;s domain
+  
+    UserName   - The user&apos;s name
+
+Outputs:
+    result (   - A cursor containing the list of groups
+        DomainName - The domain of the group
+        GroupName  - The group&apos;s name
+    )
+
+Exceptions:
+    None
+
+Author:      Calvin Goodrich
+Date:        3/30/2011
+CSW Version: 5.1.0
+
+© 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="DomainName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="UserName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype type="TABLE" caseSensitive="false" refId="1">
+        <element name="DomainName">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="GroupName">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.repository.GetUserGroups</attribute>
+  <attribute name="creationDate" type="LONG">1383622341816</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392747908292</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

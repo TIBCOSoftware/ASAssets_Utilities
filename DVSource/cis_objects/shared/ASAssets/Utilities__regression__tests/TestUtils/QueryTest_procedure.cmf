@@ -1,0 +1,50 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="QueryTest" path="/shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>QueryTest:
+  Tests an input query and verifies the result matches a CSV input.
+
+
+Inputs:
+  query             - The query to test.
+    value: Any valid CIS query. May not be NULL.
+
+  expectedResultCSV - A CSV string containing the expected result.
+    value: A valid CSV string. Field separator is a &apos;,&apos;, field qualifier is a &apos;&quot;&apos;, 
+           row separator is a carriage return. Fields may span multiple lines as
+           long as they are qualified with &apos;&quot;&apos; characters. May not be NULL.
+
+
+Outputs:
+  result            - A string containing either &apos;OK&apos; signifying this CJP received the 
+                      expected result or a CSV string containing the actual results.
+    value: &apos;OK&apos; or a CSV string.
+
+
+Exceptions:
+  CustomProcedureException - Thrown when invalid inputs are used.
+
+
+Author:      Calvin Goodrich
+Date:        11/23/2010
+CSW Version: 5.1.0</annotation>
+  <parameters>
+    <parameter name="query" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="expectedResultCSV" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.test.QueryTest</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

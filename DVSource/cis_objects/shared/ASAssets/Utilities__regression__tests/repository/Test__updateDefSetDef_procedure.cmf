@@ -1,0 +1,268 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_updateDefSetDef" path="/shared/ASAssets/Utilities_regression_tests/repository/Test_updateDefSetDef" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="numTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/resource" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="version" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceVersion" type="STRING" maxLength="255"/>
+      </element>
+      <element name="exists" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getDefSetDefs" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="defSetPath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="defname">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="deftype">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="datatype">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="defvalue">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateDefSetDef" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="defSetPath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="updateType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="defName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="defType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="dataType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="defValue" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/Constants" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE Test_updateDefSetDef(
+    OUT numTests INTEGER,
+    OUT numErrors INTEGER,
+    OUT numSkipped INTEGER
+)
+proc:
+BEGIN
+    PATH /shared/ASAssets/Utilities_regression_tests;
+    PATH /lib/resource;
+
+    DECLARE test_name VARCHAR DEFAULT &apos;repository/Test_updateDefSetDef&apos;;
+    DECLARE resourcePath ResourceDefs.ResourcePath;
+    DECLARE updateType VARCHAR(255);
+    DECLARE myDefName VARCHAR(255);
+    DECLARE myDefType VARCHAR(255);
+    DECLARE myDataType VARCHAR(255);
+    DECLARE myDefValue VARCHAR(255);
+    DECLARE testDataType VARCHAR(255);
+    DECLARE testDefValue VARCHAR(255);
+    DECLARE args System.Text;
+    DECLARE result System.Text;
+    DECLARE resourceExists BOOLEAN;
+
+    SET numTests = 0;
+    SET numErrors = 0;
+    SET numSkipped = 0;
+
+    -- start test
+    --
+    test_block_1: 
+    BEGIN INDEPENDENT TRANSACTION
+        SET resourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_sql_def_set&apos;; -- created in Test_createResource
+        SET updateType = &apos;INSERT&apos;;
+        SET myDefName = &apos;TEST_CONSTANT&apos;;
+        SET myDefType = &apos;CONSTANT_DEFINITION&apos;;
+        SET myDataType = &apos;VARCHAR(255)&apos;;
+        SET myDefValue = &apos;This is a constant definition value&apos;;
+
+        SET args = &apos;&apos;&apos;&apos; || resourcePath || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || updateType || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || myDefName || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || myDefType || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || myDataType || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || myDefValue || &apos;&apos;&apos;&apos;;
+
+        SET numTests = numTests + 1;
+
+        CALL /lib/resource/ResourceExists(
+             resourcePath,
+             ResourceDefs.RESOURCE_TYPE_DEFINITION_SET,
+             NULL,
+             resourceExists
+        );
+
+        IF (NOT resourceExists) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: SKIPPING, resource does not exist&apos;);
+            SET numSkipped = numSkipped + 1;
+            LEAVE test_block_1;
+        END IF;
+
+        CALL /shared/ASAssets/Utilities/repository/updateDefSetDef(
+            resourcePath,
+            updateType,
+            myDefName,
+            myDefType,
+            myDataType,
+            myDefValue
+        );
+
+        SET testDataType = NULL;
+        SET testDefValue = NULL;
+
+        expecting_single_row:
+        FOR r AS
+            SELECT
+                dataType,
+                defValue
+            FROM
+                /shared/ASAssets/Utilities/repository/getDefSetDefs(resourcePath)
+            WHERE
+                defName = myDefName AND
+                defType = myDefType
+        DO
+            SET testDataType = r.datatype;
+            SET testDefValue = r.defValue;
+            LEAVE expecting_single_row;
+        END FOR;
+
+        IF (testDataType = myDataType AND testDefValue = myDefValue) THEN
+            SET result = &apos;OK&apos;;
+        ELSE
+            SET result = &apos;FAILED: ex type = &apos; || myDataType || &apos;, act type = &apos; || coalesce(testDataType, &apos;NULL&apos;) || &apos;; ex value = &apos; || myDefValue || &apos;, act value = &apos; || coalesce(testDefValue, &apos;NULL&apos;);
+        END IF;
+    EXCEPTION
+        ELSE
+            SET result = &apos;EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE;
+    END;
+
+    CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: &apos; || result);
+
+    IF (result &lt;&gt; &apos;OK&apos;) THEN
+        SET numErrors = numErrors + 1;
+    END IF;
+    --
+    -- end test
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">26/12</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/20</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/50</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">20/21</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/56</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/99</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

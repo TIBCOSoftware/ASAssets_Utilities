@@ -1,0 +1,27 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="RepoUtils" path="/shared/ASAssets/Utilities/repository/RepoUtils" type="DATA_SOURCE" subtype="NONE" changeToken="0">
+  <annotation/>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
+  </security>
+  <attribute name="autoAddChildren" type="BOOLEAN">true</attribute>
+  <attribute name="classpath" type="STRING"/>
+  <attribute name="creationDate" type="LONG">1376679119330</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="driverName" type="STRING">Custom Java Procedure</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1397592780466</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="name" type="STRING">RepoUtils</attribute>
+  <attribute name="selectionState" type="INTEGER">1</attribute>
+  <attribute name="type" type="STRING">CustomProc</attribute>
+  <attribute name="url" type="STRING">file:///usr/local/Composite_Software/CIS_6.2.0/conf/customjars/RepoUtils.jar</attribute>
+  <attribute name="userDeletedSet" type="SET">
+    <item type="NAME_TYPE_PAIR">
+      <name>DecryptPassword</name>
+      <type>3</type>
+    </item>
+  </attribute>
+</metadata>

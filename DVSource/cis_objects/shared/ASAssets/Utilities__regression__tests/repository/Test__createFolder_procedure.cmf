@@ -1,0 +1,304 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_createFolder" path="/shared/ASAssets/Utilities_regression_tests/repository/Test_createFolder" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="numTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/resource" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="version" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceVersion" type="STRING" maxLength="255"/>
+      </element>
+      <element name="exists" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createFolder" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="sourceFolderPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/Constants" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE Test_createFolder(
+    OUT numTests INTEGER,
+    OUT numErrors INTEGER,
+    OUT numSkipped INTEGER
+)
+BEGIN
+    PATH /shared/ASAssets/Utilities_regression_tests;
+    PATH /lib/resource;
+
+    DECLARE test_name VARCHAR DEFAULT &apos;repository/Test_createFolder&apos;;
+    DECLARE resourcePath ResourceDefs.ResourcePath;
+    DECLARE args LONGVARCHAR;
+    DECLARE success BIT;
+    DECLARE faultXML XML;
+    DECLARE resourceExists BOOLEAN;
+
+    SET numTests = 0;
+    SET numErrors = 0;
+    SET numSkipped = 0;
+
+    -- start test
+    --
+    test_block_1: 
+    BEGIN INDEPENDENT TRANSACTION
+        SET resourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_folder2&apos;;
+
+        SET args = &apos;&apos;&apos;&apos; || resourcePath || &apos;&apos;&apos;&apos;;
+
+        SET numTests = numTests + 1;
+
+        CALL /lib/resource/ResourceExists(
+             resourcePath,
+             /lib/resource/ResourceDefs.RESOURCE_TYPE_CONTAINER,
+             NULL,
+             resourceExists
+        );
+
+        IF (resourceExists) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: SKIPPING, resource exists&apos;);
+            SET numSkipped = numSkipped + 1;
+            LEAVE test_block_1;
+        END IF;
+
+        CALL /shared/ASAssets/Utilities/repository/createFolder(
+            resourcePath,
+            success,
+            faultXML
+        );
+
+        IF (success &lt;&gt; 1) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+            LEAVE test_block_1;
+        END IF;
+
+        CALL /lib/resource/ResourceExists(
+             resourcePath,
+             /lib/resource/ResourceDefs.RESOURCE_TYPE_CONTAINER,
+             NULL,
+             resourceExists
+        );
+
+        IF (resourceExists) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: OK&apos;);
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+        END IF;
+
+    EXCEPTION
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE);
+            SET numErrors = numErrors + 1;
+    END; -- test_block_1
+    --
+    -- end test
+
+    -- start test
+    --
+    test_block_2: 
+    BEGIN
+        SET resourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_folder2/non/existant/folder&apos;;
+
+        SET args = &apos;&apos;&apos;&apos; || resourcePath || &apos;&apos;&apos;&apos;;
+
+        SET numTests = numTests + 1;
+
+        CALL /lib/resource/ResourceExists(
+             resourcePath,
+             /lib/resource/ResourceDefs.RESOURCE_TYPE_CONTAINER,
+             NULL,
+             resourceExists
+        );
+
+        IF (resourceExists) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, fails, intervening folders missing: SKIPPING, resource exists&apos;);
+            SET numSkipped = numSkipped + 1;
+            LEAVE test_block_2;
+        END IF;
+
+        CALL /shared/ASAssets/Utilities/repository/createFolder(
+            resourcePath,
+            success,
+            faultXML
+        );
+
+        IF (success &lt;&gt; 0) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, fails, intervening folders missing: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+            LEAVE test_block_2;
+        END IF;
+
+        CALL /lib/resource/ResourceExists(
+             resourcePath,
+             /lib/resource/ResourceDefs.RESOURCE_TYPE_CONTAINER,
+             NULL,
+             resourceExists
+        );
+
+        IF (NOT resourceExists) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, fails, intervening folders missing: OK&apos;);
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, fails, intervening folders missing: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+        END IF;
+
+    EXCEPTION
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, fails, intervening folders missing: OK&apos;); -- this test is SUPPOSED to fail
+    END; -- test_block_2
+    --
+    -- end test
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">18/129</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">26/11</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/66</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/108</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/123</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/72</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/51</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/64</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/121</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/96</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/39</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

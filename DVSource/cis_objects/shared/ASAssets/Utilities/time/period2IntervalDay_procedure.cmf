@@ -1,0 +1,159 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="period2IntervalDay" path="/shared/ASAssets/Utilities/time/period2IntervalDay" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>period2IntervalDay:
+
+  Converts a specified period to an INTERVAL DAY data type. If either input is NULL
+  a NULL will be returned.
+
+Inputs:
+  amount     - The number of units (specified by periodName)
+  periodName - The unit of measure for the &quot;amount&quot; input:
+                 second
+                 minute
+                 hour
+                 day
+                 week
+                 month (31 days)
+                 year
+
+Outputs:
+  result     - An interval of the specified period.
+
+Exceptions:
+  None
+
+Author:      Calvin Goodrich
+Date:        8/25/2010
+CSW Version: 5.1.0
+
+© 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="amount" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="periodName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="20"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="IntervalDay" type="INTERVAL_DAY" intervalMode="INTERVAL_DAY_TO_SECOND" intervalPrecision="9" fractionalSecondPrecision="6"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/*
+	period2IntervalDay:
+	
+	  Converts a specified period to an INTERVAL DAY data type. If either input is NULL
+	  a NULL will be returned.
+	
+	Inputs:
+	  amount     - The number of units (specified by periodName)
+	  periodName - The unit of measure for the &quot;amount&quot; input:
+	                 second
+	                 minute
+	                 hour
+	                 day
+	                 week
+	                 month (31 days)
+	                 year
+	
+	Outputs:
+	  result     - An interval of the specified period.
+	
+	Exceptions:
+	  None
+	
+	Author:      Calvin Goodrich
+	Date:        8/25/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+ */
+PROCEDURE period2IntervalDay(
+  IN amount INTEGER,
+  IN periodName VARCHAR(20),
+  OUT result INTERVAL DAY(9) TO SECOND
+)
+proc: BEGIN
+  DECLARE c CURSOR (myInt INTERVAL DAY(9) TO SECOND);
+  DECLARE days, hours, minutes, seconds INTEGER;
+  DECLARE mytmp INTEGER DEFAULT amount;
+
+  IF (amount IS NULL OR periodName IS NULL) THEN LEAVE proc; END IF;
+
+  CASE 
+    WHEN UPPER(periodName) IN (&apos;SECOND&apos;, &apos;SECONDS&apos;) THEN
+      SET days = CAST(mytmp / 86400 AS INT);
+      SET mytmp = mytmp - days * 86400;
+      SET hours = CAST(mytmp / 3600 AS INT);
+      SET mytmp = mytmp - hours * 3600;
+      SET minutes = CAST(mytmp / 60 AS INT);
+      SET mytmp = mytmp - minutes * 60;
+      SET seconds = mytmp;
+
+    WHEN UPPER(periodName) IN (&apos;MINUTE&apos;, &apos;MINUTES&apos;) THEN
+      SET days = CAST(mytmp / 1440 AS INT);
+      SET mytmp = mytmp - days * 1440;
+      SET hours = CAST(mytmp / 60 AS INT);
+      SET mytmp = mytmp - hours * 60;
+      SET minutes = mytmp;
+      SET seconds = 0;
+
+    WHEN UPPER(periodName) IN (&apos;HOUR&apos;, &apos;HOURS&apos;) THEN
+      SET days = CAST(mytmp / 24 AS INT);
+      SET mytmp = mytmp - days * 24;
+      SET hours = mytmp;
+      SET minutes = 0;
+      SET seconds = 0;
+
+    WHEN UPPER(periodName) IN (&apos;DAY&apos;, &apos;DAYS&apos;) THEN
+      SET days = mytmp;
+      SET hours = 0;
+      SET minutes = 0;
+      SET seconds = 0;
+
+    WHEN UPPER(periodName) IN (&apos;WEEK&apos;, &apos;WEEKS&apos;) THEN
+      SET days = mytmp * 7;
+      SET hours = 0;
+      SET minutes = 0;
+      SET seconds = 0;
+
+    WHEN UPPER(periodName) IN (&apos;MONTH&apos;, &apos;MONTHS&apos;) THEN
+      SET days = mytmp * 31;
+      SET hours = 0;
+      SET minutes = 0;
+      SET seconds = 0;
+
+    WHEN UPPER(periodName) IN (&apos;YEAR&apos;, &apos;YEARS&apos;) THEN
+      SET days = mytmp * 365;
+      SET hours = 0;
+      SET minutes = 0;
+      SET seconds = 0;
+  END CASE;
+
+  OPEN c FOR &apos;SELECT 
+               INTERVAL &apos;&apos;&apos; || days || &apos; &apos; || hours || &apos;:&apos; || minutes || &apos;:&apos; || seconds || &apos;&apos;&apos; DAY(9) TO SECOND myInt
+             FROM      
+               /services/databases/system/ALL_DOMAINS
+             WHERE
+               DOMAIN_NAME = &apos;&apos;composite&apos;&apos;&apos;;
+  FETCH c INTO result;
+  CLOSE c;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1392758673788</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:2:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

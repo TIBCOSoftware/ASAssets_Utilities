@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--(c) 2014 Cisco and/or its affiliates. All rights reserved.-->
+
+<project name="DateUtils" default="default" basedir=".">
+
+	<property name="src" location="src"/>
+	<property name="build" location="classes"/>
+	<property name="dist" location="../dist"/>
+	<property name="lib" location="../lib"/>
+	<property name="project-name" value="DateUtils"/>
+
+	<path id="project.class.path">
+		<fileset dir="../lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp />
+		<!-- Create the build directory structure used by compile -->
+		<mkdir dir="${build}" />
+	</target>
+
+	<target name="compile" depends="init" description="compile the source " >
+		<!-- Compile the java code from ${src} into ${build} -->
+		<javac source="1.6" target="1.6" srcdir="${src}" destdir="${build}" 
+			debug="true" debuglevel="lines,vars,source">
+	      <classpath refid="project.class.path"/>
+		</javac>
+	</target>
+
+	<target name="dist-jar" depends="clean,compile" description="generate the distribution">
+
+		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
+		<jar jarfile="${dist}/${project-name}.jar" basedir="${build}" />
+
+		<delete dir="${build}" />
+	</target>
+
+	<target name="clean" description="clean up">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build}" />
+		<delete file="${dist}/${project-name}.jar" />
+	</target>
+
+	<target name="default" depends="clean,dist-jar" description="Compile and package CJP jar"/>
+</project>

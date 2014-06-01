@@ -1,0 +1,46 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="HTMLtoXML" path="/shared/ASAssets/Utilities/xml/XMLUtils/HTMLtoXML" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>HTMLtoXML:
+
+	This procedure converts HTML into XHTML (XML). HTML has a looser tagging syntax than XML so this procedure
+    uses the JTidy library (http://jtidy.sourceforge.net) to clean up the HTML to conform to the XHTML standard.
+
+
+	Input:
+		inHTML - The HTML to clean.  
+			Values: Any HTML document
+
+
+	Output:
+		outXML - The cleaned XHTML.
+			Values: An XML document
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	02/06/2010		Jeremy Akers		6.2.0			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inHTML" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="outXML" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.xml.HTMLtoXML</attribute>
+  <attribute name="creationDate" type="LONG">1392838522801</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392839277327</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

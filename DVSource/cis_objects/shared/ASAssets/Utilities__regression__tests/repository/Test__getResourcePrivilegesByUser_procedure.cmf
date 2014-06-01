@@ -1,0 +1,129 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_getResourcePrivilegesByUser" path="/shared/ASAssets/Utilities_regression_tests/repository/Test_getResourcePrivilegesByUser" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="numTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="query" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="expectedResultCSV" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE Test_getResourcePrivilegesByUser(
+    OUT numTests INTEGER,
+    OUT numErrors INTEGER,
+    OUT numSkipped INTEGER
+)
+proc:
+BEGIN
+    DECLARE test_name VARCHAR DEFAULT &apos;repository/Test_getResourcePrivilegesByUser&apos;;
+    DECLARE args System.Text;
+    DECLARE expectedResultCSV System.Text;
+    DECLARE result System.Text;
+
+    SET numTests = 0;
+    SET numErrors = 0;
+    SET numSkipped = 0;
+
+    -- start test
+    --
+    SET args = &apos;&apos;&apos;/shared/examples/CompositeView&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
+    SET expectedResultCSV = 
+&apos;/shared/examples/CompositeView,TABLE,admin,composite,NONE,READ WRITE EXECUTE SELECT UPDATE INSERT DELETE GRANT,READ WRITE EXECUTE SELECT UPDATE INSERT DELETE GRANT&apos;;
+
+    BEGIN
+        SET numTests = numTests + 1;
+        CALL /shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest(
+            &apos;SELECT * FROM /shared/ASAssets/Utilities/repository/getResourcePrivilegesByUser(&apos; || args || &apos;) &apos; ||
+                &apos;WHERE &quot;name&quot; IN (&apos;&apos;admin&apos;&apos;) AND &quot;domain&quot; = &apos;&apos;composite&apos;&apos;&apos;, -- need this so we get consistent results regardless of CIS instance.
+            expectedResultCSV,
+            result
+        );
+    EXCEPTION
+        ELSE
+            SET result = &apos;EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE;
+    END;
+
+    CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: &apos; || result);
+
+    IF (result &lt;&gt; &apos;OK&apos;) THEN
+        SET numErrors = numErrors + 1;
+    END IF;
+    --
+    -- end test
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397497654531</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">20/11</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/36</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/9</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">31/10</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

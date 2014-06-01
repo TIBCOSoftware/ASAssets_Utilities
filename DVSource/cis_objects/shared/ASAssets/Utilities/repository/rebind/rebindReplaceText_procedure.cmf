@@ -1,0 +1,1545 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="rebindReplaceText" path="/shared/ASAssets/Utilities/repository/rebind/rebindReplaceText" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>rebindReplaceText:
+
+	-- CIS Repository Helper Procedure --
+   	This procedure is used by both rebindFolder and rebindResource to replace the script text when the old path does not exist.
+
+	Use the method to replace the path text within the table or procedure script
+	This only gets used when the &quot;from&quot; path does not exist in the target CIS server.
+	This can happen when a car file is imported from one environment like DEV where the 
+	physical layer resources point to one data source and the target CIS server like TEST
+	contains a different data source name.   In that use case, it is not permitted to use
+	the regular rebind as it will throw an error, therefore, the only recourse is to rebind
+	the actual script or procedure text and use the individual methods for each sub-type
+	to perform the update.
+
+	The following resource types and sub-types are supported:
+		resourceType = &apos;TABLE&apos;
+			subtype = &apos;SQL_TABLE&apos; -- Get Regular View
+	
+		resourceType = &apos;PROCEDURE&apos;
+			subtype = &apos;SQL_SCRIPT_PROCEDURE&apos; -- Get Regular Procedure
+			subtype = &apos;EXTERNAL_SQL_PROCEDURE&apos; -- Get Packaged Query Procedure
+			subtype = &apos;BASIC_TRANSFORM_PROCEDURE&apos; -- Get XSLT Basic Transformation definition
+			subtype = &apos;XSLT_TRANSFORM_PROCEDURE&apos; -- Get XSLT Transformation text
+			subtype = &apos;STREAM_TRANSFORM_PROCEDURE&apos; -- Get XSLT Stream Transformation text
+
+	Textual Path Replacement Rules:
+	------------------------------
+	 Caveat:
+	   For textual path replacement, when the &quot;fromFolder&quot; does not exist and the SQL_TABLE (Views) and 
+	   SQL_SCRIPT_PROCEDURE (Procedures) have models, the model is lost.  The reason is there is no way
+	   to programatically create a model in the API.   For parameterized queries this is unfortunate as
+	   there is no way to rebuild the model once removed.  For Views, the model can be regenerated in
+	   most cases.
+	
+	resourceType = &apos;TABLE&apos;
+		subtype = &apos;SQL_TABLE&apos; -- Get Regular View
+			procedureTextCurr = tableResource.getSqlText();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			procedureText = procedureTextCurr.replaceAll(fromFolder, toFolder);
+			updateSqlTable(resourcePath, detailLevel, procedureText, model, isExplicitDesign, columns, annotation, attributes);
+
+	resourceType = &apos;PROCEDURE&apos;
+		subtype = &apos;SQL_SCRIPT_PROCEDURE&apos; -- Update Regular Procedure
+			procedureTextCurr = procedureResource.getScriptText();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			procedureText = procedureTextCurr.replaceAll(fromFolder, toFolder);
+			updateSqlScriptProcedure(resourcePath, detailLevel, procedureText, model, isExplicitDesign, parameters, annotation, attributes);
+
+		subtype = &apos;EXTERNAL_SQL_PROCEDURE&apos; -- Update Packaged Query Procedure
+			usedResourcePathCurr = procedureResource.getExternalDataSourcePath();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			usedResourcePath = usedResourcePathCurr.replaceAll(fromFolder, toFolder);
+			updateExternalSqlProcedure(resourcePath, detailLevel, procedureText, usedResourcePath, parameters, annotation, attributes);
+
+		subtype = &apos;BASIC_TRANSFORM_PROCEDURE&apos; -- Update XSLT Basic Transformation definition
+			usedResourcePathCurr = procedureResource.getTransformSourcePath();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			usedResourcePath = usedResourcePathCurr.replaceAll(fromFolder, toFolder);
+			updateBasicTransformProcedure(resourcePath, detailLevel, usedResourcePath, resourceType, annotation, attributes);
+
+		subtype = &apos;XSLT_TRANSFORM_PROCEDURE&apos; -- Update XSLT Transformation text
+			usedResourcePathCurr = procedureResource.getTransformSourcePath();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			usedResourcePath = usedResourcePathCurr.replaceAll(fromFolder, toFolder);
+			updateXsltTransformProcedure(resourcePath, detailLevel, usedResourcePath, resourceType, procedureText, model, annotation, isExplicitDesign, parameters, attributes);
+
+		subtype = &apos;STREAM_TRANSFORM_PROCEDURE&apos; -- Update XSLT Stream Transformation text
+			usedResourcePathCurr = procedureResource.getTransformSourcePath();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			usedResourcePath = usedResourcePathCurr.replaceAll(fromFolder, toFolder);
+			updateStreamTransformProcedure(resourcePath, detailLevel, usedResourcePath, resourceType, model, isExplicitDesign, parameters, annotation, attributes);
+
+
+	Input:
+		resourcePath - the resource path of the resource being rebound
+
+		resourceType - the type of the resource being rebound
+
+		subtype - the subtype of the resource beging rebound
+
+		fromFolder - the original &quot;from&quot; path of the &quot;used&quot; resource
+
+		to Folder - the target &quot;to&quot; path of the for the &quot;used&quot; resource
+
+
+	Output:
+		success - 1 or 0 - 1=success, 0=unsuccessful
+
+
+	Exceptions:
+        System.IllegalArgumentException - thrown if an input value is missing
+        System.SOAPFaultException - thrown if there is a fault
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	04/24/2013		Mike Tinius			5.2.0			Created new
+	05/24/2013		Mike Tinius			6.0.0			Fixed issue with script text needing to be XML &quot;unescaped&quot; prior to it being updated and XML &quot;escaped&quot;
+	06/25/2013		Mike Tinius			6.1.0			Set explicit success=1 in the different sections to insure a proper value is returned.
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="fromFolder" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="toFolder" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/applyReservedListToPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="fixedResourcePath" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateBasicTransformationProcedure" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="transformSourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="transformSourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="annotation" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="attributeVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="AttributeCompleteType" type="TREE" refId="2">
+              <element name="attrName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attrType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attrValue">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="valueList">
+                <datatype name="valueList" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="itemType" type="TREE" refId="3">
+                      <element name="type">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="value">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="valueMap">
+                <datatype name="valueMap" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="entryType" type="TREE" refId="4">
+                      <element name="key">
+                        <datatype name="key" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <reference refId="3"/>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="value">
+                        <datatype name="value" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <reference refId="3"/>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="valueArray">
+                <datatype name="valueArray" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="unset">
+                <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateExternalSqlProcedure" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="externalSqlText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="externalDatasaourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="parameterVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="ParameterType" type="TREE" refId="2">
+              <element name="name">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="sqlType">
+                <datatype name="sqlType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="sqlType" type="TREE" refId="3">
+                      <element name="definition">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="nativeType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="referencePath">
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                      </element>
+                      <element name="referenceTypeName">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="proprietaryModel">
+                        <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+                      </element>
+                      <element name="name">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="trailingSpaces">
+                        <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="xmlType">
+                <datatype name="xmlType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="xmlType" type="TREE" refId="4">
+                      <element name="name">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="namespace">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="nativeType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="schema">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="referencePath">
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                      </element>
+                      <element name="proprietaryModel">
+                        <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="pseudoType">
+                <datatype name="pseudoType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="pseudoType" type="TREE" refId="5">
+                      <element name="definition">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="direction">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="isNullable">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attributes">
+                <datatype name="attributes" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="AttributeCompleteType" type="TREE" refId="6">
+                      <element name="attrName">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="attrType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="attrValue">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="valueList">
+                        <datatype name="valueList" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="itemType" type="TREE" refId="7">
+                              <element name="type">
+                                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                              </element>
+                              <element name="value">
+                                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                              </element>
+                            </datatype>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="valueMap">
+                        <datatype name="valueMap" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="entryType" type="TREE" refId="8">
+                              <element name="key">
+                                <datatype name="key" type="ARRAY" maxLength="0">
+                                  <itemDatatype>
+                                    <datatype name="itemType" type="TREE" refId="9">
+                                      <element name="type">
+                                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                                      </element>
+                                      <element name="value">
+                                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                                      </element>
+                                    </datatype>
+                                  </itemDatatype>
+                                </datatype>
+                              </element>
+                              <element name="value">
+                                <datatype name="value" type="ARRAY" maxLength="0">
+                                  <itemDatatype>
+                                    <reference refId="9"/>
+                                  </itemDatatype>
+                                </datatype>
+                              </element>
+                            </datatype>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="valueArray">
+                        <datatype name="valueArray" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="unset">
+                        <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="annotation">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="annotation" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="attributeVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="AttributeCompleteType" type="TREE" refId="10">
+              <element name="attrName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attrType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attrValue">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="valueList">
+                <datatype name="valueList" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <reference refId="7"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="valueMap">
+                <datatype name="valueMap" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <reference refId="8"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="valueArray">
+                <datatype name="valueArray" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="unset">
+                <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateSqlScript" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="scripttext" direction="INOUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateSqlTable" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="inScripttext" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateStreamTransformProcedure" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="transformSourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="transformSourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="streamModel" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="xsltModelType" type="TREE" refId="2">
+              <element name="version">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="type">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="proprietaryModel">
+                <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="annotation" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="isExplicitlyDesigned" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="parameterVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="ParameterType" type="TREE" refId="3">
+              <element name="name">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="sqlType">
+                <datatype name="sqlType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="sqlType" type="TREE" refId="4">
+                      <element name="definition">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="nativeType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="referencePath">
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                      </element>
+                      <element name="referenceTypeName">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="proprietaryModel">
+                        <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+                      </element>
+                      <element name="name">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="trailingSpaces">
+                        <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="xmlType">
+                <datatype name="xmlType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="xmlType" type="TREE" refId="5">
+                      <element name="name">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="namespace">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="nativeType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="schema">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="referencePath">
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                      </element>
+                      <element name="proprietaryModel">
+                        <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="pseudoType">
+                <datatype name="pseudoType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="pseudoType" type="TREE" refId="6">
+                      <element name="definition">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="direction">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="isNullable">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attributes">
+                <datatype name="attributes" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="AttributeCompleteType" type="TREE" refId="7">
+                      <element name="attrName">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="attrType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="attrValue">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="valueList">
+                        <datatype name="valueList" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="itemType" type="TREE" refId="8">
+                              <element name="type">
+                                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                              </element>
+                              <element name="value">
+                                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                              </element>
+                            </datatype>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="valueMap">
+                        <datatype name="valueMap" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="entryType" type="TREE" refId="9">
+                              <element name="key">
+                                <datatype name="key" type="ARRAY" maxLength="0">
+                                  <itemDatatype>
+                                    <reference refId="8"/>
+                                  </itemDatatype>
+                                </datatype>
+                              </element>
+                              <element name="value">
+                                <datatype name="value" type="ARRAY" maxLength="0">
+                                  <itemDatatype>
+                                    <reference refId="8"/>
+                                  </itemDatatype>
+                                </datatype>
+                              </element>
+                            </datatype>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="valueArray">
+                        <datatype name="valueArray" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="unset">
+                        <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="annotation">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="attributeVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="AttributeCompleteType" type="TREE" refId="10">
+              <element name="attrName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attrType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attrValue">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="valueList">
+                <datatype name="valueList" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <reference refId="8"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="valueMap">
+                <datatype name="valueMap" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <reference refId="9"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="valueArray">
+                <datatype name="valueArray" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="unset">
+                <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateXsltTransformProcedure" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="transformSourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="transformSourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="xsltText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="xsltModel" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="xsltModelType" type="TREE" refId="2">
+              <element name="version">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="type">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="proprietaryModel">
+                <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="annotation" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="isExplicitDesign" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="parameterVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="ParameterType" type="TREE" refId="3">
+              <element name="name">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="sqlType">
+                <datatype name="sqlType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="sqlType" type="TREE" refId="4">
+                      <element name="definition">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="nativeType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="referencePath">
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                      </element>
+                      <element name="referenceTypeName">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="proprietaryModel">
+                        <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+                      </element>
+                      <element name="name">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="trailingSpaces">
+                        <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="xmlType">
+                <datatype name="xmlType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="xmlType" type="TREE" refId="5">
+                      <element name="name">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="namespace">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="nativeType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="schema">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="referencePath">
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                      </element>
+                      <element name="proprietaryModel">
+                        <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="pseudoType">
+                <datatype name="pseudoType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="pseudoType" type="TREE" refId="6">
+                      <element name="definition">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="direction">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="isNullable">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attributes">
+                <datatype name="attributes" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="AttributeCompleteType" type="TREE" refId="7">
+                      <element name="attrName">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="attrType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="attrValue">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="valueList">
+                        <datatype name="valueList" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="itemType" type="TREE" refId="8">
+                              <element name="type">
+                                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                              </element>
+                              <element name="value">
+                                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                              </element>
+                            </datatype>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="valueMap">
+                        <datatype name="valueMap" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="entryType" type="TREE" refId="9">
+                              <element name="key">
+                                <datatype name="key" type="ARRAY" maxLength="0">
+                                  <itemDatatype>
+                                    <datatype name="itemType" type="TREE" refId="10">
+                                      <element name="type">
+                                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                                      </element>
+                                      <element name="value">
+                                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                                      </element>
+                                    </datatype>
+                                  </itemDatatype>
+                                </datatype>
+                              </element>
+                              <element name="value">
+                                <datatype name="value" type="ARRAY" maxLength="0">
+                                  <itemDatatype>
+                                    <reference refId="10"/>
+                                  </itemDatatype>
+                                </datatype>
+                              </element>
+                            </datatype>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="valueArray">
+                        <datatype name="valueArray" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="unset">
+                        <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="annotation">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="attributeVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="AttributeCompleteType" type="TREE" refId="11">
+              <element name="attrName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attrType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attrValue">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="valueList">
+                <datatype name="valueList" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <reference refId="8"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="valueMap">
+                <datatype name="valueMap" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <reference refId="9"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="valueArray">
+                <datatype name="valueArray" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="unset">
+                <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/getValueFromXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="namespaces" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inXpath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inXml" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/unescapeXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inStr" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outStr" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/applyReservedListToPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/unescapeXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+    rebindReplaceText:
+
+	-- CIS Repository Helper Procedure --
+   	This procedure is used by both rebindFolder and rebindResource to replace the script text when the old path does not exist.
+
+	Use the method to replace the path text within the table or procedure script
+	This only gets used when the &quot;from&quot; path does not exist in the target CIS server.
+	This can happen when a car file is imported from one environment like DEV where the 
+	physical layer resources point to one data source and the target CIS server like TEST
+	contains a different data source name.   In that use case, it is not permitted to use
+	the regular rebind as it will throw an error, therefore, the only recourse is to rebind
+	the actual script or procedure text and use the individual methods for each sub-type
+	to perform the update.
+
+	The following resource types and sub-types are supported:
+		resourceType = &apos;TABLE&apos;
+			subtype = &apos;SQL_TABLE&apos; -- Get Regular View
+	
+		resourceType = &apos;PROCEDURE&apos;
+			subtype = &apos;SQL_SCRIPT_PROCEDURE&apos; -- Get Regular Procedure
+			subtype = &apos;EXTERNAL_SQL_PROCEDURE&apos; -- Get Packaged Query Procedure
+			subtype = &apos;BASIC_TRANSFORM_PROCEDURE&apos; -- Get XSLT Basic Transformation definition
+			subtype = &apos;XSLT_TRANSFORM_PROCEDURE&apos; -- Get XSLT Transformation text
+			subtype = &apos;STREAM_TRANSFORM_PROCEDURE&apos; -- Get XSLT Stream Transformation text
+
+	Textual Path Replacement Rules:
+	------------------------------
+	 Caveat:
+	   For textual path replacement, when the &quot;fromFolder&quot; does not exist and the SQL_TABLE (Views) and 
+	   SQL_SCRIPT_PROCEDURE (Procedures) have models, the model is lost.  The reason is there is no way
+	   to programatically create a model in the API.   For parameterized queries this is unfortunate as
+	   there is no way to rebuild the model once removed.  For Views, the model can be regenerated in
+	   most cases.
+	
+	resourceType = &apos;TABLE&apos;
+		subtype = &apos;SQL_TABLE&apos; -- Get Regular View
+			procedureTextCurr = tableResource.getSqlText();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			procedureText = procedureTextCurr.replaceAll(fromFolder, toFolder);
+			updateSqlTable(resourcePath, detailLevel, procedureText, model, isExplicitDesign, columns, annotation, attributes);
+
+	resourceType = &apos;PROCEDURE&apos;
+		subtype = &apos;SQL_SCRIPT_PROCEDURE&apos; -- Update Regular Procedure
+			procedureTextCurr = procedureResource.getScriptText();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			procedureText = procedureTextCurr.replaceAll(fromFolder, toFolder);
+			updateSqlScriptProcedure(resourcePath, detailLevel, procedureText, model, isExplicitDesign, parameters, annotation, attributes);
+
+		subtype = &apos;EXTERNAL_SQL_PROCEDURE&apos; -- Update Packaged Query Procedure
+			usedResourcePathCurr = procedureResource.getExternalDataSourcePath();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			usedResourcePath = usedResourcePathCurr.replaceAll(fromFolder, toFolder);
+			updateExternalSqlProcedure(resourcePath, detailLevel, procedureText, usedResourcePath, parameters, annotation, attributes);
+
+		subtype = &apos;BASIC_TRANSFORM_PROCEDURE&apos; -- Update XSLT Basic Transformation definition
+			usedResourcePathCurr = procedureResource.getTransformSourcePath();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			usedResourcePath = usedResourcePathCurr.replaceAll(fromFolder, toFolder);
+			updateBasicTransformProcedure(resourcePath, detailLevel, usedResourcePath, resourceType, annotation, attributes);
+
+		subtype = &apos;XSLT_TRANSFORM_PROCEDURE&apos; -- Update XSLT Transformation text
+			usedResourcePathCurr = procedureResource.getTransformSourcePath();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			usedResourcePath = usedResourcePathCurr.replaceAll(fromFolder, toFolder);
+			updateXsltTransformProcedure(resourcePath, detailLevel, usedResourcePath, resourceType, procedureText, model, annotation, isExplicitDesign, parameters, attributes);
+
+		subtype = &apos;STREAM_TRANSFORM_PROCEDURE&apos; -- Update XSLT Stream Transformation text
+			usedResourcePathCurr = procedureResource.getTransformSourcePath();
+			// Replace all of the matching old &quot;fromFolder&quot; paths with the new &quot;toFolder&quot; path
+			usedResourcePath = usedResourcePathCurr.replaceAll(fromFolder, toFolder);
+			updateStreamTransformProcedure(resourcePath, detailLevel, usedResourcePath, resourceType, model, isExplicitDesign, parameters, annotation, attributes);
+
+
+	Input:
+		resourcePath - the resource path of the resource being rebound
+
+		resourceType - the type of the resource being rebound
+
+		subtype - the subtype of the resource beging rebound
+
+		fromFolder - the original &quot;from&quot; path of the &quot;used&quot; resource
+
+		to Folder - the target &quot;to&quot; path of the for the &quot;used&quot; resource
+
+
+	Output:
+		success - 1 or 0 - 1=success, 0=unsuccessful
+
+
+	Exceptions:
+        System.IllegalArgumentException - thrown if an input value is missing
+        System.SOAPFaultException - thrown if there is a fault
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	04/24/2013		Mike Tinius			5.2.0			Created new
+	05/24/2013		Mike Tinius			6.0.0			Fixed issue with script text needing to be XML &quot;unescaped&quot; prior to it being updated and XML &quot;escaped&quot;
+	06/25/2013		Mike Tinius			6.1.0			Set explicit success=1 in the different sections to insure a proper value is returned.
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE rebindReplaceText(
+	IN resourcePath		/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+	IN resourceType		VARCHAR,
+	IN fromFolder		/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+	IN toFolder			/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	IN debug			CHAR(1),
+	OUT success			BIT
+)
+BEGIN
+	DECLARE moduleName				VARCHAR DEFAULT &apos;rebindReplaceText&apos;;
+	DECLARE notEmpty				INTEGER DEFAULT 0;
+	DECLARE Empty					INTEGER DEFAULT 1;
+	DECLARE createResponse 			XML;
+	DECLARE faultResponse 			XML;
+	DECLARE message					LONGVARCHAR;
+	DECLARE namespaces				VARCHAR(305) DEFAULT &apos;xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&apos;;
+	DECLARE xmlOut					XML;
+	DECLARE xpath					VARCHAR(1024);
+	DECLARE subtype					VARCHAR;
+	DECLARE scriptText				LONGVARCHAR;
+	DECLARE externalDataSourcePath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+   	DECLARE transformSourcePath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE transformSourceType		VARCHAR;
+
+	-- Place a folder separator &apos;/&apos; at the end of the fromFolder and toFolder to insure that no partial paths are replaced
+	-- by accident.  Paths must be complete paths.
+	DECLARE fromFolder_	/shared/ASAssets/Utilities/TypeDefinitions.pathType DEFAULT REPLACE(applyReservedListToPath(fromFolder,null)||&apos;/&apos;,&apos;//&apos;,&apos;/&apos;);
+	DECLARE toFolder_	/shared/ASAssets/Utilities/TypeDefinitions.pathType DEFAULT REPLACE(applyReservedListToPath(toFolder,null)||&apos;/&apos;,&apos;//&apos;,&apos;/&apos;);
+
+	set success = 0;
+
+	if (isEmpty(resourcePath) = notEmpty and isEmpty(resourceType) = notEmpty) then 
+
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;fromFolder=&apos;||fromFolder_);
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;  toFolder=&apos;||toFolder_);
+
+		-- Retrieve the resource XML
+		call /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML(resourcePath, resourceType, xmlOut);
+
+		set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:subtype&apos;;
+		call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), subtype);
+
+		/*************************************************************
+		 * Resource: TABLE / SQL_TABLE - View
+		 *************************************************************/
+		if (resourceType = &apos;TABLE&apos; and subtype =&apos;SQL_TABLE&apos;) then
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:sqlText&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), scriptText);
+			-- Unescape the XML in preparation for it to be escaped again during update
+			set scriptText = unescapeXML(scriptText);
+
+			if (POSITION(fromFolder_ IN scriptText) &gt; 0) then
+				set message = &apos;      UPDATED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+
+				-- Replace the basePath with the actual path
+				set scriptText = REPLACE(scriptText, fromFolder_, toFolder_);
+
+/*  IN fullResourcePath 	/shared/Utilities/TypeDefinitions.pathType, 
+    IN inScripttext 		LONGVARCHAR,
+	OUT success				BIT,
+	OUT createResponse 		XML,
+	OUT faultResponse		XML
+*/
+				-- Update the table text
+				call /shared/ASAssets/Utilities/repository/updateSqlTable(resourcePath,scriptText,success,createResponse,faultResponse);
+				if (isEmpty(faultResponse) = notEmpty or success = 0) then
+					set message = &apos;        ERROR: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+					call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+					raise System.SOAPFaultException value cast(faultResponse as longvarchar);
+				end if;
+			else
+				set message = &apos;    INSPECTED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+			end if;
+			set success = 1;
+		end if;
+
+		/*************************************************************
+		 * Resource: PROCEDURE / SQL_SCRIPT_PROCEDURE - sql script procedure
+		 *************************************************************/
+		if (resourceType = &apos;PROCEDURE&apos; and subtype = &apos;SQL_SCRIPT_PROCEDURE&apos;) then
+			-- Get procedure script text 
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:scriptText&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), scriptText);
+			-- Unescape the XML in preparation for it to be escaped again during update
+			set scriptText = unescapeXML(scriptText);
+
+			if (POSITION(fromFolder_ IN scriptText) &gt; 0) then
+				set message = &apos;      UPDATED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+
+				-- Replace the basePath with the actual path
+				set scriptText = REPLACE(scriptText, fromFolder_, toFolder_);
+
+/*   IN fullResourcePath 	/shared/Utilities/TypeDefinitions.pathType, 
+    INOUT scripttext 		LONGVARCHAR,
+	OUT success				BIT,
+	OUT createResponse 		XML,
+	OUT faultResponse		XML
+*/
+				-- Update the script text
+				call /shared/ASAssets/Utilities/repository/updateSqlScript(resourcePath,scriptText,success,createResponse,faultResponse);
+				if (isEmpty(faultResponse) = notEmpty or success = 0) then
+					set message = &apos;        ERROR: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+					call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+					raise System.SOAPFaultException value cast(faultResponse as longvarchar);
+				end if;
+			else
+				set message = &apos;    INSPECTED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+			end if;
+			set success = 1;
+		end if;
+
+		/*************************************************************
+		 * Resource: PROCEDURE / EXTERNAL_SQL_PROCEDURE -- Packaged Query Procedure
+		 *************************************************************/
+		if (resourceType = &apos;PROCEDURE&apos; and subtype =&apos;EXTERNAL_SQL_PROCEDURE&apos;) then
+			-- Get the &quot;resource:externalDataSourcePath&quot;
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:externalDataSourcePath&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), externalDataSourcePath);
+			set externalDataSourcePath = REPLACE(applyReservedListToPath(externalDataSourcePath,null)||&apos;/&apos;,&apos;//&apos;,&apos;/&apos;);
+
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;origFolder=&apos;||emptyStr(externalDataSourcePath));
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;fromFolder=&apos;||emptyStr(fromFolder_));
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;  toFolder=&apos;||emptyStr(toFolder_));
+
+			-- Get the &quot;resource:externalSqlText&quot;
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:externalSqlText&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), scriptText);
+			-- Unescape the XML in preparation for it to be escaped again during update
+			set scriptText = unescapeXML(scriptText);
+
+			if (POSITION(fromFolder_ IN externalDataSourcePath) &gt; 0) then
+				set message = &apos;      UPDATED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+
+				-- Replace the basePath with the actual path
+				set externalDataSourcePath = REPLACE(externalDataSourcePath, fromFolder_, toFolder_);
+
+/* 	IN resourcePath 			/shared/Utilities/TypeDefinitions.pathType, 
+   	IN externalSqlText 			LONGVARCHAR,
+	IN externalDatasaourcePath	/shared/Utilities/TypeDefinitions.pathType, 
+	IN parameterVector			/shared/Utilities/repository/definitions/RepositoryDefinitions.ParameterVectorType,
+	IN annotation				LONGVARCHAR,
+	IN attributeVector			/shared/Utilities/repository/definitions/RepositoryDefinitions.AttributeCompleteVectorType,
+	OUT success					BIT
+*/
+				-- Update the External Package
+				call /shared/ASAssets/Utilities/repository/updateExternalSqlProcedure(resourcePath, scriptText, externalDataSourcePath, null, null, null, success);
+
+				if (isEmpty(faultResponse) = notEmpty or success = 0) then
+					set message = &apos;        ERROR: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+					call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+					raise System.SOAPFaultException value cast(faultResponse as longvarchar);
+				end if;
+			else
+				set message = &apos;    INSPECTED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+			end if;
+			set success = 1;
+		end if;
+
+		/*************************************************************
+		 * Resource: PROCEDURE / BASIC_TRANSFORM_PROCEDURE -- Basic Transformation
+		 *************************************************************/
+		if (resourceType = &apos;PROCEDURE&apos; and subtype =&apos;BASIC_TRANSFORM_PROCEDURE&apos;) then
+			-- Get the &quot;resource:transformSourcePath&quot;
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:transformSourcePath&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), transformSourcePath);
+			set transformSourcePath = applyReservedListToPath(transformSourcePath,null);
+
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;origFolder=&apos;||emptyStr(transformSourcePath));
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;fromFolder=&apos;||emptyStr(fromFolder_));
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;  toFolder=&apos;||emptyStr(toFolder_));
+
+			-- Get the &quot;resource:transformSourceType&quot;
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:transformSourceType&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), transformSourceType);
+
+			if (POSITION(fromFolder_ IN transformSourcePath) &gt; 0) then
+				set message = &apos;      UPDATED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+
+				-- Replace the basePath with the actual path
+				set transformSourcePath = REPLACE(transformSourcePath, fromFolder_, toFolder_);
+
+/*  IN resourcePath 			/shared/Utilities/TypeDefinitions.pathType, 
+   	IN transformSourcePath 		/shared/Utilities/TypeDefinitions.pathType, 
+	IN transformSourceType		VARCHAR,
+	IN annotation				LONGVARCHAR,
+	IN attributeVector			/shared/Utilities/repository/definitions/RepositoryDefinitions.AttributeCompleteVectorType,
+*/
+				-- Update the Basic XSLT Transformation
+				call /shared/ASAssets/Utilities/repository/updateBasicTransformationProcedure(resourcePath, transformSourcePath, transformSourceType, null, null, success);
+
+				if (isEmpty(faultResponse) = notEmpty or success = 0) then
+					set message = &apos;        ERROR: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+					call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+					raise System.SOAPFaultException value cast(faultResponse as longvarchar);
+				end if;
+			else
+				set message = &apos;    INSPECTED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+			end if;
+			set success = 1;
+		end if;
+
+		/*************************************************************
+		 * Resource: PROCEDURE / XSLT_TRANSFORM_PROCEDURE -- XSLT Custom Transformation
+		 *************************************************************/
+		if (resourceType = &apos;PROCEDURE&apos; and subtype =&apos;XSLT_TRANSFORM_PROCEDURE&apos;) then
+			-- Get the &quot;resource:transformSourcePath&quot;
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:transformSourcePath&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), transformSourcePath);
+			set transformSourcePath = applyReservedListToPath(transformSourcePath,null);
+
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;origFolder=&apos;||emptyStr(transformSourcePath));
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;fromFolder=&apos;||emptyStr(fromFolder_));
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;  toFolder=&apos;||emptyStr(toFolder_));
+
+			-- Get the &quot;resource:transformSourceType&quot;
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:transformSourceType&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), transformSourceType);
+
+			if (POSITION(fromFolder_ IN transformSourcePath) &gt; 0) then
+				set message = &apos;      UPDATED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+
+				-- Replace the basePath with the actual path
+				set transformSourcePath = REPLACE(transformSourcePath, fromFolder_, toFolder_);
+
+/*  IN resourcePath 			/shared/Utilities/TypeDefinitions.pathType, 
+   	IN transformSourcePath 		/shared/Utilities/TypeDefinitions.pathType, 
+	IN transformSourceType		VARCHAR,
+	IN xsltText					LONGVARCHAR,
+	IN xsltModel				/shared/Utilities/repository/definitions/RepositoryDefinitions.XsltModelVectorType,
+	IN annotation				LONGVARCHAR,
+	IN isExplicitDesign			BIT,
+	IN parameterVector			/shared/Utilities/repository/definitions/RepositoryDefinitions.ParameterVectorType,
+	IN attributeVector			/shared/Utilities/repository/definitions/RepositoryDefinitions.AttributeCompleteVectorType,
+	OUT success					BIT
+*/
+				-- Update the XSLT Transformation
+				call /shared/ASAssets/Utilities/repository/updateXsltTransformProcedure(resourcePath, transformSourcePath, transformSourceType, null, null, null, null, null, null, success);
+
+				if (isEmpty(faultResponse) = notEmpty or success = 0) then
+					set message = &apos;        ERROR: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+					call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+					raise System.SOAPFaultException value cast(faultResponse as longvarchar);
+				end if;
+			else
+				set message = &apos;    INSPECTED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+			end if;
+			set success = 1;
+		end if;
+
+		/*************************************************************
+		 * Resource: PROCEDURE / STREAM_TRANSFORM_PROCEDURE -- XSLT Custom Transformation
+		 *************************************************************/
+		if (resourceType = &apos;PROCEDURE&apos; and subtype =&apos;STREAM_TRANSFORM_PROCEDURE&apos;) then
+			-- Get the &quot;resource:transformSourcePath&quot;
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:transformSourcePath&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), transformSourcePath);
+			set transformSourcePath = applyReservedListToPath(transformSourcePath,null);
+
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;origFolder=&apos;||emptyStr(transformSourcePath));
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;fromFolder=&apos;||emptyStr(fromFolder_));
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;  toFolder=&apos;||emptyStr(toFolder_));
+
+			-- Get the &quot;resource:transformSourceType&quot;
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:transformSourceType&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), transformSourceType);
+
+			if (POSITION(fromFolder_ IN transformSourcePath) &gt; 0) then
+				set message = &apos;      UPDATED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+
+				-- Replace the basePath with the actual path
+				set transformSourcePath = REPLACE(transformSourcePath, fromFolder_, toFolder_);
+
+/*  IN resourcePath 			/shared/Utilities/TypeDefinitions.pathType, 
+   	IN transformSourcePath 		/shared/Utilities/TypeDefinitions.pathType, 
+	IN transformSourceType		VARCHAR,
+	IN streamModel				/shared/Utilities/repository/definitions/RepositoryDefinitions.XsltModelVectorType,
+	IN annotation				LONGVARCHAR,
+	IN isExplicitlyDesigned		BIT,
+	IN parameterVector			/shared/Utilities/repository/definitions/RepositoryDefinitions.ParameterVectorType,
+	IN attributeVector			/shared/Utilities/repository/definitions/RepositoryDefinitions.AttributeCompleteVectorType,
+	OUT success					BIT
+*/
+				-- Update the XSLT Streaming Transformation
+				call /shared/ASAssets/Utilities/repository/updateStreamTransformProcedure(resourcePath, transformSourcePath, transformSourceType, null, null, null, null, null, success);
+
+				if (isEmpty(faultResponse) = notEmpty or success = 0) then
+					set message = &apos;        ERROR: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+					call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+					raise System.SOAPFaultException value cast(faultResponse as longvarchar);
+				end if;
+			else
+				set message = &apos;    INSPECTED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, message);
+			end if;
+			set success = 1;
+		end if;
+
+	else
+		raise System.IllegalArgumentException value &apos;Resource Path=[&apos;||emptyStr(resourcePath)||&apos;] and Type=[&apos;||emptyStr(resourceType)||&apos;] and Subtype=[&apos;||emptyStr(subtype)||&apos;] cannot be empty.&apos;;
+	end if;
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;success=&apos;||emptyStr(success));
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">12/353</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/172</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/303</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/412</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/402</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/258</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/209</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

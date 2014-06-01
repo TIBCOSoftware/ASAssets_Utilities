@@ -1,0 +1,130 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_RegexGetGroups" path="/shared/ASAssets/Utilities_regression_tests/string/TextUtils/Test_RegexGetGroups" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="numTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="query" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="expectedResultCSV" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE Test_RegexGetGroups(
+    OUT numTests INTEGER,
+    OUT numErrors INTEGER,
+    OUT numSkipped INTEGER
+)
+BEGIN
+    DECLARE test_name VARCHAR DEFAULT &apos;string/TextUtils/Test_RegexGetGroups&apos;;
+    DECLARE args System.Text;
+    DECLARE expectedResultCSV System.Text;
+    DECLARE result System.Text;
+
+    SET numTests = 0;
+    SET numErrors = 0;
+    SET numSkipped = 0;
+
+    -- start test
+    --
+    SET args = &apos;&apos;&apos;2010-07-28T13:02:00.003-08:00&apos;&apos;,&apos;&apos;\s*(\-?\d+\-\d{2}\-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?)([\+\-]\d{2}:\d{2}|Z)?\s*&apos;&apos;, 1&apos;;
+    SET expectedResultCSV = 
+&apos;0, 2010-07-28T13:02:00.003-08:00
+1, 2010-07-28
+2, 13:02:00.003
+3, -08:00&apos;;
+
+    BEGIN
+        SET numTests = numTests + 1;
+        CALL /shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest(
+            &apos;SELECT * FROM /shared/ASAssets/Utilities/string/TextUtils/RegexGetGroups(&apos; || args || &apos;)&apos;,
+            expectedResultCSV,
+            result
+        );
+    EXCEPTION
+        ELSE
+            SET result = &apos;EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE;
+    END;
+
+    CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: &apos; || result);
+
+    IF (result &lt;&gt; &apos;OK&apos;) THEN
+        SET numErrors = numErrors + 1;
+    END IF;
+    --
+    -- end test
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397499097310</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">20/10</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">31/9</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/8</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/37</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

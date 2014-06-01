@@ -1,0 +1,182 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="entityExtractToString" path="/shared/ASAssets/Utilities/string/entityExtractToString" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>entityExtractToString:
+	Invoke &quot;entityExtract&quot; and return the keywords in a single comma separate string.  
+	This is a helper procedure that takes the vector output from &quot;entityExtract&quot; and turns it into a single string.
+ 
+	Input:
+		inText - contains any text string.  
+			Values: Any text value
+		inDelimiter - Any single delimiting character that separates words in a text string.
+			Values: &apos; &apos;, &apos;|&apos; or &apos;,&apos; are common separators.
+		inNumWords - Number of words to extract  
+			Values: 0 or Null=extract all words, &gt;0 only extract to the number provided
+		random - A numerical bit (1 or 0) that defines whether to return words randomly or in sequence.  
+			 Random may be useful if you want to randomly skip over words to get a random extraction of words.
+			 Sequential will extract words in order of their appearance in the text.
+			Values: true(1)=random-produce a list randomly from the incoming text
+				false(0)=sequential-produce a list sequentially from the incoming text
+		removeSymbols - A numerical bit (1 or 0) that defines whether to remove all symbols before performing the extraction.  
+				The list of symbols are defined in entityConstants.
+			Values: true(1)=remove symbols and punctuation prior to extraction
+				false(0)=do not remove symbols and punctuation prior to extraction
+	Output:
+		outWords - A single, comma separate string of keyword entities
+			Values: String of any text value such as this string: keyword1,keyword2,keyword3
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inText" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="inDelimiter" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="inNumWords" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="random" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="removeSymbols" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="outWords" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/string/entityExtract" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inDelimiter" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="inNumWords" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="random" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="removeSymbols" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="entityVector" direction="OUT">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+          </itemDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* entityExtractToString:
+	Invoke &quot;entityExtract&quot; and return the keywords in a single comma separate string.  
+	This is a helper procedure that takes the vector output from &quot;entityExtract&quot; and turns it into a single string.
+ 
+	Input:
+		inText - contains any text string.  
+			Values: Any text value
+		inDelimiter - Any single delimiting character that separates words in a text string.
+			Values: &apos; &apos;, &apos;|&apos; or &apos;,&apos; are common separators.
+		inNumWords - Number of words to extract  
+			Values: 0 or Null=extract all words, &gt;0 only extract to the number provided
+		random - A numerical bit (1 or 0) that defines whether to return words randomly or in sequence.  
+			 Random may be useful if you want to randomly skip over words to get a random extraction of words.
+			 Sequential will extract words in order of their appearance in the text.
+			Values: true(1)=random-produce a list randomly from the incoming text
+				false(0)=sequential-produce a list sequentially from the incoming text
+		removeSymbols - A numerical bit (1 or 0) that defines whether to remove all symbols before performing the extraction.  
+				The list of symbols are defined in entityConstants.
+			Values: true(1)=remove symbols and punctuation prior to extraction
+				false(0)=do not remove symbols and punctuation prior to extraction
+	Output:
+		outWords - A single, comma separate string of keyword entities
+			Values: String of any text value such as this string: keyword1,keyword2,keyword3
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE entityExtractToString(
+	IN inText		LONGVARCHAR,
+	IN inDelimiter		CHAR(1),-- &apos; &apos;, &apos;|&apos; or any other single character delimiter
+	IN inNumWords		INTEGER,-- number of words to produce.  If 0 or null then produce all words
+	IN random		bit,	-- true(1)=random-produce a list randomly from the incoming text
+					-- false(0)=sequential-produce a list sequentially from the incoming text
+	IN removeSymbols	bit,	-- true(1)=remove symbols and punctuation prior to extraction
+					-- false(0)=do not remove symbols and punctuation prior to extraction
+	OUT outWords		LONGVARCHAR -- comma separate list of words.
+)
+BEGIN
+	DECLARE entityVector	VECTOR(varchar);
+	DECLARE i,j		INTEGER DEFAULT 1;
+	DECLARE randomNum,mod	INTEGER;
+	DECLARE numWords 	INTEGER;
+
+	call /shared/ASAssets/Utilities/string/entityExtract(inText,inDelimiter,numWords,random,removeSymbols,entityVector);
+	
+	if (inNumWords = 0) then
+		set randomNum = CARDINALITY(entityVector);
+		set numWords = CARDINALITY(entityVector);
+	else
+		set randomNum = CARDINALITY(entityVector) / numWords;
+		set numWords = inNumWords;
+	end if;
+	if (randomNum = 0) then
+		set randomNum = 1;
+	end if;
+--call print(&apos;randomNum=&apos;||randomNum);
+--call print(&apos;CARDINALITY(entityVector)=&apos;||cast(CARDINALITY(entityVector) as varchar));
+
+	set outWords = &apos;&apos;;
+	set i = 1;
+	set j = 1;
+	outWordsLoop:
+	WHILE (i &lt;= CARDINALITY(entityVector) and j &lt;= numWords) DO
+		set mod = i % randomNum;
+--call print(&apos;mod=&apos;||mod);
+		if (random = 1) then
+			if (mod = 0) then
+				if (outWords = &apos;&apos;) then
+					set outWords = entityVector[i];
+				else
+					set outWords = outWords || &apos;, &apos; || entityVector[i];
+				end if;
+				set j = j + 1;
+			end if;
+		else
+			if (outWords = &apos;&apos;) then
+				set outWords = entityVector[i];
+			else
+				set outWords = outWords || &apos;, &apos; || entityVector[i];
+			end if;
+			set j = j + 1;
+		end if;
+		set i = i + 1;
+	END WHILE;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

@@ -1,0 +1,188 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="extractTime" path="/shared/ASAssets/Utilities/time/extractTime" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>extractTime:
+	This procedure takes an input string that is expected to contain a time value. It compares this string
+	against a (non-exhaustive) set of time formats, and extracts the time value.
+	The time formats supported in this procedure are defined as constants in DefaultValues.
+ 
+	Input:
+		inTimeStr - contains any varchar of length 255.  
+			Values: Any text value in a reasonable date or timestamp format such as ‘12:00:00’
+		isMandatory - contains any varchar of length 255.  
+			Values: 0 means not mandatory, 1 means mandatory. No other values accepted
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+	Output:
+		extractTime - 1. contains a valid time
+				   2. null if isMandatory=0 and no time could be extracted
+				   3. Exception is thrown if isMandatory=1 and no timestamp could be extracted
+			Values: null or a time value such as 00:00:00
+
+	Exceptions:  InvalidTimeException
+			If isMandatory=0 and no format could be found then return null.
+			If isMandatory=1 and no format could be found then an exception is thrown.
+
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inTimeStr" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="isMandatory" direction="IN" nullable="true">
+      <datatype name="SMALLINT" type="INTEGER" minValue="-32768" maxValue="32767"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="extractTime" direction="OUT" nullable="true">
+      <datatype name="TIME" type="TIME"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/ExceptionDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/time/DefaultValues" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* extractTime:
+	This procedure takes an input string that is expected to contain a time value. It compares this string
+	against a (non-exhaustive) set of time formats, and extracts the time value.
+	The time formats supported in this procedure are defined as constants in DefaultValues.
+ 
+	Input:
+		inTimeStr - contains any varchar of length 255.  
+			Values: Any text value in a reasonable date or timestamp format such as ‘12:00:00’
+		isMandatory - contains any varchar of length 255.  
+			Values: 0 means not mandatory, 1 means mandatory. No other values accepted
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+	Output:
+		extractTime - 1. contains a valid time
+				   2. null if isMandatory=0 and no time could be extracted
+				   3. Exception is thrown if isMandatory=1 and no timestamp could be extracted
+			Values: null or a time value such as 00:00:00
+
+	Exceptions:  InvalidTimeException
+			If isMandatory=0 and no format could be found then return null.
+			If isMandatory=1 and no format could be found then an exception is thrown.
+
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE extractTime(
+	IN inTimeStr 			VARCHAR(255), 
+    IN isMandatory 			SMALLINT,   -- 0 means not mandatory, 1 means mandatory. No other values accepted.
+	IN debug 				CHAR(1), -- true=&apos;Y&apos; and false=&apos;N&apos;	  
+	OUT extractTime		 	TIME
+)
+BEGIN
+ 	PATH /shared/ASAssets/Utilities;
+	DECLARE moduleName 			VARCHAR DEFAULT &apos;extractTime()&apos;;
+	DECLARE errorMessage		/shared/ASAssets/Utilities/TypeDefinitions.messageType DEFAULT &apos;&apos;;
+	DECLARE i					INTEGER DEFAULT 0;
+	DECLARE timeStr 			VARCHAR; 
+	DECLARE timeFormatVector 	VECTOR(varchar);
+	DECLARE pattern				VARCHAR;
+
+	set timeFormatVector = /shared/ASAssets/Utilities/&quot;time&quot;/DefaultValues.timeFormatVectorConst;
+	set timeStr = emptyStr(TRIM(inTimeStr));
+	-- Initialize it.
+	SET extractTime = NULL;
+	SET pattern = &apos;&apos;;
+
+	IF (LENGTH(timeStr) &gt; 0) THEN
+	    set i = 1;
+	    dateLoop:
+	    While (i &lt;= CARDINALITY(timeFormatVector)) do
+	    	BEGIN
+		    SET pattern = timeFormatVector[i];
+		    SET extractTime = PARSE_TIME(timeStr, timeFormatVector[i]);
+		    leave dateLoop;
+	    	EXCEPTION
+		    else
+		    	set i = i + 1;
+	    	END;
+	    end while;
+	    if (i &gt; CARDINALITY(timeFormatVector)) then
+		set i = 0;
+		set pattern = &apos;&apos;;
+	    end if;
+	END IF;
+
+	IF (UPPER(debug) = &apos;Y&apos; or UPPER(debug) = &apos;T&apos;) THEN
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,
+			&apos;length=&apos;|| length(emptyStr(inTimeStr)) || 
+			&apos;,  inTimeStr=&apos;||emptyStr(inTimeStr) || 
+			&apos;,  extractTime=&apos;||emptyStr(extractTime) || 
+			&apos;   Pattern[&apos;|| i || &apos;]=[&apos;|| pattern || &apos;]&apos;);	
+	END IF;
+	IF (extractTime is null) THEN
+            IF (isMandatory = 1) THEN
+            	-- Mandatory means if we cannot extract a valid time, then we have to raise an exception.
+	    	set errorMessage = &apos;ERROR: extractTime(): isMandatory=1. Unable to process date=[&apos;|| timeStr || &apos;]&apos;;
+	    	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,&apos;Y&apos;,errorMessage);	
+            	RAISE /shared/ASAssets/Utilities/ExceptionDefinitions.InvalidTimeException value errorMessage;
+            ELSE
+            	-- Not mandatory means if we cannot produce a valid timestamp, just return NULL (which has been set already).
+            	-- Do not raise exception here.
+            	set errorMessage = &apos;WARNING: extractTime(): isMandatory=0 or null. Unable to process this date=[&apos;|| timeStr || &apos;]. NULL value returned.&apos;;
+		IF (UPPER(debug) = &apos;Y&apos; or UPPER(debug) = &apos;T&apos;) THEN
+		    	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,errorMessage);
+		END IF;
+            END IF;
+	END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

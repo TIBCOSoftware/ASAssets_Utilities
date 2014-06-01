@@ -1,0 +1,443 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="extractTextList" path="/shared/ASAssets/Utilities/string/extractTextList" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>extractTextList:
+	-- CIS Repository Helper Procedure --
+	extractTextList - The extractTextList is used to extract a separated list of values containing
+		embedded separators within double quotes, single quotes.  The result is returned as a cursor based on
+		the boundaries of the the qualifiers: double quotes, single quotes or paired parenthesis.  The separator value
+		is preserved within the qualifier if the flag for that qualifier is set to 1 (true).
+
+	Input:
+		textList - a separated list of items which may or may not contain double quoted lists, single quoted lists or
+					lists containing left/right parenthesis lists that are to be separated based on the passed in separator.
+		separator - The separator value (typically a comma) that will be used to define the boundary of text expressions.
+					Becuase this uses regex, any special separators need to be escaped with a \ character.  
+					It is not necessary to escape a comma separator in regex.
+					The following are potential use cases and are shown within brackets [] to better show the use of spaces:
+						[\ ] - this is used to split text on a space such as finding all the words in a sentence.
+						[\\] - this is a backslash separator escaped with a backslash
+						[\^] - this is a caret separator escaped with a backslash
+		preserveDoubleQuotes - 1 or 0/null (default).  Indicates whether to preserve the context of commas within the boundaries
+					of a double quoted qualifier string.
+		preserveSingleQuotes - 1 or 0/null (default).  Indicates whether to preserve the context of commas within the boundaries
+					of a single quoted qualifier string.
+		preserveParenthesis - 1 or 0/null (default).  Indicates whether to preserve the context of commas within the boundaries
+					of left and right parenthesis qualifier pairs.
+		preserveQualifier - 1/null (default) or 0.  In this case, the default is to preserve the qualifer value on output.  
+					The qualifiers may be double quotes, single quotes or left and right parenthesis.
+					if set to 0 (do not preserve), the qualifiers are only remmoved if they exist as pairs in the first and last characters
+					   and the length of the text being returned is at least 2 characters.
+					Otherwise if the above conditions are not met, any attempt to remove embedded qualifiers will not be completed.  
+					The assumption is that qualifiers exist at the boundaries of the comma separator such as &quot;orders,customers&quot;, orders which would yield:
+						&quot;orders,customers&quot;
+						orders
+					This example would not remove the qualifier: text &quot;more text&quot; text,text
+						text &quot;more text&quot; text
+						text
+		trimResults	- 1 or 0/null (default) - if set to 1, then trim the results of any white space otherwise do not.
+	Output:
+		result - cursor of textExpression based on the passed in separator and how the preserve qualifier flags are set
+
+	Exceptions: ex - cannot have a null or empty separator
+
+	Examples:
+		1. 	preserveDoubleQuotes=1
+			preserveQualifier=null
+			trimResults=null
+			textList:
+				&quot;orders,customers&quot;,orders,customers
+			Result: --&gt;
+				&quot;orders,customers&quot;
+				orders
+				customers
+
+		2. 	preserveSingleQuotes=1
+			preserveQualifier=0
+			trimResults=0
+			textList:
+				&apos;orders,customers&apos;,orders,customers
+			Result: --&gt;
+				orders,customers
+				orders
+				customers
+
+		3. 	preserveParenthesiss=1
+			preserveQualifier=1
+			trimResults=1
+			textList:
+				(orders,customers),    orders,      (customers)
+			Result: --&gt;
+				(orders,customers)
+				orders
+				(customers)
+
+		4. a more sophisticated example would be a list of derived columns from a sql statement:
+			preserveDoubleQuotes=1
+			preserveSingleQuotes=1
+			preserveParenthesiss=1
+			preserveQualifier=1
+			trimResults=0
+			textList:
+				Customers.*, 
+				Orders.Ship_City,
+				LOWER(ship_State) as shipState,
+				SUBSTRING(ship_State,1,1) as stateChar1,
+				RPAD(&apos; &apos;,ship_State ,4)||&apos;, &apos;||zip as shipStateZip,
+				extract(year from INTERVAL &apos;499-11&apos; YEAR(3) TO MONTH) mon,
+				Orders.Ship_City||&apos;&apos;, &apos;&apos;||RPAD(ship_State,&apos;&apos; &apos;&apos;,10)||&apos;&apos;, &apos;&apos;||Zip &quot;textWithEmbedded,Commas,&quot; 
+			Result: --&gt;
+				Customers.*
+				Orders.Ship_City
+				LOWER(ship_State) as shipState
+				SUBSTRING(ship_State,1,1) as stateChar1
+				RPAD(&apos; &apos;,ship_State ,4)||&apos;, &apos;||zip as shipStateZip
+				extract(year from INTERVAL &apos;499-11&apos; YEAR(3) TO MONTH) mon
+				Orders.Ship_City||&apos;&apos;
+				&apos;&apos;||RPAD(ship_State,&apos;&apos; &apos;&apos;,10)||&apos;&apos;
+				&apos;&apos;||Zip &quot;textWithEmbedded,Commas,&quot; 
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	05/22/2013		Mike Tinius			6.0.0			Created new for Best Practices 7.1
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="textList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="separator" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="preserveDoubleQuotes" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="preserveSingleQuotes" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="preserveParenthesis" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="preserveQualifier" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="trimResults" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="textExpression">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexReplace" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Replacement Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexReplace" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexReplace" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/*	extractTextList:
+	-- CIS Repository Helper Procedure --
+	extractTextList - The extractTextList is used to extract a separated list of values containing
+		embedded separators within double quotes, single quotes.  The result is returned as a cursor based on
+		the boundaries of the the qualifiers: double quotes, single quotes or paired parenthesis.  The separator value
+		is preserved within the qualifier if the flag for that qualifier is set to 1 (true).
+
+	Input:
+		textList - a separated list of items which may or may not contain double quoted lists, single quoted lists or
+					lists containing left/right parenthesis lists that are to be separated based on the passed in separator.
+		separator - The separator value (typically a comma) that will be used to define the boundary of text expressions.
+					Becuase this uses regex, any special separators need to be escaped with a \ character.  
+					It is not necessary to escape a comma separator in regex.
+					The following are potential use cases and are shown within brackets [] to better show the use of spaces:
+						[\ ] - this is used to split text on a space such as finding all the words in a sentence.
+						[\\] - this is a backslash separator escaped with a backslash
+						[\^] - this is a caret separator escaped with a backslash
+		preserveDoubleQuotes - 1 or 0/null (default).  Indicates whether to preserve the context of commas within the boundaries
+					of a double quoted qualifier string.
+		preserveSingleQuotes - 1 or 0/null (default).  Indicates whether to preserve the context of commas within the boundaries
+					of a single quoted qualifier string.
+		preserveParenthesis - 1 or 0/null (default).  Indicates whether to preserve the context of commas within the boundaries
+					of left and right parenthesis qualifier pairs.
+		preserveQualifier - 1/null (default) or 0.  In this case, the default is to preserve the qualifer value on output.  
+					The qualifiers may be double quotes, single quotes or left and right parenthesis.
+					if set to 0 (do not preserve), the qualifiers are only remmoved if they exist as pairs in the first and last characters
+					   and the length of the text being returned is at least 2 characters.
+					Otherwise if the above conditions are not met, any attempt to remove embedded qualifiers will not be completed.  
+					The assumption is that qualifiers exist at the boundaries of the comma separator such as &quot;orders,customers&quot;, orders which would yield:
+						&quot;orders,customers&quot;
+						orders
+					This example would not remove the qualifier: text &quot;more text&quot; text,text
+						text &quot;more text&quot; text
+						text
+		trimResults	- 1 or 0/null (default) - if set to 1, then trim the results of any white space otherwise do not.
+	Output:
+		result - cursor of textExpression based on the passed in separator and how the preserve qualifier flags are set
+
+	Exceptions: ex - cannot have a null or empty separator
+
+	Examples:
+		1. 	preserveDoubleQuotes=1
+			preserveQualifier=null
+			trimResults=null
+			textList:
+				&quot;orders,customers&quot;,orders,customers
+			Result: --&gt;
+				&quot;orders,customers&quot;
+				orders
+				customers
+
+		2. 	preserveSingleQuotes=1
+			preserveQualifier=0
+			trimResults=0
+			textList:
+				&apos;orders,customers&apos;,orders,customers
+			Result: --&gt;
+				orders,customers
+				orders
+				customers
+
+		3. 	preserveParenthesiss=1
+			preserveQualifier=1
+			trimResults=1
+			textList:
+				(orders,customers),    orders,      (customers)
+			Result: --&gt;
+				(orders,customers)
+				orders
+				(customers)
+
+		4. a more sophisticated example would be a list of derived columns from a sql statement:
+			preserveDoubleQuotes=1
+			preserveSingleQuotes=1
+			preserveParenthesiss=1
+			preserveQualifier=1
+			trimResults=0
+			textList:
+				Customers.*, 
+				Orders.Ship_City,
+				LOWER(ship_State) as shipState,
+				SUBSTRING(ship_State,1,1) as stateChar1,
+				RPAD(&apos; &apos;,ship_State ,4)||&apos;, &apos;||zip as shipStateZip,
+				extract(year from INTERVAL &apos;499-11&apos; YEAR(3) TO MONTH) mon,
+				Orders.Ship_City||&apos;&apos;, &apos;&apos;||RPAD(ship_State,&apos;&apos; &apos;&apos;,10)||&apos;&apos;, &apos;&apos;||Zip &quot;textWithEmbedded,Commas,&quot; 
+			Result: --&gt;
+				Customers.*
+				Orders.Ship_City
+				LOWER(ship_State) as shipState
+				SUBSTRING(ship_State,1,1) as stateChar1
+				RPAD(&apos; &apos;,ship_State ,4)||&apos;, &apos;||zip as shipStateZip
+				extract(year from INTERVAL &apos;499-11&apos; YEAR(3) TO MONTH) mon
+				Orders.Ship_City||&apos;&apos;
+				&apos;&apos;||RPAD(ship_State,&apos;&apos; &apos;&apos;,10)||&apos;&apos;
+				&apos;&apos;||Zip &quot;textWithEmbedded,Commas,&quot; 
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	05/22/2013		Mike Tinius			6.0.0			Created new for Best Practices 7.1
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE extractTextList(
+	IN textList				LONGVARCHAR,
+	IN separator			VARCHAR,
+	IN preserveDoubleQuotes	BIT,
+	IN preserveSingleQuotes	BIT,
+	IN preserveParenthesis	BIT,
+	IN preserveQualifier	BIT,
+	IN trimResults			BIT,
+	OUT result				PIPE(textExpression LONGVARCHAR)
+)
+BEGIN
+    PATH /shared/ASAssets/Utilities/repository;
+
+	DECLARE moduleName						VARCHAR DEFAULT &apos;extractTextList&apos;;
+	DECLARE debug							CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	DECLARE exprLen							INTEGER DEFAULT 32767;
+	DECLARE lineLen							INTEGER DEFAULT 32767;
+	DECLARE parsedTextList 					LONGVARCHAR DEFAULT textList;
+	DECLARE preserveQualifier_				BIT DEFAULT preserveQualifier;
+	DECLARE textExpression					LONGVARCHAR DEFAULT &apos;&apos;;
+	DECLARE regexSeparator 					VARCHAR DEFAULT separator;
+	DECLARE encodedSep	 					VARCHAR DEFAULT &apos;_000sep&apos;;
+	DECLARE regexReplacePatternDoubleQuote 	VARCHAR DEFAULT regexSeparator||&apos;(?=[^&quot;]{0,&apos;||exprLen||&apos;}&quot;(?:[^&quot;\r\n]{0,&apos;||exprLen||&apos;}&quot;[^&quot;]{0,&apos;||exprLen||&apos;}&quot;){0,&apos;||lineLen||&apos;}[^&quot;\r\n]{0,&apos;||lineLen||&apos;}$)&apos;;
+--												   ORIGINAL=&apos;,(?=[^&quot;]{0,1024}&quot;(?:[^&quot;\r\n]{0,1024}&quot;[^&quot;]{0,1024}&quot;){0,2048}[^&quot;\r\n]{0,2048}$)&apos;;
+	DECLARE regexReplacePatternSingleQuote 	VARCHAR DEFAULT regexSeparator||&apos;(?=[^&apos;&apos;]{0,&apos;||exprLen||&apos;}&apos;&apos;(?:[^&apos;&apos;\r\n]{0,&apos;||exprLen||&apos;}&apos;&apos;[^&apos;&apos;]{0,&apos;||exprLen||&apos;}&apos;&apos;){0,&apos;||lineLen||&apos;}[^&apos;&apos;\r\n]{0,&apos;||lineLen||&apos;}$)&apos;;
+--												   ORIGINAL=&apos;,(?=[^&apos;&apos;]{0,1024}&apos;&apos;(?:[^&apos;&apos;\r\n]{0,1024}&apos;&apos;[^&apos;&apos;]{0,1024}&apos;&apos;){0,2048}[^&apos;&apos;\r\n]{0,2048}$)&apos;;
+	DECLARE regexReplacePatternParentheses	VARCHAR DEFAULT regexSeparator||&apos;(?=[^()]{0,&apos;||exprLen||&apos;}\))&apos;;
+--												   ORIGINAL=&apos;,(?=[^()]{0,1024}\))&apos;;
+	DECLARE qualifier						VARCHAR DEFAULT &apos;&quot;&apos;&apos;()&apos;; -- left and right qualifying characters
+	DECLARE ex								EXCEPTION;
+
+	-- Validate the separator
+	if (regexSeparator is null or LENGTH(regexSeparator) = 0) then
+		raise ex value &apos;The separator cannot be null or empty.&apos;;
+	end if;
+	if (POSITION(&apos;&apos;&apos;&apos; IN regexSeparator) &gt; 0) then
+		raise ex value &apos;The separator singe quote &apos;&apos; cannot be used.&apos;;
+	end if;
+	if (POSITION(&apos;&quot;&apos; IN regexSeparator) &gt; 0) then
+		raise ex value &apos;The separator double quote &quot; cannot be used.&apos;;
+	end if;
+	if (POSITION(&apos;(&apos; IN regexSeparator) &gt; 0) then
+		raise ex value &apos;The separator left parenthesis ( cannot be used.&apos;;
+	end if;
+	if (POSITION(&apos;)&apos; IN regexSeparator) &gt; 0) then
+		raise ex value &apos;The separator right parenthesis ) cannot be used.&apos;;
+	end if;
+
+	-- Set the default qualifier value
+	if (preserveQualifier_ is null) then
+		set preserveQualifier_ = 1;
+	end if;
+
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;------------------- Begin Extracting Text List -------------------&apos;);
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;original parsedTextList=&apos;||parsedTextList);
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;regexReplacePatternDoubleQuote=&apos;||regexReplacePatternDoubleQuote);
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;regexReplacePatternSingleQuote=&apos;||regexReplacePatternSingleQuote);
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;regexReplacePatternParentheses=&apos;||regexReplacePatternParentheses);
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;&apos;);
+
+	if (preserveParenthesis is not null and preserveParenthesis = 1) then
+--	1) Replace commas inside left and right parentheses
+--		Take into account that commas may appear inside functions delimited by () as RPAD(UPPER(SUBSTRING(Phone_Number,1,5)),7,&apos;&apos;_&apos;&apos;) AreaCode, col2
+--			Regex: ,(?=[^()]{0,1024}\))
+		set parsedTextList = RegexReplace(parsedTextList, regexReplacePatternParentheses, encodedSep, 0);
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;parsedTextList=&apos;||parsedTextList);
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;&apos;);
+	end if;
+
+	if (preserveDoubleQuotes is not null and preserveDoubleQuotes = 1) then
+--	2) Replace commas inside double quotes
+--		Take into account that commas may appear inside double quoted column names such as &quot;COL,UMN,NAME&quot;, col2
+--			Regex: ,(?=[^&quot;]{0,255}&quot;(?:[^&quot;\r\n]{0,255}&quot;[^&quot;]{0,255}&quot;){0,1024}[^&quot;\r\n]{0,1024}$)
+		set parsedTextList = RegexReplace(parsedTextList, regexReplacePatternDoubleQuote, encodedSep, 0);
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;parsedTextList=&apos;||parsedTextList);
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;&apos;);
+	end if;
+
+	if (preserveSingleQuotes is not null and preserveSingleQuotes = 1) then
+--	3) Replace commas inside single quotes
+--		Take into account that commas may appear inside single quoted values such as CITY||&apos;, &apos;||STATE ADDRESS, col2
+--			Regex: ,(?=[^&apos;&apos;]{0,255}&apos;&apos;(?:[^&apos;&apos;\r\n]{0,255}&apos;&apos;[^&apos;&apos;]{0,255}&apos;&apos;){0,1024}[^&apos;&apos;\r\n]{0,1024}$)
+		set parsedTextList = RegexReplace(parsedTextList, regexReplacePatternSingleQuote, encodedSep, 0);
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;parsedTextList=&apos;||parsedTextList);
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;&apos;);
+	end if;
+
+--	4) Parse the text epxression for commas to extract a list of text items.
+--			Regex: ,
+	for c as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(parsedTextList, regexSeparator, 0) do
+		-- Remove any \ in front of the qualifier so that only the real qualifier value is used during replacement
+		if (POSITION(&apos;\&apos; IN regexSeparator) = 1) then
+			set regexSeparator = SUBSTRING(regexSeparator,2,LENGTH(regexSeparator));
+		end if;
+		-- Replace the encoded commas with real commas
+		set textExpression = REPLACE(c.splitElement, encodedSep, regexSeparator);
+		-- Trim the results if the flag is set
+		if (trimResults is not null and trimResults = 1) then
+			set textExpression = TRIM(textExpression);
+		end if;
+
+		-- Remove surrounding qualifier if it exists in the first and last character are qualifiers and the text is not the same as the incoming text list
+--		if (preserveQualifier_ = 0 and LENGTH(textExpression) &gt; 1 and textExpression != textList) then
+
+		-- Remove surrounding qualifier if it exists in the first and last character are qualifiers
+		if (preserveQualifier_ = 0 and LENGTH(textExpression) &gt; 1) then
+			if (POSITION(SUBSTRING(textExpression,1,1) IN qualifier) &gt; 0 and POSITION(SUBSTRING(textExpression,LENGTH(textExpression),1) IN qualifier) &gt; 0) then
+				set textExpression = SUBSTRING(textExpression,2,LENGTH(textExpression));
+				if (LENGTH(textExpression) &gt; 0 and POSITION(SUBSTRING(textExpression,LENGTH(textExpression),1) IN qualifier) &gt; 0) then
+					set textExpression = SUBSTRING(textExpression,1,LENGTH(textExpression)-1);
+				end if;
+			end if;
+		end if;
+
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;text=[&apos;||textExpression||&apos;]&apos;);
+		insert into result values (textExpression);
+	end for;
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;------------------- End Extracting Text List -------------------&apos;);
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;&apos;);
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486501474</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:1:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

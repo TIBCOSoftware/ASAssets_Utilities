@@ -1,0 +1,326 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getRebindableResources" path="/shared/ASAssets/Utilities/repository/rebind/getRebindableResources" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getRebindableResources:
+	-- CIS Repository Helper Procedure --
+    This procedure is used by both rebindFolder and rebindResource to assess what used resources are rebindable
+
+	Input:
+		resourcePath - the resource path of the resource being rebound
+		resourceType - the type of the resource being rebound
+		fromFolder - the original &quot;from&quot; path of the &quot;used&quot; resource
+		toFolder - the target &quot;to&quot; path of the for the &quot;used&quot; resource
+
+	Output:
+		rebindVector - the list of rebindable resources used by a given resource.   null of the from path does not exist
+
+	Exceptions:  
+        System.NotFoundException - throws an exception if the path does not exist.
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	04/24/2013		Mike Tinius			5.2.0			Created new
+	08/27/2013		Mike Tinius			6.1.0			B.P. 7.3: updated with a BEGIN INDEPENDENT TRANSACTION block as random runtime errors were being thrown during rebinding.
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="fromFolder" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="toFolder" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="rebindVector" direction="OUT" nullable="true">
+      <datatype name="rebindVector" type="ARRAY" maxLength="0">
+        <itemDatatype>
+          <datatype name="rebindRow" type="TREE" refId="1">
+            <element name="oldPath">
+              <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+            </element>
+            <element name="oldType">
+              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+            </element>
+            <element name="newPath">
+              <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+            </element>
+            <element name="newType">
+              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+            </element>
+          </datatype>
+        </itemDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getUsedResourcesCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="usedResCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="id">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/rebind/rebindCheckPathExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="rebindVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="rebindRow" type="TREE" refId="2">
+              <element name="oldPath">
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+              </element>
+              <element name="oldType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="newPath">
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+              </element>
+              <element name="newType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="outRebindVector" direction="OUT">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <reference refId="2"/>
+          </itemDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getRebindableResources:
+	-- CIS Repository Helper Procedure --
+    This procedure is used by both rebindFolder and rebindResource to assess what used resources are rebindable
+
+	Input:
+		resourcePath - the resource path of the resource being rebound
+		resourceType - the type of the resource being rebound
+		fromFolder - the original &quot;from&quot; path of the &quot;used&quot; resource
+		toFolder - the target &quot;to&quot; path of the for the &quot;used&quot; resource
+
+	Output:
+		rebindVector - the list of rebindable resources used by a given resource.   null of the from path does not exist
+
+	Exceptions:  
+        System.NotFoundException - throws an exception if the path does not exist.
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	04/24/2013		Mike Tinius			5.2.0			Created new
+	08/27/2013		Mike Tinius			6.1.0			B.P. 7.3: updated with a BEGIN INDEPENDENT TRANSACTION block as random runtime errors were being thrown during rebinding.
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getRebindableResources(
+	IN 	resourcePath	/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+	IN 	resourceType	VARCHAR,
+	IN 	fromFolder		/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+	IN 	toFolder		/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+	IN 	debug			CHAR(1),
+	OUT rebindVector 	/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.rebindVector
+)
+BEGIN
+	DECLARE moduleName	VARCHAR DEFAULT &apos;getRebindableResources&apos;;
+	DECLARE i			INTEGER DEFAULT 0;
+	DECLARE rebindRow 	/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.rebindRow;
+	DECLARE eol			VARCHAR DEFAULT CHR(13)||CHR(10);
+	-- Place a folder separator &apos;/&apos; at the end of the fromFolder and toFolder to insure that no partial paths are replaced
+	-- by accident.  Paths must be complete paths.
+	DECLARE fromFolder_	/shared/ASAssets/Utilities/TypeDefinitions.pathType DEFAULT REPLACE(fromFolder||&apos;/&apos;,&apos;//&apos;,&apos;/&apos;);
+	DECLARE toFolder_	/shared/ASAssets/Utilities/TypeDefinitions.pathType DEFAULT REPLACE(toFolder||&apos;/&apos;,&apos;//&apos;,&apos;/&apos;);
+	DECLARE ex			EXCEPTION;
+
+/*
+	DECLARE PUBLIC TYPE rebindRow ROW (
+		oldPath				TypeDefinitions.pathType,
+		oldType				VARCHAR(255),
+		newPath				TypeDefinitions.pathType,
+		newType				VARCHAR(255)
+	);
+*/
+	set rebindVector = null;
+	if (resourceExists(resourcePath, resourceType) = 1) then
+
+		if (resourceType = &apos;TABLE&apos; or
+			resourceType = &apos;PROCEDURE&apos; or
+			resourceType = &apos;LINK&apos; or
+			resourceType = &apos;DEFINITION_SET&apos; or
+			resourceType = &apos;DATA_SOURCE&apos; or
+			resourceType = &apos;TRIGGER&apos;) then
+
+			BEGIN INDEPENDENT TRANSACTION
+
+			for r as select * from /shared/ASAssets/Utilities/repository/getUsedResourcesCursor(resourcePath, resourceType) do
+				set rebindRow.oldPath = r.resourcePath;
+				set rebindRow.oldType = r.resourceType;
+				set rebindRow.newPath = REPLACE(r.resourcePath, fromFolder_, toFolder_);
+				set rebindRow.newType = r.resourceType;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, 
+							eol||&apos;        resource path: &apos; || resourcePath  || 
+							eol||&apos;        resource type: &apos; || resourceType || 
+							eol||&apos;            from path: &apos; || fromFolder ||
+							eol||&apos;              to path: &apos; || toFolder ||
+							eol||&apos;         rebind rules: &apos; ||
+							eol||&apos;              oldPath: &apos; || rebindRow.oldPath  || 
+							eol||&apos;              oldType: &apos; || rebindRow.oldType || 
+							eol||&apos;              newPath: &apos; || rebindRow.newPath || 
+							eol||&apos;              newType: &apos; || rebindRow.newType
+				);
+				
+				-- If the old and new paths are different then add them to the vector
+				if (rebindRow.oldPath != rebindRow.newPath) then
+					if (i = 0) then
+						set rebindVector = VECTOR[(null)];
+						set i = i + 1;
+						set rebindVector[i] = rebindRow;
+					else
+						set rebindVector = EXTEND(rebindVector,1);
+						set i = i + 1;
+						set rebindVector[i] = rebindRow;
+					end if;
+				end if;
+			end for;
+
+			EXCEPTION
+				ELSE raise ex value cast(CURRENT_EXCEPTION.TRACE as longvarchar);
+			END;
+
+		end if;
+	else
+		raise System.NotFoundException value &apos;The path=[&apos;||emptyStr(resourcePath)||&apos;] and type=[&apos;||emptyStr(resourceType)||&apos;] does not exist.&apos;;
+	end if;
+
+	if (rebindVector is not null and CARDINALITY(rebindVector) &gt; 0) then
+		if (CARDINALITY(rebindVector) &gt; 0) then
+			call /shared/ASAssets/Utilities/repository/rebind/rebindCheckPathExists(rebindVector, debug, rebindVector);
+		else
+			set rebindVector = null;
+		end if;
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399488160970</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:2:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:5:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">9/99</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

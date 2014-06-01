@@ -1,0 +1,325 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getUserPermissionsRecursive" path="/shared/ASAssets/Utilities/repository/getUserPermissionsRecursive" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getUserPermissionsRecursive:
+
+    This procedure returns a recursive list of resource privileges for a specified user/domain
+	from a specified parent resource path.  The privileges returned are the effective or &apos;combined&apos;
+	privileges for the user on each resource in the list.  The privileges may have been specified
+	explicitly for the user or inherited from groups to which the user has membership.
+
+    Dependencies:
+    =============
+    /shared/Utilities/repository/getResourceListRecursive- 
+		Return a list of resources, resource path, type and subtype for a given folder path.
+
+    Input:
+        userName -    CIS user name (e.g. admin)
+		domainName -  CIS domain name (e.g. composite)
+		beginFolder - path to Resource (e.g. /shared)
+
+    Output (cursor):
+        resPath -     path to resource
+		privRead -    &apos;Y&apos; if user has READ privs on the resource
+        privWrite -   &apos;Y&apos; if user has WRITE privs on the resource
+		privExecute - &apos;Y&apos; if user has EXECUTE privs on the resource
+		privSelect -  &apos;Y&apos; if user has SELECT privs on the resource
+		privUpdate -  &apos;Y&apos; if user has UPDATE privs on the resource
+		privInsert -  &apos;Y&apos; if user has INSERT privs on the resource
+		privDelete -  &apos;Y&apos; if user has DELETE privs on the resource
+		privGrant -   &apos;Y&apos; if user has GRANT privs on the resource
+
+
+    Exceptions:  getResourceListRecursive will return an exception if beginFolder is not a CONTAINER
+
+    Author:      Jerry Joplin
+    Date:        9/8/2011
+    CSW Version: 5.2.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="userName" direction="IN" nullable="true">
+      <datatype name="UserName" referenceDefinitionSet="/lib/users/UserDefs" referenceType="UserName" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="domainName" direction="IN" nullable="true">
+      <datatype name="DomainName" referenceDefinitionSet="/lib/users/UserDefs" referenceType="DomainName" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="beginFolder" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="ResultType" type="TABLE" refId="1">
+        <element name="resPath">
+          <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+        </element>
+        <element name="privRead">
+          <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+        </element>
+        <element name="privWrite">
+          <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+        </element>
+        <element name="privExecute">
+          <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+        </element>
+        <element name="privSelect">
+          <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+        </element>
+        <element name="privUpdate">
+          <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+        </element>
+        <element name="privInsert">
+          <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+        </element>
+        <element name="privDelete">
+          <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+        </element>
+        <element name="privGrant">
+          <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/users/UserDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="resourceTreeList" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resPath">
+            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creationDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="creationDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="creatorUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creatorUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="lastModifiedDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="lastModifiedUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourcePrivilegesByUser" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="path">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="type">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="name">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="domain">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="privs">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="combinedPrivs">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="inheritedPrivs">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getUserPermissionsRecursive:
+
+    This procedure returns a recursive list of resource privileges for a specified user/domain
+	from a specified parent resource path.  The privileges returned are the effective or &apos;combined&apos;
+	privileges for the user on each resource in the list.  The privileges may have been specified
+	explicitly for the user or inherited from groups to which the user has membership.
+
+    Dependencies:
+    =============
+    /shared/Utilities/repository/getResourceListRecursive- 
+		Return a list of resources, resource path, type and subtype for a given folder path.
+
+    Input:
+        userName -    CIS user name (e.g. admin)
+		domainName -  CIS domain name (e.g. composite)
+		beginFolder - path to Resource (e.g. /shared)
+
+    Output (cursor):
+        resPath -     path to resource
+		privRead -    &apos;Y&apos; if user has READ privs on the resource
+        privWrite -   &apos;Y&apos; if user has WRITE privs on the resource
+		privExecute - &apos;Y&apos; if user has EXECUTE privs on the resource
+		privSelect -  &apos;Y&apos; if user has SELECT privs on the resource
+		privUpdate -  &apos;Y&apos; if user has UPDATE privs on the resource
+		privInsert -  &apos;Y&apos; if user has INSERT privs on the resource
+		privDelete -  &apos;Y&apos; if user has DELETE privs on the resource
+		privGrant -   &apos;Y&apos; if user has GRANT privs on the resource
+
+
+    Exceptions:  getResourceListRecursive will return an exception if beginFolder is not a CONTAINER
+
+    Author:      Jerry Joplin
+    Date:        9/8/2011
+    CSW Version: 5.2.0
+
+	Updated By:  Calvin Goodrich
+	Date:        10/25/2012
+	CSW Version: 5.2.0
+    Reason:      Updated to pass resource type to getResourceListRecursive
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+
+
+PROCEDURE getUserPermissionsRecursive(
+    IN  userName /lib/users/UserDefs.UserName,
+    IN  domainName /lib/users/UserDefs.DomainName,
+    IN  beginFolder /lib/resource/ResourceDefs.ResourcePath,
+    OUT result PIPE ResultType
+)
+BEGIN
+    DECLARE PUBLIC TYPE ResultType ROW (
+        resPath /lib/resource/ResourceDefs.ResourcePath,
+		privRead CHAR(1),
+        privWrite CHAR(1),
+		privExecute CHAR(1),
+		privSelect CHAR(1),
+		privUpdate CHAR(1),
+		privInsert CHAR(1),
+		privDelete CHAR(1),
+		privGrant CHAR(1)
+    );
+
+	-- Utility procedure to return a recursive list of resources does most
+	-- of the heavy lifting for this procedure.
+	DECLARE resourceList CURSOR FOR 
+  		SELECT * from /shared/ASAssets/Utilities/repository/getResourceListRecursive(beginFolder, &apos;CONTAINER&apos;);
+
+	-- FOR loop to handle all resource entries in the recursive list
+	FOR resourceEntry AS resourceList DO
+
+		-- Determine the user&apos;s privileges by parsing all combined privileges returned
+		-- and checking for the presence of each individual privilege in the text list
+		INSERT INTO result
+			(resPath,privRead,privWrite,privExecute,privSelect,privUpdate,privInsert,privDelete,privGrant)
+		SELECT
+			getAllResourcePermissions.&quot;path&quot; resPath,
+			CASE
+				WHEN POSITION(&apos;READ&apos; IN getAllResourcePermissions.combinedPrivs) &gt; 0 THEN &apos;Y&apos;
+				ELSE &apos;N&apos;
+			END privRead,
+			CASE 
+				WHEN POSITION(&apos;WRITE&apos; IN getAllResourcePermissions.combinedPrivs) &gt; 0 THEN &apos;Y&apos;
+				ELSE &apos;N&apos;
+			END privWrite,
+			CASE 
+				WHEN POSITION(&apos;EXECUTE&apos; IN getAllResourcePermissions.combinedPrivs) &gt; 0 THEN &apos;Y&apos;
+				ELSE &apos;N&apos;
+			END privExecute,
+			CASE
+				WHEN POSITION(&apos;SELECT&apos; IN getAllResourcePermissions.combinedPrivs) &gt; 0 THEN &apos;Y&apos;
+				ELSE &apos;N&apos;
+			END privSelect,
+			CASE
+				WHEN POSITION(&apos;UPDATE&apos; IN getAllResourcePermissions.combinedPrivs) &gt; 0 THEN &apos;Y&apos;
+				ELSE &apos;N&apos;
+			END privUpdate,
+			CASE 
+				WHEN POSITION(&apos;INSERT&apos; IN getAllResourcePermissions.combinedPrivs) &gt; 0 THEN &apos;Y&apos;
+				ELSE &apos;N&apos;
+			END privInsert,
+			CASE
+				WHEN POSITION(&apos;DELETE&apos; IN getAllResourcePermissions.combinedPrivs) &gt; 0 THEN &apos;Y&apos;
+				ELSE &apos;N&apos;
+			END privDelete,
+			CASE
+				WHEN POSITION(&apos;GRANT&apos; IN getAllResourcePermissions.combinedPrivs) &gt; 0 THEN &apos;Y&apos;
+				ELSE &apos;N&apos;
+			END privGrant
+		FROM /shared/ASAssets/Utilities/repository/getResourcePrivilegesByUser(resourceEntry.resPath,resourceEntry.resType) getAllResourcePermissions
+		WHERE getAllResourcePermissions.&quot;name&quot; = userName AND getAllResourcePermissions.&quot;domain&quot; = domainName;
+
+	END FOR;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">1376679119330</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_types" type="MAP">
+    <item>
+      <key type="STRING">ResultType</key>
+      <value type="BYTE_ARRAY">EB8GAgAKAFIAZQBzAHUAbAB0AFQAeQBwAGUGKQBBAC8AcwBoAGEAcgBlAGQALwBBAFMAQQBzAHMA
+ZQB0AHMALwBVAHQAaQBsAGkAdABpAGUAcwAvAHIAZQBwAG8AcwBpAHQAbwByAHkALwBnAGUAdABV
+AHMAZQByAFAAZQByAG0AaQBzAHMAaQBvAG4AcwBSAGUAYwB1AHIAcwBpAHYAZQYqAAoAUgBlAHMA
+dQBsAHQAVAB5AHAAZQMSAAAAAQMSAAAAAQETAQkUAAAACRAhBhUABwByAGUAcwBQAGEAdABoAy8A
+AAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAwAUgBlAHMAbwB1AHIAYwBl
+AFAAYQB0AGgGKQAaAC8AbABpAGIALwByAGUAcwBvAHUAcgBjAGUALwBSAGUAcwBvAHUAcgBjAGUA
+RABlAGYAcwYqAAwAUgBlAHMAbwB1AHIAYwBlAFAAYQB0AGgDEgAAAAIEBAAAAAAAABAAARMB////
+/xAhBhUACABwAHIAaQB2AFIAZQBhAGQDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAA
+AAAIGRAbBgIABABDAEgAQQBSAxIAAAADBAUAAAAAAAAAAQQEAAAAAAAAAAEBEwH/////ECEGFQAJ
+AHAAcgBpAHYAVwByAGkAdABlAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIA
+AAAD//8QIQYVAAsAcAByAGkAdgBFAHgAZQBjAHUAdABlAy8AAAABAxYAAAAAAxoAAAABAxsAAAAB
+AyD/////AyIAAAAAAxIAAAAD//8QIQYVAAoAcAByAGkAdgBTAGUAbABlAGMAdAMvAAAAAQMWAAAA
+AAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAAA///ECEGFQAKAHAAcgBpAHYAVQBwAGQAYQB0
+AGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAP//xAhBhUACgBwAHIA
+aQB2AEkAbgBzAGUAcgB0Ay8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAD
+//8QIQYVAAoAcAByAGkAdgBEAGUAbABlAHQAZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg////
+/wMiAAAAAAMSAAAAA///ECEGFQAJAHAAcgBpAHYARwByAGEAbgB0Ay8AAAABAxYAAAAAAxoAAAAB
+AxsAAAABAyD/////AyIAAAAAAxIAAAAD/////w==</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

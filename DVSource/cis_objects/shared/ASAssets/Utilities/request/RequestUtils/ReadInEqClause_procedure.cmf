@@ -1,0 +1,55 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="ReadInEqClause" path="/shared/ASAssets/Utilities/request/RequestUtils/ReadInEqClause" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>ReadInEqClause:
+
+Description:
+    Accepts SQL text (as returned by one of the RequestUtils) and a column name. 
+    The SQL text is parsed and scanned for any expressions like ‘column name’ = ‘val’ 
+    or ‘column name’ IN (val1, val2, ..valX). All the values found are returned in a cursor.
+
+Inputs:
+    sql -      - The SQL to search
+
+    columnName - The column to search for.
+
+Outputs:
+    result (   - Cursor containing the values of the where clause condition(s).
+        value  - A located value.
+    )
+
+Exceptions:
+    None
+
+Author:      Mike DeAngelo
+Date:        11/11/2011
+CSW Version: 6.0.0
+
+© 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="sql" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="columnName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype subType="DATASOURCE_TYPE" type="TABLE" caseSensitive="false" refId="1">
+        <element name="value">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.request.ReadInEqClause</attribute>
+  <attribute name="creationDate" type="LONG">1383622342459</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754105374</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

@@ -1,0 +1,289 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_ALL" path="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_ALL" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="totalNumTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="totalNumErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="totalNumSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_archiveFile" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_copyFile" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_createFileAscii" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_existsDir" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_existsFile" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_getFileContentsAscii" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_getFileInfo" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_makeDirs" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_remove" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_removeAll" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE Test_ALL(
+    OUT totalNumTests INTEGER,
+    OUT totalNumErrors INTEGER,
+    OUT totalNumSkipped INTEGER
+)
+BEGIN
+    DECLARE test_name VARCHAR DEFAULT &apos;file/FileProcessingCJP&apos;;
+    DECLARE numTests INTEGER;
+    DECLARE numErrors INTEGER;
+    DECLARE numSkipped INTEGER;
+
+    SET totalNumTests = 0;
+    SET totalNumErrors = 0;
+    SET totalNumSkipped = 0;
+
+    CALL PRINT (test_name || &apos;: Beginning tests.&apos;);
+
+    -- instead of testing in alphabetical order like the other utilities,
+    -- the file processing CJP&apos;s need to be tested in a particular order.
+    -- testing also needs to stop if certain tests fail.
+    --
+    test_block:
+    BEGIN
+
+        CALL /shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_existsDir (numTests, numErrors, numSkipped);
+        SET totalNumTests = totalNumTests + numTests;
+        SET totalNumErrors = totalNumErrors + numErrors;
+        SET totalNumSkipped = totalNumSkipped + numSkipped;
+        IF (totalNumErrors &gt; 0) THEN LEAVE test_block; END IF; -- tests can&apos;t progress if this fails
+
+        CALL /shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_existsFile (numTests, numErrors, numSkipped);
+        SET totalNumTests = totalNumTests + numTests;
+        SET totalNumErrors = totalNumErrors + numErrors;
+        SET totalNumSkipped = totalNumSkipped + numSkipped;
+        IF (totalNumErrors &gt; 0) THEN LEAVE test_block; END IF; -- tests can&apos;t progress if this fails
+
+        CALL /shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_getFileInfo (numTests, numErrors, numSkipped);
+        SET totalNumTests = totalNumTests + numTests;
+        SET totalNumErrors = totalNumErrors + numErrors;
+        SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+        CALL /shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_getFileContentsAscii (numTests, numErrors, numSkipped);
+        SET totalNumTests = totalNumTests + numTests;
+        SET totalNumErrors = totalNumErrors + numErrors;
+        SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+        CALL /shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_makeDirs (numTests, numErrors, numSkipped);
+        SET totalNumTests = totalNumTests + numTests;
+        SET totalNumErrors = totalNumErrors + numErrors;
+        SET totalNumSkipped = totalNumSkipped + numSkipped;
+        IF (totalNumErrors &gt; 0) THEN LEAVE test_block; END IF; -- tests can&apos;t progress if this fails
+
+        CALL /shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_createFileAscii (numTests, numErrors, numSkipped);
+        SET totalNumTests = totalNumTests + numTests;
+        SET totalNumErrors = totalNumErrors + numErrors;
+        SET totalNumSkipped = totalNumSkipped + numSkipped;
+        IF (totalNumErrors &gt; 0) THEN LEAVE test_block; END IF; -- tests can&apos;t progress if this fails
+
+        CALL /shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_copyFile (numTests, numErrors, numSkipped);
+        SET totalNumTests = totalNumTests + numTests;
+        SET totalNumErrors = totalNumErrors + numErrors;
+        SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+        CALL /shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_archiveFile (numTests, numErrors, numSkipped);
+        SET totalNumTests = totalNumTests + numTests;
+        SET totalNumErrors = totalNumErrors + numErrors;
+        SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+        CALL /shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_remove (numTests, numErrors, numSkipped);
+        SET totalNumTests = totalNumTests + numTests;
+        SET totalNumErrors = totalNumErrors + numErrors;
+        SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+        CALL /shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_removeAll (numTests, numErrors, numSkipped);
+        SET totalNumTests = totalNumTests + numTests;
+        SET totalNumErrors = totalNumErrors + numErrors;
+        SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    END; -- test_block
+
+    CALL PRINT (test_name || &apos;: Tests complete: &apos; || totalNumTests || &apos; total tests, &apos; || totalNumErrors || &apos; total errors, &apos; || totalNumSkipped || &apos; skipped tests.&apos;);
+
+    IF (totalNumErrors &gt; 0) THEN
+        CALL PRINT (&apos;***** Total Errors = &apos; || totalNumErrors);
+    END IF;
+
+    IF (totalNumSkipped &gt; 0) THEN
+        CALL PRINT (&apos;***** Total Skipped = &apos; || totalNumSkipped);
+    END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">10/81</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/16</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/84</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/88</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

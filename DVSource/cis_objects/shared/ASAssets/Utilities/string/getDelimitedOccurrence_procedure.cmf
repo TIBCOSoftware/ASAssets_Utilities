@@ -1,0 +1,165 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getDelimitedOccurrence" path="/shared/ASAssets/Utilities/string/getDelimitedOccurrence" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>getDelimitedOccurrence:
+	Return the occurrence of a delimited string
+ 
+	Input:
+		inText - Text to search
+		mode - defines the mode by which to extract folder path and root name  
+			Values: F or R, &apos;F&apos;=forwrad, &apos;R&apos;=reverse
+		delimiter - the delimiter to search for
+		occurrence - the occurrence to return (default=1)
+		trimText - 0=do not trim result, 1=do trim result text (default=0)
+	Output:
+		result - the result
+
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        12/14/2011
+	CSW Version: 5.2.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inText" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="mode" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="delimiter" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="inOccurrence" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="inTrimText" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getDelimitedOccurrence:
+	Return the occurrence of a delimited string
+ 
+	Input:
+		inText - Text to search
+		mode - defines the mode by which to extract folder path and root name  
+			Values: F or R, &apos;F&apos;=forwrad, &apos;R&apos;=reverse
+		delimiter - the delimiter to search for
+		occurrence - the occurrence to return (default=1)
+		trimText - 0=do not trim result, 1=do trim result text (default=0)
+	Output:
+		result - the result
+
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        12/14/2011
+	CSW Version: 5.2.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getDelimitedOccurrence(
+	IN inText			 	LONGVARCHAR,  -- text to parse
+	IN mode					CHAR(1), -- &apos;F&apos;=forward, &apos;R&apos;=reverse
+	IN delimiter			VARCHAR,
+	IN inOccurrence			INTEGER,
+	IN inTrimText			INTEGER, --0 do not trim, 1=do trim
+	OUT result  			LONGVARCHAR
+)
+BEGIN
+	DECLARE occurrence		INTEGER DEFAULT inOccurrence;
+	DECLARE trimText		INTEGER DEFAULT inTrimText;
+	DECLARE totalSplit		INTEGER;
+	DECLARE i				INTEGER DEFAULT 1;
+	DECLARE ex				EXCEPTION;
+
+	if (mode is null or (UPPER(mode) &lt;&gt; &apos;F&apos; and UPPER(mode) &lt;&gt; &apos;R&apos;) ) then
+		raise ex value &apos;Invalid mode=[&apos;||emptyStr(mode)||&apos;]  Must be F (forward) or R (reverse).&apos;;
+	end if;
+	if (occurrence is null) then
+		set occurrence = 1;
+	end if;
+	if (delimiter is null) then
+		raise ex value &apos;Delimiter cannot be null or empty.&apos;;
+	end if;
+	if (trimText is null) then
+		set trimText = 0;
+	end if;
+
+	if (upper(mode) = &apos;R&apos;) then
+		select count(*) into totalSplit
+			from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(inText,&apos;\&apos;||delimiter,0);
+		set occurrence = totalSplit - occurrence + 1;
+	end if;
+
+	splitLoop:
+	for r as 
+		select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(inText,&apos;\&apos;||delimiter,0)
+	do
+		if (i = occurrence) then
+			if (trimText = 1) then
+				set result = TRIM(r.splitElement);
+			else
+				set result = r.splitElement;
+			end if;
+			leave splitLoop;
+		end if;
+		set i = i + 1;
+	end for;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

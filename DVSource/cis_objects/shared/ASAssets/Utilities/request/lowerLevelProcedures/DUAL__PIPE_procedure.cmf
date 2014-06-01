@@ -1,0 +1,78 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="DUAL_PIPE" path="/shared/ASAssets/Utilities/request/lowerLevelProcedures/DUAL_PIPE" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>DUAL_PIPE:
+
+	This procedure provides source data for the /shared/Utilities/request/DUAL view.
+
+
+	Input:
+		N/A
+
+
+	Output:
+		result CURSOR (
+			A VARCHAR(1) -- will always have the value &apos;A&apos;
+        ) 
+
+
+	Exceptions:  none
+
+
+	Author:      Tony Young
+	Date:        4/5/2015
+	CSW Version: 5.2.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="DUAL" direction="OUT" nullable="true">
+      <datatype name="DUAL" type="TABLE" refId="1">
+        <element name="A">
+          <datatype name="VARCHAR" type="STRING" maxLength="1"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/* 
+  DUAL_PIPE:
+
+	This procedure provides source data for the /shared/Utilities/request/DUAL view.
+
+
+	Input:
+		N/A
+
+
+	Output:
+		result CURSOR (
+			A VARCHAR(1) -- will always have the value &apos;A&apos;
+        ) 
+
+
+	Exceptions:  none
+
+
+	Author:      Tony Young
+	Date:        4/5/2015
+	CSW Version: 5.2.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE DUAL_PIPE(OUT DUAL PIPE (A VARCHAR(1)))
+BEGIN
+	INSERT INTO DUAL VALUES (&apos;A&apos;);
+END</attribute>
+  <attribute name="creationDate" type="LONG">1383622342499</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754135225</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

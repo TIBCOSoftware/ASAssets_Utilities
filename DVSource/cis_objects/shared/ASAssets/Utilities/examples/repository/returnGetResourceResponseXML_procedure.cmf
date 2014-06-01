@@ -1,0 +1,116 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="returnGetResourceResponseXML" path="/shared/ASAssets/Utilities/examples/repository/returnGetResourceResponseXML" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">PROCEDURE returnGetResourceResponseXML(
+	OUT result	XML
+)
+BEGIN
+
+set result = 
+&apos;&lt;resource:getResourceResponse xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+	&lt;resource:resources&gt;
+		&lt;resource:resource xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:type=&quot;resource:tableResource&quot;&gt;
+			&lt;resource:name&gt;RDS_T_FGRT&lt;/resource:name&gt;
+			&lt;resource:path&gt;/shared/DeutscheBank/Central/RDS3/L4_Physical_Layer/L4_1_Physical_Views/dbInstrument/RDS/RDS_T_FGRT&lt;/resource:path&gt;
+			&lt;resource:type&gt;TABLE&lt;/resource:type&gt;
+			&lt;resource:subtype&gt;SQL_TABLE&lt;/resource:subtype&gt;
+			&lt;resource:id&gt;35553&lt;/resource:id&gt;
+			&lt;resource:changeId&gt;445&lt;/resource:changeId&gt;
+			&lt;resource:ownerDomain&gt;composite&lt;/resource:ownerDomain&gt;
+			&lt;resource:ownerName&gt;admin&lt;/resource:ownerName&gt;
+			&lt;resource:impactLevel&gt;NONE&lt;/resource:impactLevel&gt;
+			&lt;resource:enabled&gt;true&lt;/resource:enabled&gt;
+			&lt;resource:columns&gt;
+				&lt;resource:column&gt;
+					&lt;resource:name&gt;FGRT_TYP&lt;/resource:name&gt;
+					&lt;resource:dataType&gt;
+						&lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+							&lt;common:definition&gt;VARCHAR(20)&lt;/common:definition&gt;
+						&lt;/common:sqlType&gt;
+					&lt;/resource:dataType&gt;
+				&lt;/resource:column&gt;
+				&lt;resource:column&gt;
+					&lt;resource:name&gt;FGRT_TYP_DESC&lt;/resource:name&gt;
+					&lt;resource:dataType&gt;
+						&lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+							&lt;common:definition&gt;VARCHAR(250)&lt;/common:definition&gt;
+						&lt;/common:sqlType&gt;
+					&lt;/resource:dataType&gt;
+				&lt;/resource:column&gt;
+				&lt;resource:column&gt;
+					&lt;resource:name&gt;START_DTE&lt;/resource:name&gt;
+					&lt;resource:dataType&gt;
+						&lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+							&lt;common:definition&gt;TIMESTAMP&lt;/common:definition&gt;
+						&lt;/common:sqlType&gt;
+					&lt;/resource:dataType&gt;
+				&lt;/resource:column&gt;
+				&lt;resource:column&gt;
+					&lt;resource:name&gt;TRMN_DTE&lt;/resource:name&gt;
+					&lt;resource:dataType&gt;
+						&lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+							&lt;common:definition&gt;TIMESTAMP&lt;/common:definition&gt;
+						&lt;/common:sqlType&gt;
+					&lt;/resource:dataType&gt;
+				&lt;/resource:column&gt;
+				&lt;resource:column&gt;
+					&lt;resource:name&gt;LAST_CHG_USR_ID&lt;/resource:name&gt;
+					&lt;resource:dataType&gt;
+						&lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+							&lt;common:definition&gt;VARCHAR(50)&lt;/common:definition&gt;
+						&lt;/common:sqlType&gt;
+					&lt;/resource:dataType&gt;
+				&lt;/resource:column&gt;
+				&lt;resource:column&gt;
+					&lt;resource:name&gt;LAST_CHG_TMS&lt;/resource:name&gt;
+					&lt;resource:dataType&gt;
+						&lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+							&lt;common:definition&gt;TIMESTAMP&lt;/common:definition&gt;
+						&lt;/common:sqlType&gt;
+					&lt;/resource:dataType&gt;
+				&lt;/resource:column&gt;
+				&lt;resource:column&gt;
+					&lt;resource:name&gt;ROW_START_TMS&lt;/resource:name&gt;
+					&lt;resource:dataType&gt;
+						&lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+							&lt;common:definition&gt;TIMESTAMP&lt;/common:definition&gt;
+						&lt;/common:sqlType&gt;
+					&lt;/resource:dataType&gt;
+				&lt;/resource:column&gt;
+				&lt;resource:column&gt;
+					&lt;resource:name&gt;ROW_END_TMS&lt;/resource:name&gt;
+					&lt;resource:dataType&gt;
+						&lt;common:sqlType xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+							&lt;common:definition&gt;TIMESTAMP&lt;/common:definition&gt;
+						&lt;/common:sqlType&gt;
+					&lt;/resource:dataType&gt;
+				&lt;/resource:column&gt;
+			&lt;/resource:columns&gt;
+			&lt;resource:tableType&gt;VIEW&lt;/resource:tableType&gt;
+			&lt;resource:explicitlyDesigned&gt;false&lt;/resource:explicitlyDesigned&gt;
+			&lt;resource:sqlText&gt;SELECT      RDS_T_FGRT.FGRT_TYP FGRT_TYP,      RDS_T_FGRT.FGRT_TYP_DESC FGRT_TYP_DESC,      RDS_T_FGRT.START_DTE START_DTE,      RDS_T_FGRT.TRMN_DTE TRMN_DTE,      RDS_T_FGRT.LAST_CHG_USR_ID LAST_CHG_USR_ID,      RDS_T_FGRT.LAST_CHG_TMS LAST_CHG_TMS,      RDS_T_FGRT.ROW_START_TMS ROW_START_TMS,      RDS_T_FGRT.ROW_END_TMS ROW_END_TMS FROM           /shared/DeutscheBank/datasource/dbvaultrepo/MTINIUS/RDS_T_FGRT RDS_T_FGRT&lt;/resource:sqlText&gt;
+		&lt;/resource:resource&gt;
+	&lt;/resource:resources&gt;
+&lt;/resource:getResourceResponse&gt;&apos;;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="model" type="NULL"/>
+  <attribute name="references" type="NULL"/>
+</metadata>

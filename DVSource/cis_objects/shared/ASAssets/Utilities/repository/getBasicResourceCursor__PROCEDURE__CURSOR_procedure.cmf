@@ -1,0 +1,635 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getBasicResourceCursor_PROCEDURE_CURSOR" path="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_PROCEDURE_CURSOR" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getBasicResourceCursor_PROCEDURE_CURSOR:
+	-- CIS Repository Helper Procedure --
+	This procedure retrieves the resource metadata for a given resource that is a procedure object providing both input and output parameters.  
+	A cursor of metadata is returned. This procedure invokes 2 lower level API procedures:
+		getBasicResourceXML - this performs the actual invocation to the CIS repository API and returns XML
+		getBasicResourceXSLT_PROCEDURE - this procedure takes the XML response from getBasicResourceXML 
+			and turns it into a cursor which is more usable by other CIS procedures.
+	It should be noted that Procedures may return more than one output cursor.  
+	The field &quot;sqlText&quot; will contain the actual CURSOR (...) definition and will be not null for each cursor output parameter.
+	This may be true for SQL Procedures or Parameterized queries.  
+	Generally speaking, for XSLT Procedures, there will only be one output cursor.
+
+	mtinus: 10/24/2013
+	Support case: 19620 - Composite does not support typed xml data types in a view variable declaration.  Only the generic &quot;XML&quot; is supported.
+		When generating views, the user of this procedure should use the columnBaseType when the dataType is xmlType otherwise use the columnType for defining
+		IN parameter declarations for VIEWS.
+
+	Input:
+		fullResourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/Utilities/repository/examples/source/PRODUCT_VIEW
+		resourceType - Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. TABLE
+		cursorNum - For multiple output cursors in a procedure, this provides a way to identify which cursor
+			the user would like to select.  If null or less than zero, then 0 is the default which returns all cursors.
+	Output:
+		resourceCursor - XML response containing the resource metadata
+			CURSOR (
+		        resourceName 	VARCHAR(255), 		The name of the resource.
+		        resourcePath 	VARCHAR(1024), 		The full resource path.
+        		resourceType 	VARCHAR(255), 		The resource type: PROCEDURE
+		        subtype 		VARCHAR(255), 		The resource sub type. e.g. SQL_SCRIPT_PROCEDURE, XSLT_TRANSFORM_PROCEDURE
+		        enabled 		BIT, 				Indicates whether the resource is enabled (1) or not (0)
+				annotation 		LONGVARCHAR,		Provides the annotation for the resource
+		        tableType 		VARCHAR(255), 		Provides the tableType which is null for procedures.  This column is here for consistency with getBasicResourceCursor_SQL_TABLE.
+		        sqlText 		VARCHAR(32768), 	The sqlText for a cursor
+				columnName 		VARCHAR(255), 		The name of the column.
+				columnType 		VARCHAR(1024),		The actual column type. e.g. CURSOR, XML, VARCHAR(255), DECIMAL(32,2), BIGINT, NUMERIC(2147483647,0), and etc.
+													or a specific typed XML: /shared/BestPracticesTest/Application/DefinitionSets/OrderTransactionsWSDL.&quot;{http://www.compositesw.com/example/transaction/orders/v1.0}OrdersRequest&quot;
+				columnBaseType	VARCHAR(255),		The base column type.  e.g. CURSOR, XML, BIGINT, INTEGER, DECIMAL, VARCHAR, NUMERIC and etc.
+				dataType		VARCHAR(255),		1 of [sqlType, xmlType, cursorType, cursorColumn]
+				paramDirection	VARCHAR(255),		The direction of the parameter. e.g. 1 of [IN,OUT,INOUT]
+				nativeBaseType 	VARCHAR(255),		The native base type.  Currently defaulted to null. Future expansion.
+				nativeType 		VARCHAR(255)		The native column type.  Currently defaulted to null. Future expansion.
+				)
+
+	Exceptions:  none
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	04/27/2012		Mike Tinius        	5.2.0			Created new.
+	03/19/2013		Mike Tinius			5.2.0			Added annotation to result cursor
+	06/27/2013		Mike Tinius			6.0.0			Modified to not output any cursor for stored procedure with no output cursor
+	09/12/2013		Mike Tinius			6.1.0			Modified if/then to if/then/else because it was not correctly parsing the CURSOR () output.
+	10/28/2013		Mike Tinius			6.2.0			B.P. 8.0: Modified to check for generic soap &quot;Envelope&quot; type and set to generic XML when dataType=&apos;xmlType&apos;.
+	03/30/2014		Mike Tinius			6.2.0			B.P. 8.1.1: Fixed issue where the columnType had 2 parenthesis VARCHAR(255)) for the last column in the list.  Addressed issue with embedded spaces and commas in column names.
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+
+	TYPES / SUBTYPES:
+	=================
+	The following resource types/subtypes are supported by this operation.  Resources
+	cannot be created under &quot;/services&quot; unless otherwise noted, and cannot be created
+	within a physical data source.  
+
+	* LINK / unknown at this time
+
+	(CIS procedures)
+	* PROCEDURE / SQL_SCRIPT_PROCEDURE - A Composite SQL Procedure.  Created with a simple default script body that is runnable.
+	(Custom procedures)
+	* PROCEDURE / JAVA_PROCEDURE - A Composite java data source procedure.  Created from a java data source (jar file).
+	(Database procedures)
+	* PROCEDURE / EXTERNAL_SQL_PROCEDURE - A Composite Packaged Query.  Created with no SQL text, so it is not runnable.  
+	* PROCEDURE / DATABASE_PROCEDURE - A database stored procedure.
+	(XML procedures)
+	* PROCEDURE / BASIC_TRANSFORM_PROCEDURE - A Composite Basic XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XSLT_TRANSFORM_PROCEDURE - A Composite XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / STREAM_TRANSFORM_PROCEDURE - A Composite XSLT Streaming Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XQUERY_TRANSFORM_PROCEDURE - A Composite XQUERY Transformation Procedure.  Created with no target schema and no model, so it is not runnable.
+	(Misc procedures)
+	* PROCEDURE / OPERATION_PROCEDURE - A Composite web service or HTTP procedure operation.</annotation>
+  <parameters>
+    <parameter name="fullResourcePath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+    </parameter>
+    <parameter name="cursorNum" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="resourceCursor" direction="OUT" nullable="true">
+      <datatype name="resourceCursor" type="TABLE" refId="1">
+        <element name="resourceName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="annotation">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="tableType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="sqlText">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="columnName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="columnType">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="columnBaseType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="dataType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="paramDirection">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="nativeBaseType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="nativeType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_PROCEDURE" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_PROCEDURE" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inXML" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="4096"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="40"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="40"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="dataType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="parameterName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="parameterType">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="parameterDirection">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="parameterTypeName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="parameterTypeNamespace">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="parameterTypeReferencePath">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexReplace" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Replacement Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/findString" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="searchString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="stringToSearch" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="direction" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="pos" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexReplace" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexReplace" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/findString" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/findString" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getBasicResourceCursor_PROCEDURE_CURSOR:
+	-- CIS Repository Helper Procedure --
+	This procedure retrieves the resource metadata for a given resource that is a procedure object providing both input and output parameters.  
+	A cursor of metadata is returned. This procedure invokes 2 lower level API procedures:
+		getBasicResourceXML - this performs the actual invocation to the CIS repository API and returns XML
+		getBasicResourceXSLT_PROCEDURE - this procedure takes the XML response from getBasicResourceXML 
+			and turns it into a cursor which is more usable by other CIS procedures.
+	It should be noted that Procedures may return more than one output cursor.  
+	The field &quot;sqlText&quot; will contain the actual CURSOR (...) definition and will be not null for each cursor output parameter.
+	This may be true for SQL Procedures or Parameterized queries.  
+	Generally speaking, for XSLT Procedures, there will only be one output cursor.
+
+	mtinus: 10/24/2013
+	Support case: 19620 - Composite does not support typed xml data types in a view variable declaration.  Only the generic &quot;XML&quot; is supported.
+		When generating views, the user of this procedure should use the columnBaseType when the dataType is xmlType otherwise use the columnType for defining
+		IN parameter declarations for VIEWS.
+
+	Input:
+		fullResourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/Utilities/repository/examples/source/PRODUCT_VIEW
+		resourceType - Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. TABLE
+		cursorNum - For multiple output cursors in a procedure, this provides a way to identify which cursor
+			the user would like to select.  If null or less than zero, then 0 is the default which returns all cursors.
+	Output:
+		resourceCursor - XML response containing the resource metadata
+			CURSOR (
+		        resourceName 	VARCHAR(255), 		The name of the resource.
+		        resourcePath 	VARCHAR(1024), 		The full resource path.
+        		resourceType 	VARCHAR(255), 		The resource type: PROCEDURE
+		        subtype 		VARCHAR(255), 		The resource sub type. e.g. SQL_SCRIPT_PROCEDURE, XSLT_TRANSFORM_PROCEDURE
+		        enabled 		BIT, 				Indicates whether the resource is enabled (1) or not (0)
+				annotation 		LONGVARCHAR,		Provides the annotation for the resource
+		        tableType 		VARCHAR(255), 		Provides the tableType which is null for procedures.  This column is here for consistency with getBasicResourceCursor_SQL_TABLE.
+		        sqlText 		VARCHAR(32768), 	The sqlText for a cursor
+				columnName 		VARCHAR(255), 		The name of the column.
+				columnType 		VARCHAR(1024),		The actual column type. e.g. CURSOR, XML, VARCHAR(255), DECIMAL(32,2), BIGINT, NUMERIC(2147483647,0), and etc.
+													or a specific typed XML: /shared/BestPracticesTest/Application/DefinitionSets/OrderTransactionsWSDL.&quot;{http://www.compositesw.com/example/transaction/orders/v1.0}OrdersRequest&quot;
+				columnBaseType	VARCHAR(255),		The base column type.  e.g. CURSOR, XML, BIGINT, INTEGER, DECIMAL, VARCHAR, NUMERIC and etc.
+				dataType		VARCHAR(255),		1 of [sqlType, xmlType, cursorType, cursorColumn]
+				paramDirection	VARCHAR(255),		The direction of the parameter. e.g. 1 of [IN,OUT,INOUT]
+				nativeBaseType 	VARCHAR(255),		The native base type.  Currently defaulted to null. Future expansion.
+				nativeType 		VARCHAR(255)		The native column type.  Currently defaulted to null. Future expansion.
+				)
+
+	Exceptions:  none
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	04/27/2012		Mike Tinius        	5.2.0			Created new.
+	03/19/2013		Mike Tinius			5.2.0			Added annotation to result cursor
+	06/27/2013		Mike Tinius			6.0.0			Modified to not output any cursor for stored procedure with no output cursor
+	09/12/2013		Mike Tinius			6.1.0			Modified if/then to if/then/else because it was not correctly parsing the CURSOR () output.
+	10/28/2013		Mike Tinius			6.2.0			B.P. 8.0: Modified to check for generic soap &quot;Envelope&quot; type and set to generic XML when dataType=&apos;xmlType&apos;.
+	03/30/2014		Mike Tinius			6.2.0			B.P. 8.1.1: Fixed issue where the columnType had 2 parenthesis VARCHAR(255)) for the last column in the list.  Addressed issue with embedded spaces and commas in column names.
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+
+	TYPES / SUBTYPES:
+	=================
+	The following resource types/subtypes are supported by this operation.  Resources
+	cannot be created under &quot;/services&quot; unless otherwise noted, and cannot be created
+	within a physical data source.  
+
+	* LINK / unknown at this time
+
+	(CIS procedures)
+	* PROCEDURE / SQL_SCRIPT_PROCEDURE - A Composite SQL Procedure.  Created with a simple default script body that is runnable.
+	(Custom procedures)
+	* PROCEDURE / JAVA_PROCEDURE - A Composite java data source procedure.  Created from a java data source (jar file).
+	(Database procedures)
+	* PROCEDURE / EXTERNAL_SQL_PROCEDURE - A Composite Packaged Query.  Created with no SQL text, so it is not runnable.  
+	* PROCEDURE / DATABASE_PROCEDURE - A database stored procedure.
+	(XML procedures)
+	* PROCEDURE / BASIC_TRANSFORM_PROCEDURE - A Composite Basic XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XSLT_TRANSFORM_PROCEDURE - A Composite XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / STREAM_TRANSFORM_PROCEDURE - A Composite XSLT Streaming Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XQUERY_TRANSFORM_PROCEDURE - A Composite XQUERY Transformation Procedure.  Created with no target schema and no model, so it is not runnable.
+	(Misc procedures)
+	* PROCEDURE / OPERATION_PROCEDURE - A Composite web service or HTTP procedure operation.
+*/
+PROCEDURE getBasicResourceCursor_PROCEDURE_CURSOR(
+    IN fullResourcePath 	/lib/resource/ResourceDefs.ResourcePath,  
+    IN resourceType 		/lib/resource/ResourceDefs.ResourceType, 
+	IN cursorNum			INTEGER,
+    OUT resourceCursor PIPE (
+		        resourceName 	VARCHAR(255), 		--The name of the resource.
+		        resourcePath 	VARCHAR(1024), 		--The full resource path.
+        		resourceType 	VARCHAR(255), 		--The resource type: PROCEDURE
+		        subtype 		VARCHAR(255), 		--The resource sub type. e.g. SQL_SCRIPT_PROCEDURE, XSLT_TRANSFORM_PROCEDURE
+		        enabled 		BIT, 				--Indicates whether the resource is enabled (1) or not (0)
+				annotation 		LONGVARCHAR,		--Provides the annotation for the resource
+		        tableType 		VARCHAR(255), 		--Provides the tableType which is null for procedures.  This column is here for consistency with getBasicResourceCursor_SQL_TABLE.
+		        sqlText 		VARCHAR(32768), 	--The sqlText for a cursor
+				columnName 		VARCHAR(255), 		--The name of the column.
+				columnType 		VARCHAR(1024),		--The actual column type. e.g. CURSOR, XML, VARCHAR(255), DECIMAL(32,2), BIGINT, NUMERIC(2147483647,0), and etc.
+													--or a specific typed XML: /shared/BestPracticesTest/Application/DefinitionSets/OrderTransactionsWSDL.&quot;{http://www.compositesw.com/example/transaction/orders/v1.0}OrdersRequest&quot;
+				columnBaseType	VARCHAR(255),		--The base column type.  e.g. CURSOR, XML, BIGINT, INTEGER, DECIMAL, VARCHAR, NUMERIC and etc.
+				dataType		VARCHAR(255),		--1 of [sqlType, xmlType, cursorType, cursorColumn]
+				paramDirection	VARCHAR(255),		--The direction of the parameter. e.g. 1 of [IN,OUT,INOUT]
+				nativeBaseType 	VARCHAR(255),		--The native base type.  Currently defaulted to null.  Future expansion.
+				nativeType 		VARCHAR(255)		--The native column type.  Currently defaulted to null. Future expansion.
+        )
+    )
+BEGIN
+	DECLARE moduleName			VARCHAR DEFAULT &apos;getBasicResourceCursor_PROCEDURE_CURSOR&apos;;
+	DECLARE debug				CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	DECLARE cursorNum_			INTEGER DEFAULT cursorNum;
+	DECLARE resourceResponse 	XML;
+	DECLARE cursorDefinition	LONGVARCHAR;
+	DECLARE columnDefinition	LONGVARCHAR;
+	DECLARE columnName 			VARCHAR(255) DEFAULT NULL;
+	DECLARE columnType 			VARCHAR(1024) DEFAULT NULL;
+	DECLARE columnBaseType		VARCHAR(255) DEFAULT NULL;
+	DECLARE numOutCursors		INTEGER DEFAULT 0;
+	DECLARE i					INTEGER;
+	DECLARE annotation			LONGVARCHAR;
+	DECLARE parameterDirection	VARCHAR;
+	DECLARE parameterType		LONGVARCHAR;
+	DECLARE dataType			VARCHAR;
+	DECLARE notEmpty			INTEGER DEFAULT 0;
+	DECLARE pos					INTEGER;
+	-- Regex pattern for encoding values in double quotes
+	DECLARE regexSize						INTEGER DEFAULT 200000;
+	DECLARE regexReplacePatternDoubleQuote 	VARCHAR DEFAULT &apos;(?=[^&quot;]{0,&apos;||regexSize||&apos;}&quot;(?:[^&quot;\r\n]{0,&apos;||regexSize||&apos;}&quot;[^&quot;]{0,&apos;||regexSize||&apos;}&quot;){0,&apos;||regexSize||&apos;}[^&quot;\r\n]{0,&apos;||regexSize||&apos;}$)&apos;;
+
+	-- 0 means get all input/output cursors
+	if (cursorNum_ is null or cursorNum_ &lt; 0) then
+		set cursorNum_ = 0;
+	end if;
+
+	call /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML(fullResourcePath, resourceType, resourceResponse);
+    FOR r as
+        SELECT * 
+		FROM /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_PROCEDURE(resourceResponse)
+/*      resourceName VARCHAR(255), 
+        resourcePath VARCHAR(1024), 
+        resourceType LONGVARCHAR, 
+        subtype VARCHAR(255), 
+        enabled BIT, 
+		annotation LONGVARCHAR,
+		dataType VARCHAR(255)
+        parameterName VARCHAR(255), 
+        parameterType VARCHAR(32767),
+        parameterDirection VARCHAR(255)
+        parameterTypeName VARCHAR(255),
+        parameterTypeNamespace VARCHAR(32767),
+        parameterTypeReferencePath VARCHAR(32767),
+*/
+	DO
+		if (r.annotation is not null) then -- first row
+			set annotation = r.annotation;
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;   annotation: &apos;||annotation);
+		end if;
+		set parameterDirection = TRIM(r.parameterDirection);
+		set parameterType = TRIM(r.parameterType);
+		set dataType = TRIM(r.dataType);
+
+		if (parameterDirection = &apos;IN&apos;) then
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;   dataType=[&apos;||emptyStr(dataType)||&apos;]&apos;);
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;   parameterTypeName=[&apos;||emptyStr(r.parameterTypeName)||&apos;]&apos;);
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;   parameterTypeNamespace=[&apos;||emptyStr(r.parameterTypeNamespace)||&apos;]&apos;);
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;   parameterType=[&apos;||emptyStr(parameterType)||&apos;]&apos;);
+			set columnName = TRIM(r.parameterName);
+			set columnType = TRIM(r.parameterType);
+			if (dataType = &apos;xmlType&apos;) then
+				set columnBaseType = &apos;XML&apos;;
+				if (r.parameterTypeNamespace is null) then
+					set columnType = r.parameterTypeName;
+				else
+    				--e.g. /shared/exampleWS/Application/DefinitionSets/CustomerWSDL.&quot;{http://www.compositesw.com/example/transaction/customer/v1.0}CustomerRequest&quot;,
+					if (r.parameterTypeReferencePath is not null and LENGTH(r.parameterTypeReferencePath) &gt; 0) then
+						set columnType = emptyStr(r.parameterTypeReferencePath)||&apos;.&quot;{&apos;||r.parameterTypeNamespace||&apos;}&apos;||r.parameterTypeName||&apos;&quot;&apos;;
+					else
+						if (r.parameterTypeName = &apos;Envelope&apos;) then
+							set columnType = &apos;XML&apos;;
+						else
+							set columnType = &apos;&quot;{&apos;||r.parameterTypeNamespace||&apos;}&apos;||r.parameterTypeName||&apos;&quot;&apos;;
+						end if;
+					end if;
+				end if;
+			else
+				set columnBaseType = columnType;
+				if (columnBaseType is not null) then
+					set pos = POSITION(&apos;(&apos; IN columnType);
+					if (pos &gt; 0) then
+						set columnBaseType = SUBSTRING(columnBaseType, 1, pos - 1);
+					end if;
+				end if;
+			end if;
+			INSERT INTO resourceCursor values(r.resourceName,r.resourcePath,r.resourceType,r.subtype,r.enabled,null,null,null,columnName,columnType,columnBaseType,dataType,parameterDirection,null,null);
+		end if;
+
+		if (parameterDirection = &apos;OUT&apos; AND POSITION(&apos;CURSOR&apos; IN parameterType) = 1) then
+			set numOutCursors = numOutCursors + 1;
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;   parameterType=[&apos;||emptyStr(parameterType)||&apos;]&apos;);
+
+			-- Check to see if the number of the output cursor matches the one passed in by the user
+			if (cursorNum_ = 0 or cursorNum_ = numOutCursors) then
+				if (findString(&apos;CURSOR (&apos;,parameterType,&apos;F&apos;) &gt; 0) then
+--					call print(&apos;FOUND [CURSOR (]&apos;);
+					-- Remove the leading &quot;CURSOR (&quot;
+					set cursorDefinition = TRIM(REPLACE(parameterType, &apos;CURSOR (&apos;,&apos;&apos;));
+					-- Remove the trailing right parenthesis &quot;)&quot;
+					if ( SUBSTRING(cursorDefinition, LENGTH(cursorDefinition), 1) = &apos;)&apos;) then
+						set cursorDefinition = SUBSTRING(cursorDefinition, 1, LENGTH(cursorDefinition) - 1);
+					end if;
+				elseif (findString(&apos;CURSOR(&apos;,parameterType,&apos;F&apos;) &gt; 0) then
+--					call print(&apos;FOUND [CURSOR(]&apos;);
+					-- Remove the leading &quot;CURSOR(&quot;
+					set cursorDefinition = TRIM(REPLACE(parameterType, &apos;CURSOR(&apos;,&apos;&apos;));
+					-- Remove the trailing right parenthesis &quot;)&quot;
+					if ( SUBSTRING(cursorDefinition, LENGTH(cursorDefinition), 1) = &apos;)&apos;) then
+						set cursorDefinition = SUBSTRING(cursorDefinition, 1, LENGTH(cursorDefinition) - 1);
+					end if;
+				elseif (findString(&apos;CURSOR&apos;,parameterType,&apos;F&apos;) &gt; 0) then
+--					call print(&apos;FOUND [CURSOR]&apos;);
+					-- Remove the leading &quot;CURSOR&quot;
+					set cursorDefinition = TRIM(REPLACE(parameterType, &apos;CURSOR&apos;,&apos;&apos;));
+				end if;
+
+				-- Encode spaces in double quotes.  This is required in order to parse the CURSOR line and separate columns from column types
+				set cursorDefinition = RegexReplace(cursorDefinition, &apos;\&apos;||&apos; &apos;||regexReplacePatternDoubleQuote, &apos;_0020&apos;, 0);
+				-- Encode commas in double quotes.  This is required i norder to parse the cursor line when column names contain embedded commas.  Commas separate the column/column type pairs.
+				set cursorDefinition = RegexReplace(cursorDefinition, &apos;\&apos;||&apos;,&apos;||regexReplacePatternDoubleQuote, &apos;_002c&apos;, 0);
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;   Cursor Def=[&apos;||cursorDefinition||&apos;]&apos;);
+
+				-- Only output results when the CURSOR definition is not empty
+				if (isEmpty(cursorDefinition) = notEmpty) then
+					INSERT INTO resourceCursor values(r.resourceName,r.resourcePath,r.resourceType,r.subtype,r.enabled,annotation,null,r.parameterType,r.parameterName,&apos;CURSOR&apos;,&apos;CURSOR&apos;,&apos;cursorType&apos;,parameterDirection,null,null);
+/*
+CURSOR (&quot;Product ID&quot; NUMERIC(2147483647,0), &quot;Product Name&quot; VARCHAR(32768), &quot;Category,ID&quot; NUMERIC(2147483647,0), &quot;Category, Name&quot; VARCHAR(32768), ProductDescription VARCHAR(32768), SerialNumber VARCHAR(32768), UnitPrice DECIMAL(32,6), ReorderLevel NUMERIC(2147483647,0), LeadTime VARCHAR(32768))
+*/
+					-- Parse the CURSOR list based on a comma space &apos;, &apos; separator.
+					for s as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(cursorDefinition,&apos;, &apos;,0) do
+						set columnDefinition = TRIM(s.splitElement);
+						call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;   Column Def: &apos;||columnDefinition);
+
+						set columnName = null;
+						set columnType = null;
+						set i = 1;
+						-- Parse the column and column type combination based on a space separator
+						for t as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(columnDefinition,&apos; &apos;,0) do
+							if (i = 1) then
+								set columnName = t.splitElement;
+							end if;
+							if (i = 2) then
+								set columnType = t.splitElement;
+							end if;
+							set i = i + 1;
+						end for;
+						set columnBaseType = columnType;
+						if (columnBaseType is not null) then
+							set pos = POSITION(&apos;(&apos; IN columnType);
+							if (pos &gt; 0) then
+								set columnBaseType = SUBSTRING(columnBaseType, 1, pos - 1);
+							end if;
+						end if;
+						if (columnName is not null) then
+							-- Replace the encoded space with a real space
+							if (POSITION(&apos;_0020&apos; IN columnName) &gt; 0) then
+								set columnName = REPLACE(columnName, &apos;_0020&apos;, &apos; &apos;);
+							end if;
+							-- Replace the encoded comma with a real comma
+							if (POSITION(&apos;_002c&apos; IN columnName) &gt; 0) then
+								set columnName = REPLACE(columnName, &apos;_002c&apos;, &apos;,&apos;);
+							end if;
+
+							INSERT INTO resourceCursor values(r.resourceName,r.resourcePath,r.resourceType,r.subtype,r.enabled,null,null,null,columnName,columnType,columnBaseType,&apos;cursorColumn&apos;,parameterDirection,null,null);
+						end if;
+					end for;
+				end if;
+				set numOutCursors = numOutCursors + 1;
+			end if;
+		end if;
+	END FOR;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486501474</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

@@ -1,0 +1,330 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getConnectorsXform" path="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getConnectorsXform" type="PROCEDURE" subtype="XSLT_TRANSFORM_PROCEDURE" changeToken="0">
+  <annotation>© 2013 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inXML" direction="IN" nullable="false">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+    </parameter>
+    <parameter name="outputs" direction="OUT" nullable="true">
+      <datatype name="outputs" type="TABLE" refId="1">
+        <element name="name">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="annotation">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="connectorType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="groupname">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="jmsClientID">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="jndiContextFactory">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="jndiProperties">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="jndiProviderUrl">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="jndiUser">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="maxPool">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="minPool">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="poolTimeout">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="queueConnectionFactory">
+          <datatype name="VARCHAR" type="STRING" maxLength="32767"/>
+        </element>
+        <element name="useJNDI">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+      <attribute name="Customized" type="STRING">metadata.added;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/xml/reverseXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inXML" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outXML" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="creationDate" type="LONG">1383622341389</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">true</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="p:1:Customized" type="STRING">metadata.added;datatype.changed</attribute>
+  <attribute name="sourcePath" type="STRING">/shared/ASAssets/Utilities/xml/reverseXML</attribute>
+  <attribute name="sourceType" type="SHORT">3</attribute>
+  <attribute name="transformModel" type="STRING">
+&lt;transformModel customized=&quot;true&quot;&gt;
+  &lt;signature&gt;
+    &lt;datatype type=&quot;TREE&quot; refId=&quot;1&quot;&gt;
+      &lt;element name=&quot;inputs&quot;&gt;
+        &lt;datatype name=&quot;inputs&quot; type=&quot;TREE&quot; refId=&quot;2&quot;&gt;
+          &lt;element name=&quot;XML&quot; nullable=&quot;false&quot;&gt;
+            &lt;datatype name=&quot;XML&quot; type=&quot;XML&quot; contentConstraint=&quot;SEQUENCE&quot; schemaConstraint=&quot;ANY&quot; componentType=&quot;TYPE&quot; componentName=&quot;XML&quot;&gt;
+              &lt;schemaDatatype&gt;
+                &lt;datatype name=&quot;XML&quot; type=&quot;TREE&quot; refId=&quot;3&quot;&gt;&lt;/datatype&gt;
+              &lt;/schemaDatatype&gt;
+            &lt;/datatype&gt;
+          &lt;/element&gt;
+        &lt;/datatype&gt;
+      &lt;/element&gt;
+      &lt;element name=&quot;outputs&quot;&gt;
+        &lt;datatype type=&quot;PROCEDURE&quot; refId=&quot;4&quot;&gt;
+          &lt;element name=&quot;outputs&quot; direction=&quot;OUT&quot;&gt;
+            &lt;datatype name=&quot;outputs&quot; type=&quot;TABLE&quot; refId=&quot;5&quot;&gt;
+              &lt;element name=&quot;name&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;annotation&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;connectorType&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;groupname&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;jmsClientID&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;jndiContextFactory&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;jndiProperties&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;jndiProviderUrl&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;jndiUser&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;maxPool&quot;&gt;
+                &lt;datatype name=&quot;INTEGER&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;minPool&quot;&gt;
+                &lt;datatype name=&quot;INTEGER&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;poolTimeout&quot;&gt;
+                &lt;datatype name=&quot;INTEGER&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;queueConnectionFactory&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32767&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;useJNDI&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;255&quot;/&gt;
+              &lt;/element&gt;
+            &lt;/datatype&gt;
+          &lt;/element&gt;
+        &lt;/datatype&gt;
+      &lt;/element&gt;
+    &lt;/datatype&gt;
+  &lt;/signature&gt;
+  &lt;xslt&gt;&amp;lt;xslt:stylesheet xmlns:xslt=&amp;quot;http://www.w3.org/1999/XSL/Transform&amp;quot; xmlns:csw-xform=&amp;quot;http://www.compositesw.com/2003/xform&amp;quot; xmlns:ns1=&amp;quot;http://www.compositesw.com/services/system/admin/resource&amp;quot; xmlns:ns2=&amp;quot;http://www.compositesw.com/services/system/util/common&amp;quot; xmlns:xs=&amp;quot;http://www.w3.org/2001/XMLSchema&amp;quot; version=&amp;quot;1.0&amp;quot;&amp;gt;
+  &amp;lt;xslt:template match=&amp;quot;/&amp;quot;&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_name&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_annotation&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_connectorType&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_groupName&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_jmsClientID&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_jndiContextFactory&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_jndiProperties&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_jndiProviderUrl&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_jndiUser&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_maxPool&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_minPool&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_poolTimeout&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_queueConnectionFactory&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_useJNDI&amp;quot;/&amp;gt;
+    &amp;lt;xslt:element name=&amp;quot;results&amp;quot;&amp;gt;
+      &amp;lt;xslt:for-each select=&amp;quot;ns1:getConnectorsResponse&amp;quot;&amp;gt;
+        &amp;lt;xslt:for-each select=&amp;quot;ns1:connectors&amp;quot;&amp;gt;
+          &amp;lt;xslt:for-each select=&amp;quot;ns1:connector&amp;quot;&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_name&amp;quot; select=&amp;quot;ns1:name&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_annotation&amp;quot; select=&amp;quot;ns1:annotation&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_connectorType&amp;quot; select=&amp;quot;ns1:connectorType&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_groupName&amp;quot; select=&amp;quot;ns1:groupName&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_jmsClientID&amp;quot; select=&amp;quot;ns1:jmsClientID&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_jndiContextFactory&amp;quot; select=&amp;quot;ns1:jndiContextFactory&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_jndiProperties&amp;quot; select=&amp;quot;ns1:jndiProperties/ns2:attribute&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_jndiProviderUrl&amp;quot; select=&amp;quot;ns1:jndiProviderUrl&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_jndiUser&amp;quot; select=&amp;quot;ns1:jndiUser&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_maxPool&amp;quot; select=&amp;quot;ns1:maxPool&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_minPool&amp;quot; select=&amp;quot;ns1:minPool&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_poolTimeout&amp;quot; select=&amp;quot;ns1:poolTimeout&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_queueConnectionFactory&amp;quot; select=&amp;quot;ns1:queueConnectionFactory&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_useJNDI&amp;quot; select=&amp;quot;ns1:useJNDI&amp;quot;/&amp;gt;
+            &amp;lt;xslt:element name=&amp;quot;result&amp;quot;&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;name&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_name&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;annotation&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_annotation&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;connectorType&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_connectorType&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;groupName&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_groupName&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;jmsClientID&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_jmsClientID&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;jndiContextFactory&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_jndiContextFactory&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;jndiProperties&amp;quot;&amp;gt;
+                &amp;lt;xslt:copy-of select=&amp;quot;$_jndiProperties&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;jndiProviderUrl&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_jndiProviderUrl&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;jndiUser&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_jndiUser&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;maxPool&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_maxPool&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;minPool&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_minPool&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;poolTimeout&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_poolTimeout&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;queueConnectionFactory&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_queueConnectionFactory&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;useJNDI&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_useJNDI&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+            &amp;lt;/xslt:element&amp;gt;
+          &amp;lt;/xslt:for-each&amp;gt;
+        &amp;lt;/xslt:for-each&amp;gt;
+      &amp;lt;/xslt:for-each&amp;gt;
+    &amp;lt;/xslt:element&amp;gt;
+  &amp;lt;/xslt:template&amp;gt;
+&amp;lt;/xslt:stylesheet&amp;gt;&lt;/xslt&gt;
+&lt;/transformModel&gt;</attribute>
+  <attribute name="xqueryModel" type="NULL"/>
+  <attribute name="xslt" type="STRING">&lt;xslt:stylesheet xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:ns2=&quot;http://www.compositesw.com/services/system/util/common&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;1.0&quot;&gt;
+  &lt;xslt:template match=&quot;/&quot;&gt;
+    &lt;xslt:variable name=&quot;_name&quot;/&gt;
+    &lt;xslt:variable name=&quot;_annotation&quot;/&gt;
+    &lt;xslt:variable name=&quot;_connectorType&quot;/&gt;
+    &lt;xslt:variable name=&quot;_groupName&quot;/&gt;
+    &lt;xslt:variable name=&quot;_jmsClientID&quot;/&gt;
+    &lt;xslt:variable name=&quot;_jndiContextFactory&quot;/&gt;
+    &lt;xslt:variable name=&quot;_jndiProperties&quot;/&gt;
+    &lt;xslt:variable name=&quot;_jndiProviderUrl&quot;/&gt;
+    &lt;xslt:variable name=&quot;_jndiUser&quot;/&gt;
+    &lt;xslt:variable name=&quot;_maxPool&quot;/&gt;
+    &lt;xslt:variable name=&quot;_minPool&quot;/&gt;
+    &lt;xslt:variable name=&quot;_poolTimeout&quot;/&gt;
+    &lt;xslt:variable name=&quot;_queueConnectionFactory&quot;/&gt;
+    &lt;xslt:variable name=&quot;_useJNDI&quot;/&gt;
+    &lt;xslt:element name=&quot;results&quot;&gt;
+      &lt;xslt:for-each select=&quot;ns1:getConnectorsResponse&quot;&gt;
+        &lt;xslt:for-each select=&quot;ns1:connectors&quot;&gt;
+          &lt;xslt:for-each select=&quot;ns1:connector&quot;&gt;
+            &lt;xslt:variable name=&quot;_name&quot; select=&quot;ns1:name&quot;/&gt;
+            &lt;xslt:variable name=&quot;_annotation&quot; select=&quot;ns1:annotation&quot;/&gt;
+            &lt;xslt:variable name=&quot;_connectorType&quot; select=&quot;ns1:connectorType&quot;/&gt;
+            &lt;xslt:variable name=&quot;_groupName&quot; select=&quot;ns1:groupName&quot;/&gt;
+            &lt;xslt:variable name=&quot;_jmsClientID&quot; select=&quot;ns1:jmsClientID&quot;/&gt;
+            &lt;xslt:variable name=&quot;_jndiContextFactory&quot; select=&quot;ns1:jndiContextFactory&quot;/&gt;
+            &lt;xslt:variable name=&quot;_jndiProperties&quot; select=&quot;ns1:jndiProperties/ns2:attribute&quot;/&gt;
+            &lt;xslt:variable name=&quot;_jndiProviderUrl&quot; select=&quot;ns1:jndiProviderUrl&quot;/&gt;
+            &lt;xslt:variable name=&quot;_jndiUser&quot; select=&quot;ns1:jndiUser&quot;/&gt;
+            &lt;xslt:variable name=&quot;_maxPool&quot; select=&quot;ns1:maxPool&quot;/&gt;
+            &lt;xslt:variable name=&quot;_minPool&quot; select=&quot;ns1:minPool&quot;/&gt;
+            &lt;xslt:variable name=&quot;_poolTimeout&quot; select=&quot;ns1:poolTimeout&quot;/&gt;
+            &lt;xslt:variable name=&quot;_queueConnectionFactory&quot; select=&quot;ns1:queueConnectionFactory&quot;/&gt;
+            &lt;xslt:variable name=&quot;_useJNDI&quot; select=&quot;ns1:useJNDI&quot;/&gt;
+            &lt;xslt:element name=&quot;result&quot;&gt;
+              &lt;xslt:element name=&quot;name&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_name&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;annotation&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_annotation&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;connectorType&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_connectorType&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;groupName&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_groupName&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;jmsClientID&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_jmsClientID&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;jndiContextFactory&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_jndiContextFactory&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;jndiProperties&quot;&gt;
+                &lt;xslt:copy-of select=&quot;$_jndiProperties&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;jndiProviderUrl&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_jndiProviderUrl&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;jndiUser&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_jndiUser&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;maxPool&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_maxPool&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;minPool&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_minPool&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;poolTimeout&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_poolTimeout&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;queueConnectionFactory&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_queueConnectionFactory&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;useJNDI&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_useJNDI&quot;/&gt;
+              &lt;/xslt:element&gt;
+            &lt;/xslt:element&gt;
+          &lt;/xslt:for-each&gt;
+        &lt;/xslt:for-each&gt;
+      &lt;/xslt:for-each&gt;
+    &lt;/xslt:element&gt;
+  &lt;/xslt:template&gt;
+&lt;/xslt:stylesheet&gt;</attribute>
+</metadata>

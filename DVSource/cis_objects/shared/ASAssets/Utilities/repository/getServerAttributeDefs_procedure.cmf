@@ -1,0 +1,351 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getServerAttributeDefs" path="/shared/ASAssets/Utilities/repository/getServerAttributeDefs" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getServerAttributeDefs:
+
+	This procedure returns all the server attribute definitions starting at the input attribute location. If the
+    starting attribute location is a FOLDER, then the procedure will recursively walk the folder structure and
+    return all the child attribute definitions.
+
+    Users calling this procedure must have the ACCESS_TOOLS right and, depending on whether
+    the attribute is public or not, may need the READ_ALL_CONFIG right as well.
+
+
+	Input:
+		startingAttribute - The starting attribute location. 
+			Values: Any path to an attribute
+
+
+	Output:
+		result - The attribute definition and the definitions of any child attributes (if any.)
+			Values: CURSOR (
+                        attrName VARCHAR(32768),            -- path to the attribute
+                        attrType VARCHAR(32768),            -- the attribute&apos;s type
+                        updateRule VARCHAR(32768),          -- indicates whether the field is updatable or not
+                        annotation VARCHAR(32768),          -- a description of the attribute
+                        required BIT,                       -- indicates whether the field must have a value or not
+                        defaultValue VARCHAR(32768),        -- indicates the default value (NULL if there is none.)
+                        pattern VARCHAR(32768),             -- a regular expression pattern that is used to test for valid values
+                        minValue VARCHAR(32768),            -- the minimum allowed value (NULL if there is none)
+                        maxValue VARCHAR(32768),            -- the maximum allowed value (NULL if there is none)
+                        displayName VARCHAR(32768),         -- the attribute&apos;s name as displayed in the Studio Configuration panel
+                        unitName VARCHAR(32768),            -- the attribute&apos;s value&apos;s unit name
+                        parentName VARCHAR(32768),          -- the parent attribute&apos;s name (this is usually NULL)
+                        visible BIT,                        -- indicates whether the configuration setting is visible in the Studio Configuration panel
+                        editorHint VARCHAR(32768),          -- editor hint (seems unused)
+                        dependencyExpression VARCHAR(32768) -- dependency expression (also seems unused)
+            );
+
+
+	Exceptions:  none
+
+
+	Author:      Calvin Goodrich
+	Date:        2/14/2013
+	CSW Version: 6.2.2
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="startingAttribute" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="ResultSetRow" type="TABLE" refId="1">
+        <element name="attrName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="attrType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="updateRule">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="annotation">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="required">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="defaultValue">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="pattern">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="minValue">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="maxValue">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="displayName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="unitName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="parentName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="visible">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="editorHint">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="dependencyExpression">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/repository/getServerAttributeDefs" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="startingAttribute" direction="IN">
+        <datatype type="STRING" maxLength="4096"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="attrName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="attrType">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="updateRule">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="required">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="defaultValue">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="pattern">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="minValue">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="maxValue">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="displayName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="unitName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="parentName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="visible">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="editorHint">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="dependencyExpression">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getServerAttributeDefChildrenXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getServerAttributeDefChildren" direction="IN">
+        <datatype name="getServerAttributeDefChildren" extendedName="{http://www.compositesw.com/services/system/admin/server}getServerAttributeDefChildren" namespace="http://www.compositesw.com/services/system/admin/server" referenceDefinitionSet="/services/webservices/system/admin/server/operations/ServerSchema" referenceType="{http://www.compositesw.com/services/system/admin/server}getServerAttributeDefChildren" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/server}getServerAttributeDefChildren">
+          <schemaDatatype>
+            <datatype name="getServerAttributeDefChildren" namespace="http://www.compositesw.com/services/system/admin/server" superTypeName="getServerAttributeDefChildrenRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/server" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="path" namespace="http://www.compositesw.com/services/system/admin/server">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="attrName">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="attrType">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="updateRule">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="annotation">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="required">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="defaultValue">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="pattern">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="minValue">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="maxValue">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="displayName">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="unitName">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="parentName">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="visible">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="editorHint">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="dependencyExpression">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+    getServerAttributeDefs:
+
+	This procedure returns all the server attribute definitions starting at the input attribute location. If the
+    starting attribute location is a FOLDER, then the procedure will recursively walk the folder structure and
+    return all the child attribute definitions.
+
+    Users calling this procedure must have the ACCESS_TOOLS right and, depending on whether
+    the attribute is public or not, may need the READ_ALL_CONFIG right as well.
+
+
+	Input:
+		startingAttribute - The starting attribute location. 
+			Values: Any path to an attribute
+
+
+	Output:
+		result - The attribute definition and the definitions of any child attributes (if any.)
+			Values: CURSOR (
+                        attrName VARCHAR(32768),            -- path to the attribute
+                        attrType VARCHAR(32768),            -- the attribute&apos;s type
+                        updateRule VARCHAR(32768),          -- indicates whether the field is updatable or not
+                        annotation VARCHAR(32768),          -- a description of the attribute
+                        required BIT,                       -- indicates whether the field must have a value or not
+                        defaultValue VARCHAR(32768),        -- indicates the default value (NULL if there is none.)
+                        pattern VARCHAR(32768),             -- a regular expression pattern that is used to test for valid values
+                        minValue VARCHAR(32768),            -- the minimum allowed value (NULL if there is none)
+                        maxValue VARCHAR(32768),            -- the maximum allowed value (NULL if there is none)
+                        displayName VARCHAR(32768),         -- the attribute&apos;s name as displayed in the Studio Configuration panel
+                        unitName VARCHAR(32768),            -- the attribute&apos;s value&apos;s unit name
+                        parentName VARCHAR(32768),          -- the parent attribute&apos;s name (this is usually NULL)
+                        visible BIT,                        -- indicates whether the configuration setting is visible in the Studio Configuration panel
+                        editorHint VARCHAR(32768),          -- editor hint (seems unused)
+                        dependencyExpression VARCHAR(32768) -- dependency expression (also seems unused)
+            );
+
+
+	Exceptions:  none
+
+
+	Author:      Calvin Goodrich
+	Date:        2/14/2013
+	CSW Version: 6.2.2
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getServerAttributeDefs(
+    IN startingAttribute VARCHAR(4096),
+    OUT result PIPE ResultSetRow
+)
+BEGIN
+    DECLARE PUBLIC TYPE ResultSetRow ROW (
+        attrName VARCHAR(32768), 
+        attrType VARCHAR(32768), 
+        updateRule VARCHAR(32768), 
+        annotation VARCHAR(32768), 
+        required BIT, 
+        defaultValue VARCHAR(32768), 
+        pattern VARCHAR(32768), 
+        minValue VARCHAR(32768), 
+        maxValue VARCHAR(32768), 
+        displayName VARCHAR(32768), 
+        unitName VARCHAR(32768), 
+        parentName VARCHAR(32768), 
+        visible BIT, 
+        editorHint VARCHAR(32768), 
+        dependencyExpression VARCHAR(32768)
+    );
+    FOR r AS
+        SELECT * FROM /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getServerAttributeDefChildrenXSLT(
+&apos;&lt;server:getServerAttributeDefChildren xmlns:server=&quot;http://www.compositesw.com/services/system/admin/server&quot;&gt;
+  &lt;server:path&gt;&apos; || CAST(XMLTEXT(COALESCE(startingAttribute, &apos;&apos;)) AS VARCHAR(4096)) || &apos;&lt;/server:path&gt;
+&lt;/server:getServerAttributeDefChildren&gt;&apos;
+        )
+    DO
+        INSERT INTO result VALUES (r);
+
+        IF (r.attrType = &apos;FOLDER&apos;) THEN
+            FOR r2 AS
+                SELECT * FROM /shared/ASAssets/Utilities/repository/getServerAttributeDefs(r.attrName)
+            DO
+                INSERT INTO result VALUES (r2);
+            END FOR;
+        END IF;
+    END FOR;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1365005263865</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_types" type="MAP">
+    <item>
+      <key type="STRING">ResultSetRow</key>
+      <value type="BYTE_ARRAY">EB8GAgAMAFIAZQBzAHUAbAB0AFMAZQB0AFIAbwB3BikAPAAvAHMAaABhAHIAZQBkAC8AQQBTAEEA
+cwBzAGUAdABzAC8AVQB0AGkAbABpAHQAaQBlAHMALwByAGUAcABvAHMAaQB0AG8AcgB5AC8AZwBl
+AHQAUwBlAHIAdgBlAHIAQQB0AHQAcgBpAGIAdQB0AGUARABlAGYAcwYqAAwAUgBlAHMAdQBsAHQA
+UwBlAHQAUgBvAHcDEgAAAAEDEgAAAAEBEwEJFAAAAA8QIQYVAAgAYQB0AHQAcgBOAGEAbQBlAy8A
+AAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAcAVgBBAFIAQwBIAEEAUgMS
+AAAAAgQEAAAAAAAAgAABEwH/////ECEGFQAIAGEAdAB0AHIAVAB5AHAAZQMvAAAAAQMWAAAAAAMa
+AAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAAAv//ECEGFQAKAHUAcABkAGEAdABlAFIAdQBsAGUD
+LwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAL//xAhBhUACgBhAG4AbgBv
+AHQAYQB0AGkAbwBuAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8Q
+IQYVAAgAcgBlAHEAdQBpAHIAZQBkAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAA
+CBkQGQYCAAMAQgBJAFQDEgAAAAMEBwAAAAAAAAAABAYAAAAAAAAAAf////8QIQYVAAwAZABlAGYA
+YQB1AGwAdABWAGEAbAB1AGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAA
+AAL//xAhBhUABwBwAGEAdAB0AGUAcgBuAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIA
+AAAAAxIAAAAC//8QIQYVAAgAbQBpAG4AVgBhAGwAdQBlAy8AAAABAxYAAAAAAxoAAAABAxsAAAAB
+AyD/////AyIAAAAAAxIAAAAC//8QIQYVAAgAbQBhAHgAVgBhAGwAdQBlAy8AAAABAxYAAAAAAxoA
+AAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVAAsAZABpAHMAcABsAGEAeQBOAGEAbQBl
+Ay8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVAAgAdQBuAGkA
+dABOAGEAbQBlAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYV
+AAoAcABhAHIAZQBuAHQATgBhAG0AZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAA
+AAMSAAAAAv//ECEGFQAHAHYAaQBzAGkAYgBsAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP//
+//8DIgAAAAADEgAAAAP//xAhBhUACgBlAGQAaQB0AG8AcgBIAGkAbgB0Ay8AAAABAxYAAAAAAxoA
+AAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVABQAZABlAHAAZQBuAGQAZQBuAGMAeQBF
+AHgAcAByAGUAcwBzAGkAbwBuAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIA
+AAAC/////w==</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

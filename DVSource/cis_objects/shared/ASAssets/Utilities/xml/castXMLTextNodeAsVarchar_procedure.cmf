@@ -1,0 +1,269 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="castXMLTextNodeAsVarchar" path="/shared/ASAssets/Utilities/xml/castXMLTextNodeAsVarchar" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>castXMLTextNodeAsVarchar:
+  	This script converts XML text node to varchar. Does appropriate conversion from XML schema dateTime
+  	or time to ANSI format (and even adjusts timezone to server&apos;s timezone if timezone provided.)
+
+	Inputs:
+  	 	 xmlValue - An XML text node (as obtained from an XPATH or XSLT call, for example.)
+		result   - The converted text string.
+
+	Outputs:
+  		None (throws an exception if there are any errors)
+	Exceptions:  none
+	Author:      Calvin Goodrich
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="xmlValue" direction="IN" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="Text" referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/util/System" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexFind" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexGetGroups" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="groupNumber">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="matchedGroup">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexGetGroups" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/time/DateUtils/GetServerTimezone" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="displayType" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/GetServerTimezone" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/GetServerTimezone" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexFind" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexFind" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* castXMLTextNodeAsVarchar:
+  	This script converts XML text node to varchar. Does appropriate conversion from XML schema dateTime
+  	or time to ANSI format (and even adjusts timezone to server&apos;s timezone if timezone provided.)
+
+	Inputs:
+  	 	 xmlValue - An XML text node (as obtained from an XPATH or XSLT call, for example.)
+		result   - The converted text string.
+
+	Outputs:
+  		None (throws an exception if there are any errors)
+	Exceptions:  none
+	Author:      Calvin Goodrich
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE castXMLTextNodeAsVarchar(
+  IN xmlValue XML,
+  OUT result /lib/util/System.Text
+)
+BEGIN
+  DECLARE myXmlValue /lib/util/System.Text;
+  DECLARE dateRE VARCHAR DEFAULT &apos;\-?\d+\-\d{2}\-\d{2}&apos;;
+  DECLARE timeRE VARCHAR DEFAULT &apos;\d{2}:\d{2}:\d{2}(?:\.\d+)?&apos;;
+  DECLARE timezoneRE VARCHAR DEFAULT &apos;([\+\-])(\d{2}):(\d{2})|(Z)&apos;;
+  DECLARE myXMLDateTimeRE VARCHAR DEFAULT &apos;\A\s*(&apos; || dateRE || &apos;)T(&apos; || timeRE || &apos;)(?:&apos; || timezoneRE || &apos;)?\s*\z&apos;;
+  DECLARE myXMLTimeRE VARCHAR DEFAULT &apos;\A\s*(&apos; || timeRE || &apos;)(?:&apos; || timezoneRE || &apos;)?\s*\z&apos;;
+  DECLARE myDate VARCHAR;
+  DECLARE myTime VARCHAR;
+  DECLARE myTzSign VARCHAR;
+  DECLARE myTzHour VARCHAR;
+  DECLARE myTzMinute VARCHAR;
+  DECLARE myTzGMT VARCHAR;
+  DECLARE myAdjust INTEGER DEFAULT 0;
+  DECLARE sysAdjust INTEGER DEFAULT (GetServerTimezone(&apos;OFFSET&apos;) / 1000);
+  DECLARE c CURSOR;
+
+  IF (xmlValue IS NULL) THEN
+    SET result = NULL;
+  ELSE
+    SET myXmlValue = CAST(xmlValue AS /lib/util/System.Text);
+
+    -- if the XML value is an XML time, convert it to an ANSI time
+    --
+    IF (RegexFind (myXmlValue, myXMLTimeRE, 1) IS NOT NULL) THEN
+
+      -- extract the time and timezone elements
+      --
+      FOR r AS
+        SELECT
+          *
+        FROM
+          /shared/ASAssets/Utilities/string/TextUtils/RegexGetGroups(myXmlValue, myXMLTimeRE, 1)
+      DO
+				CASE r.groupNumber
+          WHEN 1 THEN SET myTime = r.matchedGroup;
+          WHEN 2 THEN SET myTzSign = r.matchedGroup;
+          WHEN 3 THEN SET myTzHour = r.matchedGroup;
+          WHEN 4 THEN SET myTzMinute = r.matchedGroup;
+          WHEN 5 THEN SET myTzGMT = r.matchedGroup;
+        END CASE;
+      END FOR; 
+
+      -- update the time with the specified timezone
+      --
+      IF (myTzSign IS NOT NULL OR myTzGMT IS NOT NULL) THEN
+
+        IF (myTzGMT IS NULL) THEN
+
+          -- calculate seconds adjustment back to GMT from specified timezone
+          --
+          SET myAdjust = CAST(myTzHour AS INT) * 3600 + CAST(myTzMinute AS INT) * 60;
+          IF (myTzSign = &apos;-&apos;) THEN
+            SET myAdjust = myAdjust * (-1);
+          END IF;
+
+        END IF;
+
+        -- calculate timezone offset difference from system offset
+        --
+        SET myAdjust = sysAdjust - myAdjust;
+
+        -- get new time by selecting it as a static value from the system ALL_DOMAINS view (can&apos;t seem to crack creating intervals programmatically.)
+        --
+        OPEN c FOR &apos;SELECT (TIME &apos;&apos;&apos; || myTime || &apos;&apos;&apos; + INTERVAL &apos;&apos;&apos; || myAdjust || &apos;&apos;&apos; SECOND(5)) mytime FROM /services/databases/system/ALL_DOMAINS WHERE DOMAIN_NAME = &apos;&apos;composite&apos;&apos;&apos;;
+        FETCH c INTO result;
+        CLOSE c;
+
+      ELSE
+        SET result = myTime;
+      END IF;
+
+    -- if the XML value is an XML dateTime, convert it to an ANSI timestamp
+    --
+    ELSEIF (RegexFind(myXmlValue, myXMLDateTimeRE, 1) IS NOT NULL) THEN 
+
+      -- extract the date, time, and timezone elements
+      --
+      FOR r AS
+        SELECT
+          *
+        FROM
+          /shared/ASAssets/Utilities/string/TextUtils/RegexGetGroups(myXmlValue, myXMLDateTimeRE, 1)
+      DO
+				CASE r.groupNumber
+          WHEN 1 THEN SET myDate = r.matchedGroup;
+          WHEN 2 THEN SET myTime = r.matchedGroup;
+          WHEN 3 THEN SET myTzSign = r.matchedGroup;
+          WHEN 4 THEN SET myTzHour = r.matchedGroup;
+          WHEN 5 THEN SET myTzMinute = r.matchedGroup;
+          WHEN 6 THEN SET myTzGMT = r.matchedGroup;
+        END CASE;
+      END FOR; 
+
+      -- update the timestamp with the specified timezone
+      --
+      IF (myTzSign IS NOT NULL OR myTzGMT IS NOT NULL) THEN
+
+        IF (myTzGMT IS NULL) THEN
+
+          -- calculate seconds adjustment back to GMT from specified timezone
+          --
+          SET myAdjust = CAST(myTzHour AS INT) * 3600 + CAST(myTzMinute AS INT) * 60;
+          IF (myTzSign = &apos;-&apos;) THEN
+            SET myAdjust = myAdjust * (-1);
+          END IF;
+
+        END IF;
+
+        -- calculate timezone offset difference from system offset
+        --
+        SET myAdjust = sysAdjust - myAdjust;
+
+        -- get new time by selecting it as a static value from the system ALL_DOMAINS view (can&apos;t seem to crack creating intervals programmatically.)
+        --
+        OPEN c FOR &apos;SELECT (TIMESTAMP &apos;&apos;&apos; || myDate || &apos; &apos; || myTime || &apos;&apos;&apos; + INTERVAL &apos;&apos;&apos; || myAdjust || &apos;&apos;&apos; SECOND(5)) mytime FROM /services/databases/system/ALL_DOMAINS WHERE DOMAIN_NAME = &apos;&apos;composite&apos;&apos;&apos;;
+        FETCH c INTO result;
+        CLOSE c;
+
+      ELSE
+        SET result = myDate || &apos; &apos; || myTime;
+      END IF;
+
+    -- otherwise pass the text through unchanged.
+    --
+    ELSE 
+      SET result = myXmlValue;
+    END IF;
+  END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486501474</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:0:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

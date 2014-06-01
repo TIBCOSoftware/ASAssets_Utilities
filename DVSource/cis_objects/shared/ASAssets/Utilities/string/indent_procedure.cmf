@@ -1,0 +1,93 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="indent" path="/shared/ASAssets/Utilities/string/indent" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>indent:
+
+	This procedures indents text
+ 
+	Input:
+		depthNum					The depth of the incoming resource.  Tells this procedure how many times to indent.
+										If null or zero, the the original value is returned and not indented.
+		indent						The amount of spaces to indent.
+		inValue						The value to indent.
+	Output:
+		outValue					The indented value.
+
+	Exceptions:  none
+
+	Author:      Mike Tinius
+	Date:        7/27/2012
+	CSW Version: 6.1.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="depthNum" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="indent" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="inValue" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="outValue" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/* 	indent:
+
+	This procedure indents text.
+ 
+	Input:
+		depthNum					The depth of the incoming resource.  Tells this procedure how many times to indent.
+										If null or zero, the the original value is returned and not indented.
+		indent						The amount of spaces to indent.
+		inValue						The value to indent.
+	Output:
+		outValue					The indented value.
+
+	Exceptions:  none
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	07/27/2012		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Moved to /string/indent from /documentation/helpers/indent
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE indent(
+	IN depthNum		INTEGER,
+	IN indent		VARCHAR,
+	IN inValue		LONGVARCHAR,
+	OUT outValue	LONGVARCHAR
+)
+BEGIN
+	DECLARE i		INTEGER DEFAULT 1;
+	DECLARE indent_ VARCHAR DEFAULT indent;
+
+	set outValue = inValue;
+	if (depthNum is not null and inValue is not null) then
+		if (indent_ is null) then
+			set indent_ = &apos;&apos;;
+		end if;
+		set outValue = &apos;&apos;;
+		while (i &lt;= depthNum) do
+			set outValue = outValue || indent_;
+			set i = i + 1;
+		end while;
+		set outValue = outValue || inValue;
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754888434</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

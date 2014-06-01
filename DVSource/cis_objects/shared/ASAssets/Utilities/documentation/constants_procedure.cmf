@@ -1,0 +1,173 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="constants" path="/shared/ASAssets/Utilities/documentation/constants" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>constants:
+
+	These are default constants used by the documentation procedures
+ 
+	Author:      Mike Tinius
+	Date:        7/27/2012
+	CSW Version: 6.1.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="docPreambleImpl" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="docResourceFormatImpl" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="debug" direction="OUT" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="debugTime" direction="OUT" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="debugTime2" direction="OUT" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="switches" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="filePath" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="resourcePath" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="resourceType" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="eol" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="indent2" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="indent4" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="padChar" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="beginSeparator" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="endSeparator" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="minorSeparator" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="excludeKeywordsInPathList" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="excludePathsList" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="excludeDSPathsList" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 	constants:
+
+	These are default constants used by the documentation procedures
+ 
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	07/25/2012		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Added new constants: debugTime, debutTime2, excludeDSPathsList
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE constants(
+ 	OUT docPreambleImpl 		/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+ 	OUT docResourceFormatImpl 	/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	OUT debug 					CHAR(1),
+	OUT debugTime				CHAR(1),
+	OUT debugTime2				CHAR(1),
+	OUT switches				LONGVARCHAR,
+	OUT filePath 				/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	OUT resourcePath 			/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	OUT resourceType 			VARCHAR,
+	OUT eol						VARCHAR,
+	OUT indent2 				VARCHAR,
+	OUT indent4 				VARCHAR,
+	OUT padChar 				VARCHAR,
+	OUT beginSeparator 			VARCHAR,
+	OUT endSeparator 			VARCHAR,
+	OUT minorSeparator 			VARCHAR,
+	OUT excludeKeywordsInPathList LONGVARCHAR,
+	OUT excludePathsList 		LONGVARCHAR,
+	OUT excludeDSPathsList		LONGVARCHAR
+)
+BEGIN
+	/* 
+	This is the path to the implementation procedure which provides formatted output for a single resource.
+	This implementation must always have this signature:
+		Input:
+			fullResourcePath - Full resource path which includes the path and the resource name  
+				Values: e.g. /shared/ASAssets/Utilities/repository/examples/source/proc1
+			resourceType - Type of CIS resource to be created
+				Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. PROCEDURE
+		Output: 
+			CURSOR (formattedText LONGVARCHAR) - formatted text is out output complete with a separator at the beginning of the resource.
+	*/
+ 	set docPreambleImpl			= &apos;/shared/ASAssets/Utilities/documentation/implementations/getDocPreambleImpl1&apos;;
+ 	set docResourceFormatImpl	= &apos;/shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1&apos;;
+	-- Debug is based on /shared/ASAssets/Utilities/repository/_debug
+	set debug					= /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	set debugTime				= &apos;N&apos;; -- first level of time display
+	set debugTime2				= &apos;N&apos;; -- second level of time display for the resource vector loop
+	-- Default switches
+	set switches				= &apos;print_time=yes save_file=yes save_file_intermediate=yes&apos;;
+	-- The location in the file system where the formatted file will be written.
+	set filePath				= &apos;/temp/cis_resource_docs.txt&apos;;
+	-- Default resource path to being the introspection of resources
+	set resourcePath			= &apos;/shared&apos;;
+	-- Default resource type for the given resource path
+	set resourceType			= &apos;CONTAINER&apos;;
+	-- Define the end of line marker
+	set eol						= CHR(13);
+	-- Indent (2 vspaces)
+	set indent2					= &apos;  &apos;;
+	-- Indent (4 spaces)
+	set indent4					= &apos;    &apos;;
+	-- Pad character
+	set padChar					= &apos; &apos;;
+	-- Beginning separator for each section
+	set beginSeparator			= &apos;================================================================================&apos;; -- 80 characters
+	-- Ending separator for each section
+	set endSeparator			= &apos;--------------------------------------------------------------------------------&apos;; -- 80 characters
+	-- Minor separator within a section
+	set minorSeparator 			= &apos;&apos;;
+
+	-- Exclude keywords in path, case insensitive.  Comma separated list.  These are whole words and not wild cards.  
+	--   A word is defined by what exists between folder separators &quot;/&quot;
+	set excludeKeywordsInPathList = null;
+	-- Exclude actual paths.  Double quotes are not required.  Comma separated list.
+	set excludePathsList		= null;
+	-- Exclude paths when finding matches for datasources.    This is a comma separated list of paths to exclude from processing.  
+	-- It may include any CIS path such as /shared/ASAssets/Utilities, /shared/ASAssets/BestPractices, /lib, /system etc.
+	set excludeDSPathsList 		= &apos;/shared/ASAssets/Utilities, /lib, /services/databases/system&apos;;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397496199149</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

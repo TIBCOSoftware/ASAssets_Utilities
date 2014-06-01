@@ -1,0 +1,53 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="remove" path="/shared/ASAssets/Utilities/file/FileProcessingCJP/remove" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>/*
+ * Source File: Remove.java
+ *
+ * Description: This Composite CJP removes a file or directory from the file system.  
+ * 		When removing a folder, it only removes the folder at the end of the path.  
+ * 		It does not remove any intermediate folders.  The folder must be empty in order
+ * 		for the remove to work and return a success.
+ *
+ * Note: The import [import com.compositesw.extension.*] requires CIS_HOME\apps\extension\lib\csext.jar
+ * 
+ *	Input:
+ *		objectPath - path of object to remove.								Types.VARCHAR, DIRECTION_IN
+ *			Can be a full file path or a directory path.
+ *
+ *	Output: 
+ *		success - true(1)=directory removed. 								Types.BOOLEAN, DIRECTION_OUT
+ *				  false(0)=failed most likely because the directory was not empty
+ *
+ *	Exceptions:  CustomProcedureException, SQLException
+ *	Author:      Mike Tinius
+ *	Date:        8/6/2010
+ *	CSW Version: 5.1.0
+ *
+ *  © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+ */</annotation>
+  <parameters>
+    <parameter name="objectPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+      <attribute name="selectionState" type="INTEGER">2</attribute>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BOOLEAN" subType="DATASOURCE_TYPE" type="BOOLEAN"/>
+      <attribute name="selectionState" type="INTEGER">2</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege user="system" domain="composite" privileges="READ WRITE EXECUTE"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.file.Remove</attribute>
+  <attribute name="creationDate" type="LONG">1366122592839</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392747517980</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="p:0:selectionState" type="INTEGER">2</attribute>
+  <attribute name="p:1:selectionState" type="INTEGER">2</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

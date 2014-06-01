@@ -1,0 +1,712 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="createResourcePrivilege" path="/shared/ASAssets/Utilities/repository/user/createResourcePrivilege" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>createResourcePrivilege:
+    * Assign privileges and ownership to all resources.
+    * The resourcelist is an array of resources - usually folders (CONTAINER) and virtual
+    * databases (DATA_SOURCE).  For each resource, an array is provided with the users or
+    * groups who can access that resource, and a set of resource privileges for each.
+    * If the recurse flag is &apos;1&apos; the same permissions will be applied to sub-resources.
+ 
+	Input:
+    		debug - Y=debug on, N=debug off 
+			owner - Owner should be set to the name of the user which should own all the objects
+			ownerDomain - Domain for owner - default is &apos;composite&apos;
+    		resourcePath - full resource path to the composite resource
+    		resourceType - resource type e.g. CONTAINER, DATA_SOURCE, PROCEDURE, VIEW
+    		recurse - 1=recurse through folders if the resource is a folder, 0=no recurse
+			name - name of the user or group to assign the privilege
+			domainName - composite domain
+			nameType - USER or GROUP
+			privs - space separated list of privileges: READ SELECT EXECUTE INSERT UPDATE DELETE
+	Output:
+
+	Exceptions:  Exception may be thrown.
+
+	Author:      Mike Tinius
+	Date:        1/18/2011
+	CSW Version: 5.2.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="owner" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="ownerDomain" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+    </parameter>
+    <parameter name="recurse" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="name" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="domainName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="nameType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="privileges" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/services/webservices/system/admin/resource/operations/changeResourceOwner" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="changeResourceOwner" direction="IN">
+        <datatype name="changeResourceOwner" extendedName="{http://www.compositesw.com/services/system/admin/resource}changeResourceOwner" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}changeResourceOwner" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}changeResourceOwner">
+          <schemaDatatype>
+            <datatype name="changeResourceOwner" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="changeResourceOwnerRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="resourceType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="detail" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="detailLevel" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="newOwnerName" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="newOwnerDomain" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="currentOwnerName" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="currentOwnerDomain" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="recurse" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="changeResourceOwnerResponse" direction="OUT">
+        <datatype name="changeResourceOwnerResponse" extendedName="{http://www.compositesw.com/services/system/admin/resource}changeResourceOwnerResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}changeResourceOwnerResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}changeResourceOwnerResponse">
+          <schemaDatatype>
+            <datatype name="changeResourceOwnerResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="changeResourceOwnerResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="3">
+              <element name="resources" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="resourceList" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                  <element name="resource" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                    <datatype name="resource" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
+                      <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="resourceType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="subtype" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="resourceSubType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="id" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="changeId" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                      </element>
+                      <element name="version" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="introspectState" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="introspectState" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="ownerDomain" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="ownerName" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="impactLevel" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="impactLevel" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="impactMessage" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="enabled" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                      </element>
+                      <element name="lockState" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="lockState" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
+                          <element name="lockOwnerDomain" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="lockOwnerName" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="lockCreateTime" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="dateTime" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DATETIME"/>
+                          </element>
+                          <element name="lockParentPath" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                            <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                        </datatype>
+                      </element>
+                      <element name="hints" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="7">
+                          <element name="hint" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="attribute" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="8">
+                              <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype name="attributeType" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="value" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="attributeTypeValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="9">
+                                  <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                    <datatype name="attributeTypeValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="10">
+                                      <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
+                                        <datatype name="attributeType" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                                      </element>
+                                      <element name="value" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                        <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                                      </element>
+                                      <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                        <reference refId="9"/>
+                                      </element>
+                                      <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                        <datatype name="attributeTypeValueMap" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="11">
+                                          <element name="entry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                            <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="12">
+                                              <element name="key" namespace="http://www.compositesw.com/services/system/util/common">
+                                                <reference refId="10"/>
+                                              </element>
+                                              <element name="value" namespace="http://www.compositesw.com/services/system/util/common">
+                                                <reference refId="10"/>
+                                              </element>
+                                            </datatype>
+                                          </element>
+                                        </datatype>
+                                      </element>
+                                      <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                        <datatype name="attributeSimpleValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="13">
+                                          <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                            <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                                          </element>
+                                        </datatype>
+                                      </element>
+                                    </datatype>
+                                  </element>
+                                </datatype>
+                              </element>
+                              <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <reference refId="11"/>
+                              </element>
+                              <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <reference refId="13"/>
+                              </element>
+                              <element name="unset" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                      <element name="annotation" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="attributes" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="attributeList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="14">
+                          <element name="attribute" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="attribute" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="15">
+                              <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype name="attributeType" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="value" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <reference refId="9"/>
+                              </element>
+                              <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <reference refId="11"/>
+                              </element>
+                              <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <reference refId="13"/>
+                              </element>
+                              <element name="unset" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="fault" direction="OUT">
+        <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
+          <schemaDatatype>
+            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="16">
+              <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="17">
+                  <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="message" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="detail" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="severity" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="messageSeverity" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/services/webservices/system/admin/resource/operations/updateResourcePrivileges" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="updateResourcePrivileges" direction="IN">
+        <datatype name="updateResourcePrivileges" extendedName="{http://www.compositesw.com/services/system/admin/resource}updateResourcePrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}updateResourcePrivileges" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}updateResourcePrivileges">
+          <schemaDatatype>
+            <datatype name="updateResourcePrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="updateResourcePrivilegesRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="updateRecursively" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+              <element name="updateDependenciesRecursively" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+              <element name="updateDependentsRecursively" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+              <element name="privilegeEntries" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                  <element name="privilegeEntry" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                    <datatype name="privilegeEntry" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                      <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="resourceOrColumnType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="privileges" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
+                          <element name="privilege" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="privilege" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
+                              <element name="domain" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="nameType" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="userNameType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="privs" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="privList" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="combinedPrivs" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                                <datatype name="privList" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="inheritedPrivs" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                                <datatype name="privList" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+              <element name="mode" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="updatePrivilegesMode" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="updateResourcePrivilegesResponse" direction="OUT">
+        <datatype name="updateResourcePrivilegesResponse" extendedName="{http://www.compositesw.com/services/system/admin/resource}updateResourcePrivilegesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}updateResourcePrivilegesResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}updateResourcePrivilegesResponse">
+          <schemaDatatype>
+            <datatype name="updateResourcePrivilegesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="updateResourcePrivilegesResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="7"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="fault" direction="OUT">
+        <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
+          <schemaDatatype>
+            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="8">
+              <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="9">
+                  <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="message" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="detail" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="severity" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="messageSeverity" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getResourcePrivilegesXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getResourcePrivileges" direction="IN">
+        <datatype name="getResourcePrivileges" extendedName="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivileges" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivileges">
+          <schemaDatatype>
+            <datatype name="getResourcePrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="getResourcePrivilegesRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="entries" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                  <element name="entry" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                    <datatype name="pathTypeOrColumnPair" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                      <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="resourceOrColumnType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+              <element name="filter" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="includeColumnPrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="5">
+          <element name="path">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="4096"/>
+          </element>
+          <element name="type">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="40"/>
+          </element>
+          <element name="domain">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="255"/>
+          </element>
+          <element name="name">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="255"/>
+          </element>
+          <element name="nameType">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="255"/>
+          </element>
+          <element name="privs">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="combinedPrivs">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="inheritedPrivs">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* createResourcePrivilege:
+    * Assign privileges and ownership to all resources.
+    * The resourcelist is an array of resources - usually folders (CONTAINER) and virtual
+    * databases (DATA_SOURCE).  For each resource, an array is provided with the users or
+    * groups who can access that resource, and a set of resource privileges for each.
+    * If the recurse flag is &apos;1&apos; the same permissions will be applied to sub-resources.
+ 
+	Input:
+    		debug - Y=debug on, N=debug off 
+			owner - Owner should be set to the name of the user which should own all the objects
+			ownerDomain - Domain for owner - default is &apos;composite&apos;
+    		resourcePath - full resource path to the composite resource
+    		resourceType - resource type e.g. CONTAINER, DATA_SOURCE, PROCEDURE, VIEW
+    		recurse - 1=recurse through folders if the resource is a folder, 0=no recurse
+			name - name of the user or group to assign the privilege
+			domainName - composite domain
+			nameType - USER or GROUP
+			privs - space separated list of privileges: READ SELECT EXECUTE INSERT UPDATE DELETE
+	Output:
+
+	Exceptions:  Exception may be thrown.
+
+	Author:      Mike Tinius
+	Date:        1/18/2011
+	CSW Version: 5.2.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE createResourcePrivilege(
+	IN debug 				CHAR(1),-- e.g. Y or N
+	IN owner				VARCHAR(255),-- Owner should be set to the name of the user which should own all the objects
+	IN ownerDomain			VARCHAR(255),-- Domain for owner - default is &apos;composite&apos;
+	IN resourcePath			/lib/resource/ResourceDefs.ResourcePath,-- full resource path to the composite resource
+	IN resourceType 		/lib/resource/ResourceDefs.ResourceType,-- resource type e.g. CONTAINER, DATA_SOURCE, PROCEDURE, VIEW
+	IN recurse 				CHAR(1),-- 1=recurse through folders if the resource is a folder, 0=no recurse
+	IN name					VARCHAR(255),-- name of the user or group to assign the privilege
+	IN domainName			VARCHAR(255),-- composite domain
+	IN nameType				VARCHAR(255),-- USER or GROUP
+	IN &quot;privileges&quot;			VARCHAR(255)-- space separated list of privileges: READ SELECT EXECUTE INSERT UPDATE DELETE
+)
+BEGIN
+	DECLARE moduleName 		VARCHAR DEFAULT &apos;createResourcePrivilege&apos;;
+	DECLARE request 		VARCHAR(4096);
+	DECLARE response 		XML;
+	DECLARE fault 			XML;
+    DECLARE user_exists 	BOOLEAN;
+    DECLARE groups 			VECTOR(VARCHAR) DEFAULT VECTOR[];
+	DECLARE message 		LONGVARCHAR;
+	DECLARE padChar			CHAR(1) DEFAULT &apos; &apos;;
+    DECLARE i,j				INTEGER DEFAULT 1;
+    DECLARE ex 				EXCEPTION;
+   /*
+    * The resourcelist is an array of resources - usually folders (CONTAINER) and virtual
+    * databases (DATA_SOURCE).  For each resource, an array is provided with the users or
+    * groups who can access that resource, and a set of resource privileges for each.
+    * If the recurse flag is &apos;1&apos; the same permissions will be applied to sub-resources.
+    */
+    DECLARE resourcelist CONSTANT VECTOR(
+        ROW(resource VARCHAR, resourceType VARCHAR, recurse CHAR(1), resourceprivs VECTOR(
+            ROW(name VARCHAR, domainname VARCHAR, nametype VARCHAR, privs VARCHAR))
+        ))
+        DEFAULT VECTOR[(resourcePath, resourceType, recurse, VECTOR[(name, domainName, nameType, REPLACE(&quot;privileges&quot;,&apos;|&apos;,&apos; &apos;))])];
+/*
+(&apos;/shared&apos;, &apos;CONTAINER&apos;, &apos;1&apos;, VECTOR[ (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE&apos;) ]),
+(&apos;/shared/BestPractices&apos;, &apos;CONTAINER&apos;, &apos;1&apos;, VECTOR[  (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;)    ]),
+(&apos;/shared/Utilities&apos;, &apos;CONTAINER&apos;, &apos;1&apos;, VECTOR[      (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;)    ]),
+
+(&apos;/services/databases/VIPSAPP&apos;, &apos;DATA_SOURCE&apos;, &apos;1&apos;, VECTOR[(&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;) ]),
+(&apos;/shared/VIPS_02&apos;, &apos;CONTAINER&apos;, &apos;1&apos;, VECTOR[ (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;)  ]),
+(&apos;/shared/VIPS_03&apos;, &apos;CONTAINER&apos;, &apos;1&apos;, VECTOR[ (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;)  ]),
+(&apos;/shared/VIPS_DataSources&apos;, &apos;CONTAINER&apos;, &apos;1&apos;, VECTOR[ (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;)  ]),
+
+
+(&apos;/services/webservices/spiral1&apos;, &apos;CONTAINER&apos;, &apos;1&apos;, VECTOR[  (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;)   ]),
+(&apos;/services/webservices/vipsApplicationWS_v1_1&apos;, &apos;DATA_SOURCE&apos;, &apos;1&apos;, VECTOR[  (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;)   ]),
+(&apos;/services/webservices/vipsMedicalPrescreenFormWS_v1_1&apos;, &apos;DATA_SOURCE&apos;, &apos;1&apos;, VECTOR[ (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;)    ]),
+(&apos;/services/webservices/vipsMedicalPrescreenWS_v1_1&apos;, &apos;DATA_SOURCE&apos;, &apos;1&apos;, VECTOR[  (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;)     ]),
+(&apos;/services/webservices/vipsStatusWS_v1_1&apos;, &apos;DATA_SOURCE&apos;, &apos;1&apos;, VECTOR[  (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;GROUP&apos;, &apos;READ SELECT EXECUTE INSERT UPDATE DELETE&apos;)    ])    ];
+*/
+
+/*
+    * Step three: Display the existing privileges
+ 		   OUT result CURSOR (
+				&quot;domain&quot; VARCHAR(32768), 
+				name VARCHAR(32768), 
+				nameType VARCHAR(32768), 
+				privs VARCHAR(32768), 
+				combinedPrivs VARCHAR(32768), 
+				inheritedPrivs VARCHAR(32768)
+   		     )
+*/
+    SET i = 1;
+    WHILE i &lt;= CARDINALITY(resourcelist)
+    DO
+        call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;EXISTING PRIVILEGES FOR &apos; || resourcelist[i].resource);
+		set message = 	RPAD(&apos;domain&apos;,12,padChar) ||&apos;  &apos;||
+						RPAD(&apos;name&apos;,12,padChar) || &apos;  &apos;||
+						RPAD(&apos;nameType&apos;,10,padChar) || &apos;  &apos;||
+						RPAD(&apos;privs&apos;,60,padChar) || &apos;  &apos;||
+						RPAD(&apos;combinedPrivs&apos;,60,padChar) || &apos;  &apos;||
+						RPAD(&apos;inheritedPrivs&apos;,60,padChar);							
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;EXISTING PRIVILEGES:&apos; || message);
+		set message = 	RPAD(&apos;------------&apos;,12,padChar) ||&apos;  &apos;||
+						RPAD(&apos;------------&apos;,12,padChar) || &apos;  &apos;||
+						RPAD(&apos;----------&apos;,10,padChar) || &apos;  &apos;||
+						RPAD(&apos;------------------------------------------------------------&apos;,60,padChar) || &apos;  &apos;||
+						RPAD(&apos;------------------------------------------------------------&apos;,60,padChar) || &apos;  &apos;||
+						RPAD(&apos;------------------------------------------------------------&apos;,60,padChar);							
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;EXISTING PRIVILEGES:&apos; || message);
+		for r as select * from /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getResourcePrivilegesXSLT(
+			&apos;&lt;ns1:getResourcePrivileges xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+				&lt;ns1:entries&gt;
+					&lt;ns1:entry&gt;
+						&lt;ns1:path&gt;&apos; || resourcelist[i].resource || &apos;&lt;/ns1:path&gt;
+						&lt;ns1:type&gt;&apos; || resourcelist[i].resourceType || &apos;&lt;/ns1:type&gt;
+					&lt;/ns1:entry&gt;
+				&lt;/ns1:entries&gt;
+			&lt;/ns1:getResourcePrivileges&gt;&apos;
+		) order by nameType, name desc
+		do
+			set message = 	RPAD(r.&quot;domain&quot;,12,padChar) ||&apos;  &apos;||
+							RPAD(r.name,12,padChar) || &apos;  &apos;||
+							RPAD(r.nameType,10,padChar) || &apos;  &apos;||
+							RPAD(r.privs,60,padChar) || &apos;  &apos;||
+							RPAD(r.combinedPrivs,60,padChar) || &apos;  &apos;||
+							RPAD(r.inheritedPrivs,60,padChar);							
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;EXISTING PRIVILEGES:&apos; || message);
+		end for;
+
+       /*
+        * Step three: Assign privileges and ownership to all resources
+        */
+        call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;Assigning PRIVILEGES TO &apos; || resourcelist[i].resource);
+        BEGIN
+            DECLARE privs VARCHAR(2000) DEFAULT &apos;&apos;;
+			set j = 1;
+            WHILE j &lt;= CARDINALITY(resourcelist[i].resourceprivs)
+            DO
+                call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;    &apos; || resourcelist[i].resourceprivs[j].nameType || &apos; &apos; || resourcelist[i].resourceprivs[j].name || &apos; SET TO &apos; || resourcelist[i].resourceprivs[j].privs);
+                SET privs = privs || &apos;
+                         &lt;ns1:privilege&gt;
+                            &lt;ns1:domain&gt;&apos; || resourcelist[i].resourceprivs[j].domainname || &apos;&lt;/ns1:domain&gt;
+                            &lt;ns1:name&gt;&apos; || resourcelist[i].resourceprivs[j].name || &apos;&lt;/ns1:name&gt;
+                            &lt;ns1:nameType&gt;&apos; || resourcelist[i].resourceprivs[j].nameType || &apos;&lt;/ns1:nameType&gt;
+                            &lt;ns1:privs&gt;&apos; || resourcelist[i].resourceprivs[j].privs || &apos;&lt;/ns1:privs&gt;
+                         &lt;/ns1:privilege&gt;&apos;;
+                SET j = j + 1;
+            END WHILE;
+                    
+			set request =
+               &apos;&lt;ns1:updateResourcePrivileges xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot;
+                     xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+                     xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+                   &lt;ns1:updateRecursively&gt;&apos; || resourcelist[i].recurse || &apos;&lt;/ns1:updateRecursively&gt;
+                   &lt;ns1:privilegeEntries&gt;
+                     &lt;ns1:privilegeEntry&gt;
+                       &lt;ns1:path&gt;&apos; || resourcelist[i].resource || &apos;&lt;/ns1:path&gt;
+                       &lt;ns1:type&gt;&apos; || resourcelist[i].resourceType || &apos;&lt;/ns1:type&gt;
+                       &lt;ns1:privileges&gt;&apos; || privs || &apos;
+                       &lt;/ns1:privileges&gt;
+                     &lt;/ns1:privilegeEntry&gt;
+                   &lt;/ns1:privilegeEntries&gt;
+                   &lt;ns1:mode&gt;SET_EXACTLY&lt;/ns1:mode&gt;
+                &lt;/ns1:updateResourcePrivileges&gt;&apos;;
+			CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, request);
+            CALL /services/webservices/system/admin/resource/operations/updateResourcePrivileges(request, response, fault);
+        EXCEPTION                     
+			WHEN System.SOAPFaultException THEN
+			RAISE;                                   
+        END;
+ 
+        call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;Assigning ownership TO &apos; || resourcelist[i].resource);
+        BEGIN
+			set request =
+               &apos;&lt;ns1:changeResourceOwner xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot;
+                     xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+                     xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+                   &lt;ns1:path&gt;&apos; || resourcelist[i].resource || &apos;&lt;/ns1:path&gt;
+                   &lt;ns1:type&gt;&apos; || resourcelist[i].resourceType || &apos;&lt;/ns1:type&gt;
+                   &lt;ns1:detail&gt;NONE&lt;/ns1:detail&gt;
+                   &lt;ns1:newOwnerName&gt;&apos; || owner || &apos;&lt;/ns1:newOwnerName&gt;
+                   &lt;ns1:newOwnerDomain&gt;&apos; || ownerDomain || &apos;&lt;/ns1:newOwnerDomain&gt;
+                   &lt;ns1:recurse&gt;TRUE&lt;/ns1:recurse&gt;
+                &lt;/ns1:changeResourceOwner&gt;&apos;;
+			CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, request);
+            CALL /services/webservices/system/admin/resource/operations/changeResourceOwner(request, response, fault);
+        EXCEPTION                     
+			WHEN System.SOAPFaultException THEN
+			RAISE;                                   
+        END;
+        SET i = i + 1;
+    END WHILE;
+
+    EXCEPTION
+		ELSE
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, emptyStr(CURRENT_EXCEPTION.TRACE));
+			raise ex value CURRENT_EXCEPTION.TRACE;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">9/188</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/168</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

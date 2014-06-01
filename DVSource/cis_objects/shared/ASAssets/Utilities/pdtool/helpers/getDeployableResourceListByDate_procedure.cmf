@@ -1,0 +1,611 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getDeployableResourceListByDate" path="/shared/ASAssets/Utilities/pdtool/helpers/getDeployableResourceListByDate" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getDeployableResourceListByDate:
+	-- CIS Repository Helper Procedure --
+
+		This procedure provides the logic for retrieving a complete list of paths based on the creation date or last modified date.  
+		If either the creation date or the last modified date is not null and is greater than the passed in resource timestamp then 
+		it appears in the result.  Any resource paths found in the exclude paths list &quot;excludePathsList&quot; will be excluded from the 
+		result.   Any resources that are not inclusive of the include base paths &quot;includeBasePath&quot; will be excluded from the result.
+
+		PDTool (Composite Professional Services Promotion and Deployment Tool) is used to execute generated plan files.  If 
+		you do not have PDTool on site, you may obtain it through a Composite/Cisco Professional Services engagement.
+
+	Input:
+		resourcePathList			LONGVARCHAR		- A comma separated list of resource paths to generate a plan for based on the lineage of all resources found.
+		resourceTimestamp			TIMESTAMP,	 	- resource timestamp value to compare with either the creation date or modified date of a resource with CIS 6.2.2 or higher
+		includeBasePath				LONGVARCHAR		- If present, then include any resources found in this comma separated list of base paths and exclude all others.
+													-   It is intended to allow the user to specify a base path for published resources and 
+													-   /shared project folder resources that are related project level resources but exclude
+													-   any other resources not associated with those base paths.
+		excludePathsList			LONGVARCHAR		- A comma separated list of resource paths or partials paths to exclude
+										 				all paths or partial paths should end with a / to insure uniqueness of the path string.
+		debug						CHAR(1),	 	- Y or N
+	Output:
+		resourceTreeList 							- A list of resources
+			PIPE /shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive.resourceTreeType
+				DECLARE PUBLIC TYPE resourceTreeType ROW (
+				name					VARCHAR(255),				name of the CIS resource
+				resPath					TypeDefinitions.pathType,	full path of the CIS resource
+				resType					VARCHAR(255),				resource type
+				subType					VARCHAR(255),				resource sub type
+				creationDate			TIMESTAMP,
+				creationDateBigint		BIGINT,
+				creatorUserDomain		VARCHAR(255),
+				creatorUserName			VARCHAR(255),
+				lastModifiedDate		TIMESTAMP,
+				lastModifiedDateBigint	BIGINT,
+				lastModifiedUserDomain	VARCHAR(255),
+				lastModifiedUserName	VARCHAR(255)
+				);
+
+	Exceptions: none
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	07/30/2013		Mike Tinius			6.0.0			Created new
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePathList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="resourceTimestamp" direction="IN" nullable="true">
+      <datatype name="TIMESTAMP" type="DATETIME"/>
+    </parameter>
+    <parameter name="includeBasePath" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="excludePathsList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="resourceTreeList" direction="OUT" nullable="true">
+      <datatype name="resourceTreeType" type="TABLE" refId="1">
+        <element name="name">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resPath">
+          <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        </element>
+        <element name="resType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="subType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="creationDate">
+          <datatype name="TIMESTAMP" type="DATETIME"/>
+        </element>
+        <element name="creationDateBigint">
+          <datatype name="BIGINT" type="INTEGER"/>
+        </element>
+        <element name="creatorUserDomain">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="creatorUserName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="lastModifiedDate">
+          <datatype name="TIMESTAMP" type="DATETIME"/>
+        </element>
+        <element name="lastModifiedDateBigint">
+          <datatype name="BIGINT" type="INTEGER"/>
+        </element>
+        <element name="lastModifiedUserDomain">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="lastModifiedUserName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getAncestorResources" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="id">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="changeid">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="ownerDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="ownerName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="impactLevel">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="childCount">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getAncestorResources" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_ResourceAttributes" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="type">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="value">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="valueList">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="valueMap">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_ResourceAttributes" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourcesByDate" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="optionType" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceNum" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="resourceDate" direction="IN">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resPath">
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creationDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="creationDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="creatorUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creatorUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="lastModifiedDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="lastModifiedUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourcesByDate" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/time/DateUtils/BigintToTimestamp" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/time/DateUtils/BigintToTimestamp" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inBigint" direction="IN">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="DATETIME"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/time/DateUtils/TimestampToBigint" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/time/DateUtils/TimestampToBigint" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inTimestamp" direction="IN">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="INTEGER"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/getValueFromXML" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/getValueFromXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="namespaces" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inXpath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inXml" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/*	getDeployableResourceListByDate:
+	-- CIS Repository Helper Procedure --
+
+		This procedure provides the logic for retrieving a complete list of paths based on the creation date or last modified date.  
+		If either the creation date or the last modified date is not null and is greater than the passed in resource timestamp then 
+		it appears in the result.  Any resource paths found in the exclude paths list &quot;excludePathsList&quot; will be excluded from the 
+		result.   Any resources that are not inclusive of the include base paths &quot;includeBasePath&quot; will be excluded from the result.
+
+		PDTool (Composite Professional Services Promotion and Deployment Tool) is used to execute generated plan files.  If 
+		you do not have PDTool on site, you may obtain it through a Composite/Cisco Professional Services engagement.
+
+	Input:
+		resourcePathList			LONGVARCHAR		- A comma separated list of resource paths to generate a plan for based on the lineage of all resources found.
+		resourceTimestamp			TIMESTAMP,	 	- resource timestamp value to compare with either the creation date or modified date of a resource with CIS 6.2.2 or higher
+		includeBasePath				LONGVARCHAR		- If present, then include any resources found in this comma separated list of base paths and exclude all others.
+													-   It is intended to allow the user to specify a base path for published resources and 
+													-   /shared project folder resources that are related project level resources but exclude
+													-   any other resources not associated with those base paths.
+		excludePathsList			LONGVARCHAR		- A comma separated list of resource paths or partials paths to exclude
+										 				all paths or partial paths should end with a / to insure uniqueness of the path string.
+		debug						CHAR(1),	 	- Y or N
+	Output:
+		resourceTreeList 							- A list of resources
+			PIPE /shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive.resourceTreeType
+				DECLARE PUBLIC TYPE resourceTreeType ROW (
+				name					VARCHAR(255),				name of the CIS resource
+				resPath					TypeDefinitions.pathType,	full path of the CIS resource
+				resType					VARCHAR(255),				resource type
+				subType					VARCHAR(255),				resource sub type
+				creationDate			TIMESTAMP,
+				creationDateBigint		BIGINT,
+				creatorUserDomain		VARCHAR(255),
+				creatorUserName			VARCHAR(255),
+				lastModifiedDate		TIMESTAMP,
+				lastModifiedDateBigint	BIGINT,
+				lastModifiedUserDomain	VARCHAR(255),
+				lastModifiedUserName	VARCHAR(255)
+				);
+
+	Exceptions: none
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	07/30/2013		Mike Tinius			6.0.0			Created new
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getDeployableResourceListByDate(
+	IN resourcePathList			LONGVARCHAR,-- a comma separated list of resource paths
+	IN resourceTimestamp		TIMESTAMP,	-- resource timestamp value to compare with either the creation date or modified date of a resource
+	IN includeBasePath			LONGVARCHAR,-- If present, then include any resources found in this comma separated list of base paths and exclude all others.
+											--   It is intended to allow the user to specify a base path for published resources and 
+											--   /shared project folder resources that are related project level resources but exclude
+											--   any other resources not associated with those base paths.
+	IN excludePathsList			LONGVARCHAR,-- a comma separated list of resource paths or partials paths to exclude
+										 	-- all paths or partial paths should end with a / to insure uniqueness of the path string.
+	IN debug					CHAR(1),	-- Y or N
+	OUT resourceTreeList 		PIPE /shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive.resourceTreeType
+)
+BEGIN
+	DECLARE moduleName				VARCHAR DEFAULT &apos;getDeployableResourceListByDate&apos;;
+	DECLARE excludePathsList_		LONGVARCHAR DEFAULT excludePathsList;
+	DECLARE includeBasePath_		LONGVARCHAR DEFAULT includeBasePath;
+	DECLARE excludePath 			/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE includePath 			/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE resourcePath 			/shared/ASAssets/Utilities/TypeDefinitions.pathType; -- actual resource path and not a folder path
+	DECLARE resourceType			VARCHAR DEFAULT null; -- The resource type
+	DECLARE processPath				boolean;
+	DECLARE processIncludePath		boolean;
+	DECLARE xmlOut					XML;
+	DECLARE xmlTemp					LONGVARCHAR;
+	DECLARE namespaces				VARCHAR(255) DEFAULT &apos;xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&apos;;
+	DECLARE xpath					VARCHAR(1024);
+	DECLARE compareDateBigint		BIGINT;
+	DECLARE rec						/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive.resourceTreeType;
+
+	-- Convert timestamp to bigint
+	call /shared/ASAssets/Utilities/&quot;time&quot;/DateUtils/TimestampToBigint(resourceTimestamp, compareDateBigint);
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;resourceTimestamp=[&apos;||emptyStr(resourceTimestamp)||&apos;]  compareDateBigint=[&apos;||emptyStr(compareDateBigint)||&apos;]&apos;);
+
+	-- If the excludePathsList is empty make it null
+	if (excludePathsList_ IS NOT NULL AND LENGTH(TRIM(excludePathsList_)) = 0) then
+		set excludePathsList_ = null;
+	end if;
+	-- If the excludePathsList is empty make it null
+	if (includeBasePath_ IS NOT NULL AND LENGTH(TRIM(includeBasePath_)) = 0) then
+		set includeBasePath_ = null;
+	end if;
+
+	-- Log the exclude path list
+	for p as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludePathsList_, &apos;,&apos;, 0) do
+		-- Log a single resourcePath from the list
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;Exclude path=[&apos;||emptyStr(TRIM(p.splitElement))||&apos;]&apos;);
+	end for;
+	-- Log the exclude non-base path list
+	for p as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(includeBasePath_, &apos;,&apos;, 0) do
+		-- Log a single resourcePath from the list
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;Include base path=[&apos;||emptyStr(TRIM(p.splitElement))||&apos;]&apos;);
+	end for;
+
+	-- Extract the resource path list one-by-one and find the lineage for each
+	for p as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(resourcePathList, &apos;,&apos;, 0) do
+		-- Get a single resourcePath from the list
+		set resourcePath = TRIM(p.splitElement);
+
+		if (resourcePath is not null and LENGTH(resourcePath) &gt; 0) then
+			-- Retrieve the resource XML
+			call /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML(resourcePath, null, xmlOut);
+			set xmlTemp = CAST(xmlOut as LONGVARCHAR);
+			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:type&apos;;
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(&apos;N&apos;, namespaces, xpath, xmlTemp, resourceType);
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;Starting Search Path=[&apos;||emptyStr(resourcePath)||&apos;]  type=[&apos;||emptyStr(resourceType)||&apos;]&apos;);
+
+			-- Get all the resources in that DATA_SOURCE or CONTAINER that are greater than or equal to the &quot;compare modified timestamp&quot;
+			for list as 
+				select DISTINCT * FROM (
+					-- Get all resources where the &quot;lastModifiedDate&quot; attribute &gt;= resourceTimestamp
+					select * from /shared/ASAssets/Utilities/repository/getResourcesByDate(3, resourcePath, resourceType, null, resourceTimestamp) 
+					UNION
+					-- Get all resources where the &quot;creationDate&quot; attribute &gt;= resourceTimestamp
+					select * from /shared/ASAssets/Utilities/repository/getResourcesByDate(5, resourcePath, resourceType, null, resourceTimestamp) 
+				) getResourcesByDateUnion
+			do
+				-- If the resource path is in the exclude list then don&apos;t process it
+				set processPath = true;
+				excludeLoop:
+				for p as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludePathsList_, &apos;,&apos;, 0) do
+					set excludePath = REPLACE(TRIM(p.splitElement)||&apos;/&apos;,&apos;//&apos;,&apos;/&apos;);
+					-- Check the resource path against the exclude list
+					if (REPLACE(list.resPath||&apos;/&apos;,&apos;//&apos;,&apos;/&apos;) = excludePath) then
+						set processPath = false;
+						leave excludeLoop;
+					end if;
+				end for;
+
+				-- If the resource path is in the include base path list then process it otherwise ignore it
+				if (processPath and includeBasePath_ is not null) then
+					set processIncludePath = false;
+					includeLoop:
+					for p as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(includeBasePath_, &apos;,&apos;, 0) do
+						set includePath = REPLACE(TRIM(p.splitElement)||&apos;/&apos;,&apos;//&apos;,&apos;/&apos;);
+						-- Check the resource path against the exclude list
+						if (POSITION(includePath IN list.resPath) = 1) then
+							set processIncludePath = true;
+							leave includeLoop;
+						end if;
+					end for;
+					set processPath = processIncludePath;
+				end if;
+
+				if (processPath) then
+
+					/*  When non-folder &quot;CONTAINER&quot; resource is found, then determine its closest ancestor that is a folder &quot;CONTAINER&quot;.
+						The purpose of this is to insure that a deployed resource will have a folder created on the target so a container
+						resource mus be generated here.
+					*/
+					if (list.resType != &apos;CONTAINER&apos;) then
+						set rec = null;
+						-- Get the ancestory of the resource to determine the lowest level folder container of the resource
+						for ancestor as select * from /shared/ASAssets/Utilities/repository/getAncestorResources(list.resPath, list.resType) do
+							if (ancestor.resourceType = &apos;CONTAINER&apos; and ancestor.subtype = &apos;FOLDER_CONTAINER&apos;) then
+								set rec.name = ancestor.resourceName;
+								set rec.resPath = ancestor.resourcePath;
+								set rec.resType = ancestor.resourceType;
+								set rec.subtype = ancestor.subtype;
+							end if;
+						end for;
+
+						-- Obtain the resource attributes to located creation and modified attributes (starting with 6.2.2 and higher)
+						FOR attr AS SELECT * FROM /shared/ASAssets/Utilities/repository/getBasicResourceCursor_ResourceAttributes(rec.resPath, rec.resType) DO
+--							call print(&apos;attr.name=&apos;||emptyStr(attr.name)||&apos;  attr.value=[&apos;||emptyStr(attr.&quot;value&quot;)||&apos;]&apos;);
+							CASE attr.name
+								WHEN &apos;creationDate&apos; THEN 
+									if (attr.&quot;value&quot; is not null and attr.&quot;value&quot; &gt; 0) then
+										set rec.creationDateBigint = attr.&quot;value&quot;;
+										call /shared/ASAssets/Utilities/&quot;time&quot;/DateUtils/BigintToTimestamp(rec.creationDateBigint, rec.creationDate);
+									end if;
+								WHEN &apos;creatorUserDomain&apos; THEN set rec.creatorUserDomain = attr.&quot;value&quot;;
+								WHEN &apos;creatorUserName&apos; THEN set rec.creatorUserName = attr.&quot;value&quot;;
+								WHEN &apos;lastModifiedDate&apos; THEN 
+									if (attr.&quot;value&quot; is not null and attr.&quot;value&quot; &gt; 0) then
+										set rec.lastModifiedDateBigint = attr.&quot;value&quot;;
+										call /shared/ASAssets/Utilities/&quot;time&quot;/DateUtils/BigintToTimestamp(rec.lastModifiedDateBigint, rec.lastModifiedDate);
+									end if;
+								WHEN &apos;lastModifiedUserDomain&apos; THEN set rec.lastModifiedUserDomain = attr.&quot;value&quot;;
+								WHEN &apos;lastModifiedUserName&apos; THEN set rec.lastModifiedUserName = attr.&quot;value&quot;;
+								ELSE
+							END CASE;
+						END FOR;
+
+						-- Log the folder it and insert it into the pipe
+						call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;    Container resource path=[&apos;||emptyStr(rec.resPath)||&apos;]  type=[&apos;||emptyStr(rec.resType)||&apos;]&apos;);
+						-- The folder container resource is required to insure that all folders are created on the target system
+						INSERT INTO resourceTreeList values(rec);
+					end if;
+
+					call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;Resource path=[&apos;||emptyStr(list.resPath)||&apos;]  type=[&apos;||emptyStr(list.resType)||&apos;]&apos;);
+					INSERT INTO resourceTreeList values(list);
+				end if;
+			end for;
+		end if;
+	end for;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

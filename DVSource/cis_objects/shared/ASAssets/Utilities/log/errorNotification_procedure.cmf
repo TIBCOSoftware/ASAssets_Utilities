@@ -1,0 +1,146 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="errorNotification" path="/shared/ASAssets/Utilities/log/errorNotification" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>errorNotification:
+
+	UNDER CONSTRUCTION: options for EMAIL, JMS, FILE, DATABASE
+
+	Provides the developer with a way in which to programmatically send error messages to 
+	a File, JMS queue, Email or a Database.   Optionally the message can be logged to the 
+	CIS log file if debug is turned on or LOG is set in the notification type 
+
+	Input:
+		notificationType - Contains one or more comma/space separated options in a single string.  
+			Values: LOG, EMAIL, JMS, FILE, DATABASE
+		moduleName - The name of the invoking procedure with a length of VARCHAR(255).
+			Values: Any text value. e.g. &apos;procedureName&apos;
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+		messageText - The message to be to be sent or stored
+			Values: Any text value
+	Output: none
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="notificationType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="moduleName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="messageText" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* errorNotification:
+
+	UNDER CONSTRUCTION: options for EMAIL, JMS, FILE, DATABASE
+
+	Provides the developer with a way in which to programmatically send error messages to 
+	a File, JMS queue, Email or a Database.   Optionally the message can be logged to the 
+	CIS log file if debug is turned on or LOG is set in the notification type 
+
+	Input:
+		notificationType - Contains one or more comma/space separated options in a single string.  
+			Values: LOG, EMAIL, JMS, FILE, DATABASE
+		moduleName - The name of the invoking procedure with a length of VARCHAR(255).
+			Values: Any text value. e.g. &apos;procedureName&apos;
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+		messageText - The message to be to be sent or stored
+			Values: Any text value
+	Output: none
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE errorNotification(
+	IN notificationType	VARCHAR(255),	-- (Contains one or more comma/space separated options in a single string)
+						-- (e.g. LOG, EMAIL, JMS, FILE, DATABASE) 
+	IN moduleName 		/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType, 
+	IN debug 			CHAR(1),	-- Y or N / T or F 
+						-- If Y or T, the LOG is added to the notificationType and a message is written to the CIS Log
+	IN messageText 		LONGVARCHAR
+)
+BEGIN
+	--DECLARE moduleName VARCHAR DEFAULT &apos;errorNotification()&apos;;
+	DECLARE localModuleName 	/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType DEFAULT &apos;&lt;no_module_defined&gt;&apos;;
+	DECLARE localNotificationType	VARCHAR DEFAULT &apos;&apos;;
+	DECLARE localMessage	 	/shared/ASAssets/Utilities/TypeDefinitions.messageType DEFAULT &apos;&lt;no_message_text&gt;&apos;;
+	DECLARE localDebug 		VARCHAR(1) DEFAULT &apos;N&apos;;
+
+	IF (moduleName IS NOT NULL) THEN
+		set localModuleName = moduleName;
+	END IF;
+	IF (messageText IS NOT NULL) THEN
+		set localMessage = messageText;
+	END IF;	
+	IF (notificationType IS NOT NULL) THEN
+		set localNotificationType = UPPER(notificationType);
+	END IF;
+	IF ((debug IS NOT NULL) or (LENGTH(debug) &gt; 0)) then
+		SET localDebug = UPPER(debug);
+		if (localDebug = &apos;Y&apos; or localDebug = &apos;T&apos;) then
+			set localNotificationType = localNotificationType || &apos;, LOG&apos;;
+		end if;
+	END IF;
+
+	-- Implement an Error Notification Strategy in this module based on EMAIL, JMS Error Queue, FILE (sepparate from CIS log file) or DATABASE
+	-- Each option is checked for in the notificationType passed in so that multiple options can be executed on a per call basis.
+	if (POSITION(&apos;LOG&apos; in localNotificationType) &gt; 0) then
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, localDebug, &apos;[NotificationType=&apos;||localNotificationType||&apos;] &apos;||localMessage);
+	end if;
+	if (POSITION(&apos;EMAIL&apos; in localNotificationType) &gt; 0) then
+		-- Implement sending localMessage to EMAIL
+	end if;
+	if (POSITION(&apos;JMS&apos; in localNotificationType) &gt; 0) then
+		-- Implement sending localMessage to JMS
+	end if;
+	if (POSITION(&apos;FILE&apos; in localNotificationType) &gt; 0) then
+		-- Implement sending localMessage to FILE
+	end if;
+	if (POSITION(&apos;DATABASE&apos; in localNotificationType) &gt; 0) then
+		-- Implement sending localMessage to DATABASE
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1369417729163</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>
