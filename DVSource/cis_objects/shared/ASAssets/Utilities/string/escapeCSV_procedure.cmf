@@ -1,0 +1,102 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="escapeCSV" path="/shared/ASAssets/Utilities/string/escapeCSV" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>escapeCSV:
+	Look for separators or qualifiers in a string and escape them if present.
+ 
+	Input:
+		inStr - incoming string.  
+			Values: Any text string
+
+        separator - the separator character to look for.
+            Values: Any single character. Will use &apos;,&apos; (comma) if NULL.
+
+        qualifier - the qualifier character to look for (and use if escaping is necessary.)
+            Values: Any single character. Will use &apos;&quot;&apos; (double quote) if NULL.
+
+	Output:
+		outStr - incoming string with separators and qualifiers escaped.
+			Values: Any text string
+
+	Exceptions:  none
+
+	Author:      Calvin Goodrich
+	Date:        10/25/2011
+	CSW Version: 5.1.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inStr" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="separator" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="1"/>
+    </parameter>
+    <parameter name="qualifier" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="1"/>
+    </parameter>
+    <parameter name="outStr" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/* escapeCSV:
+	Look for separators or qualifiers in a string and escape them if present.
+ 
+	Input:
+		inStr - incoming string.  
+			Values: Any text string
+
+        separator - the separator character to look for.
+            Values: Any single character. Will use &apos;,&apos; (comma) if NULL.
+
+        qualifier - the qualifier character to look for (and use if escaping is necessary.)
+            Values: Any single character. Will use &apos;&quot;&apos; (double quote) if NULL.
+
+	Output:
+		outStr - incoming string with separators and qualifiers escaped.
+			Values: Any text string
+
+	Exceptions:  none
+
+	Author:      Calvin Goodrich
+	Date:        10/25/2011
+	CSW Version: 5.1.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE escapeCSV(
+	IN inStr longvarchar,
+    IN separator VARCHAR(1),
+    IN qualifier VARCHAR(1),
+	OUT outStr longvarchar	
+)
+BEGIN
+    DECLARE tmp LONGVARCHAR DEFAULT inStr;
+    DECLARE sep CHAR(1) DEFAULT CASE WHEN (separator IS NULL OR separator = &apos;&apos;) THEN &apos;,&apos; ELSE separator END;
+    DECLARE qual CHAR(1) DEFAULT CASE WHEN (qualifier IS NULL OR qualifier = &apos;&apos;) THEN &apos;&quot;&apos; ELSE qualifier END;
+
+    IF (POSITION(sep IN tmp) &gt; 0 OR POSITION(qual IN tmp) &gt; 0) THEN
+        IF (POSITION(qual IN tmp) &gt; 0) THEN
+            SET tmp = REPLACE(tmp, qual, qual || qual);
+        END IF;
+
+        SET outStr = qual || tmp || qual;
+    ELSE
+        SET outStr = tmp;
+    END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1392754734918</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

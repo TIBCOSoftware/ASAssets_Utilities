@@ -1,0 +1,324 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="terminateIdleSessions" path="/shared/ASAssets/Utilities/request/terminateIdleSessions" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>terminateIdleSessions:
+
+	This procedure terminates any ODBC/JDBC/ADO.NET sessions that have been idle for longer than the
+	specified input (in minutes). The caller must have ACCESS_TOOLS and MODIFY_ALL_STATUS rights.
+
+
+	Input:
+		idleMinutes - The number of minutes a session must be idle before it&apos;s terminated.
+			Values: Any number of minutes.
+
+
+	Output a PIPE of rows containing:
+		success - Indicates whether the termination was successful or not.
+			Values: 1 or 0
+
+		responseXML - The response from performServerAction().
+			Values: XML
+
+		faultXML - The fault response from performServerAction().
+			Values: XML or NULL if there was no error.
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	01/29/2014		Jeremy Akers		6.2.5			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="idleMinutes" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="outPipe" direction="OUT" nullable="true">
+      <datatype name="TerminateIdleSessionsResultRow" type="TABLE" refId="1">
+        <element name="session_id">
+          <datatype name="BIGINT" type="INTEGER"/>
+        </element>
+        <element name="success">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="faultXML">
+          <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+            <schemaDatatype>
+              <datatype name="XML" type="TREE" refId="2"></datatype>
+            </schemaDatatype>
+          </datatype>
+        </element>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Log" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToLog" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/debug/LogError" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToLog" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/services/databases/system/SYS_SESSIONS" type="TABLE">
+    <datatype type="TABLE" refId="1">
+      <element name="SESSION_ID">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="OWNER_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="OWNER">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="SESSION_TYPE">
+        <datatype type="STRING" maxLength="20"/>
+      </element>
+      <element name="SESSION_NAME">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="HOST">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="DATASOURCE_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="LOGIN_TIME">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="LOGOUT_TIME">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="STATUS">
+        <datatype type="STRING" maxLength="20"/>
+      </element>
+      <element name="IDLE_DURATION">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="TIMEOUT_DURATION">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="TOTAL_REQUESTS">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="ACTIVE_REQUESTS">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="TOTAL_TRANSACTIONS">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="ACTIVE_TRANSACTIONS">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="BYTES_TO_CLIENT">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="BYTES_FROM_CLIENT">
+        <datatype type="INTEGER"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/request/terminateSession" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="sessionID" direction="IN">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="responseXML" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultXML" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+  	terminateIdleSessions:
+
+	This procedure terminates any ODBC/JDBC/ADO.NET sessions that have been idle for longer than the
+	specified input (in minutes). The caller must have ACCESS_TOOLS and MODIFY_ALL_STATUS rights.
+
+
+	Input:
+		idleMinutes - The number of minutes a session must be idle before it&apos;s terminated.
+			Values: Any number of minutes.
+
+
+	Output a PIPE of rows containing:
+		success - Indicates whether the termination was successful or not.
+			Values: 1 or 0
+
+		responseXML - The response from performServerAction().
+			Values: XML
+
+		faultXML - The fault response from performServerAction().
+			Values: XML or NULL if there was no error.
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	01/29/2014		Jeremy Akers		6.2.5			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE terminateIdleSessions(
+    IN idleMinutes INT, 
+    OUT outPipe PIPE TerminateIdleSessionsResultRow
+)
+BEGIN
+	DECLARE PUBLIC TYPE TerminateIdleSessionsResultRow ROW (
+        session_id BIGINT, 
+        success BIT, 
+        faultXML XML
+    );
+	DECLARE PUBLIC TYPE TerminateIdleSessionsResult CURSOR TerminateIdleSessionsResultRow; -- to be used by calling procedure
+
+    DECLARE success BIT;
+    DECLARE responseXML XML;
+    DECLARE faultXML XML;
+    DECLARE crs CURSOR FOR SELECT 
+        SYS_SESSIONS.SESSION_ID, 
+        SYS_SESSIONS.OWNER_ID, 
+        SYS_SESSIONS.OWNER, 
+        SYS_SESSIONS.SESSION_TYPE, 
+        SYS_SESSIONS.SESSION_NAME, 
+        SYS_SESSIONS.HOST, 
+        SYS_SESSIONS.DATASOURCE_ID, 
+        SYS_SESSIONS.LOGIN_TIME, 
+        SYS_SESSIONS.LOGOUT_TIME, 
+        SYS_SESSIONS.STATUS, 
+        SYS_SESSIONS.IDLE_DURATION, 
+        SYS_SESSIONS.TIMEOUT_DURATION, 
+        SYS_SESSIONS.TOTAL_REQUESTS, 
+        SYS_SESSIONS.ACTIVE_REQUESTS, 
+        SYS_SESSIONS.TOTAL_TRANSACTIONS, 
+        SYS_SESSIONS.ACTIVE_TRANSACTIONS, 
+        SYS_SESSIONS.BYTES_TO_CLIENT, 
+        SYS_SESSIONS.BYTES_FROM_CLIENT
+    FROM      
+        /services/databases/system/SYS_SESSIONS SYS_SESSIONS
+    WHERE 
+    	SESSION_TYPE IN (&apos;JDBC&apos;, &apos;ODBC&apos;, &apos;ADO.NET&apos;) AND
+    	STATUS = &apos;ACTIVE&apos; AND
+    	IDLE_DURATION &gt; (1000 * 60 * idleMinutes);
+    
+    IF idleMinutes IS NULL OR idleMinutes &lt;= 0 THEN 
+    	CALL LogError(&apos;terminateIdleSessions called with invalid idleMinutes value&apos;);
+    	RAISE System.IllegalArgumentException VALUE &apos;idleMinutes may not be NULL, and must have a value greater than 0&apos;;
+    END IF;
+    
+    --CALL LOG(&apos;terminateIdleSessions called with idleMinutes = &apos; || idleMinutes);
+    
+    OPEN crs;
+    FOR r AS crs DO
+    	CALL LOG(&apos;Terminating idle session ID: &apos;||r.SESSION_ID);
+    	CALL /shared/ASAssets/Utilities/request/terminateSession(r.SESSION_ID, success, responseXML, faultXML);
+    	IF(success &lt;&gt; 1) THEN
+    		CALL LogError(&apos;Failed to terminate idle session ID: &apos;||r.SESSION_ID||&apos;, Fault XML: &apos;||CAST(faultXML AS LONGVARCHAR));
+    	END IF;
+    	INSERT INTO outPipe VALUES (r.SESSION_ID, success, faultXML);
+    END FOR;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1391026792436</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">jeremy</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:0:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+  <attribute name="p:1:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="public_types" type="MAP">
+    <item>
+      <key type="STRING">TerminateIdleSessionsResultRow</key>
+      <value type="BYTE_ARRAY">EB8GAgAeAFQAZQByAG0AaQBuAGEAdABlAEkAZABsAGUAUwBlAHMAcwBpAG8AbgBzAFIAZQBzAHUA
+bAB0AFIAbwB3BikAOAAvAHMAaABhAHIAZQBkAC8AQQBTAEEAcwBzAGUAdABzAC8AVQB0AGkAbABp
+AHQAaQBlAHMALwByAGUAcQB1AGUAcwB0AC8AdABlAHIAbQBpAG4AYQB0AGUASQBkAGwAZQBTAGUA
+cwBzAGkAbwBuAHMGKgAeAFQAZQByAG0AaQBuAGEAdABlAEkAZABsAGUAUwBlAHMAcwBpAG8AbgBz
+AFIAZQBzAHUAbAB0AFIAbwB3AxIAAAABAxIAAAABARMBCRQAAAADECEGFQAKAHMAZQBzAHMAaQBv
+AG4AXwBpAGQDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAZBgIABgBCAEkA
+RwBJAE4AVAMSAAAAAgQHgAAAAAAAAAD/////ECEGFQAHAHMAdQBjAGMAZQBzAHMDLwAAAAEDFgAA
+AAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAZBgIAAwBCAEkAVAMSAAAAAwQHAAAAAAAAAAAE
+BgAAAAAAAAAB/////xAhBhUACABmAGEAdQBsAHQAWABNAEwDLwAAAAEDFgAAAAADGgAAAAEDGwAA
+AAEDIP////8DIgAAAAAIGRAQBgIAAwBYAE0ATAMSAAAABAY5AAMAWABNAEwDOgAAAAEIIxAfBgIA
+AwBYAE0ATAMSAAAABQMSAAAABQETAQkUAAAAAP//////////</value>
+    </item>
+    <item>
+      <key type="STRING">TerminateIdleSessionsResult</key>
+      <value type="BYTE_ARRAY">EB8GAgAeAFQAZQByAG0AaQBuAGEAdABlAEkAZABsAGUAUwBlAHMAcwBpAG8AbgBzAFIAZQBzAHUA
+bAB0AFIAbwB3BikAOAAvAHMAaABhAHIAZQBkAC8AQQBTAEEAcwBzAGUAdABzAC8AVQB0AGkAbABp
+AHQAaQBlAHMALwByAGUAcQB1AGUAcwB0AC8AdABlAHIAbQBpAG4AYQB0AGUASQBkAGwAZQBTAGUA
+cwBzAGkAbwBuAHMGKgAbAFQAZQByAG0AaQBuAGEAdABlAEkAZABsAGUAUwBlAHMAcwBpAG8AbgBz
+AFIAZQBzAHUAbAB0AxIAAAABAxIAAAABARMBCRQAAAADECEGFQAKAHMAZQBzAHMAaQBvAG4AXwBp
+AGQDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAZBgIABgBCAEkARwBJAE4A
+VAMSAAAAAgQHgAAAAAAAAAD/////ECEGFQAHAHMAdQBjAGMAZQBzAHMDLwAAAAEDFgAAAAADGgAA
+AAEDGwAAAAEDIP////8DIgAAAAAIGRAZBgIAAwBCAEkAVAMSAAAAAwQHAAAAAAAAAAAEBgAAAAAA
+AAAB/////xAhBhUACABmAGEAdQBsAHQAWABNAEwDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP//
+//8DIgAAAAAIGRAQBgIAAwBYAE0ATAMSAAAABAY5AAMAWABNAEwDOgAAAAEIIxAfBgIAAwBYAE0A
+TAMSAAAABQMSAAAABQETAQkUAAAAAP//////////</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">12/85</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>LogError</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/75</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/74</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>LogError</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/82</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

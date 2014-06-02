@@ -1,0 +1,239 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="resourceExists" path="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>resourceExists:
+	-- CIS Repository Helper Procedure --
+	Determine if a resource exists or not.
+ 
+	Input:
+		fullResourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/Utilities/repository/examples/source/proc2
+		resourceType - Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. PROCEDURE
+	Output:
+		resourceExists - true(1) or false(0)
+			Values: 1 or 0
+
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+
+	TYPES / SUBTYPES:
+	=================
+	The following resource types/subtypes are supported by this operation.  Resources
+	cannot be created under &quot;/services&quot; unless otherwise noted, and cannot be created
+	within a physical data source.  
+
+	(Basic CIS folder)
+	* CONTAINER / FOLDER_CONTAINER - A Composite folder.   Cannot be created anywhere under /services except in another FOLDER under /services/webservices.
+	* CONTAINER / DIRECTORY_CONTAINER - A Composite directory.
+	(Database)
+	* CONTAINER / CATALOG_CONTAINER - A Composite catalog folder under a data source.  Can only be created within a data source under /services/databases.
+	* CONTAINER / SCHEMA_CONTAINER - A Composite schema container.  Can only be created within a CATALOG that is under /services/databases.
+	(Web Services)
+	* CONTAINER / SERVICE_CONTAINER - A web service container for the service.  Can only be created within a Composite Web Services data source that is under /services/webservices.
+	* CONTAINER / OPERATIONS_CONTAINER - A web service container for the operations
+	* CONTAINER / PORT_CONTAINER - A Composite web service container for port.   Can only be created within a SERVICE under /services/webservices.
+	(Connectors)
+	* CONTAINER / CONNECTOR_CONTAINER - A Composite container for connectors.
+
+	* CONNECTOR / JMS - A Composite JMS Connector.  Created with no connection information
+	* CONNECTOR / HTTP - A Composite HTTP Connector.  Created with no connection information
+
+	* DATA_SOURCE / RELATIONAL_DATA_SOURCE - A relational database source.
+	* DATA_SOURCE / FILE_DATA_SOURCE - A comma separate file data source.
+	* DATA_SOURCE / XML_FILE_DATA_SOURCE - An XML file data source.
+	* DATA_SOURCE / WSDL_DATA_SOURCE - A Composite web service data source.
+	* DATA_SOURCE / XML_HTTP_DATA_SOURCE - An HTTP XML data source.
+	* DATA_SOURCE / NONE - A custom java procedure data source.
+
+	* DEFINITION_SET / SQL_DEFINITION_SET - A Composite SQL Definition set.
+	* DEFINITION_SET / XML_SCHEMA_DEFINITION_SET - A Composite XML Schema Defintion set.
+	* DEFINITION_SET / WSDL_DEFINITION_SET - A Composite WSDL Definition set.
+	* DEFINITION_SET / ABSTRACT_WSDL_DEFINITION_SET - A Composite Abstract WSDL Definition set such as the ones imported from Designer.
+	* DEFINITION_SET / SCDL_DEFINITION_SET - A Composite SCA composite Definition set imported from Designer.
+
+	* LINK / unknown at this time
+
+	(CIS procedures)
+	* PROCEDURE / SQL_SCRIPT_PROCEDURE - A Composite SQL Procedure.  Created with a simple default script body that is runnable.
+	(Custom procedures)
+	* PROCEDURE / JAVA_PROCEDURE - A Composite java data source procedure.  Created from a java data source (jar file).
+	(Database procedures)
+	* PROCEDURE / EXTERNAL_SQL_PROCEDURE - A Composite Packaged Query.  Created with no SQL text, so it is not runnable.  
+	* PROCEDURE / DATABASE_PROCEDURE - A database stored procedure.
+	(XML procedures)
+	* PROCEDURE / BASIC_TRANSFORM_PROCEDURE - A Composite Basic XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XSLT_TRANSFORM_PROCEDURE - A Composite XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / STREAM_TRANSFORM_PROCEDURE - A Composite XSLT Streaming Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XQUERY_TRANSFORM_PROCEDURE - A Composite XQUERY Transformation Procedure.  Created with no target schema and no model, so it is not runnable.
+	(Misc procedures)
+	* PROCEDURE / OPERATION_PROCEDURE - A Composite web service or HTTP procedure operation.
+
+	* TABLE / SQL_TABLE - A Composite View.  Created with no SQL text or model, so it is not runnable.  
+	* TABLE / DATABASE_TABLE - A Composite database table.
+	* TABLE / DELIMITED_FILE_TABLE - A Composite delimited file table
+	* TABLE / SYSTEM_TABLE - A Composite system table view.
+
+	* TREE / XML_FILE_TREE - The XML tree structure associated with a file-XML data source.
+
+	* TRIGGER / NONE - A Composite trigger.   Created disabled.</annotation>
+  <parameters>
+    <parameter name="fullResourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="resourceExists" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="version" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceVersion" type="STRING" maxLength="255"/>
+      </element>
+      <element name="exists" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* resourceExists:
+	-- CIS Repository Helper Procedure --
+	Determine if a resource exists or not.
+ 
+	Input:
+		fullResourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/Utilities/repository/examples/source/proc2
+		resourceType - Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. PROCEDURE
+	Output:
+		resourceExists - true(1) or false(0)
+			Values: 1 or 0
+
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+
+	TYPES / SUBTYPES:
+	=================
+	The following resource types/subtypes are supported by this operation.  Resources
+	cannot be created under &quot;/services&quot; unless otherwise noted, and cannot be created
+	within a physical data source.  
+
+	(Basic CIS folder)
+	* CONTAINER / FOLDER_CONTAINER - A Composite folder.   Cannot be created anywhere under /services except in another FOLDER under /services/webservices.
+	* CONTAINER / DIRECTORY_CONTAINER - A Composite directory.
+	(Database)
+	* CONTAINER / CATALOG_CONTAINER - A Composite catalog folder under a data source.  Can only be created within a data source under /services/databases.
+	* CONTAINER / SCHEMA_CONTAINER - A Composite schema container.  Can only be created within a CATALOG that is under /services/databases.
+	(Web Services)
+	* CONTAINER / SERVICE_CONTAINER - A web service container for the service.  Can only be created within a Composite Web Services data source that is under /services/webservices.
+	* CONTAINER / OPERATIONS_CONTAINER - A web service container for the operations
+	* CONTAINER / PORT_CONTAINER - A Composite web service container for port.   Can only be created within a SERVICE under /services/webservices.
+	(Connectors)
+	* CONTAINER / CONNECTOR_CONTAINER - A Composite container for connectors.
+
+	* CONNECTOR / JMS - A Composite JMS Connector.  Created with no connection information
+	* CONNECTOR / HTTP - A Composite HTTP Connector.  Created with no connection information
+
+	* DATA_SOURCE / RELATIONAL_DATA_SOURCE - A relational database source.
+	* DATA_SOURCE / FILE_DATA_SOURCE - A comma separate file data source.
+	* DATA_SOURCE / XML_FILE_DATA_SOURCE - An XML file data source.
+	* DATA_SOURCE / WSDL_DATA_SOURCE - A Composite web service data source.
+	* DATA_SOURCE / XML_HTTP_DATA_SOURCE - An HTTP XML data source.
+	* DATA_SOURCE / NONE - A custom java procedure data source.
+
+	* DEFINITION_SET / SQL_DEFINITION_SET - A Composite SQL Definition set.
+	* DEFINITION_SET / XML_SCHEMA_DEFINITION_SET - A Composite XML Schema Defintion set.
+	* DEFINITION_SET / WSDL_DEFINITION_SET - A Composite WSDL Definition set.
+	* DEFINITION_SET / ABSTRACT_WSDL_DEFINITION_SET - A Composite Abstract WSDL Definition set such as the ones imported from Designer.
+	* DEFINITION_SET / SCDL_DEFINITION_SET - A Composite SCA composite Definition set imported from Designer.
+
+	* LINK / unknown at this time
+
+	(CIS procedures)
+	* PROCEDURE / SQL_SCRIPT_PROCEDURE - A Composite SQL Procedure.  Created with a simple default script body that is runnable.
+	(Custom procedures)
+	* PROCEDURE / JAVA_PROCEDURE - A Composite java data source procedure.  Created from a java data source (jar file).
+	(Database procedures)
+	* PROCEDURE / EXTERNAL_SQL_PROCEDURE - A Composite Packaged Query.  Created with no SQL text, so it is not runnable.  
+	* PROCEDURE / DATABASE_PROCEDURE - A database stored procedure.
+	(XML procedures)
+	* PROCEDURE / BASIC_TRANSFORM_PROCEDURE - A Composite Basic XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XSLT_TRANSFORM_PROCEDURE - A Composite XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / STREAM_TRANSFORM_PROCEDURE - A Composite XSLT Streaming Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XQUERY_TRANSFORM_PROCEDURE - A Composite XQUERY Transformation Procedure.  Created with no target schema and no model, so it is not runnable.
+	(Misc procedures)
+	* PROCEDURE / OPERATION_PROCEDURE - A Composite web service or HTTP procedure operation.
+
+	* TABLE / SQL_TABLE - A Composite View.  Created with no SQL text or model, so it is not runnable.  
+	* TABLE / DATABASE_TABLE - A Composite database table.
+	* TABLE / DELIMITED_FILE_TABLE - A Composite delimited file table
+	* TABLE / SYSTEM_TABLE - A Composite system table view.
+
+	* TREE / XML_FILE_TREE - The XML tree structure associated with a file-XML data source.
+
+	* TRIGGER / NONE - A Composite trigger.   Created disabled.
+*/
+PROCEDURE resourceExists(
+    IN fullResourcePath /shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+    IN resourceType VARCHAR, -- CONTAINER, PROCEDURE, TABLE
+    OUT resourceExists BIT -- 1=true, 0=false
+)
+BEGIN
+	DECLARE version 		varchar default null;
+	DECLARE resourceFound	boolean;
+
+	set resourceExists = 1;
+	call /lib/resource/ResourceExists(fullResourcePath,resourceType,version,resourceFound);
+	if (not resourceFound) then
+		set resourceExists = 0;
+	end if;
+	
+/*
+	SELECT  resourceExists 
+	INTO resourceExists
+	FROM /shared/Utilities/repository/lowerLevelProcedures/resourceExistsXSLT(
+		&apos;&lt;ns1:resourceExists 
+			xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; 
+			xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+			xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+			&lt;ns1:path&gt;&apos; || CAST(XMLTEXT(fullResourcePath) AS LONGVARCHAR) || &apos;&lt;/ns1:path&gt;
+			&lt;ns1:type&gt;&apos; || CAST(XMLTEXT(resourceType) AS VARCHAR) || &apos;&lt;/ns1:type&gt;
+			&lt;ns1:version/&gt;
+		&lt;/ns1:resourceExists&gt;&apos;);
+*/
+END</attribute>
+  <attribute name="creationDate" type="LONG">1376679119329</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

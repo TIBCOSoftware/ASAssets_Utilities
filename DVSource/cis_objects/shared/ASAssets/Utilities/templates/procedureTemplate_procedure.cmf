@@ -1,0 +1,102 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="procedureTemplate" path="/shared/ASAssets/Utilities/templates/procedureTemplate" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>procedureTemplate:
+
+	This entire procedure is a template that shows the best practice for documenting a CIS Procedure.
+	This is a procedure description that describes the purpose of this procedure.
+
+
+	Input:
+		inVar - contains any varchar of length 255.  
+			Values: Any text value
+
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+
+
+	Output:
+		outVar - contains any varchar of length 255
+			Values: Any text value
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/05/2010		Mike Tinius			5.2.0			Created new
+    04/30/2013      Calvin Goodrich     6.2.0           Updated to illustrate new modification record format
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inVar" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="outVar" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+  </security>
+  <attribute name="Script" type="STRING">/* 
+  procedureTemplate:
+
+	This entire procedure is a template that shows the best practice for documenting a CIS Procedure.
+	This is a procedure description that describes the purpose of this procedure.
+
+
+	Input:
+		inVar - contains any varchar of length 255.  
+			Values: Any text value
+
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+
+
+	Output:
+		outVar - contains any varchar of length 255
+			Values: Any text value
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/05/2010		Mike Tinius			5.2.0			Created new
+    04/30/2013      Calvin Goodrich     6.2.0           Updated to illustrate new modification record format
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE procedureTemplate(
+	IN	inVar	VARCHAR(255),
+	IN	debug	CHAR(1),
+	OUT	outVar	VARCHAR(255)
+)
+BEGIN
+  	-- Local Declarations go here
+	DECLARE moduleName		VARCHAR(255) DEFAULT &apos;procedureTemplate()&apos;;
+	DECLARE localVar		VARCHAR(255) DEFAULT &apos;DEBUG &apos;;
+
+	-- Document source code here
+	IF (debug = &apos;Y&apos; or debug = &apos;T&apos;) THEN
+		SET outVar = localVar||&apos;on: &apos;||inVar;
+	ELSE
+		SET outVar = localVar||&apos;off: &apos;||inVar;
+	END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1383622342653</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392838692721</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

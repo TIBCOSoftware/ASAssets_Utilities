@@ -1,0 +1,176 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_updateResourcesSqlTable" path="/shared/ASAssets/Utilities/examples/repository/test_updateResourcesSqlTable" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="createResponse" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+    </parameter>
+    <parameter name="faultResponse" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/repository/createAllFolders" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="sourceFolderPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createResource" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceSubType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE test_updateResourcesSqlTable(
+	OUT success		BIT,
+	OUT createResponse 	XML,
+	OUT faultResponse	XML
+)
+BEGIN
+	DECLARE resourcePath	VARCHAR(2048);
+	DECLARE resourceName	VARCHAR;
+	DECLARE resourceType	VARCHAR;
+	DECLARE resourceSubType	VARCHAR;
+	DECLARE scriptext		LONGVARCHAR;
+	DECLARE annotation		LONGVARCHAR;
+	DECLARE columnList		VECTOR(/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.childResourceType);
+	DECLARE sqlIndexList	VECTOR(/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.sqlIndexType);
+
+	set resourcePath = &apos;/shared/Utilities/examples/repository/target&apos;;
+	set resourceName = &apos;PRODUCT_VIEW2&apos;;
+	set resourceType = &apos;TABLE&apos;;
+	set resourceSubType = &apos;SQL_TABLE&apos;;
+	set scriptext = &apos;SELECT * FROM /shared/examples/ds_inventory/products products&apos;;
+	set annotation = &apos;product information&apos;;
+/*	DECLARE PUBLIC TYPE childResourceType ROW (
+		resourceName 		VARCHAR, 
+		resourcePath 		TypeDefinitions.pathType, 
+		resourceType 		VARCHAR, 
+		columnName 			VARCHAR, 
+		columnType 			VARCHAR	);
+*/
+	set columnList = VECTOR[
+(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;ProductID&apos;,&apos;INTEGER&apos;,&apos;Product Identifier&apos;),
+(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;ProductName&apos;,&apos;VARCHAR(50)&apos;,&apos;Product Name&apos;),
+(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;ProductDescription&apos;,&apos;VARCHAR(255)&apos;,&apos;Product Description&apos;),
+(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;CategoryID&apos;,&apos;INTEGER&apos;,&apos;Category Identifier&apos;),
+(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;SerialNumber&apos;,&apos;VARCHAR(50)&apos;,&apos;Serial Number&apos;),
+(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;UnitPrice&apos;,&apos;DECIMAL(12,2)&apos;,&apos;Unit Price&apos;),
+(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;ReorderLevel&apos;,&apos;INTEGER&apos;,&apos;Reorder Level&apos;),
+(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;LeadTime&apos;,&apos;VARCHAR(30)&apos;,&apos;Lead Time&apos;)
+];
+/*	DECLARE PUBLIC TYPE sqlIndexType ROW (
+		sqlIndexName 		VARCHAR(255), 
+		sqlIndexType 		VARCHAR(255), 
+		sqlIndexUnique 		BIT, 
+		sqlIndexColName 	VARCHAR(255), 
+		sqlIndexColOrder 	VARCHAR(255) );
+*/
+	set sqlIndexList = VECTOR[
+(&apos;categoryIDX&apos;,&apos;UNKNOWN&apos;,0,&apos;CategoryID&apos;,&apos;ASCENDING&apos;),
+(&apos;productsPK&apos;,&apos;PRIMARY_KEY&apos;,1,&apos;ProductID&apos;,&apos;ASCENDING&apos;),
+(&apos;productsPK&apos;,&apos;PRIMARY_KEY&apos;,1,&apos;ProductName&apos;,&apos;ASCENDING&apos;)
+];
+
+
+	call /shared/ASAssets/Utilities/repository/createAllFolders(resourcePath, success, faultResponse);
+
+	if (success = 1) then
+		IF (resourceExists(resourcePath||&apos;/&apos;||resourceName,resourceType) = 0) THEN
+		    call /shared/ASAssets/Utilities/repository/createResource(resourcePath, resourceName, resourceType, resourceSubType, success, createResponse, faultResponse);
+		END IF;
+	end if;
+
+	if (success = 1) then
+--		CALL /shared/Utilities/repository/updateResourcesSqlTable(resourcePath||&apos;/&apos;||resourceName, scriptext, annotation, columnList, sqlIndexList, success, createResponse, faultResponse);
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399565923676</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:1:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:2:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

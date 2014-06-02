@@ -1,0 +1,415 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_ProductCatalogXForm" path="/shared/ASAssets/Utilities/examples/xml/test_ProductCatalogXForm" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="ProductID">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="ProductName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="CategoryID">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="CategoryName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="ProductDescription">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="SerialNumber">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="UnitPrice">
+          <datatype name="DECIMAL" type="DECIMAL" maxDigits="32" maxFractionalDigits="2"/>
+        </element>
+        <element name="ReorderLevel">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="LastReorder">
+          <datatype name="TIMESTAMP" type="DATETIME"/>
+        </element>
+        <element name="LeadTime">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/examples/xml/ProductCatalogTransform" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="iXml" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="3">
+          <element name="ProductID">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="ProductName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="CategoryID">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="CategoryName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="ProductDescription">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="SerialNumber">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="UnitPrice">
+            <datatype type="DECIMAL" maxDigits="32" maxFractionalDigits="2"/>
+          </element>
+          <element name="ReorderLevel">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="LastReorder">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="LeadTime">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">-- example of calling the resulting transform procedure (double check the resulting timestamps of 
+-- the LastReorder column and make sure they&apos;ve been converted to your local CIS instance&apos;s time)
+--
+PROCEDURE test_ProductCatalogXForm(
+  OUT result CURSOR /shared/ASAssets/Utilities/examples/&quot;xml&quot;/ProductCatalogTransform.resultRow  -- this can be a generic cursor or strongly typed with a row definition that matches the output of the transform procedure.
+)
+BEGIN
+  DECLARE inXML XML DEFAULT -- modified version of $CIS_HOME/docs/examples/productCatalog.xml (added &lt;LastReorder&gt; elements)
+&apos;&lt;catalog&gt;
+  &lt;category&gt;
+    &lt;CategoryID&gt;1&lt;/CategoryID&gt;
+    &lt;CategoryName&gt;Data Storage&lt;/CategoryName&gt;
+    &lt;products&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;2&lt;/ProductID&gt;
+        &lt;ProductName&gt;Mega Zip 750MB USB 2.0&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Mega Zip 750 MB&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;5-76-9876&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;187.67&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;7 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;1&lt;/ProductID&gt;
+        &lt;ProductName&gt;Maxtific 40GB ATA133 7200&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Maxtific Storage  40 GB&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;221-887-3458&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;89.99&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;20&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-14T09:22:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;14 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;18&lt;/ProductID&gt;
+        &lt;ProductName&gt;Acme 40GB ATA100 7200&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Acme Storage 40 GB&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;HD-ACM4483-2&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;85.95&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;6&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-01T15:45:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;6&lt;/ProductID&gt;
+        &lt;ProductName&gt;Maxtific 60GB ATA133 7200&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Maxtific Storage 60 GB&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;220-768-7642&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;109.99&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2000-01-01T00:05:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;2 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;4&lt;/ProductID&gt;
+        &lt;ProductName&gt;Maxtific120 GB ATA133 7200&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Maxtific Storage 120 GB&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;221-889-3460&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;151.95&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;18&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;1999-12-31T23:55:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;14 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;3&lt;/ProductID&gt;
+        &lt;ProductName&gt;Mega Zip 250MB&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Parallel External w/o Disk&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;5-75-9924&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;140.95&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2009-04-01T16:03:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;7 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+    &lt;/products&gt;
+  &lt;/category&gt;
+  &lt;category&gt;
+    &lt;CategoryID&gt;2&lt;/CategoryID&gt;
+    &lt;CategoryName&gt;External Drives&lt;/CategoryName&gt;
+    &lt;products&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;5&lt;/ProductID&gt;
+        &lt;ProductName&gt;Mega Zip 250MB SCSI External&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Mega Zip 250 MB&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;9-2244-038&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;144.95&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;2&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2008-02-29T12:00:00Z&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+    &lt;/products&gt;
+  &lt;/category&gt;
+  &lt;category&gt;
+    &lt;CategoryID&gt;3&lt;/CategoryID&gt;
+    &lt;CategoryName&gt;Internal Drives&lt;/CategoryName&gt;
+  &lt;/category&gt;
+  &lt;category&gt;
+    &lt;CategoryID&gt;4&lt;/CategoryID&gt;
+    &lt;CategoryName&gt;Memory&lt;/CategoryName&gt;
+    &lt;products&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;9&lt;/ProductID&gt;
+        &lt;ProductName&gt;Acme Super Memory&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Acme Memory&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;MEM-212&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;25.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;10&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-05:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+    &lt;/products&gt;
+  &lt;/category&gt;
+  &lt;category&gt;
+    &lt;CategoryID&gt;5&lt;/CategoryID&gt;
+    &lt;CategoryName&gt;Modems&lt;/CategoryName&gt;
+    &lt;products&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;8&lt;/ProductID&gt;
+        &lt;ProductName&gt;Deluxe RedPagoda PCI V.90 56K&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Voice Modem&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;RDP-9864&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;18.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;1999-12-31T23:55:00Z&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;2 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;7&lt;/ProductID&gt;
+        &lt;ProductName&gt;RedPagoda PCI 56K&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Fax Modem&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;RDP-8546&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;14.95&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2000-01-01T00:05:00Z&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;2 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+    &lt;/products&gt;
+  &lt;/category&gt;
+  &lt;category&gt;
+    &lt;CategoryID&gt;7&lt;/CategoryID&gt;
+    &lt;CategoryName&gt;Networking&lt;/CategoryName&gt;
+    &lt;products&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;23&lt;/ProductID&gt;
+        &lt;ProductName&gt;Widget 5&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Widget model&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;W5&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;22.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;22&lt;/ProductID&gt;
+        &lt;ProductName&gt;Widget 4&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Widget model&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;W4&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;22.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;21&lt;/ProductID&gt;
+        &lt;ProductName&gt;Widget 3&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Widget model&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;W3&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;22.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;20&lt;/ProductID&gt;
+        &lt;ProductName&gt;Widget 2&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Widget model&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;W2&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;22.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;25&lt;/ProductID&gt;
+        &lt;ProductName&gt;Widget 7&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Widget model&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;W7&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;22.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;19&lt;/ProductID&gt;
+        &lt;ProductName&gt;Widget 1&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Widget model&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;W1&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;22.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;24&lt;/ProductID&gt;
+        &lt;ProductName&gt;Widget 6&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Widget model&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;W6&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;22.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+    &lt;/products&gt;
+  &lt;/category&gt;
+  &lt;category&gt;
+    &lt;CategoryID&gt;6&lt;/CategoryID&gt;
+    &lt;CategoryName&gt;Printers&lt;/CategoryName&gt;
+    &lt;products&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;11&lt;/ProductID&gt;
+        &lt;ProductName&gt;Printerific C42UX&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Inkjet Printer&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;PRNT-RFC764&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;129.99&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;2&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;10 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;10&lt;/ProductID&gt;
+        &lt;ProductName&gt;Lexington Z23&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Lexington Color Jet Printer&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;PRNT-LEX35&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;99.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;5&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;5 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+    &lt;/products&gt;
+  &lt;/category&gt;
+  &lt;category&gt;
+    &lt;CategoryID&gt;8&lt;/CategoryID&gt;
+    &lt;CategoryName&gt;Processors&lt;/CategoryName&gt;
+    &lt;products&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;17&lt;/ProductID&gt;
+        &lt;ProductName&gt;Acme 950MHz w/o fan&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Acme Processor&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;CPU-ACM8733&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;39.99&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;3&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;2 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;13&lt;/ProductID&gt;
+        &lt;ProductName&gt;Processor King 2.0 GHz&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;King  2.0 GHz&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;CPU-C538&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;99.99&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;2&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;20 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;12&lt;/ProductID&gt;
+        &lt;ProductName&gt;Processor Queen IV 2.4 GHz&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Queen 2.4 GHz&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;CPU-7543&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;215.99&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;3&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;14 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+    &lt;/products&gt;
+  &lt;/category&gt;
+  &lt;category&gt;
+    &lt;CategoryID&gt;9&lt;/CategoryID&gt;
+    &lt;CategoryName&gt;Video Cards&lt;/CategoryName&gt;
+    &lt;products&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;16&lt;/ProductID&gt;
+        &lt;ProductName&gt;Force Pro M64 32MB&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Force Pro Video Card&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;VID-FP765549&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;41.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;8&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;1 Day&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;15&lt;/ProductID&gt;
+        &lt;ProductName&gt;Rad 2000 PRO 32 MB&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Rad Video Card&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;VID-RAD76459&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;40.00&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;6&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;10 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+      &lt;product&gt;
+        &lt;ProductID&gt;14&lt;/ProductID&gt;
+        &lt;ProductName&gt;Rad Expert 9000 PRO 128 MB&lt;/ProductName&gt;
+        &lt;ProductDescription&gt;Rad Video Card&lt;/ProductDescription&gt;
+        &lt;SerialNumber&gt;VID-RAD89388&lt;/SerialNumber&gt;
+        &lt;UnitPrice&gt;129.99&lt;/UnitPrice&gt;
+        &lt;ReorderLevel&gt;2&lt;/ReorderLevel&gt;
+        &lt;LastReorder&gt;2010-07-15T10:35:00-08:00&lt;/LastReorder&gt;
+        &lt;LeadTime&gt;3 Days&lt;/LeadTime&gt;
+      &lt;/product&gt;
+    &lt;/products&gt;
+  &lt;/category&gt;
+&lt;/catalog&gt;
+&apos;;
+
+  OPEN result FOR SELECT * FROM /shared/ASAssets/Utilities/examples/&quot;xml&quot;/ProductCatalogTransform(inXML); 
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

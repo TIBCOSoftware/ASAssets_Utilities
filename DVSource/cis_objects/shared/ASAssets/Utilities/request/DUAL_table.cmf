@@ -1,0 +1,128 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="DUAL" path="/shared/ASAssets/Utilities/request/DUAL" type="TABLE" subtype="SQL_TABLE" changeToken="0" tableType="VIEW">
+  <annotation>DUAL:
+
+	This view provides similar functionality to Oracle&apos;s &quot;dual&quot; virtual table.
+
+
+	Input:
+		N/A
+
+
+	Output:
+		result CURSOR (
+			A VARCHAR(1) -- will always have the value &apos;A&apos;
+        ) 
+
+
+	Exceptions:  none
+
+
+	Author:      Tony Young
+	Date:        4/5/2015
+	CSW Version: 5.2.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <columns>
+    <column name="A" nullable="true">
+      <datatype type="STRING" maxLength="1"/>
+      <security>
+        <owner user="admin" domain="composite"/>
+      </security>
+    </column>
+  </columns>
+  <indexes></indexes>
+  <foreignKeys></foreignKeys>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/request/lowerLevelProcedures/DUAL_PIPE" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="DUAL" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="A">
+            <datatype type="STRING" maxLength="1"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="SQL" type="STRING">SELECT 
+    DUAL_PIPE.A
+FROM      
+    /shared/ASAssets/Utilities/request/lowerLevelProcedures/DUAL_PIPE() DUAL_PIPE</attribute>
+  <attribute name="creationDate" type="LONG">1383622342456</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="BYTE_ARRAY">EIEJBAAAAAEQUgYBAAkARABVAEEATABfAFAASQBQAEUGAgAJAEQAVQBBAEwAXwBQAEkAUABFAwv/
+////Awr/////CxEABgAGAHMAaABhAHIAZQBkAAgAQQBTAEEAcwBzAGUAdABzAAkAVQB0AGkAbABp
+AHQAaQBlAHMABwByAGUAcQB1AGUAcwB0ABQAbABvAHcAZQByAEwAZQB2AGUAbABQAHIAbwBjAGUA
+ZAB1AHIAZQBzAAkARABVAEEATABfAFAASQBQAEUJEAAAAAD//wMFAAAAAAgCEDEGAf//AQIBAQYA
+AQMAAQQAAQUAAwcAAAAABwkAAAABAAAAAAkKAAAAARBBBgEAAQBBBgIAAAYD//8GBP//Awr/////
+CAwQGwYCAAcAVgBBAFIAQwBIAEEAUgMSAAAAAQQEAAAAAAAAAAEBEwH//wMLAAAAAP////8JBgAA
+AAEQggMKAAAAHgMLAAAAHgMMAAAAyAMNAAAAyP//CAMQcQMBAAAACwMCAAAAMgkDAAACJhB0AwYA
+AAAA//8QcgYE/////xBzAwUAAAAA//8QdQEHAf//EHgGC/////8QdwMK////////EHkGDP////8Q
+dv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8Q
+eQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcD
+Cv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgG
+C/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1
+AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP//
+//8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0
+//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2
+//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2
+//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5
+Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK
+////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL
+/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUB
+BwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE////
+/xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT/
+/xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb/
+/xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb/
+/xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkG
+DP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr/
+//////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/
+////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEH
+AP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////
+EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//
+EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//
+EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//
+EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM
+/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv//
+/////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC///
+//8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA
+//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Q
+c///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8Q
+cgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Q
+dv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Q
+dv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/
+////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////
+////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL////
+/xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD/
+/xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz
+//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xBy
+BgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2
+//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2
+//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP//
+//8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr/////
+//8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////
+EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//
+EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP/
+/xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIG
+BP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb/
+/xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb/
+/xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM////
+/xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv//////
+/xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8Q
+dwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8Q
+eAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///
+EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE
+/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//
+EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//
+EHb//xB2////////</attribute>
+</metadata>

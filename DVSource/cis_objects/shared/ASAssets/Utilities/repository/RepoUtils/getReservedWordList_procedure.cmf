@@ -1,0 +1,54 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getReservedWordList" path="/shared/ASAssets/Utilities/repository/RepoUtils/getReservedWordList" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>getReservedWordList:
+
+	This procedure returns the reserved word list.
+
+    Dependencies:
+    =============
+    $CIS_INSTALL_HOME/conf/customjars/RepoUtils.properties - This properties file on the CIS host filesystem 
+        provides a list of reserved words and characters that are used to match with the various parts 
+        of a folder path.  Add any new CIS reserved words that appear from release to release in this list. This
+        file can be updated without a restart of CIS.
+
+
+	Input:
+		N/A
+
+
+	Output:
+		result - A cursor with the reserved word list
+			Values: CURSOR (
+                        ReservedWord LONGVARCHAR
+                    )
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+    04/30/2013      Calvin Goodrich     6.0.0           Created new.
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype type="TABLE" caseSensitive="false" refId="1">
+        <element name="ReservedWord">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.repository.GetReservedWordList</attribute>
+  <attribute name="creationDate" type="LONG">1383622341815</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392747884054</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

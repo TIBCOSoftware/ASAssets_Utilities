@@ -1,0 +1,254 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getAllDataSourceChildren" path="/shared/ASAssets/Utilities/repository/getAllDataSourceChildren" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getAllDataSourceChildren:
+
+	This procedure returns all the children for a given DATA_SOURCE type resources found under the starting path.
+ 
+	Input:
+		resourcePath				The starting CIS path for which to introspect resources and find data source type resources
+		includeColumns				0=do not include columns, 1=do include columns
+	Output:
+		childResCursor				A list of data source children as recursively introspected from the passed in starting path.
+
+	Exceptions:  none
+
+	Author:      Mike Tinius
+	Date:        7/27/2012
+	CSW Version: 6.1.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="includeColumns" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="childResCursor" direction="OUT" nullable="true">
+      <datatype name="childResCursorType" type="TABLE" refId="1">
+        <element name="depthNum">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="depthUsedNum">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="lineage">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="parentName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="parentPath">
+          <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+        </element>
+        <element name="parentType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="parentSubType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resourceName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="isNullable">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="columnName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="columnType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="nativeBaseType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="nativeType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getAllDataSources" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceTreeList" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resPath">
+            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creationDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="creationDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="creatorUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creatorUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="lastModifiedDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="lastModifiedUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getChildResourcesCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="childResCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="1024"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="isNullable">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="columnName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="columnType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeBaseType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 	getAllDataSourceChildren:
+
+	This procedure returns all the children for a given DATA_SOURCE type resources found under the starting path.
+ 
+	Input:
+		resourcePath				The starting CIS path for which to introspect resources and find data source type resources
+		includeColumns				0=do not include columns, 1=do include columns
+	Output:
+		childResCursor				A list of data source children as recursively introspected from the passed in starting path.
+
+	Exceptions:  none
+
+	Author:      Mike Tinius
+	Date:        7/27/2012
+	CSW Version: 6.1.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getAllDataSourceChildren(
+	IN resourcePath 		/shared/ASAssets/Utilities/TypeDefinitions.pathType, -- this must be a container path only 
+	IN includeColumns		BIT, -- 0=do not include columns, 1=do include columns
+	OUT	childResCursor  	PIPE /shared/ASAssets/Utilities/TypeDefinitions.childResCursorType
+)
+BEGIN
+	DECLARE depthNum	INTEGER;
+
+	for r as select * from /shared/ASAssets/Utilities/repository/getAllDataSources(resourcePath) do
+		if (r.name is not null) then
+			for c as select * from /shared/ASAssets/Utilities/repository/getChildResourcesCursor(r.resPath, r.resType) do
+				if ( (includeColumns = 1) or (includeColumns = 0 and c.columnName is null) ) then
+					if (c.columnName is null) then
+						set depthNum = 0;
+					else
+						set depthNum = 1;
+					end if;
+					insert into childResCursor values (
+						depthNum,
+						0,
+						&apos;&apos;,
+						r.name, 
+						r.resPath, 
+						r.resType, 
+						r.subType,
+						c.resourceName, 
+    	    			c.resourcePath, 
+	        			c.resourceType, 
+    	    			c.subtype, 
+        				c.enabled, 
+	        			c.isNullable, 
+    	    			c.columnName, 
+        				c.columnType, 
+	        			c.nativeBaseType, 
+    	    			c.nativeType
+					);
+				end if;
+			end for;
+		end if;
+	end for;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1369417729293</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

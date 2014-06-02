@@ -1,0 +1,59 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="DateDiffDate" path="/shared/ASAssets/Utilities/time/DateUtils/DateDiffDate" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>Description:
+  Calculates the difference of two DATE values. It is leap year aware.
+
+
+Inputs:
+  datePart   - Unit of measure for the output &quot;dateLength&quot;.
+    values: ‘second’, ‘minute’, ‘hour’,  ‘day’, ‘week’, ‘month’ and ‘year’ (not case sensitive)
+
+  startDate  - The starting date.
+    values: Any valid date value.
+
+  endDate    - The ending date.
+    values: Any valid date value.
+
+
+Outputs:
+  dateLength - The number of &quot;datePart&quot;s between the beginning and end dates.
+    values: An integer. 0 if any of the inputs are invalid. Negative if the end date
+            occurs before the start date.
+
+
+Exceptions:
+  None
+
+
+Author:      Kevin O&apos;Brien
+Date:        6/20/2010
+CSW Version: 5.1.0
+
+© 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="datePart" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="startDate" direction="IN" nullable="true">
+      <datatype name="DATE" subType="DATASOURCE_TYPE" type="DATE"/>
+    </parameter>
+    <parameter name="endDate" direction="IN" nullable="true">
+      <datatype name="DATE" subType="DATASOURCE_TYPE" type="DATE"/>
+    </parameter>
+    <parameter name="dateLength" direction="OUT" nullable="true">
+      <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.date.DateDiffDate</attribute>
+  <attribute name="creationDate" type="LONG">1383622342324</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392758524907</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

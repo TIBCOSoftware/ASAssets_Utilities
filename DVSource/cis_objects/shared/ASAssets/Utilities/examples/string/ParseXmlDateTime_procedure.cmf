@@ -1,0 +1,77 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="ParseXmlDateTime" path="/shared/ASAssets/Utilities/examples/string/ParseXmlDateTime" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="dateTimeString" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1"></datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexGetGroups" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexGetGroups" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="groupNumber">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="matchedGroup">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">-- uses RegexGetGroups() to produce a result set containing the various components
+-- of an XML dateTime type. (this works a bit better than PARSE_TIMESTAMP().) See 
+-- annotation for RegexGetGroups() for usage details.
+--
+-- this should produce four rows:
+-- group 0: the entire matched date, time, and timezone string (group 0 is always the match of the entire regular expression.)
+-- group 1: the date component
+-- group 2: the time component (with optional fractional second.)
+-- group 3: the timezone component (if any. NULL otherwise.)
+
+--
+PROCEDURE ParseXmlDateTime(
+  IN dateTimeString VARCHAR,
+  OUT result CURSOR
+)
+BEGIN
+  DECLARE dateRE VARCHAR DEFAULT &apos;\-?\d+\-\d{2}\-\d{2}&apos;;          -- date component including optional sign for the year.
+  DECLARE timeRE VARCHAR DEFAULT &apos;\d{2}:\d{2}:\d{2}(?:\.\d+)?&apos;;   -- time component including optional fractional seconds (CIS only accepts 3 digits here when casting to TIMESTAMP.)
+  DECLARE timezoneRE VARCHAR DEFAULT &apos;[\+\-]\d{2}:\d{2}|Z&apos;;       -- timezone component: either sign, hours, and minutes or the GMT indicator (Z)
+  DECLARE myXMLDateTimeRE VARCHAR DEFAULT &apos;\A\s*(&apos; || dateRE || &apos;)T(&apos; || timeRE || &apos;)(&apos; || timezoneRE || &apos;)?\s*\z&apos;; -- matches a dateTime string wrapped in optional whitespace.
+
+--DECLARE dateTimeString VARCHAR DEFAULT &apos;2010-07-28T13:02:00.003-08:00&apos;;
+
+  OPEN result FOR select * from /shared/ASAssets/Utilities/string/TextUtils/RegexGetGroups(dateTimeString, myXMLDateTimeRE, 1);
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

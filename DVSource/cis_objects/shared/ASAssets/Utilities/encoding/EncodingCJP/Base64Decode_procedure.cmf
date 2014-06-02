@@ -1,0 +1,45 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Base64Decode" path="/shared/ASAssets/Utilities/encoding/EncodingCJP/Base64Decode" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>Base64Decode:
+
+  Accepts a Base64 encoded string as input and returns the Base64 decoded value of the string.
+
+	Input:
+		base64EncodedString - The base64 encoded value to decode.  
+			Values: Any Base64 value
+
+
+	Output:
+		result - The Base64 decoded value
+			Values: Any text value
+
+
+	Exceptions:  none
+
+
+	Author:      Gordon Rose
+	Date:        10/18/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="base64EncodedString" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.encoding.Base64Decode</attribute>
+  <attribute name="creationDate" type="LONG">1383622340459</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392747283911</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

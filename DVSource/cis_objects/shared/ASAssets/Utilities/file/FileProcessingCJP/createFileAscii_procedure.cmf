@@ -1,0 +1,47 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="createFileAscii" path="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>/*
+ * Source File: CreateFileAscii.java
+ *
+ * Description: This Composite CJP creates a new ASCII file in the file system.
+ *
+ *   Note: The import [import com.compositesw.extension.*] requires CIS_HOME\apps\extension\lib\csext.jar\
+ *
+ *	Input:
+ *		filePath - full path to a file that is to be created.				Types.VARCHAR, DIRECTION_IN
+ *		append - 0=do not append file, 1=append file.						Types.SMALLINT, DIRECTION_IN
+ *		fileContent - The ascii text content to write.						Types.LONGVARCHAR, DIRECTION_IN
+ *
+ *	Output: none
+ *
+ *	Exceptions:  CustomProcedureException, SQLException
+ *	Author:      Mike Tinius
+ *	Date:        8/6/2010
+ *	CSW Version: 5.1.0
+ *
+ *  © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+ */</annotation>
+  <parameters>
+    <parameter name="filePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="append" direction="IN" nullable="true">
+      <datatype name="SMALLINT" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-32768" maxValue="32767"/>
+    </parameter>
+    <parameter name="fileContent" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.file.CreateFileAscii</attribute>
+  <attribute name="creationDate" type="LONG">1366122592839</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392747417370</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

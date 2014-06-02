@@ -1,0 +1,127 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_getNodeFromXML" path="/shared/ASAssets/Utilities/examples/xml/test_getNodeFromXML" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/xml/getNodeFromXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="namespaces" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inXpath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="iteration" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="inXml" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE test_getNodeFromXML(	
+	OUT  result 		LONGVARCHAR
+)
+BEGIN
+	DECLARE myXML		XML;
+	DECLARE inXpath		VARCHAR(2048);
+	DECLARE namespaces	VARCHAR(4096);
+	DECLARE iteration	INTEGER DEFAULT 0; -- 0=all iterations, 1=first occurrence only
+
+SET myXML = 
+&apos;&lt;Book 
+	xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot; 
+	xmlns:par=&quot;http://www.compositesw.com/samples/mynamespace/paragraph/v1.0&quot;&gt;
+	&lt;sam:Name sam:isbn=&quot;12-3456-123&quot;&gt;Book Name&lt;/sam:Name&gt;
+
+	&lt;sam:Chapter sam:name=&quot;Chapter 3&quot;&gt;
+		&lt;par:para&gt;para 1&lt;/par:para&gt;
+		&lt;par:para&gt;&lt;/par:para&gt;
+	&lt;/sam:Chapter&gt;
+	&lt;sam:Chapter sam:name=&quot;&quot;/&gt;
+	&lt;sam:Chapter sam:name=&quot;Chapter 3&quot;&gt;
+		&lt;par:para&gt;para 1&lt;/par:para&gt;
+		&lt;par:para&gt;para 2&lt;/par:para&gt;
+	&lt;/sam:Chapter&gt;
+	&lt;sam:Chapter sam:name=&quot;Chapter 1&quot;&gt;
+		&lt;par:para&gt;para 1&lt;/par:para&gt;
+		&lt;par:para/&gt;
+	&lt;/sam:Chapter&gt;
+
+	&lt;sam:Chapter sam:name=&quot;&quot;/&gt;
+
+	&lt;sam:Chapter sam:name=&quot;Chapter 3&quot;&gt;
+		&lt;par:para&gt;para 1&lt;/par:para&gt;
+		&lt;par:para&gt;&lt;/par:para&gt;
+	&lt;/sam:Chapter&gt;
+
+	&lt;sam:Chapter sam:name=&quot;Chapter 3&quot;&gt;
+		&lt;par:para/&gt;
+	&lt;/sam:Chapter&gt;
+	&lt;sam:Chapter sam:name=&quot;Chapter 3&quot;&gt;&lt;/sam:Chapter&gt;
+	&lt;sam:Appendix&gt;Appendix&lt;/sam:Appendix&gt;
+&lt;/Book&gt;
+&apos;;
+/*
+	&lt;sam:Chapter sam:name=&quot;Chapter 3&quot;&gt;&lt;/sam:Chapter&gt;
+	&lt;sam:Chapter sam:name=&quot;Chapter 3&quot;&gt;
+		&lt;par:para&gt;para 1&lt;/par:para&gt;
+		&lt;par:para&gt;&lt;/par:para&gt;
+	&lt;/sam:Chapter&gt;
+	&lt;sam:Chapter sam:name=&quot;&quot;/&gt;
+	&lt;sam:Chapter sam:name=&quot;Chapter 3&quot;&gt;
+		&lt;par:para&gt;para 1&lt;/par:para&gt;
+		&lt;par:para&gt;para 2&lt;/par:para&gt;
+	&lt;/sam:Chapter&gt;
+	&lt;sam:Chapter sam:name=&quot;Chapter 1&quot;&gt;
+		&lt;par:para&gt;para 1&lt;/par:para&gt;
+		&lt;par:para/&gt;
+	&lt;/sam:Chapter&gt;
+	&lt;sam:Chapter sam:name=&quot;&quot;/&gt;
+	&lt;sam:Chapter sam:name=&quot;Chapter 3&quot;&gt;
+		&lt;par:para&gt;para 1&lt;/par:para&gt;
+		&lt;par:para&gt;&lt;/par:para&gt;
+	&lt;/sam:Chapter&gt;
+	&lt;sam:Chapter sam:name=&quot;Chapter 3&quot;&gt;
+		&lt;par:para/&gt;
+	&lt;/sam:Chapter&gt;
+
+*/
+	-- Set specific XML namesspaces that must be included in the XSLT to work properly
+	SET namespaces = 
+		&apos;xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot;
+		xmlns:par=&quot;http://www.compositesw.com/samples/mynamespace/paragraph/v1.0&quot;&apos;;
+
+	SET inXpath = &apos;/Book/sam:Chapter&apos;;
+	CALL /shared/ASAssets/Utilities/&quot;xml&quot;/getNodeFromXML(&apos;Y&apos;, namespaces, inXpath, iteration, myXML, result);
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="references" type="NULL"/>
+</metadata>

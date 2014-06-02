@@ -1,0 +1,207 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_isReservedWord" path="/shared/ASAssets/Utilities_regression_tests/repository/RepoUtils/Test_isReservedWord" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="numTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/RepoUtils/isReservedWord" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inWord" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isReservedWord" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE Test_isReservedWord(
+    OUT numTests INTEGER,
+    OUT numErrors INTEGER,
+    OUT numSkipped INTEGER
+)
+BEGIN
+    DECLARE test_name VARCHAR DEFAULT &apos;repository/RepoUtils/Test_isReservedWord&apos;;
+    DECLARE args System.Text;
+
+    SET numTests = 0;
+    SET numErrors = 0;
+    SET numSkipped = 0;
+
+    -- start test 1
+    --
+    SET args = &apos;XML&apos;;
+
+    BEGIN
+        SET numTests = numTests + 1;
+        IF (isReservedWord(args)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos;&apos;&apos; || args || &apos;&apos;&apos;: OK&apos;);
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos;&apos;&apos; || args || &apos;&apos;&apos;: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+        END IF;
+    EXCEPTION
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos;&apos;&apos; || args || &apos;&apos;&apos;: EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE);
+            SET numErrors = numErrors + 1;
+    END;
+    --
+    -- end test 1
+
+    -- start test 2
+    --
+    SET args = &apos;blah&apos;;
+
+    BEGIN
+        SET numTests = numTests + 1;
+        IF (NOT isReservedWord(args)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos;&apos;&apos; || args || &apos;&apos;&apos;: OK&apos;);
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos;&apos;&apos; || args || &apos;&apos;&apos;: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+        END IF;
+    EXCEPTION
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos;&apos;&apos; || args || &apos;&apos;&apos;: EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE);
+            SET numErrors = numErrors + 1;
+    END;
+    --
+    -- end test 2
+
+    -- start test 3
+    --
+    SET args = &apos;&quot;xml&quot;&apos;;
+
+    BEGIN
+        SET numTests = numTests + 1;
+        IF (NOT isReservedWord(args)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos;&apos;&apos; || args || &apos;&apos;&apos;: OK&apos;);
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos;&apos;&apos; || args || &apos;&apos;&apos;: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+        END IF;
+    EXCEPTION
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos;&apos;&apos; || args || &apos;&apos;&apos;: EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE);
+            SET numErrors = numErrors + 1;
+    END;
+    --
+    -- end test 3
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">18/21</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/41</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/43</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/68</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/63</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/28</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/8</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/23</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/48</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/61</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

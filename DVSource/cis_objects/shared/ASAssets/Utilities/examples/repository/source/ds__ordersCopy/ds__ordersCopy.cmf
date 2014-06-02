@@ -1,0 +1,115 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="ds_ordersCopy" path="/shared/ASAssets/Utilities/examples/repository/source/ds_ordersCopy" type="DATA_SOURCE" subtype="RELATIONAL" changeToken="0">
+  <annotation/>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/examples/repository/source/ds_ordersCopy/cache_status" type="TABLE">
+    <datatype type="TABLE" refId="1">
+      <element name="clusterid">
+        <datatype type="STRING" maxLength="40"/>
+      </element>
+      <element name="serverid" nullable="false">
+        <datatype type="STRING" maxLength="80"/>
+      </element>
+      <element name="resourceid" nullable="false">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="parameters">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="status" nullable="false">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="cachekey" nullable="false">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="starttime" nullable="false">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="finishtime">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="cleartime">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="bytes">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="message">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/examples/repository/source/ds_ordersCopy/cache_tracking" type="TABLE">
+    <datatype type="TABLE" refId="1">
+      <element name="clusterid">
+        <datatype type="STRING" maxLength="40"/>
+      </element>
+      <element name="serverid" nullable="false">
+        <datatype type="STRING" maxLength="80"/>
+      </element>
+      <element name="resourceid" nullable="false">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="catalog">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="schema">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="table" nullable="false">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="createtime">
+        <datatype type="DATETIME"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="autoAddChildren" type="BOOLEAN">true</attribute>
+  <attribute name="cacheStatusTable" type="STRING">/shared/ASAssets/Utilities/examples/repository/source/ds_ordersCopy/cache_status</attribute>
+  <attribute name="cacheTrackingTable" type="STRING">/shared/ASAssets/Utilities/examples/repository/source/ds_ordersCopy/cache_tracking</attribute>
+  <attribute name="commitOnFetchDone" type="BOOLEAN">false</attribute>
+  <attribute name="connCheckOutProcedure" type="STRING"/>
+  <attribute name="connPoolMaxSize" type="INTEGER">50</attribute>
+  <attribute name="connPoolMinSize" type="INTEGER">10</attribute>
+  <attribute name="connPoolTimeout" type="INTEGER">30</attribute>
+  <attribute name="connProperties" type="MAP"></attribute>
+  <attribute name="connStaleTimeout" type="INTEGER">0</attribute>
+  <attribute name="connValidateQuery" type="STRING"/>
+  <attribute name="connectorName" type="STRING"/>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="driverName" type="STRING">MySQL 5.0</attribute>
+  <attribute name="execTimeout" type="INTEGER">0</attribute>
+  <attribute name="healthmonitortable" type="STRING">cis_hm_table</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="isPassThrough" type="STRING">Disabled</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="login" type="STRING">tutorial</attribute>
+  <attribute name="name" type="STRING">ds_ordersCopy</attribute>
+  <attribute name="password" type="STRING">A49A5A0FAFF13F4A</attribute>
+  <attribute name="persistPassword" type="BOOLEAN">true</attribute>
+  <attribute name="selectionState" type="INTEGER">1</attribute>
+  <attribute name="statsConfigured" type="BOOLEAN">true</attribute>
+  <attribute name="statsNumThreads" type="INTEGER">1</attribute>
+  <attribute name="streamingResults" type="BOOLEAN">true</attribute>
+  <attribute name="topicName" type="STRING"/>
+  <attribute name="txnIsolationLevel" type="STRING">Read Committed</attribute>
+  <attribute name="type" type="STRING">MySql</attribute>
+  <attribute name="url" type="STRING">jdbc:mysql://localhost:9408/orders</attribute>
+  <attribute name="urlDatabaseName" type="STRING">orders</attribute>
+  <attribute name="urlIP" type="STRING">localhost</attribute>
+  <attribute name="urlPatternStr" type="STRING">jdbc:mysql://&lt;HOST&gt;:&lt;PORT&gt;/&lt;DATABASE_NAME&gt;</attribute>
+  <attribute name="urlPort" type="INTEGER">9408</attribute>
+  <attribute name="userDeletedSet" type="SET">
+    <item type="NAME_TYPE_PAIR">
+      <name>employees</name>
+      <type>2</type>
+    </item>
+  </attribute>
+</metadata>

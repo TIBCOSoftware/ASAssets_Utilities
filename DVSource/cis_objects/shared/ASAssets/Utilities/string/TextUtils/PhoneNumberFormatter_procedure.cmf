@@ -1,0 +1,49 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="PhoneNumberFormatter" path="/shared/ASAssets/Utilities/string/TextUtils/PhoneNumberFormatter" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>PhoneNumberFormatter:
+
+Description:
+  Provides standard formatting of phone numbers. If format string is not 
+  specified as an input (null or blank), a number will be formatted as 
+  999-999-9999. See http://download.oracle.com/javase/6/docs/api/java/util/Formatter.html
+  for details on formatting syntax.
+
+Inputs:
+  inPhoneNumber      - a 10-digit phone number, arbitrary formatted
+  inOutputFormat     - output formatting pattern (&apos;%.3s-%.3s-%.4s&apos; used if NULL is passed.)
+
+Output:
+  outPhoneNumber     - Input number formatted according to the pattern
+
+Exceptions:
+  CustomProcedureException - if supplied input can not be formatted
+
+Author:      Alex Dedov
+Date:        9/21/2011
+CSW Version: 6.0.0
+
+© 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inPhoneNumber" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="inOutputFormat" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="outPhoneNumber" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.PhoneNumberFormatter</attribute>
+  <attribute name="creationDate" type="LONG">1383622340768</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754412310</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

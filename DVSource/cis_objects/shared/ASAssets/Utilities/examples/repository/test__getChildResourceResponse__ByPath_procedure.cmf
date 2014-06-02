@@ -1,0 +1,345 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_getChildResourceResponse_ByPath" path="/shared/ASAssets/Utilities/examples/repository/test_getChildResourceResponse_ByPath" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="inResourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="childResPipe" direction="OUT" nullable="true">
+      <datatype name="childResourceResponseType" type="TABLE" refId="1">
+        <element name="resourceName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="annotation">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="isNullable">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="columnName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="columnType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="nativeBaseType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="nativeType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/fixLeadingCharactersInFolderPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="fixedResourcePath" direction="OUT">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="1024"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="proprietaryModel">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="columnName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="columnType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeBaseType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getChildResourcesCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="childResCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="1024"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="isNullable">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="columnName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="columnType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeBaseType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/fixLeadingCharactersInFolderPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE test_getChildResourceResponse_ByPath(
+	IN inResourcePath	VARCHAR(1024),
+	IN resourceType 	VARCHAR,
+	OUT childResPipe	PIPE /shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.childResourceResponseType
+)
+BEGIN
+	DECLARE resourcePath		VARCHAR(1024);
+	DECLARE childResourceResponse	XML;
+	DECLARE childResCursor		CURSOR /shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.childResourceResponseType;
+
+--/shared/DB/RDS4/L4_Physical_Layer/L4_2_Physical_Metadata/ICI/DBEDM_Dev
+--DATA_SOURCE
+
+--/shared/DB/RDS4/L4_Physical_Layer/L4_2_Physical_Metadata/ICI/DBEDM_Dev/DVREAD/SYN_TMP_ICI_FIXINC_EXTRACT
+--TABLE
+		    -- Put quotes around &quot;_folder&quot; or &quot;1_folder&quot; but in a way that it is not hard-coded if _ or 0-9 exists in the first charcater of the folder name
+		    SET resourcePath = fixLeadingCharactersInFolderPath(inResourcePath); 
+		    
+		    -- Provides the ability to introspect Composite DATA_SOURCES which contain many tables
+		    IF (resourceType = &apos;DATA_SOURCE&apos;) THEN
+			OPEN childResCursor FOR 
+				SELECT *
+				FROM /shared/ASAssets/Utilities/repository/getChildResourcesCursor(resourcePath, resourceType);
+			/* Important Note:  The FIRST ROW FOR a TABLE returns a NULL IN the COLUMN name.  
+			   This IS used TO determine the start OF a new TABLE.  Don&apos;t change the XSLT -- getChildResourcesResponseXSLT
+		    	   getChildResourcesResponseXSLT returns the following:
+			select--&gt; resourceName:	inventorytransactions
+			select--&gt; resourcePath:	/shared/ViewGenerator/PhysicalLayer/INVENTORY/ds_inventory/inventorytransactions
+			select--&gt; resourceType:	TABLE
+			select--&gt; subtype:	DATABASE_TABLE
+			select--&gt; enabled:	1
+			select--&gt; annotation:
+			select--&gt; isNullable:	IS_NOT_NULLABLE
+			select--&gt; columnName:	TransactionID
+			select--&gt; columnType:	INTEGER
+			select--&gt; nativeBaseType:	int
+			select--&gt; nativeType:	int(11)    				
+*/
+		   END IF;
+		   -- Provides the ability to return metadata on Composite Views (a.k.a. resource type = TABLE).
+		   IF (resourceType = &apos;TABLE&apos;) THEN
+			OPEN childResCursor FOR 
+				SELECT resourceName, resourcePath, resourceType, subtype, enabled, annotation, NULL, columnName, columnType, NULL, NULL
+				FROM /shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE(resourcePath, resourceType);
+			/* Important Note:  The FIRST ROW FOR a TABLE returns a NULL IN the columnName.  
+			   This IS used TO determine the start OF a new TABLE.  Don&apos;t change the XSLT -- getResourceResponseXSLT_SQL_TABLE
+		    	   getResourceResponseXSLT_SQL_TABLE returns the following:
+			select--&gt; resourceName: RDS_T_FGRT
+			select--&gt; resourcePath: /shared/DeutscheBank/Central/RDS3/L4_Physical_Layer/L4_1_Physical_Views/dbInstrument/RDS/RDS_T_FGRT
+			select--&gt; resourceType: TABLE
+			select--&gt; subtype: SQL_TABLE
+			select--&gt; annotation:
+			select--&gt; enabled: 1
+			select--&gt; null, --isNullable
+				  tableType: VIEW
+				  sqlText: [NULL]
+			select--&gt; columnName: FGRT_TYP
+			select--&gt; columnType: VARCHAR(20)
+			select--&gt; null, --nativeBaseType
+			select--&gt; null, --nativeType				
+*/
+			   END IF;
+
+		    FOR childRes AS childResCursor DO	  
+CALL print(&apos;--------childRes1: resourceType:&apos;|| EmptyStr(childRes.resourceType));			    	
+		    	IF (childRes.resourceType = &apos;CONTAINER&apos;) THEN
+			    FOR childRes2 AS 
+				SELECT * FROM /shared/ASAssets/Utilities/repository/getChildResourcesCursor(childRes.resourcePath, childRes.resourceType)
+		    	    DO
+CALL print(&apos;--------childRes2: resourceType:&apos;|| EmptyStr(childRes2.resourceType));			    	
+		    		IF (childRes2.resourceType = &apos;CONTAINER&apos;) THEN
+				    FOR childRes3 AS 
+					SELECT * FROM /shared/ASAssets/Utilities/repository/getChildResourcesCursor(childRes2.resourcePath, childRes2.resourceType)
+		    		    DO
+CALL print(&apos;--------childRes3: resourceType:&apos;|| EmptyStr(childRes3.resourceType));			    	
+CALL print(&apos;--------childRes3: columname/columntype:&apos;|| EmptyStr(childRes3.columnName) || &apos;/&apos; ||EmptyStr(childRes3.columnType));			    	
+
+					INSERT INTO childResPipe VALUES (childRes3);
+
+				    END FOR;		    	
+			    	ELSE
+CALL print(&apos;--------childRes2: columname/columntype:&apos;|| EmptyStr(childRes2.columnName) || &apos;/&apos; ||EmptyStr(childRes2.columnType));			    	
+					INSERT INTO childResPipe VALUES (childRes2);
+				END IF;
+			    END FOR;		    	
+		    	ELSE
+CALL print(&apos;--------childRes1: columname/columntype:&apos;|| EmptyStr(childRes.columnName) || &apos;/&apos; ||EmptyStr(childRes.columnType));			    	
+				INSERT INTO childResPipe VALUES (childRes);
+			END IF; 	    	    
+   
+		    END FOR;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">6/65</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">6/76</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">6/87</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">6/75</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">6/82</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">6/70</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

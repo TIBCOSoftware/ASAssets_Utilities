@@ -1,0 +1,57 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="removeAll" path="/shared/ASAssets/Utilities/file/FileProcessingCJP/removeAll" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>/*
+ * Source File: RemoveAll.java
+ *
+ * Description: This Composite CJP removes all the files and directories from the file system 
+ * 		starting at the path provided.  Optionally, the caller can choose to only delete files
+ * 		and leave the directory structure in place.
+ *
+ * Note: The import [import com.compositesw.extension.*] requires CIS_HOME\apps\extension\lib\csext.jar
+ * 
+ *	Input:
+ *		dirPath - directory path to remove.									Types.VARCHAR, DIRECTION_IN
+ *		removeDirs - Y=remove all files and directories.					Types.VARCHAR, DIRECTION_IN
+ *					 N=remove only files and leave directory structures in place.
+ *
+ *	Output: 
+ *		success - true/1=directory removed, false/0=failed w/exception. 	Types.BOOLEAN, DIRECTION_OUT
+ *
+ *	Exceptions:  CustomProcedureException, SQLException
+ *	Author:      Mike Tinius
+ *	Date:        8/6/2010
+ *	CSW Version: 5.1.0
+ *
+ *  © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+ */</annotation>
+  <parameters>
+    <parameter name="dirPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+      <attribute name="selectionState" type="INTEGER">2</attribute>
+    </parameter>
+    <parameter name="removeDirs" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+      <attribute name="selectionState" type="INTEGER">2</attribute>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BOOLEAN" subType="DATASOURCE_TYPE" type="BOOLEAN"/>
+      <attribute name="selectionState" type="INTEGER">2</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege user="system" domain="composite" privileges="READ WRITE EXECUTE"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.file.RemoveAll</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392747528095</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="p:0:selectionState" type="INTEGER">2</attribute>
+  <attribute name="p:1:selectionState" type="INTEGER">2</attribute>
+  <attribute name="p:2:selectionState" type="INTEGER">2</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

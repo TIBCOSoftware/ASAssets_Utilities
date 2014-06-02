@@ -1,0 +1,155 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getDocConstant" path="/shared/ASAssets/Utilities/documentation/helpers/getDocConstant" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>getDocConstant:
+
+	This procedure gets a constant value from a dynamic constant path.
+ 
+	Input:
+		constantPath				The path to the constants file ending with procedure parenthesis ().
+										i.e. /shared/ASAssets/Utilities/documentation/constants()
+		constantName				The name of the constant.
+										i.e. docResourceFormatImpl
+	Output:
+		outValue					The value of the constant
+										i.e. /shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1
+
+	Exceptions:  ex - Exception if constantPath is not valid (null or resource not found).
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	08/22/2012		Mike Tinius			5.2.0			Created new
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="constantPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="constantName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="outValue" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 	getDocConstant:
+
+	This procedure gets a constant value from a dynamic constant path.
+ 
+	Input:
+		constantPath				The path to the constants file ending with procedure parenthesis ().
+										i.e. /shared/ASAssets/Utilities/documentation/constants()
+		constantName				The name of the constant.
+										i.e. docResourceFormatImpl
+	Output:
+		outValue					The value of the constant
+										i.e. /shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1
+
+	Exceptions:  ex - Exception if constantPath is not valid (null or resource not found).
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	08/22/2012		Mike Tinius			5.2.0			Created new
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getDocConstant(
+	IN constantPath			/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	IN constantName			VARCHAR,
+	OUT outValue			LONGVARCHAR
+)
+BEGIN
+	DECLARE sqlStatement	VARCHAR(1024);
+	DECLARE result			CURSOR (textVal LONGVARCHAR);
+	DECLARE sqlProjection	VARCHAR(1024);
+	DECLARE sqlFrom			VARCHAR(1024);
+	DECLARE ex				EXCEPTION;
+
+	if (constantPath IS NULL OR resourceExists(REPLACE(constantPath, &apos;()&apos;, &apos;&apos;), &apos;PROCEDURE&apos;) = 0) then
+		raise ex value &apos;The constantPath does not exist=[&apos;||emptyStr(constantPath)||&apos;]&apos;;
+	end if;
+
+	-- Set up the sql projection list
+	if (isEmpty(constantName) = 0) then
+		set sqlProjection = TRIM(constantName);
+	else
+		set sqlProjection = &apos;null&apos;;
+	end if;
+	-- Set up the SQL from clause
+	if (isEmpty(constantPath) = 0) then
+		set sqlFrom = TRIM(constantPath);
+		-- Append procedure () at the end of the path if it does not exist.
+		if (POSITION(&apos;()&apos; IN constantPath) = 0) then
+			set sqlFrom = sqlFrom || &apos;()&apos;;
+		end if;
+	end if;
+
+	-- Set up the SQL statement
+	set sqlStatement = &apos;select &apos;|| sqlProjection || &apos; from &apos; || sqlFrom;
+--	call print(&apos;SQL:&apos;||sqlStatement);
+
+	set outValue = null;
+	open result for sqlStatement;
+	for r as result do
+		set outValue = r.textVal;
+	end for;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397496296084</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

@@ -1,0 +1,189 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_rebindFolder" path="/shared/ASAssets/Utilities/examples/repository/test_rebindFolder" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="testOption" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="direction" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/rebindFolder" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="startingResourceFolder" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="rebindFromFolder" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="rebindToFolder" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* test_rebindFolder:
+	Test rebindFolder.
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	04/27/2013		Mike Tinius			5.2.0			created new for testing
+
+	CSW Version: 5.2.0
+    Copyright (c) 2010
+    Composite Software, Inc.
+    All Rights Reserved
+*/
+PROCEDURE test_rebindFolder(
+	IN testOption		INTEGER,
+	IN direction		CHAR(1), -- O=original, C=copy of data source
+	OUT success			BIT
+)
+BEGIN
+	DECLARE startingResourceFolder 	/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE fromFolder				/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE toFolder				/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE resourcePath			/shared/ASAssets/Utilities/TypeDefinitions.pathType; 
+	DECLARE faultResponse			XML;
+	DECLARE ex						EXCEPTION;
+
+	set success = 0;
+	if (testOption is null or testOption &lt; 1 or testOption &gt; 3) then
+		raise ex value &apos;Invalid test option=&apos;||emptyStr(testOption);
+	end if;
+	if (direction is null or (UPPER(direction) != &apos;C&apos; and UPPER(direction) != &apos;O&apos;)) then
+		raise ex value &apos;Invalid direction=&apos;||emptyStr(direction);
+	end if;
+	call print(&apos;-------------------------------&apos;);
+	call print(&apos;test option=&apos;||testOption);
+	call print(&apos;  direction=&apos;||direction);
+	call print(&apos;-------------------------------&apos;);
+
+	-- VIEW
+	if (testOption = 1) then
+		SET startingResourceFolder = &apos;/shared/Utilities/examples/repository/source/Rebind/RebindFolder/Views&apos;;
+		if (UPPER(direction) = &apos;C&apos;) then
+			SET fromFolder = &apos;/shared/Utilities/examples/repository/source/ds_orders&apos;;
+			SET toFolder =   &apos;/shared/Utilities/examples/repository/source/ds_ordersCopy&apos;;
+		else -- original
+			SET fromFolder = &apos;/shared/Utilities/examples/repository/source/ds_ordersCopy&apos;;
+			SET toFolder =   &apos;/shared/Utilities/examples/repository/source/ds_orders&apos;;
+		end if;
+	end if;
+	-- PROCEDURE
+	if (testOption = 2) then
+		SET startingResourceFolder = &apos;/shared/Utilities/examples/repository/source/Rebind/RebindFolder/Procedures&apos;;
+		if (UPPER(direction) = &apos;C&apos;) then
+			SET fromFolder = &apos;/shared/Utilities/examples/repository/source/ds_orders&apos;;
+			SET toFolder =   &apos;/shared/Utilities/examples/repository/source/ds_ordersCopy&apos;;
+		else -- original
+			SET fromFolder = &apos;/shared/Utilities/examples/repository/source/ds_ordersCopy&apos;;
+			SET toFolder =   &apos;/shared/Utilities/examples/repository/source/ds_orders&apos;;
+		end if;
+	end if;
+	-- XSLT Procedures
+	if (testOption = 3) then
+		SET startingResourceFolder = &apos;/shared/Utilities/examples/repository/source/Rebind/RebindFolder/XSLTProcedures&apos;;
+		if (UPPER(direction) = &apos;C&apos;) then
+			SET fromFolder = &apos;/shared/Utilities/examples/repository/source/ds_XML&apos;;
+			SET toFolder =   &apos;/shared/Utilities/examples/repository/source/ds_XMLCopy&apos;;
+		else -- original
+			SET fromFolder = &apos;/shared/Utilities/examples/repository/source/ds_XMLCopy&apos;;
+			SET toFolder =   &apos;/shared/Utilities/examples/repository/source/ds_XML&apos;;
+		end if;
+	end if;
+/*
+	IN startingResourceFolder 	/shared/Utilities/TypeDefinitions.pathType,
+	IN rebindFromFolder			/shared/Utilities/TypeDefinitions.pathType,
+	IN rebindToFolder			/shared/Utilities/TypeDefinitions.pathType,
+	IN debug					CHAR(1),
+	OUT success					BIT,
+	OUT faultResponse			XML
+*/
+	CALL /shared/ASAssets/Utilities/repository/rebindFolder(startingResourceFolder,fromFolder,toFolder,success,faultResponse);
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">7/34</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">7/33</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">7/35</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">7/32</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

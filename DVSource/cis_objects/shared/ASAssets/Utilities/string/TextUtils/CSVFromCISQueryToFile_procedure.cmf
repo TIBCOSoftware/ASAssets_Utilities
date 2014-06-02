@@ -1,0 +1,104 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="CSVFromCISQueryToFile" path="/shared/ASAssets/Utilities/string/TextUtils/CSVFromCISQueryToFile" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>CSVFromCISQueryToFile:
+  Function to execute a CIS query and convert the result set to a CSV string.
+  Write the result to a file.
+
+Inputs:
+  query_string          - The query to execute. If NULL is passed as input a NULL will be returned.
+    values: Any valid CIS query.
+
+  separator_character   - The character used to separate values.
+    values: Any single character or NULL (defaults to &apos;,&apos;.)
+	default=&apos;,&apos;
+	
+  qualifier_character   - The character used to qualify values when they contain a separator character.
+    values: Any single character (other than the separator character) or NULL (defaults to &apos;&quot;&apos;.)
+	default=&apos;&quot;&apos;
+	
+  create_column_headers - Indicates whether to create a column headers row as the first row of the output.
+    values: Any boolean value (such as &quot;true&quot; or &quot;false&quot;.)
+	default=false
+	
+  total_columns         - Total number of columns to produce.  This is a validation against the number of fields queried
+    values: Any positive integer.
+    
+  filePath              - full path to a file that is to be created.
+    values: Any valid filesystem path to a flat text file (existing or not.)
+  
+  append                - Indicates whether or not to append to the file at filePath.
+    values: 0=do not append file, 1=append file.
+
+  buffer_size           - Number of rows to buffer before writing to the file.
+    values: Any positive integer.
+
+
+Output:
+  result                - Indicates success or failure
+    values: 1 or 0
+
+
+Exceptions:
+  CustomProcedureException - Thrown when illegal arguments are passed.
+
+
+Author:      Mike Tinius
+Date:        8/1/2011
+CSW Version: 5.2.0
+
+Updated By:  Calvin Goodrich 
+Date:        10/19/2011
+CSW Version: 5.1.0
+Reason:      Updated to fix issue where data elements containing a qualifier character don&apos;t get 
+             qualified (and the existing qualifiers escaped.)
+
+Updated By:  Calvin Goodrich
+Date:        8/23/2012
+CSW Version: 5.2.0
+Reason:      Updated to buffer writing rows to the file to improve write performance.
+
+© 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="query_string" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="separator_character" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="qualifier_character" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="create_column_headers" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="total_columns" direction="IN" nullable="true">
+      <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="file_Path" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="append" direction="IN" nullable="true">
+      <datatype name="SMALLINT" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-32768" maxValue="32767"/>
+    </parameter>
+    <parameter name="buffer_size" direction="IN" nullable="true">
+      <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      <attribute name="selectionState" type="INTEGER">2</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.CSVFromCISQueryToFile</attribute>
+  <attribute name="creationDate" type="LONG">1383622340769</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754237213</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="p:8:selectionState" type="INTEGER">2</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

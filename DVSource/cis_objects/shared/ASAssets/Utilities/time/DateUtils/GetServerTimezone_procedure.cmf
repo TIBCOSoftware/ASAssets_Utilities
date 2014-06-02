@@ -1,0 +1,46 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="GetServerTimezone" path="/shared/ASAssets/Utilities/time/DateUtils/GetServerTimezone" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>GetServerTimezone:
+
+  Returns the timezone this instance of CIS is running in. Various display types are available:
+
+  ID         - The timezone ID (according to Java, i.e. &quot;America/Los_Angeles&quot;)
+  SHORT_NAME - The name of the timezone in short format (i.e. &quot;PDT&quot;)
+  LONG_NAME  - The name of the timezone in long format (i.e. &quot;Pacific Daylight Time&quot;)
+  OFFSET     - The number of milliseconds to add to GMT time to get the current timezone&apos;s time (i.e. &quot;-28800000&quot;)
+
+Inputs:
+  displayType - The desired format of the timezone
+
+Outputs:
+  outValue    - This CIS instance&apos;s timezone in the specified format
+
+Exceptions:
+  None
+
+Author:      Calvin Goodrich
+Date:        8/11/2010
+CSW Version: 5.1.0
+
+© 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="displayType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="outValue" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.date.GetServerTimezone</attribute>
+  <attribute name="creationDate" type="LONG">1383622342324</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392758547639</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

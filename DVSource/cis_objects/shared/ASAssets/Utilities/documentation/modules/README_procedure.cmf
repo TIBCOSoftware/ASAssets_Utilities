@@ -1,0 +1,26 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="README" path="/shared/ASAssets/Utilities/documentation/modules/README" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters></parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/*
+	The modules folder is used to house the implementation of additional documentation modules.
+	The documentation modules are invoked by the &quot;getDocResourceFormatImpl#&quot; procedure.  
+	The # represents the implementation numbers.
+*/
+PROCEDURE README()
+BEGIN
+END</attribute>
+  <attribute name="creationDate" type="LONG">1383622340397</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1383622352184</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

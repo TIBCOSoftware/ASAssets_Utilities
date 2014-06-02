@@ -1,0 +1,276 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getUsedResourcesXSLT" path="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getUsedResourcesXSLT" type="PROCEDURE" subtype="XSLT_TRANSFORM_PROCEDURE" changeToken="0">
+  <annotation>getUsedResourcesXSLT:
+	-- CIS Repository Helper Procedure --
+	This procedure transforms the XML child metadata for a given resource and returns a cursor of metadata.
+	The procedure &apos;getUsedResourcesCursor&apos; invokes this procedure.  Please use getUsedResourcesCursor.
+
+	Input:
+		inXML - XML metadata containing a list of child resource information  
+			Values: XML
+	Output:
+		usedResCursor  - response containing the resource metadata
+    		CURSOR (
+        		resourceName VARCHAR(32768), 
+        		resourcePath VARCHAR(32768), 
+        		resourceType VARCHAR(32768), 
+        		subtype VARCHAR(32768), 
+        		enabled BIT, 
+        		tableType VARCHAR(32768), 
+        		explicitlyDesigned BIT, 
+        		sqlText VARCHAR(32768)
+       		 )
+	Exceptions:  none
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			Created new
+	11/12/2012		Mike Tinius			5.2.0+			Expanded result cursor to include &quot;id&quot;
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inXML" direction="IN" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+    </parameter>
+    <parameter name="outputs" direction="OUT" nullable="false">
+      <datatype name="outputs" type="TABLE" refId="1">
+        <element name="resourceName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="id">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="tableType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="explicitlyDesigned">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="sqlText">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/xml/reverseXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inXML" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outXML" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="creationDate" type="LONG">1383622341389</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">true</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="p:1:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="sourcePath" type="STRING">/shared/ASAssets/Utilities/xml/reverseXML</attribute>
+  <attribute name="sourceType" type="SHORT">3</attribute>
+  <attribute name="transformModel" type="STRING">
+&lt;transformModel customized=&quot;true&quot;&gt;
+  &lt;signature&gt;
+    &lt;datatype type=&quot;TREE&quot; refId=&quot;1&quot;&gt;
+      &lt;element name=&quot;inputs&quot;&gt;
+        &lt;datatype name=&quot;inputs&quot; type=&quot;TREE&quot; refId=&quot;2&quot;&gt;
+          &lt;element name=&quot;XML&quot; nullable=&quot;false&quot;&gt;
+            &lt;datatype name=&quot;XML&quot; type=&quot;XML&quot; contentConstraint=&quot;SEQUENCE&quot; schemaConstraint=&quot;ANY&quot; componentType=&quot;TYPE&quot; componentName=&quot;XML&quot;&gt;
+              &lt;schemaDatatype&gt;
+                &lt;datatype name=&quot;XML&quot; type=&quot;TREE&quot; refId=&quot;3&quot;&gt;&lt;/datatype&gt;
+              &lt;/schemaDatatype&gt;
+            &lt;/datatype&gt;
+          &lt;/element&gt;
+        &lt;/datatype&gt;
+      &lt;/element&gt;
+      &lt;element name=&quot;outputs&quot;&gt;
+        &lt;datatype type=&quot;PROCEDURE&quot; refId=&quot;4&quot;&gt;
+          &lt;element name=&quot;outputs&quot; direction=&quot;OUT&quot;&gt;
+            &lt;datatype name=&quot;outputs&quot; type=&quot;TABLE&quot; refId=&quot;5&quot;&gt;
+              &lt;element name=&quot;resourceName&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;resourcePath&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;resourceType&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;subtype&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;enabled&quot;&gt;
+                &lt;datatype name=&quot;BIT&quot; type=&quot;INTEGER&quot; minValue=&quot;0&quot; maxValue=&quot;1&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;id&quot;&gt;
+                &lt;datatype name=&quot;INTEGER&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;tableType&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;explicitlyDesigned&quot;&gt;
+                &lt;datatype name=&quot;BIT&quot; type=&quot;INTEGER&quot; minValue=&quot;0&quot; maxValue=&quot;1&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;sqlText&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+            &lt;/datatype&gt;
+          &lt;/element&gt;
+        &lt;/datatype&gt;
+      &lt;/element&gt;
+    &lt;/datatype&gt;
+  &lt;/signature&gt;
+  &lt;xslt&gt;&amp;lt;xslt:stylesheet xmlns:xslt=&amp;quot;http://www.w3.org/1999/XSL/Transform&amp;quot; xmlns:csw-xform=&amp;quot;http://www.compositesw.com/2003/xform&amp;quot; xmlns:ns1=&amp;quot;http://www.compositesw.com/services/system/admin/resource&amp;quot; xmlns:xs=&amp;quot;http://www.w3.org/2001/XMLSchema&amp;quot; version=&amp;quot;1.0&amp;quot;&amp;gt;
+  &amp;lt;xslt:template match=&amp;quot;/&amp;quot;&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_resourceName&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_resourcePath&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_resourceType&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_subtype&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_enabled&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_id&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_tableType&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_explicitlyDesigned&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_sqlText&amp;quot;/&amp;gt;
+    &amp;lt;xslt:element name=&amp;quot;results&amp;quot;&amp;gt;
+      &amp;lt;xslt:for-each select=&amp;quot;ns1:getUsedResourcesResponse&amp;quot;&amp;gt;
+        &amp;lt;xslt:for-each select=&amp;quot;ns1:resources&amp;quot;&amp;gt;
+          &amp;lt;xslt:for-each select=&amp;quot;ns1:resource&amp;quot;&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_resourceName&amp;quot; select=&amp;quot;ns1:name&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_resourcePath&amp;quot; select=&amp;quot;ns1:path&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_resourceType&amp;quot; select=&amp;quot;ns1:type&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_subtype&amp;quot; select=&amp;quot;ns1:subtype&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_enabled&amp;quot; select=&amp;quot;ns1:enabled&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_id&amp;quot; select=&amp;quot;ns1:id&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_tableType&amp;quot; select=&amp;quot;ns1:tableType&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_explicitlyDesigned&amp;quot; select=&amp;quot;ns1:explicitlyDesigned&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_sqlText&amp;quot; select=&amp;quot;ns1:sqlText&amp;quot;/&amp;gt;
+            &amp;lt;xslt:element name=&amp;quot;result&amp;quot;&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;resourceName&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_resourceName&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;resourcePath&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_resourcePath&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;resourceType&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_resourceType&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;subtype&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_subtype&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;enabled&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_enabled&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;id&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_id&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;tableType&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_tableType&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;explicitlyDesigned&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_explicitlyDesigned&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;sqlText&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_sqlText&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+            &amp;lt;/xslt:element&amp;gt;
+          &amp;lt;/xslt:for-each&amp;gt;
+        &amp;lt;/xslt:for-each&amp;gt;
+      &amp;lt;/xslt:for-each&amp;gt;
+    &amp;lt;/xslt:element&amp;gt;
+  &amp;lt;/xslt:template&amp;gt;
+&amp;lt;/xslt:stylesheet&amp;gt;&lt;/xslt&gt;
+&lt;/transformModel&gt;</attribute>
+  <attribute name="xqueryModel" type="NULL"/>
+  <attribute name="xslt" type="STRING">&lt;xslt:stylesheet xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;1.0&quot;&gt;
+  &lt;xslt:template match=&quot;/&quot;&gt;
+    &lt;xslt:variable name=&quot;_resourceName&quot;/&gt;
+    &lt;xslt:variable name=&quot;_resourcePath&quot;/&gt;
+    &lt;xslt:variable name=&quot;_resourceType&quot;/&gt;
+    &lt;xslt:variable name=&quot;_subtype&quot;/&gt;
+    &lt;xslt:variable name=&quot;_enabled&quot;/&gt;
+    &lt;xslt:variable name=&quot;_id&quot;/&gt;
+    &lt;xslt:variable name=&quot;_tableType&quot;/&gt;
+    &lt;xslt:variable name=&quot;_explicitlyDesigned&quot;/&gt;
+    &lt;xslt:variable name=&quot;_sqlText&quot;/&gt;
+    &lt;xslt:element name=&quot;results&quot;&gt;
+      &lt;xslt:for-each select=&quot;ns1:getUsedResourcesResponse&quot;&gt;
+        &lt;xslt:for-each select=&quot;ns1:resources&quot;&gt;
+          &lt;xslt:for-each select=&quot;ns1:resource&quot;&gt;
+            &lt;xslt:variable name=&quot;_resourceName&quot; select=&quot;ns1:name&quot;/&gt;
+            &lt;xslt:variable name=&quot;_resourcePath&quot; select=&quot;ns1:path&quot;/&gt;
+            &lt;xslt:variable name=&quot;_resourceType&quot; select=&quot;ns1:type&quot;/&gt;
+            &lt;xslt:variable name=&quot;_subtype&quot; select=&quot;ns1:subtype&quot;/&gt;
+            &lt;xslt:variable name=&quot;_enabled&quot; select=&quot;ns1:enabled&quot;/&gt;
+            &lt;xslt:variable name=&quot;_id&quot; select=&quot;ns1:id&quot;/&gt;
+            &lt;xslt:variable name=&quot;_tableType&quot; select=&quot;ns1:tableType&quot;/&gt;
+            &lt;xslt:variable name=&quot;_explicitlyDesigned&quot; select=&quot;ns1:explicitlyDesigned&quot;/&gt;
+            &lt;xslt:variable name=&quot;_sqlText&quot; select=&quot;ns1:sqlText&quot;/&gt;
+            &lt;xslt:element name=&quot;result&quot;&gt;
+              &lt;xslt:element name=&quot;resourceName&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_resourceName&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;resourcePath&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_resourcePath&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;resourceType&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_resourceType&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;subtype&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_subtype&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;enabled&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_enabled&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;id&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_id&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;tableType&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_tableType&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;explicitlyDesigned&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_explicitlyDesigned&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;sqlText&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_sqlText&quot;/&gt;
+              &lt;/xslt:element&gt;
+            &lt;/xslt:element&gt;
+          &lt;/xslt:for-each&gt;
+        &lt;/xslt:for-each&gt;
+      &lt;/xslt:for-each&gt;
+    &lt;/xslt:element&gt;
+  &lt;/xslt:template&gt;
+&lt;/xslt:stylesheet&gt;</attribute>
+</metadata>

@@ -1,0 +1,133 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="normalizeRowsToString" path="/shared/ASAssets/Utilities/string/normalizeRowsToString" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>normalizeRowsToString:
+	De-dupe an incoming cursor of strings.  
+	For example, maybe there is a list of keywords and you only want the unique values.
+	Output the values in a single comma-delimited string.  Can be used in conjunction with &apos;entityExtractToPipe&apos;
+ 
+	Input:
+		curs - contains a cursor of varchar keywords.
+			Values: Any text value
+	Output:
+		result - return a de-duped set of values in a comma separated string.
+			Values: Any text value
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="curs" direction="IN" nullable="true">
+      <datatype name="curs" type="TABLE" refId="1">
+        <element name="str">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/log" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* normalizeRowsToString:
+	De-dupe an incoming cursor of strings.  
+	For example, maybe there is a list of keywords and you only want the unique values.
+	Output the values in a single comma-delimited string.  Can be used in conjunction with &apos;entityExtractToPipe&apos;
+ 
+	Input:
+		curs - contains a cursor of varchar keywords.
+			Values: Any text value
+	Output:
+		result - return a de-duped set of values in a comma separated string.
+			Values: Any text value
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE normalizeRowsToString(
+	IN curs 	cursor (str varchar),
+	OUT result	LONGVARCHAR
+)
+BEGIN
+    PATH /shared/ASAssets/Utilities/log;
+    PATH /shared/ASAssets/Utilities/repository;
+
+    DECLARE PROC_NAME   CONSTANT VARCHAR DEFAULT &apos;string/normalizeRowsToString&apos;;
+
+	DECLARE temp		VARCHAR;
+	DECLARE i,j		INTEGER;
+	DECLARE strVector	VECTOR (varchar);
+
+	set strVector = VECTOR[&apos;&apos;];
+	set result = &apos;&apos;;
+	set i = 1;
+	FOR s as curs DO
+		set temp = s;
+call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug, temp);
+		set j = 1;
+		innerLoop:
+		WHILE (j &lt;= CARDINALITY(strVector)) DO
+			IF (i &lt;&gt; j) THEN
+				IF (temp = strVector[j]) THEN
+					set temp = null;
+				END IF; 
+			END IF;
+			set j = j + 1;
+			if (j &gt; i) then 
+				leave innerLoop;
+			end if;
+		END WHILE;
+		if (temp is not null) then
+			set j = CARDINALITY(strVector);
+			set strVector[j] = temp;
+			if (result = &apos;&apos;) then
+				set result = temp;
+			else 
+				set result = result || &apos;, &apos; || temp;
+			end if;
+			set strVector = extend(strVector,1);
+		end if;
+		set i = i + 1;
+	END FOR;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

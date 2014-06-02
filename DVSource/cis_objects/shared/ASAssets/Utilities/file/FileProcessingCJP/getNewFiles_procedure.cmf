@@ -1,0 +1,56 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getNewFiles" path="/shared/ASAssets/Utilities/file/FileProcessingCJP/getNewFiles" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>/*
+ * Source File: GetNewFiles.java
+ *
+ * Description: This Composite CJP returns a cursor of new files from the source file system.
+ *
+ * Note: The import [import com.compositesw.extension.*] requires CIS_HOME\apps\extension\lib\csext.jar
+ * 
+ *	Input:
+ *		directoryPath - directory path to retrieve a cursor of file/dir info.		Types.VARCHAR, DIRECTION_IN
+ *
+ *	Output: 
+ *		newFilenames - cursor listing of files in the directory		ProcedureConstants.TYPED_CURSOR, DIRECTION_OUT,
+ *	     		filePath - full path to the file or directory		Types.VARCHAR, DIRECTION_OUT
+ *	     		fileName - name of the file or directory			Types.VARCHAR, DIRECTION_OUT
+ *	     		fileTimestamp - timestamp of file or directory		Types.TIMESTAMP, DIRECTION_OUT
+ *
+ *	Exceptions:  CustomProcedureException, SQLException
+ *	Author:      Mike Tinius
+ *	Date:        8/2/2010
+ *	CSW Version: 5.1.0
+ *
+ *  © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+ */</annotation>
+  <parameters>
+    <parameter name="directoryPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="newFilenames" direction="OUT" nullable="true">
+      <datatype type="TABLE" caseSensitive="false" refId="1">
+        <element name="filePath">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="fileName">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="fileTimestamp">
+          <datatype name="TIMESTAMP" type="DATETIME"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.file.GetNewFiles</attribute>
+  <attribute name="creationDate" type="LONG">1366122592839</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392747496032</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

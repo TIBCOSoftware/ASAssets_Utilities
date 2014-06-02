@@ -1,0 +1,64 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="RegexReplace" path="/shared/ASAssets/Utilities/string/TextUtils/RegexReplace" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>Description:
+  Finds an occurrence of a regular expression match in a VARCHAR and replaces the match
+  with the replacement text input value. The value of the occurrence input value 
+  determines which occurrence to replace (numbered starting at 1 from left to right. 
+  Use negative values to number occurrences from right to left.) Zero may be used as a 
+  value for an occurrence and indicates that ALL matches should be replaced. If no match 
+  is found, then the original input text is returned. If a NULL value is passed in 
+  as the value of any of the inputs, the original input text is returned. 
+
+  The regular expression language used is what is supported by the JDK used by CIS 
+  (currently 1.5 in CIS 4.6.0) See the javadoc for java.util.regex.Pattern for 
+  details on what is supported. Also see the javadoc for java.util.regex.Matcher
+  (specifically for the appendReplacement() method) for detail on how to include
+  grouped (as distinguished from &quot;matched&quot;) text in the replacement text.
+
+Inputs:
+  Input Text         - The text to search
+  Regular Expression - The regular expression to search for
+  Replacement Text   - The expression to use for replacing the match
+  Occurrence         - The occurrance of the match (starting from 1 left to right or -1 right to left.) 0 means replace ALL occurrences.
+
+Outputs:
+  result             - The input text with the matche(s) replaced.
+
+Exceptions:
+  None
+
+Author:      Calvin Goodrich
+Date:        8/11/2010
+CSW Version: 5.1.0
+
+© 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="Input Text" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="Regular Expression" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="Replacement Text" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="Occurrence" direction="IN" nullable="true">
+      <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.RegexReplace</attribute>
+  <attribute name="creationDate" type="LONG">1383622340770</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754462723</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

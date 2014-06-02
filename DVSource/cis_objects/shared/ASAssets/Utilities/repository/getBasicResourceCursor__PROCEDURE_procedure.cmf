@@ -1,0 +1,270 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getBasicResourceCursor_PROCEDURE" path="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_PROCEDURE" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getBasicResourceCursor_PROCEDURE:
+	-- CIS Repository Helper Procedure --
+	This procedure retrieves the resource metadata for a given resource that is a procedure object.  
+	A cursor of metadata is returned. This procedure invokes 2 lower level API procedures:
+		getBasicResourceXML - this performs the actual invocation to the CIS repository API and returns XML
+		getBasicResourceXSLT_PROCEDURE - this procedure takes the XML response from getBasicResourceXML 
+			and turns it into a cursor which is more usable by other CIS procedures.
+
+	Input:
+		fullResourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/Utilities/repository/examples/source/myProc
+		resourceType - Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. PROCEDURE
+	Output:
+		resourceCursor - XML response containing the resource metadata
+			CURSOR (
+				resourceName VARCHAR(255), 
+				resourcePath VARCHAR(1024), 
+				resourceType VARCHAR(255), 
+				subtype VARCHAR(255), 
+				enabled BIT, 
+				annotation LONGVARCHAR,
+				parameterName VARCHAR(255), 
+				parameterType LONGVARCHAR, 
+				parameterDirection VARCHAR(255)
+				)
+	Exceptions:  none
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/12/2011		Tony Young, Matt Lee 5.2.0			Created new
+	04/27/2012		Mike Tinius        	5.2.0			Expanded result cursor.
+	03/19/2013		Mike Tinius			5.2.0			Added annotation to result cursor
+	10/28/2013		Mike Tinius			6.2.0			Added specific columns to projection instead of select * as the XSLT returns more columns now.
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
+
+	TYPES / SUBTYPES:
+	=================
+	The following resource types/subtypes are supported by this operation.  Resources
+	cannot be created under &quot;/services&quot; unless otherwise noted, and cannot be created
+	within a physical data source.  
+
+	* LINK / unknown at this time
+
+	(CIS procedures)
+	* PROCEDURE / SQL_SCRIPT_PROCEDURE - A Composite SQL Procedure.  Created with a simple default script body that is runnable.
+	(Custom procedures)
+	* PROCEDURE / JAVA_PROCEDURE - A Composite java data source procedure.  Created from a java data source (jar file).
+	(Database procedures)
+	* PROCEDURE / EXTERNAL_SQL_PROCEDURE - A Composite Packaged Query.  Created with no SQL text, so it is not runnable.  
+	* PROCEDURE / DATABASE_PROCEDURE - A database stored procedure.
+	(XML procedures)
+	* PROCEDURE / BASIC_TRANSFORM_PROCEDURE - A Composite Basic XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XSLT_TRANSFORM_PROCEDURE - A Composite XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / STREAM_TRANSFORM_PROCEDURE - A Composite XSLT Streaming Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XQUERY_TRANSFORM_PROCEDURE - A Composite XQUERY Transformation Procedure.  Created with no target schema and no model, so it is not runnable.
+	(Misc procedures)
+	* PROCEDURE / OPERATION_PROCEDURE - A Composite web service or HTTP procedure operation.</annotation>
+  <parameters>
+    <parameter name="fullResourcePath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+    </parameter>
+    <parameter name="resourceCursor" direction="OUT" nullable="true">
+      <datatype name="resourceCursor" type="TABLE" refId="1">
+        <element name="resourceName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="annotation">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="parameterName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="parameterType">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="parameterDirection">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_PROCEDURE" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inXML" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="4096"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="40"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="40"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="dataType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="parameterName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="parameterType">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="parameterDirection">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="parameterTypeName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="parameterTypeNamespace">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="parameterTypeReferencePath">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getBasicResourceCursor_PROCEDURE:
+	-- CIS Repository Helper Procedure --
+	This procedure retrieves the resource metadata for a given resource that is a procedure object.  
+	A cursor of metadata is returned. This procedure invokes 2 lower level API procedures:
+		getBasicResourceXML - this performs the actual invocation to the CIS repository API and returns XML
+		getBasicResourceXSLT_PROCEDURE - this procedure takes the XML response from getBasicResourceXML 
+			and turns it into a cursor which is more usable by other CIS procedures.
+
+	Input:
+		fullResourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/Utilities/repository/examples/source/myProc
+		resourceType - Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. PROCEDURE
+	Output:
+		resourceCursor - XML response containing the resource metadata
+			CURSOR (
+				resourceName VARCHAR(255), 
+				resourcePath VARCHAR(1024), 
+				resourceType VARCHAR(255), 
+				subtype VARCHAR(255), 
+				enabled BIT, 
+				annotation LONGVARCHAR,
+				parameterName VARCHAR(255), 
+				parameterType LONGVARCHAR, 
+				parameterDirection VARCHAR(255)
+				)
+	Exceptions:  none
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/12/2011		Tony Young, Matt Lee 5.2.0			Created new
+	04/27/2012		Mike Tinius        	5.2.0			Expanded result cursor.
+	03/19/2013		Mike Tinius			5.2.0			Added annotation to result cursor
+	10/28/2013		Mike Tinius			6.2.0			Added specific columns to projection instead of select * as the XSLT returns more columns now.
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
+
+	TYPES / SUBTYPES:
+	=================
+	The following resource types/subtypes are supported by this operation.  Resources
+	cannot be created under &quot;/services&quot; unless otherwise noted, and cannot be created
+	within a physical data source.  
+
+	* LINK / unknown at this time
+
+	(CIS procedures)
+	* PROCEDURE / SQL_SCRIPT_PROCEDURE - A Composite SQL Procedure.  Created with a simple default script body that is runnable.
+	(Custom procedures)
+	* PROCEDURE / JAVA_PROCEDURE - A Composite java data source procedure.  Created from a java data source (jar file).
+	(Database procedures)
+	* PROCEDURE / EXTERNAL_SQL_PROCEDURE - A Composite Packaged Query.  Created with no SQL text, so it is not runnable.  
+	* PROCEDURE / DATABASE_PROCEDURE - A database stored procedure.
+	(XML procedures)
+	* PROCEDURE / BASIC_TRANSFORM_PROCEDURE - A Composite Basic XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XSLT_TRANSFORM_PROCEDURE - A Composite XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / STREAM_TRANSFORM_PROCEDURE - A Composite XSLT Streaming Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XQUERY_TRANSFORM_PROCEDURE - A Composite XQUERY Transformation Procedure.  Created with no target schema and no model, so it is not runnable.
+	(Misc procedures)
+	* PROCEDURE / OPERATION_PROCEDURE - A Composite web service or HTTP procedure operation.
+*/
+PROCEDURE getBasicResourceCursor_PROCEDURE(
+    IN fullResourcePath 	/lib/resource/ResourceDefs.ResourcePath,  
+    IN resourceType 		/lib/resource/ResourceDefs.ResourceType, 
+    OUT resourceCursor CURSOR (
+        resourceName VARCHAR(255), 
+        resourcePath VARCHAR(1024), 
+        resourceType VARCHAR(255), 
+        subtype VARCHAR(255), 
+        enabled BIT, 
+		annotation LONGVARCHAR,
+        parameterName VARCHAR(255), 
+        parameterType LONGVARCHAR,
+        parameterDirection VARCHAR(255)
+        )
+    )
+BEGIN
+	DECLARE resourceResponse XML;
+	call /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML(fullResourcePath, resourceType, resourceResponse);
+        OPEN resourceCursor FOR 
+            SELECT resourceName, resourcePath, resourceType, subtype, enabled, annotation, parameterName, parameterType, parameterDirection
+			  FROM /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_PROCEDURE(resourceResponse);
+END</attribute>
+  <attribute name="creationDate" type="LONG">1376679119329</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

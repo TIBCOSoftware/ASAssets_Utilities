@@ -1,0 +1,215 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_parseAndModifyXML_static" path="/shared/ASAssets/Utilities/examples/xml/test_parseAndModifyXML_static" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>parseAndModifyXML:
+	Parse and XML document given a vector of XPath statements and modify the values and reconstruct the XML.
+ 	IMPORTANT:  When updating an element with a list of attributes, you must supply all of the original
+	attributes in order to retain what you had.  This routine overwrites the original element so be careful.
+
+	Input:
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+		namespaces - any string with the valid namespaces for the incoming XML  
+			Values: e.g. xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot;
+				     xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+				     xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;
+		ElemAttrVector - contains a vector of qualified elements, qualified attributes and the value to change.
+			It may be necessary to read the orginal values for each attribute to construct this vector on the fly
+			if you want to retain certain values.  Then modify only the attributes that you want to change.
+			Values: e.g. {(&apos;sam:Name&apos;,&apos;sam:isbn&apos;,&apos;00-0000-000&apos;)}
+		inXml - any XML document
+			Values: e.g. &lt;Book xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot;&gt;
+					&lt;sam:Name sam:isbn=&quot;12-3456-123&quot;/&gt;
+					&lt;Chapter&gt;Test Data&lt;/Chapter&gt;
+				     &lt;/Book&gt;
+	Output:
+		outXml - modified XML
+			Values: e.g. &lt;Book xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot;&gt; 	
+					&lt;sam:Name sam:isbn=&quot;00-0000-000&quot;/&gt; 	
+					&lt;Chapter&gt;Test Data&lt;/Chapter&gt;
+				     &lt;/Book&gt;
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    Copyright (c) 2010
+    Composite Software, Inc.
+    All Rights Reserved</annotation>
+  <parameters>
+    <parameter name="outXml" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* parseAndModifyXML:
+	Parse and XML document given a vector of XPath statements and modify the values and reconstruct the XML.
+ 	IMPORTANT:  When updating an element with a list of attributes, you must supply all of the original
+	attributes in order to retain what you had.  This routine overwrites the original element so be careful.
+
+	Input:
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+		namespaces - any string with the valid namespaces for the incoming XML  
+			Values: e.g. xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot;
+				     xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+				     xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;
+		ElemAttrVector - contains a vector of qualified elements, qualified attributes and the value to change.
+			It may be necessary to read the orginal values for each attribute to construct this vector on the fly
+			if you want to retain certain values.  Then modify only the attributes that you want to change.
+			Values: e.g. {(&apos;sam:Name&apos;,&apos;sam:isbn&apos;,&apos;00-0000-000&apos;)}
+		inXml - any XML document
+			Values: e.g. &lt;Book xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot;&gt;
+					&lt;sam:Name sam:isbn=&quot;12-3456-123&quot;/&gt;
+					&lt;Chapter&gt;Test Data&lt;/Chapter&gt;
+				     &lt;/Book&gt;
+	Output:
+		outXml - modified XML
+			Values: e.g. &lt;Book xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot;&gt; 	
+					&lt;sam:Name sam:isbn=&quot;00-0000-000&quot;/&gt; 	
+					&lt;Chapter&gt;Test Data&lt;/Chapter&gt;
+				     &lt;/Book&gt;
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    Copyright (c) 2010
+    Composite Software, Inc.
+    All Rights Reserved
+*/
+PROCEDURE test_parseAndModifyXML_static(
+	OUT outXml		XML
+	)
+BEGIN
+	declare inXml		XML;
+	declare debug 		char(1) default &apos;Y&apos;;
+	DECLARE moduleName	VARCHAR DEFAULT &apos;parseAndModifyXML()&apos;;
+	DECLARE xsltExpr	LONGVARCHAR;
+
+set inXml=
+&apos;&lt;Book xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot;&gt;
+	&lt;sam:Name sam:isbn=&quot;12-3456-123&quot;/&gt;
+	&lt;Chapter&gt;Test Data&lt;/Chapter&gt;
+	&lt;Paragraph&gt;This is the first sentence in the paragraph&lt;/Paragraph&gt;
+	&lt;sam:Author sam:firstname=&quot;Joe&quot; sam:lastname=&quot;Author&quot;&gt;Author Biography&lt;/sam:Author&gt;
+&lt;/Book&gt;
+&apos;;
+
+set xsltExpr=
+&apos;&lt;xslt:stylesheet version=&quot;1.0&quot;
+	xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot; 
+	xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; 
+	xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot;
+	xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+	xmlns:xlink=&quot;http://www.w3.org/1999/xlink&quot;&gt;
+
+  &lt;xslt:output method=&quot;xml&quot; version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; indent=&quot;yes&quot; /&gt;
+    
+  &lt;xslt:template match=&quot;node()&quot;&gt;
+    &lt;xslt:copy&gt;
+    &lt;xslt:apply-templates select=&quot;@*|node()&quot;/&gt;
+    &lt;/xslt:copy&gt;
+  &lt;/xslt:template&gt;
+
+&lt;xslt:template match=&quot;sam:Name&quot;&gt;
+  &lt;xslt:element name=&quot;{name()}&quot;&gt;
+    &lt;xslt:attribute name=&quot;sam:isbn&quot;&gt;00-0000-000&lt;/xslt:attribute&gt;
+    &lt;xslt:element&gt;The Book&lt;/xslt:element&gt;
+  &lt;/xslt:element&gt;
+&lt;/xslt:template&gt;
+
+&lt;xslt:template match=&quot;Chapter&quot;&gt;
+  &lt;xslt:element name=&quot;{name()}&quot;&gt;
+    &lt;xslt:element&gt;Chapter 1&lt;/xslt:element&gt;
+  &lt;/xslt:element&gt;
+&lt;/xslt:template&gt;
+
+&lt;xslt:template match=&quot;Paragraph&quot;&gt;
+  &lt;xslt:element name=&quot;{name()}&quot;&gt;
+    &lt;xslt:attribute name=&quot;xsi:nil&quot;&gt;true&lt;/xslt:attribute&gt;
+  &lt;/xslt:element&gt;
+&lt;/xslt:template&gt;
+
+&lt;xslt:template match=&quot;sam:Author&quot;&gt;
+  &lt;xslt:element name=&quot;{name()}&quot;&gt;
+    &lt;xslt:attribute name=&quot;sam:firstname&quot;&gt;Joe&lt;/xslt:attribute&gt;
+    &lt;xslt:attribute name=&quot;sam:lastname&quot;&gt;Author&lt;/xslt:attribute&gt;
+    &lt;xslt:attribute name=&quot;xsi:nil&quot;&gt;true&lt;/xslt:attribute&gt;
+  &lt;/xslt:element&gt;
+&lt;/xslt:template&gt;
+
+  &lt;xslt:template match=&quot;@*|text()|comment()&quot;&gt;
+    &lt;xslt:copy&gt;
+      &lt;xslt:apply-templates select=&quot;@*|node()&quot;/&gt;
+    &lt;/xslt:copy&gt;
+  &lt;/xslt:template&gt;
+
+&lt;/xslt:stylesheet&gt;&apos;;
+
+	call print(&apos;inXml=&apos;||cast(inXml as longvarchar));
+
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;XSLT=&apos;|| xsltExpr);	
+
+	-- Execute the XSLT against the incoming XML (KO/SDR) format
+	SET outXml = XSLT( inXml, xsltExpr );
+
+/* Sample output:
+&lt;Book xmlns:sam=&quot;http://www.compositesw.com/samples/mynamespace/v1.0&quot;&gt; 	
+	&lt;sam:Name sam:isbn=&quot;00-0000-000&quot;&gt;The Book&lt;/sam:Name&gt; 	
+	&lt;Chapter&gt;Chapter 1&lt;/Chapter&gt; 	
+	&lt;Paragraph xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:nil=&quot;true&quot;/&gt; 	
+	&lt;sam:Author sam:firstname=&quot;Joe&quot; sam:lastname=&quot;Author&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:nil=&quot;true&quot;/&gt; 
+&lt;/Book&gt; 
+*/
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">7/107</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

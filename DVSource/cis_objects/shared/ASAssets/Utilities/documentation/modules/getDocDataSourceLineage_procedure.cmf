@@ -1,0 +1,634 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getDocDataSourceLineage" path="/shared/ASAssets/Utilities/documentation/modules/getDocDataSourceLineage" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getDocDataSourceLineage:
+
+	This procedure returns all the DATA_SOURCE type resources found under the starting path.  It returns the formatted
+	text for two sections: &quot;Data Sources Accessed List&quot; and &quot;Data Sources Lineage&quot;.  
+
+	The data sources accessed is a distinct list of data sources along with their type, path and whether they are enabled or not.  
+
+	Input:
+		resourcePath					The full resource path to the CIS resource to introspect and return data source access and lineage documentation.
+											Values: e.g. /shared/examples/CompositeView
+		resourceType					The type of resource.
+											Values: e.g. TABLE
+		constantPath					This is the path to the constants file
+											Values: e.g. /shared/ASAssets/Utilities/documentation/constants()
+		commandOptionValueDsAccessed 	The result command (&apos;print_datasource_accessed&apos;) 
+											Values: e.g. [0,1] - none=0, all=1
+		commandOptionValueDsLineage 	The result command (&apos;print_datasource_lineage&apos;) 
+											Values: e.g. [0,1] - none=0, all=1
+		childResVect					This is a complete list (vector) of data source children.  Since these routines are recursive it will be inefficient
+											to calculate this on the fly each time.  It is more efficient to get these resources once up front and simply pass
+											the entire list in.  It is used to identify the lowest level resources which is a child of a data source.
+	Output:
+		formattedText					The formatted text output.
+
+	Exceptions:  none
+
+An example output is shown below:
+	The data source accessed list provides a unique list of data sources used by the passed in resource path.
+
+	The data source lineage provides a top to bottom lineage starting with the &quot;resources used&quot; list.  
+	The format of the lineage shows indenting and a depth counter when the depth of the resource changes.
+	Additionally, when a child source is found an indicator of [CS] is placed in front of the resource.
+	The type of that resource is placed at the end of the child resource path in the format of [TYPE.SUBTYPE].
+	The parent data source path is placed under neath the child with a [DS] indicator in front of it.
+
+Data Source Accessed List:
+---------------------------
+    Datasource Name               Enabled Type        Sub Type                 Datasource Path                                     
+    ----------------------------- ------- ----------- ------------------------ ---------------------------------------------------
+    ds_orders                     1       DATA_SOURCE RELATIONAL_DATA_SOURCE   /shared/examples/ds_orders                          
+    ds_XML                        1       DATA_SOURCE XML_FILE_DATA_SOURCE     /shared/examples/ds_XML                             
+    ds_inventory                  1       DATA_SOURCE RELATIONAL_DATA_SOURCE   /shared/examples/ds_inventory                       
+
+Data Source Lineage:
+--------------------
+seqnum   id     pid    depth  resource path
+     1 - 20587             0  /shared/examples/CompositeView
+
+     2 - 20658  20587      1    /shared/examples/ViewOrder
+     3 - 20741  20658      2      [CS] /shared/examples/ds_orders/customers  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_orders
+     4 - 20679  20658      2      [CS] /shared/examples/ds_orders/orderdetails  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_orders
+     5 - 20711  20658      2      [CS] /shared/examples/ds_orders/orders  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_orders
+     6 - 20670  20711      3        /shared/examples/ds_orders
+     7 - 20729  20670      4          [CS] /shared/examples/ds_orders/cache_status  [TABLE.DATABASE_TABLE]
+                                      [DS] /shared/examples/ds_orders
+     8 - 20671  20670      4          [CS] /shared/examples/ds_orders/cache_tracking  [TABLE.DATABASE_TABLE]
+                                      [DS] /shared/examples/ds_orders
+     9 - 20689  20711      3        [CS] /shared/examples/ds_orders/orders_cache  [TABLE.DATABASE_TABLE]
+                                    [DS] /shared/examples/ds_orders
+
+    10 - 20774  20587      1    /shared/examples/ViewSales
+    11 - 20679  20774      2      [CS] /shared/examples/ds_orders/orderdetails  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_orders
+    12 - 20786  20774      2      /shared/examples/productCatalog_Transformation
+    13 - 20757  20786      3        [CS] /shared/examples/ds_XML/productCatalog.xml  [TREE.XML_FILE_TREE]
+                                    [DS] /shared/examples/ds_XML
+
+    14 - 20763  20587      1    /shared/examples/ViewSupplier
+    15 - 20606  20763      2      [CS] /shared/examples/ds_inventory/inventorytransactions  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_inventory
+    16 - 20619  20763      2      [CS] /shared/examples/ds_inventory/purchaseorders  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_inventory
+    17 - 20644  20763      2      [CS] /shared/examples/ds_inventory/suppliers  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_inventory
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	07/25/2012		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Completely overhauled inputs and logic to use getResourceLineageRecursive.
+	10/28/2013		Mike Tinius			6.2.0			Updated for /shared/PSAssets structure
+	03/20/2014		Mike Tinius			6.2.0			Added parameter to getResourceListRecursive to support recursion detection.
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="constantPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="commandOptionValueDsAccessed" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="commandOptionValueDsLineage" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="formattedText" direction="OUT" nullable="true">
+      <datatype name="Text" referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="constantName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceLineageRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inSeqNum" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="inParentID" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="inResourceDepth" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="inLineageResourceIdList" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="excludePathsList" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="datasourceAncestor" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="inIgnoreResourceDoesNotExist" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="resourceTreeList" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="seqNum">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="resourceID">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="parentID">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="resDepth">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="treeType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resPath">
+            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="dsID">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="dsResName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="dsResPath">
+            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="dsResType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="dsResSubType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="dsEnabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="dsChildCount">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/indent" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="depthNum" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="indent" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inValue" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getDocConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/indent" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 	getDocDataSourceLineage:
+
+	This procedure returns all the DATA_SOURCE type resources found under the starting path.  It returns the formatted
+	text for two sections: &quot;Data Sources Accessed List&quot; and &quot;Data Sources Lineage&quot;.  
+
+	The data sources accessed is a distinct list of data sources along with their type, path and whether they are enabled or not.  
+
+	Input:
+		resourcePath					The full resource path to the CIS resource to introspect and return data source access and lineage documentation.
+											Values: e.g. /shared/examples/CompositeView
+		resourceType					The type of resource.
+											Values: e.g. TABLE
+		constantPath					This is the path to the constants file
+											Values: e.g. /shared/ASAssets/Utilities/documentation/constants()
+		commandOptionValueDsAccessed 	The result command (&apos;print_datasource_accessed&apos;) 
+											Values: e.g. [0,1] - none=0, all=1
+		commandOptionValueDsLineage 	The result command (&apos;print_datasource_lineage&apos;) 
+											Values: e.g. [0,1] - none=0, all=1
+		childResVect					This is a complete list (vector) of data source children.  Since these routines are recursive it will be inefficient
+											to calculate this on the fly each time.  It is more efficient to get these resources once up front and simply pass
+											the entire list in.  It is used to identify the lowest level resources which is a child of a data source.
+	Output:
+		formattedText					The formatted text output.
+
+	Exceptions:  none
+
+An example output is shown below:
+	The data source accessed list provides a unique list of data sources used by the passed in resource path.
+
+	The data source lineage provides a top to bottom lineage starting with the &quot;resources used&quot; list.  
+	The format of the lineage shows indenting and a depth counter when the depth of the resource changes.
+	Additionally, when a child source is found an indicator of [CS] is placed in front of the resource.
+	The type of that resource is placed at the end of the child resource path in the format of [TYPE.SUBTYPE].
+	The parent data source path is placed under neath the child with a [DS] indicator in front of it.
+
+Data Source Accessed List:
+---------------------------
+    Datasource Name               Enabled Type        Sub Type                 Datasource Path                                     
+    ----------------------------- ------- ----------- ------------------------ ---------------------------------------------------
+    ds_orders                     1       DATA_SOURCE RELATIONAL_DATA_SOURCE   /shared/examples/ds_orders                          
+    ds_XML                        1       DATA_SOURCE XML_FILE_DATA_SOURCE     /shared/examples/ds_XML                             
+    ds_inventory                  1       DATA_SOURCE RELATIONAL_DATA_SOURCE   /shared/examples/ds_inventory                       
+
+Data Source Lineage:
+--------------------
+seqnum   id     pid    depth  resource path
+     1 - 20587             0  /shared/examples/CompositeView
+
+     2 - 20658  20587      1    /shared/examples/ViewOrder
+     3 - 20741  20658      2      [CS] /shared/examples/ds_orders/customers  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_orders
+     4 - 20679  20658      2      [CS] /shared/examples/ds_orders/orderdetails  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_orders
+     5 - 20711  20658      2      [CS] /shared/examples/ds_orders/orders  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_orders
+     6 - 20670  20711      3        /shared/examples/ds_orders
+     7 - 20729  20670      4          [CS] /shared/examples/ds_orders/cache_status  [TABLE.DATABASE_TABLE]
+                                      [DS] /shared/examples/ds_orders
+     8 - 20671  20670      4          [CS] /shared/examples/ds_orders/cache_tracking  [TABLE.DATABASE_TABLE]
+                                      [DS] /shared/examples/ds_orders
+     9 - 20689  20711      3        [CS] /shared/examples/ds_orders/orders_cache  [TABLE.DATABASE_TABLE]
+                                    [DS] /shared/examples/ds_orders
+
+    10 - 20774  20587      1    /shared/examples/ViewSales
+    11 - 20679  20774      2      [CS] /shared/examples/ds_orders/orderdetails  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_orders
+    12 - 20786  20774      2      /shared/examples/productCatalog_Transformation
+    13 - 20757  20786      3        [CS] /shared/examples/ds_XML/productCatalog.xml  [TREE.XML_FILE_TREE]
+                                    [DS] /shared/examples/ds_XML
+
+    14 - 20763  20587      1    /shared/examples/ViewSupplier
+    15 - 20606  20763      2      [CS] /shared/examples/ds_inventory/inventorytransactions  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_inventory
+    16 - 20619  20763      2      [CS] /shared/examples/ds_inventory/purchaseorders  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_inventory
+    17 - 20644  20763      2      [CS] /shared/examples/ds_inventory/suppliers  [TABLE.DATABASE_TABLE]
+                                  [DS] /shared/examples/ds_inventory
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	07/25/2012		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Completely overhauled inputs and logic to use getResourceLineageRecursive.
+	10/28/2013		Mike Tinius			6.2.0			Updated for /shared/PSAssets structure
+	03/20/2014		Mike Tinius			6.2.0			Added parameter to getResourceListRecursive to support recursion detection.
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getDocDataSourceLineage(
+    IN resourcePath		 			/shared/ASAssets/Utilities/TypeDefinitions.pathType,  
+    IN resourceType 				VARCHAR(255),
+	IN constantPath					/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	IN commandOptionValueDsAccessed INTEGER, --&apos;print_datasource_accessed&apos;:: 0 or 1
+	IN commandOptionValueDsLineage 	INTEGER, --&apos;print_datasource_lineage&apos;:: 0 or 1
+	OUT formattedText				/lib/util/System.Text
+)
+BEGIN
+	DECLARE moduleName 				/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType DEFAULT &apos;getDocDataSourceLineage&apos;;
+	DECLARE debug					CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debug&apos;);
+	DECLARE debug2					CHAR(1) DEFAULT &apos;N&apos;;
+	DECLARE debugTime				CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debugTime&apos;);
+	DECLARE debugTime2				CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debugTime2&apos;);
+	DECLARE i						INTEGER;
+	DECLARE DNHeader				VARCHAR DEFAULT &apos;Datasource Name&apos;;	-- DN=Datasource Name header/size
+	DECLARE DNsize					INTEGER DEFAULT LENGTH(DNHeader)+1; -- DN=Datasource Name size, default len=16
+	DECLARE DPHeader				VARCHAR DEFAULT &apos;Datasource Path&apos;;	-- DP=Datasource Path header
+	DECLARE DPsize					INTEGER DEFAULT LENGTH(DPHeader);	-- DP=Datasource Path size
+	DECLARE DTHeader				VARCHAR DEFAULT &apos;Type&apos;;				-- DT=Datasource Type header
+	DECLARE DTsize					INTEGER DEFAULT LENGTH(DTHeader);	-- DT=Datasource Type size
+	DECLARE STHeader				VARCHAR DEFAULT &apos;Subtype&apos;;			-- ST=datasource SubType header
+	DECLARE STsize					INTEGER DEFAULT LENGTH(STHeader);	-- ST=datasource SubType size
+	DECLARE ENHeader				VARCHAR DEFAULT &apos;Enabled&apos;;			-- EN=dtasource ENabled header
+	DECLARE ENsize					INTEGER DEFAULT LENGTH(ENHeader);	-- EN=datasource ENabled size
+	DECLARE pid						VARCHAR;
+	DECLARE padChar					VARCHAR DEFAULT getDocConstant(constantPath, &apos;padChar&apos;);
+	DECLARE eol						VARCHAR DEFAULT getDocConstant(constantPath, &apos;eol&apos;);
+	DECLARE indent4					VARCHAR DEFAULT getDocConstant(constantPath, &apos;indent4&apos;);
+	DECLARE linePart1				/lib/util/System.Text;
+	DECLARE linePart2				/lib/util/System.Text;
+	DECLARE docVect					VECTOR (/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive.lineageTreeType) DEFAULT VECTOR[(null)];
+/*	ROW(
+		seqNum					INTEGER,
+		resourceID				INTEGER,
+		parentID				INTEGER,
+		resDepth				INTEGER,
+		treeType				VARCHAR(255), -- Parent, Child
+		resName 				VARCHAR(255), 
+		resPath 				TypeDefinitions.pathType,
+		resType					VARCHAR(255),
+		subType					VARCHAR(255),
+		enabled					BIT,
+		dsID					INTEGER,
+		dsResName				VARCHAR(255),
+		dsResPath				TypeDefinitions.pathType,
+		dsResType 				VARCHAR(255),
+		dsResSubType			VARCHAR(255),
+		dsEnabled				BIT,
+		dsChildCount			INTEGER)
+*/
+	DECLARE lineage						/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE pos							INTEGER;
+	DECLARE dsUniqueList				/lib/util/System.Text DEFAULT &apos;&apos;;
+	DECLARE dsListHeader				VARCHAR(1024);
+	DECLARE dsListText					/lib/util/System.Text;
+	DECLARE lineageHeader				VARCHAR(1024);
+	DECLARE lineageText					/lib/util/System.Text;
+	DECLARE excludeDSPathsList			LONGVARCHAR DEFAULT getDocConstant(constantPath, &apos;excludeDSPathsList&apos;);
+	DECLARE datasourceAncestory			INTEGER DEFAULT 1;
+	DECLARE startTimeGetLineage			TIMESTAMP;
+	DECLARE startTimeDsAccessed TIMESTAMP;
+	DECLARE startTimeResourceLineage 	TIMESTAMP;
+	DECLARE startTimeOverallLineage 	TIMESTAMP;
+	DECLARE durationDsAccessed			INTERVAL DAY TO SECOND;
+	DECLARE durationResourceLineage		INTERVAL DAY TO SECOND;
+	DECLARE durationDsAccessedDisp		VARCHAR;
+	DECLARE durationResourceLineageDisp	VARCHAR;
+	DECLARE durationDsAccessedOverall	INTERVAL DAY TO SECOND DEFAULT &apos;0 00:00:00.000&apos;;
+	DECLARE durationResourceLineageOverall INTERVAL DAY TO SECOND DEFAULT &apos;0 00:00:00.000&apos;;
+	DECLARE durationOverall				INTERVAL DAY TO SECOND;
+	DECLARE inIgnoreResourceDoesNotExist INTEGER DEFAULT 1; 	-- Ignore any resources that do not exist
+																-- 1 = Bypass the processing of that resource.
+																-- 0 = (default) Do not ignore any resources.  Throw an error that the resource does not exist.
+
+	-- Initialize the starting times
+	set startTimeOverallLineage = CURRENT_TIMESTAMP;
+	-- Initialize output
+	set formattedText = &apos;&apos;;
+
+	-- Only execute this if the resource is not a CONTAINER
+	if (resourceType != &apos;CONTAINER&apos;) then
+		/********************************************
+		 * Get the Data Source Lineage
+		 ********************************************/
+		-- Find data sources associated with the path that was passed in
+		set startTimeGetLineage = CURRENT_TIMESTAMP;
+		set lineage = indent4 || resourcePath || eol;
+		set i = 1;
+		for r as 
+			SELECT * FROM /shared/ASAssets/Utilities/repository/getResourceLineageRecursive(NULL, NULL, NULL, NULL, resourcePath, resourceType, excludeDSPathsList, datasourceAncestory, inIgnoreResourceDoesNotExist)  
+		do
+			-- Assign the row to the vector
+			set docVect[i] = r;
+/*
+			call /shared/Utilities/log/logDebugMessage(moduleName,debug2,&apos;i=&apos;||LPAD(i,4,&apos; &apos;)||&apos;  DNsize=&apos;||DNsize || &apos;  DPsize=&apos;||DPsize || &apos;  DTsize=&apos;||DTsize || &apos;  STsize=&apos;||STsize || &apos;  ENsize=&apos;||ENsize);
+			call /shared/Utilities/log/logDebugMessage(moduleName,debug2,&apos;i=&apos;||LPAD(i,4,&apos; &apos;)
+						|| &apos;  DN=&apos;||emptyStr(docVect[i].dsResName) 
+						|| &apos;  DP=&apos;||emptyStr(docVect[i].dsResPath)  
+						|| &apos;  DT=&apos;||emptyStr(docVect[i].dsResType)  
+						|| &apos;  ST=&apos;||emptyStr(docVect[i].dsResSubType)  
+						|| &apos;  EN=&apos;||emptyStr(docVect[i].dsEnabled) );
+*/
+			-- Determine the longest length for each field
+			if (docVect[i].dsResName is not null and length(docVect[i].dsResName) &gt; DNsize) then
+				set DNsize = length(docVect[i].dsResName);
+			end if;
+			if (docVect[i].dsResPath is not null and length(docVect[i].dsResPath) &gt; DPsize) then
+				set DPsize = length(docVect[i].dsResPath);
+			end if;
+			if (docVect[i].dsResType is not null and length(docVect[i].dsResType) &gt; DTsize) then
+				set DTsize = length(docVect[i].dsResType);
+			end if;
+			if (docVect[i].dsResSubType is not null and length(docVect[i].dsResSubType) &gt; STsize) then
+				set STsize = length(docVect[i].dsResSubType);
+			end if;
+			if (docVect[i].dsEnabled is not null and length(docVect[i].dsEnabled) &gt; ENsize) then
+				set ENsize = length(docVect[i].dsEnabled);
+			end if;
+			set docVect = EXTEND(docVect,1);
+			set i = i + 1;
+		end for;
+		set docVect = TRUNCATE(docVect,1);
+
+		-- Increment sizes by 1
+		set DNsize = DNsize + 1;
+		set DPsize = DPsize + 1;
+		set DTsize = DTsize + 1;
+		set STsize = STsize + 1;
+		set ENsize = ENsize + 1;
+--		call /shared/Utilities/log/logDebugMessage(moduleName,debug2,&apos;  DNsize=&apos;||DNsize || &apos;  DPsize=&apos;||DPsize || &apos;  DTsize=&apos;||DTsize || &apos;  STsize=&apos;||STsize || &apos;  ENsize=&apos;||ENsize);
+		set durationOverall = CURRENT_TIMESTAMP - startTimeGetLineage;
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debugTime,&apos;                Get Lineage List::    duration=&apos;||emptyStr(durationOverall)||&apos;    Lineage Row Count=&apos;||CARDINALITY(docVect));
+
+		/********************************************
+		 * Prepare the formatted text for:
+		 *    Data Sources Accessed List
+		 ********************************************/
+		-- Prepare the data source accessed header
+		set dsListHeader = 		 		     &apos;Data Source Accessed List:&apos;||eol;
+		set dsListHeader = dsListHeader||    &apos;---------------------------&apos;||eol;
+		-- Establish the header
+		set dsListHeader = dsListHeader || indent4 || RPAD(DNHeader,DNsize,padChar) || RPAD(ENHeader,ENsize,padChar)|| RPAD(DTHeader,DTsize,padChar)  || RPAD(STHeader,STsize,padChar) || RPAD(DPHeader,DPsize,padChar)||eol;
+		set dsListHeader = dsListHeader || indent4 || RPAD(&apos;-&apos;,DNsize-1,&apos;-&apos;) ||&apos; &apos;|| RPAD(&apos;-&apos;,ENsize-1,&apos;-&apos;) ||&apos; &apos;|| RPAD(&apos;-&apos;,DTsize-1,&apos;-&apos;) ||&apos; &apos;|| RPAD(&apos;-&apos;,STsize-1,&apos;-&apos;) ||&apos; &apos;|| RPAD(&apos;-&apos;,DPsize-1,&apos;-&apos;)||eol;
+		set dsListText = &apos;&apos;;
+
+		/********************************************
+		 * Prepare the formatted text for:
+		 *    Data Source Lineage
+		 ********************************************/
+		-- Prepare the data source lineage header
+		set lineageHeader =                  &apos;Data Source Lineage:&apos;||eol;
+		set lineageHeader = lineageHeader || &apos;--------------------&apos;||eol;
+		set lineageHeader = lineageHeader || &apos;seqnum   id     pid    depth  resource path&apos;||eol;
+		set lineageText = &apos;&apos;;
+
+		-- Format the output
+		set i = 1;
+		while (i &lt;= CARDINALITY(docVect)) do
+			set durationDsAccessedDisp = &apos;&apos;;
+			set durationResourceLineageDisp = &apos;&apos;;
+			/********************************************
+			 * Create the formatted text for:
+			 *    Data Sources Accessed List
+			 ********************************************/
+			if (commandOptionValueDsAccessed = 1) then
+				set startTimeDsAccessed = CURRENT_TIMESTAMP;
+				-- Construct the unique list of data sources used by the incoming resource
+				if (docVect[i].dsResPath is not null and POSITION(&apos;[&apos;||docVect[i].dsResPath||&apos;]&apos; in dsUniqueList) = 0) then
+					-- Add the data source to the unique list
+					set dsUniqueList = dsUniqueList || &apos;[&apos;|| docVect[i].dsResPath || &apos;] &apos;;
+					-- Construct the data source lineage text
+					set dsListText = dsListText || indent4||
+								RPAD(docVect[i].dsResName,		DNsize,padChar)||
+								RPAD(docVect[i].dsEnabled,		ENsize,padChar)||
+								RPAD(docVect[i].dsResType,		DTsize,padChar)||
+								RPAD(docVect[i].dsResSubType,	STsize,padChar)||
+								RPAD(docVect[i].dsResPath,		DPsize,padChar)||
+								eol;
+				end if;
+				-- Log the intermediate time
+				set durationDsAccessed = (CURRENT_TIMESTAMP - startTimeDsAccessed);
+				set durationDsAccessedOverall = durationDsAccessedOverall + durationDsAccessed;
+				set durationDsAccessedDisp = RPAD(CAST(durationDsAccessed AS VARCHAR),14,padChar);
+			end if;
+
+			/********************************************
+			 * Create the formatted text for:
+			 *    Data Source Lineage
+			 ********************************************/
+			if (commandOptionValueDsLineage = 1) then
+				set startTimeResourceLineage = CURRENT_TIMESTAMP;
+				-- Check for a null parentID
+				set pid = CAST(docVect[i].parentID AS VARCHAR);
+				if (docVect[i].parentID is null) then
+					set pid = &apos; &apos;;
+				end if;
+
+				-- Put a blank line before any resource depth=1
+				set linePart1 = &apos;&apos;;
+				if (docVect[i].resDepth = 1) then
+					set linePart1 = eol;
+				end if;
+
+				-- Construct the first part of the line
+				set linePart1 = linePart1 ||
+								LPAD(docVect[i].seqNum,6,padChar) || &apos; - &apos;|| 
+								RPAD(docVect[i].resourceID,7,padChar) || 
+								RPAD(pid,7,&apos; &apos;) ||
+								LPAD(docVect[i].resDepth,5,padChar);
+
+				-- Construct the second part of the line formatted based on whether the resource is a child of a data source or not
+				if (docVect[i].dsResPath is null) then
+					set linePart2 = &apos;  &apos;||indent(docVect[i].resDepth,&apos;  &apos;,docVect[i].resPath);
+				else
+					set linePart2 = &apos;  &apos;||indent(docVect[i].resDepth,&apos;  &apos;,&apos;[CS] &apos;|| docVect[i].resPath || &apos;  [&apos;|| docVect[i].resType ||&apos;.&apos;||emptyStr(docVect[i].subType)||&apos;]&apos;) || eol ||
+									LPAD(&apos; &apos;,30,&apos; &apos;)||indent(docVect[i].resDepth,&apos;  &apos;,&apos;[DS] &apos;|| docVect[i].dsResPath);
+				end if;
+				-- Glue both parts of the line together and put an end of line on it
+				set lineageText = lineageText || emptyStr(linePart1) || emptyStr(linePart2) || eol;
+
+				-- Log the intermediate time
+				set durationResourceLineage = (CURRENT_TIMESTAMP - startTimeResourceLineage);
+				set durationResourceLineageOverall = durationResourceLineageOverall + durationResourceLineage;
+				set durationResourceLineageDisp = RPAD(CAST(durationResourceLineage AS VARCHAR),14,padChar);
+			end if;
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debugTime2,&apos;                   resource loop::      &apos;||
+				LPAD(i,6,&apos; &apos;)||&apos; ds_accessed=&apos;||durationDsAccessedDisp||&apos;     res_lineage=&apos;||durationResourceLineageDisp);
+			set i = i + 1;
+		end while;
+		set docVect = null;
+
+		-- Add the data source list to the output formatted text
+		if (commandOptionValueDsAccessed = 1 AND isEmpty(dsListText) = 0) then
+			set startTimeDsAccessed = CURRENT_TIMESTAMP;
+			set formattedText = formattedText || dsListHeader || dsListText || eol;
+			set durationDsAccessedOverall = durationDsAccessedOverall + (CURRENT_TIMESTAMP - startTimeDsAccessed);
+		end if;
+
+		-- Add the data source lineage to the output formatted text
+		if (commandOptionValueDsLineage = 1 AND isEmpty(lineageText) = 0) then
+			set startTimeResourceLineage = CURRENT_TIMESTAMP;
+			set formattedText = formattedText || lineageHeader || lineageText;
+			set durationResourceLineageOverall = durationResourceLineageOverall + (CURRENT_TIMESTAMP - startTimeResourceLineage);
+		end if;
+
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debugTime,&apos;            Datasources Accessed::    duration=&apos;||emptyStr(durationDsAccessedOverall));
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debugTime,&apos;                Resource Lineage::    duration=&apos;||emptyStr(durationResourceLineageOverall));
+		set durationOverall = CURRENT_TIMESTAMP - startTimeOverallLineage;
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debugTime,&apos;              Datasource Lineage::    duration=&apos;||emptyStr(durationOverall));
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397496403592</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:2:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:3:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

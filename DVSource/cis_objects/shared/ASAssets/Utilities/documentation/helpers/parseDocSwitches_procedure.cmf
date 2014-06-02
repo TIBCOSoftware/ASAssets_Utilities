@@ -1,0 +1,207 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="parseDocSwitches" path="/shared/ASAssets/Utilities/documentation/helpers/parseDocSwitches" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>parseDocSwitches:
+
+	This procedure parses the switches that are passed in to determine what behavior should be taken.
+
+    defaultValue=        0     1
+	print_containers=[{none}|all] - print the resource container (folder)
+
+ 	defaultValue=        0     1     2       3
+	print_annotations=[none|{all}|nonblank|blank] - print all annotations whether they are blank or not
+
+    defaultValue=                 0     1
+	print_resource_projections=[none|{all}] - print the resource projections
+
+    defaultValue=           0     1
+	print_resources_used=[none|{all}] - print the immediate child resources used by the parent resource
+
+    defaultValue=               0     1
+	print_datasource_accessed=[none|{all}] - print the data source accessed list
+
+    defaultValue=               0     1
+	print_datasource_lineage=[none|{all}] - print the data source lineage
+
+	defaultValue=             0   1
+	print_time=[{no}|yes] - print the time it takes to retrieve the full documentation for each resource and the final time
+
+	defaultValue=             0   1
+	save_file=[{no}|yes] - save the results to a file
+
+	defaultValue=             0   1
+	save_file_intermediate=[{no}|yes] - save the file intermediately after each resource is completed
+
+	Input:
+		switches					A space separated list of switches with no embedded spaces 
+										i.e. print_annotations=nonblank print_resource_projections=all print_resources_used=all print_datasource_lineage=all
+
+		command						One of |print_annotations|print_resource_projections|print_resources_used|print_datasource_accessed|print_datasource_lineage
+										i.e. print_annotations
+	Output:
+		commandOptionValue			The result command value [0,1,2,3] - none|no=0, all|yes=1, nonblank=2, blank=3
+										i.e. 3
+	Exceptions:  none
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	08/22/2012		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Added defaults for print_time, save_file, save_file_initialize.  Added no and yes.
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="switches" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="command" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="commandOptionValue" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 	parseDocSwitches:
+
+	This procedure parses the switches that are passed in to determine what behavior should be taken.
+
+    defaultValue=        0     1
+	print_containers=[{none}|all] - print the resource container (folder)
+
+ 	defaultValue=        0     1     2       3
+	print_annotations=[none|{all}|nonblank|blank] - print all annotations whether they are blank or not
+
+    defaultValue=                 0     1
+	print_resource_projections=[none|{all}] - print the resource projections
+
+    defaultValue=           0     1
+	print_resources_used=[none|{all}] - print the immediate child resources used by the parent resource
+
+    defaultValue=               0     1
+	print_datasource_accessed=[none|{all}] - print the data source accessed list
+
+    defaultValue=               0     1
+	print_datasource_lineage=[none|{all}] - print the data source lineage
+
+	defaultValue=             0   1
+	print_time=[{no}|yes] - print the time it takes to retrieve the full documentation for each resource and the final time
+
+	defaultValue=             0   1
+	save_file=[{no}|yes] - save the results to a file
+
+	defaultValue=             0   1
+	save_file_intermediate=[{no}|yes] - save the file intermediately after each resource is completed
+
+	Input:
+		switches					A space separated list of switches with no embedded spaces 
+										i.e. print_annotations=nonblank print_resource_projections=all print_resources_used=all print_datasource_lineage=all
+
+		command						One of |print_annotations|print_resource_projections|print_resources_used|print_datasource_accessed|print_datasource_lineage
+										i.e. print_annotations
+	Output:
+		commandOptionValue			The result command value [0,1,2,3] - none|no=0, all|yes=1, nonblank=2, blank=3
+										i.e. 3
+	Exceptions:  none
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	08/22/2012		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Added defaults for print_time, save_file, save_file_initialize.  Added no and yes.
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE parseDocSwitches(
+	IN 	switches			LONGVARCHAR, -- the space separate list of switches with no embedded spaces 
+	IN  command				VARCHAR, -- one of |print_annotations|print_resource_projections|print_resources_used|print_datasource_lineage
+	OUT commandOptionValue	INTEGER  -- the result command value [0,1,2,3]
+)
+BEGIN
+	DECLARE parsedCommand	VARCHAR;
+	DECLARE i				INTEGER;
+	DECLARE cmdRoot			VARCHAR;
+	DECLARE cmdOption		VARCHAR;
+
+	-- Assign default values
+	case
+		when command = &apos;print_containers&apos; 			then set commandOptionValue = 0; -- none
+		when command = &apos;print_annotations&apos; 			then set commandOptionValue = 1; -- all
+		when command = &apos;print_resource_projections&apos; then set commandOptionValue = 1; -- all
+		when command = &apos;print_resources_used&apos;		then set commandOptionValue = 1; -- all
+		when command = &apos;print_datasource_accessed&apos; 	then set commandOptionValue = 1; -- all
+		when command = &apos;print_datasource_lineage&apos; 	then set commandOptionValue = 1; -- all
+		when command = &apos;print_time&apos; 				then set commandOptionValue = 0; -- no
+		when command = &apos;save_file&apos; 					then set commandOptionValue = 0; -- no
+		when command = &apos;save_file_initialize&apos; 		then set commandOptionValue = 0; -- no
+		else										set commandOptionValue = 0;
+	end case;
+
+	-- Separate the commands 
+	-- i.e. print_annotations=none print_resource_projections=all print_resources_used=none
+	for r as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(switches, &apos; &apos;, 0) do
+		set parsedCommand = TRIM(r.splitElement);
+
+		-- check to see if the passed in command is found in the parsed command switches
+		if (POSITION(command||&apos;=&apos; IN parsedCommand) &gt; 0) then
+
+			-- check for an equal sign which separates the command and command option
+			if (POSITION(&apos;=&apos; IN parsedCommand) &gt; 0) then
+				set i = 1;
+				-- Separate the command root from the command option
+				-- i.e. print_annotations=none
+				for s as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(parsedCommand, &apos;=&apos;, 0) do
+					if (i = 1) then
+						set cmdRoot = LOWER(TRIM(s.splitElement));
+					end if;
+					if (i = 2) then
+						set cmdOption = LOWER(TRIM(s.splitElement));
+						case
+							when cmdOption = &apos;none&apos; or cmdOption = &apos;no&apos; then set commandOptionValue = 0;
+							when cmdOption = &apos;all&apos; or cmdOption = &apos;yes&apos; then set commandOptionValue = 1;
+							when cmdOption = &apos;nonblank&apos; then set commandOptionValue = 2;
+							when cmdOption = &apos;blank&apos; then set commandOptionValue = 3;
+							else
+								set commandOptionValue = 0;
+						end case;
+					end if;
+					set i = i + 1;
+				end for; 
+			end if;
+		end if;
+	end for; 
+--	call print(&apos;command=&apos;||emptyStr(command)||&apos; commandOptionValue=&apos;||commandOptionValue);
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

@@ -1,0 +1,424 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="copyResources" path="/shared/ASAssets/Utilities/repository/copyResources" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>copyResources:
+	-- CIS Repository Helper Procedure --
+	This is a procedure is used to copy all of the CIS resources from a source folder to a target folder.
+	If the target folder does not exist, this procedure will create it and then copy the source folder resources.
+ 
+	Input:
+		sourceFolderPath - CIS source folder path.  Folder must exist.
+			Values: e.g. /shared/Utilities
+		targetFolderPath - CIS target folder path.  Gets created if it does not exist
+			Values: e.g. /shared/tmp
+	Output:
+		success	- true(1) or false(0)
+		faultResponse - null if succesful otherwise contains a fault resposne.
+			Values: Fault Resposne XML value
+	Exceptions:  none
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			Created new
+	10/25/2012		Calvin Goodrich		5.2.0			Updated to pass resource type to getResourceListRecursive
+	08/01/2013		Mike Tinius			6.1.0			Updated resourceList to use RepositoryDefinitionsRecursive.resourceTreeType
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="sourceFolderPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="targetFolderPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="faultResponse" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/services/webservices/system/admin/resource/operations/copyResource" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="copyResource" direction="IN">
+        <datatype name="copyResource" extendedName="{http://www.compositesw.com/services/system/admin/resource}copyResource" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}copyResource" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}copyResource">
+          <schemaDatatype>
+            <datatype name="copyResource" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="copyResourceRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="resourceType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="targetContainerPath" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="newName" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="copyMode" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="copyMode" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="copyResourceResponse" direction="OUT">
+        <datatype name="copyResourceResponse" extendedName="{http://www.compositesw.com/services/system/admin/resource}copyResourceResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}copyResourceResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}copyResourceResponse">
+          <schemaDatatype>
+            <datatype name="copyResourceResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="copyResourceResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="3"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="fault" direction="OUT">
+        <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
+          <schemaDatatype>
+            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="4">
+              <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
+                  <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="message" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="detail" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="severity" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="messageSeverity" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createAllFolders" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="sourceFolderPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createFolder" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="sourceFolderPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="resourceTreeList" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resPath">
+            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creationDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="creationDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="creatorUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creatorUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="lastModifiedDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="lastModifiedUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="mode" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="folderName" direction="OUT">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="folderPath" direction="OUT">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* copyResources:
+	-- CIS Repository Helper Procedure --
+	This is a procedure is used to copy all of the CIS resources from a source folder to a target folder.
+	If the target folder does not exist, this procedure will create it and then copy the source folder resources.
+ 
+	Input:
+		sourceFolderPath - CIS source folder path.  Folder must exist.
+			Values: e.g. /shared/Utilities
+		targetFolderPath - CIS target folder path.  Gets created if it does not exist
+			Values: e.g. /shared/tmp
+	Output:
+		success	- true(1) or false(0)
+		faultResponse - null if succesful otherwise contains a fault resposne.
+			Values: Fault Resposne XML value
+	Exceptions:  none
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			Created new
+	10/25/2012		Calvin Goodrich		5.2.0			Updated to pass resource type to getResourceListRecursive
+	08/01/2013		Mike Tinius			6.1.0			Updated resourceList to use RepositoryDefinitionsRecursive.resourceTreeType
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE copyResources(
+	IN sourceFolderPath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	IN targetFolderPath		/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	OUT success				BIT, -- true(1) or false(0)
+	OUT faultResponse 		XML
+)
+BEGIN
+    PATH /lib/resource;
+    PATH /shared/ASAssets/Utilities/log;
+    PATH /shared/ASAssets/Utilities/repository;
+
+    DECLARE PROC_NAME           CONSTANT VARCHAR DEFAULT &apos;repository/copyResources&apos;;
+	DECLARE debug				CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	DECLARE resourceList 		CURSOR /shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive.resourceTreeType;
+	DECLARE resourceName 		varchar;
+	DECLARE resourceFolderPath	/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE resourcePath		/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+	DECLARE createInput 		varchar(8128);
+	DECLARE createResponse 		XML;
+	DECLARE childResourceList	/lib/util/System.Text DEFAULT &apos;&apos;;
+	DECLARE ex					EXCEPTION;
+
+    set success = 1;
+    -- If the source folders exists then start copying
+    if (resourceExists(sourceFolderPath,&apos;CONTAINER&apos;) = 1) then
+
+ 		BEGIN INDEPENDENT TRANSACTION
+			-- Insure that the base target folder has been created
+			call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;----------------------------------------------------&apos;);
+			call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;Target Folder Path: &apos;||targetFolderPath);
+			call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;----------------------------------------------------&apos;);
+			call /shared/ASAssets/Utilities/repository/createAllFolders(targetFolderPath, success, faultResponse);
+
+			-- Next get a list of Folder Resources in the &apos;Source&apos; directory structure
+			open resourceList for 
+				select * from /shared/ASAssets/Utilities/repository/getResourceListRecursive(sourceFolderPath, &apos;CONTAINER&apos;)
+				where subType = &apos;FOLDER_CONTAINER&apos;;
+			-- Traverse the source structure and duplicate that structure in the &apos;Target&apos; folder
+			for resource as resourceList do
+				call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;FOLDER SOURCE: &apos;||resource.resPath);
+				set resourceFolderPath = REPLACE(resource.resPath, sourceFolderPath, targetFolderPath);
+				call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;FOLDER TARGET: &apos;||resourceFolderPath);
+				if (resource.subType = &apos;FOLDER_CONTAINER&apos;) then
+					-- If the target folder does not exist then create else
+					if (resourceExists(resourceFolderPath,&apos;CONTAINER&apos;) = 0) then 
+						call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;CREATE FOLDER: &apos;||resourceFolderPath);
+						call /shared/ASAssets/Utilities/repository/createFolder(resourceFolderPath, success, faultResponse);
+					end if;
+				end if;
+			end for;
+		EXCEPTION
+			ELSE raise ex value PROC_NAME||&apos;:  &apos;||cast(CURRENT_EXCEPTION.TRACE as longvarchar);
+		END;
+
+		BEGIN INDEPENDENT TRANSACTION
+
+		-- Then copy the resources
+			open resourceList for 
+			--select * from /shared/Utilities/repository/getResourceListRecursive(sourceFolderPath)
+			select * from /shared/ASAssets/Utilities/repository/getResourceListRecursive(sourceFolderPath, &apos;CONTAINER&apos;)
+			where subType &lt;&gt; &apos;FOLDER_CONTAINER&apos;;
+			set resourcePath = null;
+
+			myloop:
+			for resource as resourceList do
+				-- If the resource is a Data Source then it is not permitted to copy its children.
+				-- Get the list of all the children to verify against.
+				if (resource.resType = &apos;DATA_SOURCE&apos;) then
+					set childResourceList = &apos;&apos;;
+					for r as select * from /shared/ASAssets/Utilities/repository/getResourceListRecursive(resource.resPath, &apos;DATA_SOURCE&apos;) do
+						set childResourceList = childResourceList || r.resPath||&apos;;&apos;;
+					end for;
+				end if;
+	
+				-- Check the current resource path against the last known data source child resource list.
+				-- If the resource is in the data source child list then skip copying it by iterating back to the top of the loop.
+				set resourcePath = resource.resPath ||&apos;;&apos;;
+				if (POSITION(resourcePath IN childResourceList) &gt; 0) then
+					iterate myloop;
+				end if;
+
+				-- The resource is not a child of a data source so go ahead and copy it to the target path.
+				set resourceFolderPath = REPLACE(resource.resPath, sourceFolderPath, targetFolderPath);
+				if (resource.subType &lt;&gt; &apos;FOLDER_CONTAINER&apos;) then
+					call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;******************************************&apos;);
+					call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;SOURCE RES TYPE: &apos;||resource.resType);
+					call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;SOURCE SUB TYPE: &apos;||resource.subType);
+					call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;    COPY SOURCE: &apos;||resource.resPath);
+					call /shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath(resourceFolderPath, &apos;E&apos;, resourceName, resourceFolderPath);
+					call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;    COPY TARGET: &apos;||resourceFolderPath || &apos;/&apos;|| resourceName);
+					set createInput = 
+					&apos;&lt;resource:copyResource xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+						&lt;resource:path&gt;&apos; || CAST(XMLTEXT(resource.resPath) AS LONGVARCHAR) || &apos;&lt;/resource:path&gt;
+						&lt;resource:type&gt;&apos; || CAST(XMLTEXT(resource.resType) AS LONGVARCHAR) || &apos;&lt;/resource:type&gt;
+						&lt;resource:targetContainerPath&gt;&apos; || CAST(XMLTEXT(resourceFolderPath) AS LONGVARCHAR) || &apos;&lt;/resource:targetContainerPath&gt;
+						&lt;resource:newName&gt;&apos; || CAST(XMLTEXT(resourceName) AS LONGVARCHAR) || &apos;&lt;/resource:newName&gt;
+						&lt;resource:copyMode&gt;OVERWRITE_REPLACE_IF_EXISTS&lt;/resource:copyMode&gt;
+					&lt;/resource:copyResource&gt;&apos;;
+
+					call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;				&apos; || createInput);
+					Call /services/webservices/system/admin/resource/operations/copyResource(
+						createInput, createResponse, faultResponse);
+					if (faultResponse is not null) then
+						set success = 0;
+					end if;
+					call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;faultResponse=&apos;||emptyStr(faultResponse));
+					call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;******************************************&apos;);				
+				end if;
+			end for;
+		EXCEPTION
+			ELSE raise ex value PROC_NAME||&apos;:  &apos;||cast(CURRENT_EXCEPTION.TRACE as longvarchar);
+		END;
+    else
+		call /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;Source folder does not exist:  &apos;||sourceFolderPath);
+		set success = 0;
+    end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399565923676</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:3:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

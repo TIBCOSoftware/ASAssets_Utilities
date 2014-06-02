@@ -1,0 +1,151 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getResourceImpactedCursor" path="/shared/ASAssets/Utilities/repository/getResourceImpactedCursor" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getResourceImpactedCursor:
+
+	This procedure returns impacted information of a resource.
+
+
+	Input:
+		inResourcePath - The path to the resource  
+			Values: A path to a resource
+
+    inResourceType - The resource type (see /lib/resource/ResourceDefs for constants beginning with &quot;RESOURCE_TYPE&quot;)
+      Values: &apos;TABLE&apos;, &apos;PROCEDURE&apos;, &apos;DATA_SOURCE&apos;, etc.
+
+
+    Output:
+		outputs  - response cursor containing the resource metadata
+		CURSOR (
+        impactLevel VARCHAR(32768),      -- a short message stating the reason for the impacted status or &quot;NONE&quot; if not impacted.
+        impactMessage VARCHAR(32768)     -- a more verbose error message or NULL if not impacted.
+  	)
+
+
+	Exceptions:  none
+
+
+    Author:      Calvin Goodrich
+    Date:        9/12/2010
+    CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inResourcePath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="inResourceType" direction="IN" nullable="true">
+      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="impactLevel">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="impactMessage">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getResourceImpactedXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getResource" direction="IN">
+        <datatype name="getResource" extendedName="{http://www.compositesw.com/services/system/admin/resource}getResource" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getResource" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getResource">
+          <schemaDatatype>
+            <datatype name="getResource" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="getResourceRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="resourceType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="detail" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="detailLevel" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="impactLevel">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="impactMessage">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/*
+getResourceImpactedCursor:
+
+	This procedure returns impacted information of a resource.
+
+
+	Input:
+		inResourcePath - The path to the resource  
+			Values: A path to a resource
+
+    inResourceType - The resource type (see /lib/resource/ResourceDefs for constants beginning with &quot;RESOURCE_TYPE&quot;)
+      Values: &apos;TABLE&apos;, &apos;PROCEDURE&apos;, &apos;DATA_SOURCE&apos;, etc.
+
+
+    Output:
+		outputs  - response cursor containing the resource metadata
+		CURSOR (
+        impactLevel VARCHAR(32768),      -- a short message stating the reason for the impacted status or &apos;NONE&apos; if not impacted.
+        impactMessage VARCHAR(32768)     -- a more verbose error message or NULL if not impacted.
+  	)
+
+
+	Exceptions:  none
+
+
+    Author:      Calvin Goodrich
+    Date:        9/12/2010
+    CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getResourceImpactedCursor(
+    IN inResourcePath /lib/resource/ResourceDefs.ResourcePath, 
+    IN inResourceType /lib/resource/ResourceDefs.ResourceType,
+    OUT result CURSOR (
+        impactLevel VARCHAR(32768), 
+        impactMessage VARCHAR(32768)
+    )
+)
+BEGIN
+    OPEN result FOR 
+        SELECT 
+            *
+        FROM      
+            /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getResourceImpactedXSLT(
+                &apos;&lt;ns1:getResource xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+                    &lt;ns1:path&gt;&apos; || CAST(XMLTEXT(inResourcePath) AS VARCHAR(2147483647)) || &apos;&lt;/ns1:path&gt;
+                    &lt;ns1:type&gt;&apos; || CAST(XMLTEXT(inResourceType) AS VARCHAR(2147483647)) || &apos;&lt;/ns1:type&gt;
+                    &lt;ns1:detail&gt;SIMPLE&lt;/ns1:detail&gt;
+                &lt;/ns1:getResource&gt;&apos;
+            ) getResourceImpactedXSLT;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1376679119330</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

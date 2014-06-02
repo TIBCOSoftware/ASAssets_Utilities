@@ -1,0 +1,232 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_FixedFromXMLToFile" path="/shared/ASAssets/Utilities_regression_tests/xml/XMLUtils/Test_FixedFromXMLToFile" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="numTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/existsFile" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="filePath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/getFileContentsAscii" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="filePath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="fileContent" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/getCisHome" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/getFileSeparator" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="query" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="expectedResultCSV" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/existsFile" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisHome" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getFileContentsAscii" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getFileSeparator" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE Test_FixedFromXMLToFile(
+    OUT numTests INTEGER,
+    OUT numErrors INTEGER,
+    OUT numSkipped INTEGER
+)
+BEGIN
+    DECLARE test_name VARCHAR DEFAULT &apos;xml/XMLUtils/Test_FixedFromXMLToFile&apos;;
+    DECLARE FS CHAR(1) DEFAULT getFileSeparator();
+    DECLARE testFile VARCHAR(4096) DEFAULT getCisHome() || FS || &apos;tmp&apos; || FS || &apos;testfile.txt&apos;;
+    DECLARE args System.Text;
+    DECLARE expectedResultCSV System.Text;
+    DECLARE result System.Text;
+    DECLARE expectedFileContent, fileContent System.Text;
+    DECLARE success BOOLEAN;
+
+    SET numTests = 0;
+    SET numErrors = 0;
+    SET numSkipped = 0;
+
+    -- start test
+    --
+    SET args = &apos;&apos;&apos;&lt;?xml version=&quot;1.0&quot;?&gt;
+&lt;p1:Customer xmlns:p1=&quot;http://www.compositesw.com/ps/FileProcessor&quot;&gt;
+    &lt;row&gt;
+    	&lt;customerID&gt;1&lt;/customerID&gt;
+    	&lt;companyName&gt;Composite Software&lt;/companyName&gt;
+    	&lt;contactFirstName&gt;John&lt;/contactFirstName&gt;
+    	&lt;contactLastName&gt;Doe&lt;/contactLastName&gt;
+    	&lt;billingAddress&gt;1234 First Avenue NE&lt;/billingAddress&gt;
+    	&lt;city&gt;Reston&lt;/city&gt;
+    	&lt;stateOrProvince&gt;VA&lt;/stateOrProvince&gt;
+    	&lt;postalCode&gt;22190&lt;/postalCode&gt;
+    	&lt;countryRegion&gt;USA&lt;/countryRegion&gt;
+    	&lt;contactTitle&gt;Mr&lt;/contactTitle&gt;
+    	&lt;phoneNumber&gt;(703)111-2222&lt;/phoneNumber&gt;
+    	&lt;faxNumber&gt;(703)111-3333&lt;/faxNumber&gt;
+    &lt;/row&gt;
+    &lt;row&gt;
+    	&lt;customerID&gt;2&lt;/customerID&gt;
+    	&lt;companyName&gt;Company 2&lt;/companyName&gt;
+    	&lt;contactFirstName&gt;Jane&lt;/contactFirstName&gt;
+    	&lt;contactLastName&gt;Doe&lt;/contactLastName&gt;
+    	&lt;billingAddress&gt;5678 Second Street NW&lt;/billingAddress&gt;
+    	&lt;city&gt;Washington&lt;/city&gt;
+    	&lt;stateOrProvince&gt;DC&lt;/stateOrProvince&gt;
+    	&lt;postalCode&gt;10002&lt;/postalCode&gt;
+    	&lt;countryRegion&gt;US&lt;/countryRegion&gt;
+    	&lt;contactTitle&gt;Mrs&lt;/contactTitle&gt;
+    	&lt;phoneNumber&gt;202-111-2222&lt;/phoneNumber&gt;
+    	&lt;faxNumber&gt;202-111-3333&lt;/faxNumber&gt;
+    &lt;/row&gt;
+&lt;/p1:Customer&gt;&apos;&apos;, &apos;&apos;2|20|10|15|30|15|2|5|3|4|15|15&apos;&apos;, &apos;&apos;false&apos;&apos;, 12, &apos;&apos;&apos; || testFile || &apos;&apos;&apos;, 0&apos;;
+    SET expectedResultCSV = &apos;0&apos;;
+    SET expectedFileContent = 
+&apos;
+1 Composite Software  John      Doe            1234 First Avenue NE          Reston         VA22190USAMr  (703)111-2222  (703)111-3333  
+2 Company 2           Jane      Doe            5678 Second Street NW         Washington     DC10002US Mrs 202-111-2222   202-111-3333   
+&apos;;
+
+    BEGIN
+        SET numTests = numTests + 1;
+        CALL /shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest(
+            &apos;SELECT result FROM /shared/ASAssets/Utilities/&quot;xml&quot;/XMLUtils/FixedFromXMLToFile(&apos; || args || &apos;)&apos;,
+            expectedResultCSV,
+            result
+        );
+
+        IF (NOT existsFile (testFile)) THEN
+            SET result = &apos;FAILED: file &apos; || testFile || &apos; does not exist.&apos;;
+        ELSE
+
+            SET fileContent = getFileContentsAscii(testFile);
+    
+            IF (fileContent &lt;&gt; expectedFileContent) THEN
+                SET result = &apos;FAILURE: expected file content does not match.&apos;;
+            END IF;
+        END IF;
+
+--        CALL /shared/Utilities/file/FileProcessingCJP/remove(testFile, success);
+    EXCEPTION
+        ELSE
+            SET result = &apos;EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE;
+    END;
+
+    CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: &apos; || result);
+
+    IF (result &lt;&gt; &apos;OK&apos;) THEN
+        SET numErrors = numErrors + 1;
+    END IF;
+    --
+    -- end test
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397499203240</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">18/10</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">20/12</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">46/13</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/85</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">31/11</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

@@ -1,0 +1,123 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_normalizeRows" path="/shared/ASAssets/Utilities/examples/xml/test_normalizeRows" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="keywords" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="keywordsCurs" direction="OUT" nullable="true">
+      <datatype name="keywordsCurs" type="TABLE" refId="1">
+        <element name="str">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/normalizeRowsToPipe" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="curs" direction="IN">
+        <datatype type="TABLE" refId="2">
+          <element name="str">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+      <element name="pipeStr" direction="OUT">
+        <datatype type="TABLE" refId="3">
+          <element name="str">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/normalizeRowsToString" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="curs" direction="IN">
+        <datatype type="TABLE" refId="2">
+          <element name="str">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE test_normalizeRows(
+	OUT keywords	LONGVARCHAR,
+	OUT keywordsCurs cursor (str varchar)
+)
+BEGIN
+  -- Add your code here
+	DECLARE curs cursor (str varchar);
+	DECLARE RecordIDCriteria varchar;
+	DECLARE sql_stmt	VARCHAR(4096);
+
+	set sql_stmt = &apos;
+	select ProductDescription 
+	from /shared/examples/ds_inventory/products 
+	WHERE ProductID &lt;= 3&apos;;
+
+	open curs for sql_stmt;
+	if (curs.ISOPEN) then
+		call print(&apos;calling normalizeRowsToString&apos;);
+		call /shared/ASAssets/Utilities/string/normalizeRowsToString(curs, keywords);
+	end if;
+	call print (&apos;keywords: &apos;||keywords);
+
+	open curs for sql_stmt;
+	if (curs.ISOPEN) then
+		call print(&apos;calling normalizeRowsToPipe&apos;);
+		call /shared/ASAssets/Utilities/string/normalizeRowsToPipe(curs, keywordsCurs);
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">8/25</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">8/18</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">7/21</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

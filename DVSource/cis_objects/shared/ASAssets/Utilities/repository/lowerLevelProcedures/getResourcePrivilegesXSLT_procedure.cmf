@@ -1,0 +1,489 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getResourcePrivilegesXSLT" path="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getResourcePrivilegesXSLT" type="PROCEDURE" subtype="XSLT_TRANSFORM_PROCEDURE" changeToken="0">
+  <annotation>getResourcePrivilegesXSLT:
+
+	This XSLT transformation extracts resource privileges from the repository.
+
+
+	Input:
+		inXML - XML metadata containing a list of resource information  
+			Values: XML
+
+
+	Output:
+		output  - response containing the resource metadata
+    		CURSOR (
+        		path           VARCHAR(32768), 
+        		&quot;type&quot;         VARCHAR(32768), 
+        		domain         VARCHAR(32768), 
+        		name           VARCHAR(32768), 
+        		nameType       VARCHAR(32768), 
+        		privs          VARCHAR(32768), 
+        		compbinedPrivs VARCHAR(32768), 
+        		inheritedPrivs VARCHAR(32768)
+       		)
+
+
+	Exceptions:  none
+
+
+	Author:      Jerry Joplin
+	Date:        9/8/2011
+	CSW Version: 5.2.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="getResourcePrivileges" direction="IN" nullable="true">
+      <datatype name="getResourcePrivileges" extendedName="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivileges" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivileges">
+        <schemaDatatype>
+          <datatype name="getResourcePrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="getResourcePrivilegesRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="1">
+            <element name="entries" namespace="http://www.compositesw.com/services/system/admin/resource">
+              <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="2">
+                <element name="entry" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                  <datatype name="pathTypeOrColumnPair" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                    <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                      <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                    </element>
+                    <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                      <datatype name="resourceOrColumnType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                    </element>
+                  </datatype>
+                </element>
+              </datatype>
+            </element>
+            <element name="filter" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+              <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+            </element>
+            <element name="includeColumnPrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+              <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+            </element>
+          </datatype>
+        </schemaDatatype>
+      </datatype>
+    </parameter>
+    <parameter name="outputs" direction="OUT" nullable="false">
+      <datatype name="outputs" type="TABLE" refId="1">
+        <element name="path">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="4096"/>
+        </element>
+        <element name="type">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="40"/>
+        </element>
+        <element name="domain">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="255"/>
+        </element>
+        <element name="name">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="255"/>
+        </element>
+        <element name="nameType">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="255"/>
+        </element>
+        <element name="privs">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="combinedPrivs">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="inheritedPrivs">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/services/webservices/system/admin/resource/operations/ResourceSchema" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/services/webservices/system/admin/resource/operations/getResourcePrivileges" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getResourcePrivileges" direction="IN">
+        <datatype name="getResourcePrivileges" extendedName="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivileges" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivileges">
+          <schemaDatatype>
+            <datatype name="getResourcePrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="getResourcePrivilegesRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="entries" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                  <element name="entry" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                    <datatype name="pathTypeOrColumnPair" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                      <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="resourceOrColumnType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+              <element name="filter" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="includeColumnPrivileges" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="getResourcePrivilegesResponse" direction="OUT">
+        <datatype name="getResourcePrivilegesResponse" extendedName="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivilegesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivilegesResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getResourcePrivilegesResponse">
+          <schemaDatatype>
+            <datatype name="getResourcePrivilegesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="getResourcePrivilegesResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="5">
+              <element name="privilegeEntries" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
+                  <element name="privilegeEntry" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                    <datatype name="privilegeEntry" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="7">
+                      <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="resourceOrColumnType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="privileges" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="8">
+                          <element name="privilege" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="privilege" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="9">
+                              <element name="domain" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="nameType" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="userNameType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="privs" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="privList" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="combinedPrivs" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                                <datatype name="privList" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="inheritedPrivs" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                                <datatype name="privList" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="fault" direction="OUT">
+        <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
+          <schemaDatatype>
+            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="10">
+              <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="11">
+                  <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="message" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="detail" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="severity" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="messageSeverity" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1392832243427</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="sourcePath" type="STRING">/services/webservices/system/admin/resource/operations/getResourcePrivileges</attribute>
+  <attribute name="sourceType" type="SHORT">3</attribute>
+  <attribute name="transformModel" type="STRING">
+&lt;transformModel customized=&quot;false&quot;&gt;
+  &lt;signature&gt;
+    &lt;datatype type=&quot;TREE&quot; refId=&quot;1&quot;&gt;
+      &lt;element name=&quot;inputs&quot;&gt;
+        &lt;datatype name=&quot;inputs&quot; type=&quot;TREE&quot; refId=&quot;2&quot;&gt;
+          &lt;element name=&quot;getResourcePrivilegesResponse&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; nullable=&quot;false&quot;&gt;
+            &lt;datatype name=&quot;getResourcePrivilegesResponse&quot; extendedName=&quot;{http://www.compositesw.com/services/system/admin/resource}getResourcePrivilegesResponse&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; referenceDefinitionSet=&quot;/services/webservices/system/admin/resource/operations/ResourceSchema&quot; referenceType=&quot;{http://www.compositesw.com/services/system/admin/resource}getResourcePrivilegesResponse&quot; subType=&quot;ELEMENT_DECL&quot; type=&quot;XML&quot; contentConstraint=&quot;SEQUENCE&quot; schemaConstraint=&quot;ANY&quot; componentType=&quot;ELEMENT&quot; componentName=&quot;{http://www.compositesw.com/services/system/admin/resource}getResourcePrivilegesResponse&quot;&gt;
+              &lt;schemaDatatype&gt;
+                &lt;datatype name=&quot;getResourcePrivilegesResponse&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;getResourcePrivilegesResponse&quot; superTypeNamespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; subType=&quot;ELEMENT_DECL&quot; type=&quot;TREE&quot; refId=&quot;3&quot;&gt;
+                  &lt;element name=&quot;privilegeEntries&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                    &lt;datatype superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;4&quot;&gt;
+                      &lt;element name=&quot;privilegeEntry&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; maxOccurs=&quot;2147483647&quot; minOccurs=&quot;0&quot;&gt;
+                        &lt;datatype name=&quot;privilegeEntry&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;5&quot;&gt;
+                          &lt;element name=&quot;path&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;string&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;type&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;resourceOrColumnType&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;string&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;SIMPLE_TYPE&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;privileges&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;6&quot;&gt;
+                              &lt;element name=&quot;privilege&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; maxOccurs=&quot;2147483647&quot; minOccurs=&quot;0&quot;&gt;
+                                &lt;datatype name=&quot;privilege&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;7&quot;&gt;
+                                  &lt;element name=&quot;domain&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                                    &lt;datatype name=&quot;string&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                                  &lt;/element&gt;
+                                  &lt;element name=&quot;name&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                                    &lt;datatype name=&quot;string&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                                  &lt;/element&gt;
+                                  &lt;element name=&quot;nameType&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                                    &lt;datatype name=&quot;userNameType&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;string&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;SIMPLE_TYPE&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                                  &lt;/element&gt;
+                                  &lt;element name=&quot;privs&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                                    &lt;datatype name=&quot;privList&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;string&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;SIMPLE_TYPE&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                                  &lt;/element&gt;
+                                  &lt;element name=&quot;combinedPrivs&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
+                                    &lt;datatype name=&quot;privList&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;string&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;SIMPLE_TYPE&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                                  &lt;/element&gt;
+                                  &lt;element name=&quot;inheritedPrivs&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
+                                    &lt;datatype name=&quot;privList&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;string&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;SIMPLE_TYPE&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                                  &lt;/element&gt;
+                                &lt;/datatype&gt;
+                              &lt;/element&gt;
+                            &lt;/datatype&gt;
+                          &lt;/element&gt;
+                        &lt;/datatype&gt;
+                      &lt;/element&gt;
+                    &lt;/datatype&gt;
+                  &lt;/element&gt;
+                &lt;/datatype&gt;
+              &lt;/schemaDatatype&gt;
+            &lt;/datatype&gt;
+          &lt;/element&gt;
+        &lt;/datatype&gt;
+      &lt;/element&gt;
+      &lt;element name=&quot;outputs&quot;&gt;
+        &lt;datatype name=&quot;outputs&quot; type=&quot;TREE&quot; refId=&quot;8&quot;&gt;
+          &lt;element name=&quot;outputs&quot;&gt;
+            &lt;datatype name=&quot;outputs&quot; type=&quot;TABLE&quot; refId=&quot;9&quot;&gt;
+              &lt;element name=&quot;path&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;4096&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;type&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;40&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;domain&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;255&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;name&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;255&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;nameType&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;255&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;privs&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;combinedPrivs&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;inheritedPrivs&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+            &lt;/datatype&gt;
+          &lt;/element&gt;
+        &lt;/datatype&gt;
+      &lt;/element&gt;
+    &lt;/datatype&gt;
+  &lt;/signature&gt;
+  &lt;xslt&gt;
+&amp;lt;xslt:stylesheet version=&amp;quot;2.0&amp;quot; xmlns:csw-xform=&amp;quot;http://www.compositesw.com/2003/xform&amp;quot; xmlns:ns1=&amp;quot;http://www.compositesw.com/services/system/admin/resource&amp;quot; xmlns:xs=&amp;quot;http://www.w3.org/2001/XMLSchema&amp;quot; xmlns:xslt=&amp;quot;http://www.w3.org/1999/XSL/Transform&amp;quot;&amp;gt;
+  &amp;lt;xslt:template match=&amp;quot;/&amp;quot;&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_path&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_type&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_domain&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_name&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_nameType&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_privs&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_combinedPrivs&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_inheritedPrivs&amp;quot;/&amp;gt;
+    &amp;lt;xslt:element name=&amp;quot;results&amp;quot;&amp;gt;
+      &amp;lt;xslt:for-each select=&amp;quot;ns1:getResourcePrivilegesResponse&amp;quot;&amp;gt;
+        &amp;lt;xslt:for-each select=&amp;quot;ns1:privilegeEntries&amp;quot;&amp;gt;
+          &amp;lt;xslt:for-each select=&amp;quot;ns1:privilegeEntry&amp;quot;&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_path&amp;quot; select=&amp;quot;ns1:path&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_type&amp;quot; select=&amp;quot;ns1:type&amp;quot;/&amp;gt;
+            &amp;lt;xslt:for-each select=&amp;quot;ns1:privileges&amp;quot;&amp;gt;
+              &amp;lt;xslt:for-each select=&amp;quot;ns1:privilege&amp;quot;&amp;gt;
+                &amp;lt;xslt:variable name=&amp;quot;_domain&amp;quot; select=&amp;quot;ns1:domain&amp;quot;/&amp;gt;
+                &amp;lt;xslt:variable name=&amp;quot;_name&amp;quot; select=&amp;quot;ns1:name&amp;quot;/&amp;gt;
+                &amp;lt;xslt:variable name=&amp;quot;_nameType&amp;quot; select=&amp;quot;ns1:nameType&amp;quot;/&amp;gt;
+                &amp;lt;xslt:variable name=&amp;quot;_privs&amp;quot; select=&amp;quot;ns1:privs&amp;quot;/&amp;gt;
+                &amp;lt;xslt:variable name=&amp;quot;_combinedPrivs&amp;quot; select=&amp;quot;ns1:combinedPrivs&amp;quot;/&amp;gt;
+                &amp;lt;xslt:variable name=&amp;quot;_inheritedPrivs&amp;quot; select=&amp;quot;ns1:inheritedPrivs&amp;quot;/&amp;gt;
+                &amp;lt;xslt:element name=&amp;quot;result&amp;quot;&amp;gt;
+                  &amp;lt;xslt:element name=&amp;quot;path&amp;quot;&amp;gt;
+                    &amp;lt;xslt:value-of select=&amp;quot;$_path&amp;quot;/&amp;gt;
+                  &amp;lt;/xslt:element&amp;gt;
+                  &amp;lt;xslt:element name=&amp;quot;type&amp;quot;&amp;gt;
+                    &amp;lt;xslt:value-of select=&amp;quot;$_type&amp;quot;/&amp;gt;
+                  &amp;lt;/xslt:element&amp;gt;
+                  &amp;lt;xslt:element name=&amp;quot;domain&amp;quot;&amp;gt;
+                    &amp;lt;xslt:value-of select=&amp;quot;$_domain&amp;quot;/&amp;gt;
+                  &amp;lt;/xslt:element&amp;gt;
+                  &amp;lt;xslt:element name=&amp;quot;name&amp;quot;&amp;gt;
+                    &amp;lt;xslt:value-of select=&amp;quot;$_name&amp;quot;/&amp;gt;
+                  &amp;lt;/xslt:element&amp;gt;
+                  &amp;lt;xslt:element name=&amp;quot;nameType&amp;quot;&amp;gt;
+                    &amp;lt;xslt:value-of select=&amp;quot;$_nameType&amp;quot;/&amp;gt;
+                  &amp;lt;/xslt:element&amp;gt;
+                  &amp;lt;xslt:element name=&amp;quot;privs&amp;quot;&amp;gt;
+                    &amp;lt;xslt:value-of select=&amp;quot;$_privs&amp;quot;/&amp;gt;
+                  &amp;lt;/xslt:element&amp;gt;
+                  &amp;lt;xslt:element name=&amp;quot;combinedPrivs&amp;quot;&amp;gt;
+                    &amp;lt;xslt:value-of select=&amp;quot;$_combinedPrivs&amp;quot;/&amp;gt;
+                  &amp;lt;/xslt:element&amp;gt;
+                  &amp;lt;xslt:element name=&amp;quot;inheritedPrivs&amp;quot;&amp;gt;
+                    &amp;lt;xslt:value-of select=&amp;quot;$_inheritedPrivs&amp;quot;/&amp;gt;
+                  &amp;lt;/xslt:element&amp;gt;
+                &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;/xslt:for-each&amp;gt;
+            &amp;lt;/xslt:for-each&amp;gt;
+            &amp;lt;xslt:element name=&amp;quot;result&amp;quot;&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;path&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_path&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;type&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_type&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;domain&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_domain&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;name&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_name&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;nameType&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_nameType&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;privs&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_privs&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;combinedPrivs&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_combinedPrivs&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;inheritedPrivs&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_inheritedPrivs&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+            &amp;lt;/xslt:element&amp;gt;
+          &amp;lt;/xslt:for-each&amp;gt;
+        &amp;lt;/xslt:for-each&amp;gt;
+      &amp;lt;/xslt:for-each&amp;gt;
+    &amp;lt;/xslt:element&amp;gt;
+  &amp;lt;/xslt:template&amp;gt;
+&amp;lt;/xslt:stylesheet&amp;gt;&lt;/xslt&gt;
+  &lt;links&gt;
+    &lt;link source=&quot;/inputs/getResourcePrivilegesResponse/privilegeEntries/privilegeEntry/privileges/privilege/privs&quot; target=&quot;/outputs/outputs/privs&quot;/&gt;
+    &lt;link source=&quot;/inputs/getResourcePrivilegesResponse/privilegeEntries/privilegeEntry/type&quot; target=&quot;/outputs/outputs/type&quot;/&gt;
+    &lt;link source=&quot;/inputs/getResourcePrivilegesResponse/privilegeEntries/privilegeEntry/privileges/privilege/domain&quot; target=&quot;/outputs/outputs/domain&quot;/&gt;
+    &lt;link source=&quot;/inputs/getResourcePrivilegesResponse/privilegeEntries/privilegeEntry/path&quot; target=&quot;/outputs/outputs/path&quot;/&gt;
+    &lt;link source=&quot;/inputs/getResourcePrivilegesResponse/privilegeEntries/privilegeEntry/privileges/privilege/nameType&quot; target=&quot;/outputs/outputs/nameType&quot;/&gt;
+    &lt;link source=&quot;/inputs/getResourcePrivilegesResponse/privilegeEntries/privilegeEntry/privileges/privilege/combinedPrivs&quot; target=&quot;/outputs/outputs/combinedPrivs&quot;/&gt;
+    &lt;link source=&quot;/inputs/getResourcePrivilegesResponse/privilegeEntries/privilegeEntry/privileges/privilege/inheritedPrivs&quot; target=&quot;/outputs/outputs/inheritedPrivs&quot;/&gt;
+    &lt;link source=&quot;/inputs/getResourcePrivilegesResponse/privilegeEntries/privilegeEntry/privileges/privilege/name&quot; target=&quot;/outputs/outputs/name&quot;/&gt;
+  &lt;/links&gt;
+&lt;/transformModel&gt;</attribute>
+  <attribute name="xqueryModel" type="NULL"/>
+  <attribute name="xslt" type="STRING">
+&lt;xslt:stylesheet version=&quot;2.0&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;
+  &lt;xslt:template match=&quot;/&quot;&gt;
+    &lt;xslt:variable name=&quot;_path&quot;/&gt;
+    &lt;xslt:variable name=&quot;_type&quot;/&gt;
+    &lt;xslt:variable name=&quot;_domain&quot;/&gt;
+    &lt;xslt:variable name=&quot;_name&quot;/&gt;
+    &lt;xslt:variable name=&quot;_nameType&quot;/&gt;
+    &lt;xslt:variable name=&quot;_privs&quot;/&gt;
+    &lt;xslt:variable name=&quot;_combinedPrivs&quot;/&gt;
+    &lt;xslt:variable name=&quot;_inheritedPrivs&quot;/&gt;
+    &lt;xslt:element name=&quot;results&quot;&gt;
+      &lt;xslt:for-each select=&quot;ns1:getResourcePrivilegesResponse&quot;&gt;
+        &lt;xslt:for-each select=&quot;ns1:privilegeEntries&quot;&gt;
+          &lt;xslt:for-each select=&quot;ns1:privilegeEntry&quot;&gt;
+            &lt;xslt:variable name=&quot;_path&quot; select=&quot;ns1:path&quot;/&gt;
+            &lt;xslt:variable name=&quot;_type&quot; select=&quot;ns1:type&quot;/&gt;
+            &lt;xslt:for-each select=&quot;ns1:privileges&quot;&gt;
+              &lt;xslt:for-each select=&quot;ns1:privilege&quot;&gt;
+                &lt;xslt:variable name=&quot;_domain&quot; select=&quot;ns1:domain&quot;/&gt;
+                &lt;xslt:variable name=&quot;_name&quot; select=&quot;ns1:name&quot;/&gt;
+                &lt;xslt:variable name=&quot;_nameType&quot; select=&quot;ns1:nameType&quot;/&gt;
+                &lt;xslt:variable name=&quot;_privs&quot; select=&quot;ns1:privs&quot;/&gt;
+                &lt;xslt:variable name=&quot;_combinedPrivs&quot; select=&quot;ns1:combinedPrivs&quot;/&gt;
+                &lt;xslt:variable name=&quot;_inheritedPrivs&quot; select=&quot;ns1:inheritedPrivs&quot;/&gt;
+                &lt;xslt:element name=&quot;result&quot;&gt;
+                  &lt;xslt:element name=&quot;path&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_path&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;type&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_type&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;domain&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_domain&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;name&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_name&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;nameType&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_nameType&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;privs&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_privs&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;combinedPrivs&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_combinedPrivs&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;inheritedPrivs&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_inheritedPrivs&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                &lt;/xslt:element&gt;
+              &lt;/xslt:for-each&gt;
+            &lt;/xslt:for-each&gt;
+            &lt;xslt:element name=&quot;result&quot;&gt;
+              &lt;xslt:element name=&quot;path&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_path&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;type&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_type&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;domain&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_domain&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;name&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_name&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;nameType&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_nameType&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;privs&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_privs&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;combinedPrivs&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_combinedPrivs&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;inheritedPrivs&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_inheritedPrivs&quot;/&gt;
+              &lt;/xslt:element&gt;
+            &lt;/xslt:element&gt;
+          &lt;/xslt:for-each&gt;
+        &lt;/xslt:for-each&gt;
+      &lt;/xslt:for-each&gt;
+    &lt;/xslt:element&gt;
+  &lt;/xslt:template&gt;
+&lt;/xslt:stylesheet&gt;</attribute>
+</metadata>

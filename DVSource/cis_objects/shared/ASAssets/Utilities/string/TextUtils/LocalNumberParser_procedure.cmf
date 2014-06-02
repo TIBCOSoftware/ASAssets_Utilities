@@ -1,0 +1,49 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="LocalNumberParser" path="/shared/ASAssets/Utilities/string/TextUtils/LocalNumberParser" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>Description:
+  Function to parse a localized formatted number string into a decimal. The country code may be NULL, but if any of the
+  other input values are NULL, then a NULL will be returned.
+
+Inputs:
+  inValue            - String value to parse 
+  ISO639LangCode     - ISO standard language code (see http://www.loc.gov/standards/iso639-2/php/English_list.php)
+  ISO3166CountryCode - ISO standard country code (see http://www.iso.org/iso/country_codes/iso_3166_code_lists/english_country_names_and_code_elements.htm)
+
+Output:
+  outValue           - Parsed numeric value
+
+Exceptions:
+  None
+
+Author:      Mike DeAngelo
+Date:        8/11/2010
+CSW Version: 5.1.0
+
+© 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inValue" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="ISO639LangCode" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="ISO3166CountryCode" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="outValue" direction="OUT" nullable="true">
+      <datatype name="DOUBLE" subType="DATASOURCE_TYPE" type="FLOAT"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.LocalNumberParser</attribute>
+  <attribute name="creationDate" type="LONG">1383622340769</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754352450</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

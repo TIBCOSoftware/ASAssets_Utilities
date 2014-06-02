@@ -1,0 +1,87 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="assignAnnotation" path="/shared/ASAssets/Utilities/repository/rebind/assignAnnotation" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>assignAnnotation:
+
+	This procedure takes in an annotation and produces an XML annotation output which is used to create a request for
+	a Composite web service API that requires an annotation.
+
+	Input:
+		annotation - the annotation to wrap in XML.  
+			Values: Any text value
+
+
+	Output:
+		annotationInput - the resulting XML
+			Values: XML value
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	04/27/2013		Mike Tinius			5.2.0			created new for assigning annotation to XML annotation node.
+
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="annotation" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="annotationInput" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/* 
+    assignAnnotation:
+
+	This procedure takes in an annotation and produces an XML annotation output which is used to create a request for
+	a Composite web service API that requires an annotation.
+
+	Input:
+		annotation - the annotation to wrap in XML.  
+			Values: Any text value
+
+
+	Output:
+		annotationInput - the resulting XML
+			Values: XML value
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	04/27/2013		Mike Tinius			5.2.0			created new for assigning annotation to XML annotation node.
+
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE assignAnnotation(
+	IN annotation				LONGVARCHAR,
+	OUT annotationInput			LONGVARCHAR
+)
+BEGIN
+	DECLARE notEmpty		INTEGER DEFAULT 0;
+
+	set annotationInput = &apos;&apos;;
+	if (annotation IS NOT NULL) then
+		set annotationInput = &apos;
+		&lt;resource:annotation&gt;&apos; || CAST(XMLTEXT(annotation) AS LONGVARCHAR) || &apos;&lt;/resource:annotation&gt;&apos;;
+	end if;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">1383622341706</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392750940628</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

@@ -1,0 +1,443 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getConnectors" path="/shared/ASAssets/Utilities/repository/getConnectors" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getConnectors:
+	-- CIS Repository Helper Procedure --
+	Get the list of connectors
+
+	Input:
+   		name - connector name
+	Output:
+   		name - connector name
+		annotation - annotation
+		connectorType - type of connector (JMS)
+		groupName - group name
+		jmsClientID - jms client id
+		jndiContextFactory - JNDI Initial Context Factory 
+		jndiProperties - XML string of the JNDI JMS properties
+		jndiProviderUrl - JNDI URL
+		jndiUser - JNDI user
+		jndiPassword - JNDI password (default to NULL since the password cannot be extracted)
+		minPool - min pool
+		maxPool - max pool
+		poolTimeout - pool timeout
+		queueConnectionFactory - Queue factor
+		useJNDI - use JNDI (true or false)
+
+	Exceptions:  Exception may be thrown.
+
+	Author:      Mike Tinius
+	Date:        4/15/2012
+	CSW Version: 5.2.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="name" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="100"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="name">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="annotation">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="connectorType">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="groupName">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="jmsClientID">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="jndiContextFactory">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="jndiProperties">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="jndiProviderUrl">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="jndiUser">
+          <datatype name="VARCHAR" type="STRING" maxLength="50"/>
+        </element>
+        <element name="jndiPassword">
+          <datatype name="VARCHAR" type="STRING" maxLength="50"/>
+        </element>
+        <element name="maxPool">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="minPool">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="poolTimeout">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="queueConnectionFactory">
+          <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+        </element>
+        <element name="useJNDI">
+          <datatype name="VARCHAR" type="STRING" maxLength="50"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/services/webservices/system/admin/resource/operations/getConnectors" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getConnectors" direction="IN">
+        <datatype name="getConnectors" extendedName="{http://www.compositesw.com/services/system/admin/resource}getConnectors" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getConnectors" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getConnectors">
+          <schemaDatatype>
+            <datatype name="getConnectors" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="getConnectorsRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="detail" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="detailLevel" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="getConnectorsResponse" direction="OUT">
+        <datatype name="getConnectorsResponse" extendedName="{http://www.compositesw.com/services/system/admin/resource}getConnectorsResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getConnectorsResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getConnectorsResponse">
+          <schemaDatatype>
+            <datatype name="getConnectorsResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="getConnectorsResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="3">
+              <element name="connectors" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="connectorList" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                  <element name="connector" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                    <datatype name="connector" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
+                      <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="groupName" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="annotation" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="connectorType" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="connectorType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="attributes" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                        <datatype name="attributeList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
+                          <element name="attribute" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="attribute" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="7">
+                              <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype name="attributeType" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="value" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="attributeTypeValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="8">
+                                  <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                    <datatype name="attributeTypeValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="9">
+                                      <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
+                                        <datatype name="attributeType" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                                      </element>
+                                      <element name="value" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                        <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                                      </element>
+                                      <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                        <reference refId="8"/>
+                                      </element>
+                                      <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                        <datatype name="attributeTypeValueMap" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="10">
+                                          <element name="entry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                            <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="11">
+                                              <element name="key" namespace="http://www.compositesw.com/services/system/util/common">
+                                                <reference refId="9"/>
+                                              </element>
+                                              <element name="value" namespace="http://www.compositesw.com/services/system/util/common">
+                                                <reference refId="9"/>
+                                              </element>
+                                            </datatype>
+                                          </element>
+                                        </datatype>
+                                      </element>
+                                      <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                        <datatype name="attributeSimpleValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="12">
+                                          <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                            <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                                          </element>
+                                        </datatype>
+                                      </element>
+                                    </datatype>
+                                  </element>
+                                </datatype>
+                              </element>
+                              <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <reference refId="10"/>
+                              </element>
+                              <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <reference refId="12"/>
+                              </element>
+                              <element name="unset" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="fault" direction="OUT">
+        <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
+          <schemaDatatype>
+            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="13">
+              <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="14">
+                  <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="message" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="detail" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="severity" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="messageSeverity" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getConnectorsXform" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inXML" direction="IN" nullable="false">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT">
+        <datatype type="TABLE" refId="3">
+          <element name="name">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="connectorType">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="groupname">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="jmsClientID">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="jndiContextFactory">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="jndiProperties">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="jndiProviderUrl">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="jndiUser">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="maxPool">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="minPool">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="poolTimeout">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="queueConnectionFactory">
+            <datatype type="STRING" maxLength="32767"/>
+          </element>
+          <element name="useJNDI">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getConnectors:
+	-- CIS Repository Helper Procedure --
+	Get the list of connectors
+
+	Input:
+   		name - connector name
+	Output:
+   		name - connector name
+		annotation - annotation
+		connectorType - type of connector (JMS)
+		groupName - group name
+		jmsClientID - jms client id
+		jndiContextFactory - JNDI Initial Context Factory 
+		jndiProperties - XML string of the JNDI JMS properties
+		jndiProviderUrl - JNDI URL
+		jndiUser - JNDI user
+		jndiPassword - JNDI password (default to NULL since the password cannot be extracted)
+		minPool - min pool
+		maxPool - max pool
+		poolTimeout - pool timeout
+		queueConnectionFactory - Queue factor
+		useJNDI - use JNDI (true or false)
+
+	Exceptions:  Exception may be thrown.
+
+	Author:      Mike Tinius
+	Date:        4/15/2012
+	CSW Version: 5.2.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getConnectors(
+	IN debug 					CHAR(1),-- e.g. Y or N
+	IN name 					VARCHAR(100),
+	OUT result	PIPE (
+		name 					VARCHAR(1024),
+		annotation 				VARCHAR(1024),
+		connectorType 			VARCHAR(1024),
+		groupName 				VARCHAR(1024),
+		jmsClientID				VARCHAR(1024),
+		jndiContextFactory 		VARCHAR(1024),
+ 	  	jndiProperties 			LONGVARCHAR,
+ 	  	jndiProviderUrl 		VARCHAR(1024),
+		jndiUser 				VARCHAR(50),
+		jndiPassword			VARCHAR(50),
+		maxPool 				INTEGER,
+		minPool 				INTEGER,
+		poolTimeout 			INTEGER,
+		queueConnectionFactory 	VARCHAR(1024),
+		useJNDI 				VARCHAR(50)
+	)
+)
+BEGIN
+	DECLARE moduleName 		VARCHAR DEFAULT &apos;getConnectors&apos;;
+	DECLARE request 		VARCHAR(4096);
+	DECLARE response 		XML;
+	DECLARE fault 			XML;
+  	DECLARE ex				EXCEPTION;
+
+	set request = 
+		&apos;&lt;ns1:getConnectors xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt; 
+			&lt;ns1:detail&gt;FULL&lt;/ns1:detail&gt; 
+		&lt;/ns1:getConnectors&gt;&apos;;
+
+	CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, request);
+	CALL /services/webservices/system/admin/resource/operations/getConnectors(request, response, fault);
+	IF (fault IS NOT NULL) THEN
+		raise ex value CAST(fault as longvarchar);
+	ELSE
+   	 	for curs as 
+			select * from /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getConnectorsXform(response)
+    	do
+			if (name is null or LENGTH(name) = 0) then
+				insert into result values(
+						curs.name,
+						curs.annotation,
+						curs.connectorType,
+						curs.groupName,
+						curs.jmsClientID,
+						curs.jndiContextFactory,
+						curs.jndiProperties,
+						curs.jndiProviderUrl,
+						curs.jndiUser,
+						null, -- password is not returned so it is defaulted to null
+						curs.maxPool,
+						curs.minPool,
+						curs.poolTimeout,
+						curs.queueConnectionFactory,
+						curs.useJNDI);
+
+			else
+				if (name = curs.name) then
+					insert into result values(
+						curs.name,
+						curs.annotation,
+						curs.connectorType,
+						curs.groupName,
+						curs.jmsClientID,
+						curs.jndiContextFactory,
+						curs.jndiProperties,
+						curs.jndiProviderUrl,
+						curs.jndiUser,
+						null, -- password is not returned so it is defaulted to null
+						curs.maxPool,
+						curs.minPool,
+						curs.poolTimeout,
+						curs.queueConnectionFactory,
+						curs.useJNDI);
+
+				end if;
+			end if;
+     	end for;
+	END IF;
+
+
+	EXCEPTION
+	  ELSE
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, emptyStr(CURRENT_EXCEPTION.TRACE));
+		raise ex value CURRENT_EXCEPTION.TRACE;
+END
+</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

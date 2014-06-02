@@ -1,0 +1,600 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="cachedResources" path="/shared/ASAssets/Utilities/repository/cachedResources" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>cachedResources:
+	This procedure is used to manipulate cached resources within a starting folder.  This procedure can retrieve, enable, or disable
+	cached resources within a designated folder.  It operates recursively.
+
+	Input:
+		operation				VARCHAR			- R=retrieve, E=enable caches, D=disable caches
+												-  The operation acts upon all resources found in the path where caching is configured and
+													the includePathList_ and excludePathList_ filters are applied.
+		startingPath			ResourcePath,	- The path to recursively start searching 
+												  e.g. /shared/BestPracticesTest/Physical/Formatting
+		includePathList			LONGVARCHAR, 	- A comma separated list of paths or partial paths to include as filters (only execute on these paths).  
+												-  A partial path only has to be present anywhere within the path, not just the beginning of the path.
+												-  e.g. includePathList=/F2
+												-  e.g. 1. Interrogated Resource Path=/shared/project/F1/F2
+												-  e.g. 2. Interrogated Resource Path=/shared/project/F2/F2
+												-  e.g. 3. Interrogated Resource Path=/shared/project/F3/F2
+												-  e.g. 4. Interrogated Resource Path=/shared/project/F4/F1
+												-  In the above example, anywhere that /F2 is found the resources that live under that folder will be included.
+												-  Therefore, e.g. 1, 2 and 3 are included and 4 is not included.
+		excludePathList			LONGVARCHAR, 	- A comma separated list of paths or partial paths to exclude from the list (do not execute on these paths).
+												-  e.g. includePathList=/F3
+												-  e.g. 1. Interrogated Resource Path=/shared/project/F1/F2
+												-  e.g. 2. Interrogated Resource Path=/shared/project/F2/F2
+												-  e.g. 3. Interrogated Resource Path=/shared/project/F3/F2
+												-  e.g. 4. Interrogated Resource Path=/shared/project/F4/F1
+												-  In the above example, anywhere that /F3 is found the resources that live under that folder will be excluded.
+												-  Therefore, e.g. 3 is excluded and 1, 2 and 4 are not excluded.
+		debug					CHAR(1),		- Y=debug is on, N=do not debug
+
+		Note on above example:
+			The combination of includePathList=/F2 and excludePathList=/F3 yields a result of rows 1 and 2.
+				Row 3 is excluded because it contains /F3
+				Row 4 is not included because it does not contain /F2
+	Output:
+		result				PIPE
+		PUBLIC TYPE	generateViewsValidateType ROW(
+			operation				VARCHAR		  - R=retrieve, E=enable caches, D=disable caches
+			prevStatus				VARCHAR, 	  - The status of the cache resource: ENABLED, DISABLED
+			currStatus				VARCHAR, 	  - The status of the cache resource: ENABLED, DISABLED
+			resourceType			ResourceType, - The type of resource	
+			resourcePath			ResourcePath  - The path to the resource
+		);
+
+	Exceptions:  N/A
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	11/24/2013		Mike Tinius			6.1.0			Created new
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="operation" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="startingPath" direction="IN" nullable="true">
+      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+    </parameter>
+    <parameter name="includePathList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="excludePathList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="cachedResourceType" type="TABLE" refId="1">
+        <element name="operation">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="prevStatus">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="currStatus">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/cachedResources" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="operation" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="startingPath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="includePathList" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="excludePathList" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="operation">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="prevStatus">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="currStatus">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourceType">
+            <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+          </element>
+          <element name="resourcePath">
+            <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceCacheConfigCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="inType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="configured">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="storageMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageDataSourcePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageTargetName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storagePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageType">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="refreshMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="scheduleMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="startTime">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="fromTimeInADay">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="endTimeInADay">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="recurringDay">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="interval">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="period">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="count">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="isCluster">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="expirationPeriod">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="clearRule">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="allOrNothing">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="incremental">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="storageBucketMode">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketCatalog">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketSchema">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketPrefix">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketNumBuckets">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="storageDropCreateIdx">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="firstRefreshCallback">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="secondRefreshCallback">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceCacheConfigCursor" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="resourceTreeList" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resPath">
+            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creationDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="creationDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="creatorUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creatorUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="lastModifiedDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="lastModifiedUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateResourceCacheEnabled" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="cacheConfigured" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateResourceCacheEnabled" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* cachedResources:
+	This procedure is used to manipulate cached resources within a starting folder.  This procedure can retrieve, enable, or disable
+	cached resources within a designated folder.  It operates recursively.
+
+	Input:
+		operation				VARCHAR			- R=retrieve, E=enable caches, D=disable caches
+												-  The operation acts upon all resources found in the path where caching is configured and
+													the includePathList_ and excludePathList_ filters are applied.
+		startingPath			ResourcePath,	- The path to recursively start searching 
+												  e.g. /shared/BestPracticesTest/Physical/Formatting
+		includePathList			LONGVARCHAR, 	- A comma separated list of paths or partial paths to include as filters (only execute on these paths).  
+												-  A partial path only has to be present anywhere within the path, not just the beginning of the path.
+												-  e.g. includePathList=/F2
+												-  e.g. 1. Interrogated Resource Path=/shared/project/F1/F2
+												-  e.g. 2. Interrogated Resource Path=/shared/project/F2/F2
+												-  e.g. 3. Interrogated Resource Path=/shared/project/F3/F2
+												-  e.g. 4. Interrogated Resource Path=/shared/project/F4/F1
+												-  In the above example, anywhere that /F2 is found the resources that live under that folder will be included.
+												-  Therefore, e.g. 1, 2 and 3 are included and 4 is not included.
+		excludePathList			LONGVARCHAR, 	- A comma separated list of paths or partial paths to exclude from the list (do not execute on these paths).
+												-  e.g. includePathList=/F3
+												-  e.g. 1. Interrogated Resource Path=/shared/project/F1/F2
+												-  e.g. 2. Interrogated Resource Path=/shared/project/F2/F2
+												-  e.g. 3. Interrogated Resource Path=/shared/project/F3/F2
+												-  e.g. 4. Interrogated Resource Path=/shared/project/F4/F1
+												-  In the above example, anywhere that /F3 is found the resources that live under that folder will be excluded.
+												-  Therefore, e.g. 3 is excluded and 1, 2 and 4 are not excluded.
+		debug					CHAR(1),		- Y=debug is on, N=do not debug
+
+		Note on above example:
+			The combination of includePathList=/F2 and excludePathList=/F3 yields a result of rows 1 and 2.
+				Row 3 is excluded because it contains /F3
+				Row 4 is not included because it does not contain /F2
+	Output:
+		result				PIPE
+		PUBLIC TYPE	generateViewsValidateType ROW(
+			operation				VARCHAR		  - R=retrieve, E=enable caches, D=disable caches
+			prevStatus				VARCHAR, 	  - The status of the cache resource: ENABLED, DISABLED
+			currStatus				VARCHAR, 	  - The status of the cache resource: ENABLED, DISABLED
+			resourceType			ResourceType, - The type of resource	
+			resourcePath			ResourcePath  - The path to the resource
+		);
+
+	Exceptions:  N/A
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	11/24/2013		Mike Tinius			6.1.0			Created new
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE cachedResources(
+	IN  operation				VARCHAR,	-- R=retrieve, E=enable cache, D=disable cache
+	IN	startingPath			/lib/resource/ResourceDefs.ResourceType,-- /shared/BestPracticesTest/Physical/Formatting
+	IN  includePathList			LONGVARCHAR, -- comma separated list of paths to include as filters (only execute on these paths).
+	IN  excludePathList			LONGVARCHAR, -- comma separated list of paths to exclude (do not execute on these paths).
+	IN 	debug					CHAR(1),	-- Y=debug is on, N=do not debug
+	OUT	result					PIPE /shared/ASAssets/Utilities/repository/cachedResources.cachedResourceType
+)
+BEGIN
+	DECLARE moduleName			VARCHAR DEFAULT &apos;cachedResources&apos;;
+    DECLARE notEmpty 			INTEGER DEFAULT 0;
+    DECLARE Empty 				INTEGER DEFAULT 1;
+	DECLARE resPath				/lib/resource/ResourceDefs.ResourcePath;
+	DECLARE includePathFlag		BOOLEAN DEFAULT false;
+	DECLARE excludePathFlag		BOOLEAN DEFAULT false;
+	DECLARE excludeSysPathFlag	BOOLEAN DEFAULT false;
+    DECLARE success				BIT; -- true(1), false(0)
+    DECLARE createResponse 		XML;
+    DECLARE faultResponse		XML;
+	DECLARE ex					EXCEPTION;
+	DECLARE PUBLIC TYPE	cachedResourceType ROW(
+		operation				VARCHAR,
+		prevStatus				VARCHAR,
+		currStatus				VARCHAR,
+		resourceType			/lib/resource/ResourceDefs.ResourceType,		
+		resourcePath			/lib/resource/ResourceDefs.ResourcePath
+	);
+	DECLARE rec					cachedResourceType;
+
+	-- Check that the operation is not empty
+	IF (isEmpty(operation) = Empty) THEN
+		raise ex value &apos;The &quot;operation&quot; may not be null or empty.&apos;;
+	END IF;
+
+	-- Check that the starting path is not empty
+	IF (isEmpty(startingPath) = Empty) THEN
+		raise ex value &apos;The &quot;startingPath&quot; may not be null or empty.&apos;;
+	END IF;
+
+	CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;startingPath=&apos;||emptyStr(startingPath));
+	CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;includePathList=&apos;||emptyStr(includePathList));
+	CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, &apos;excludePathList=&apos;||emptyStr(excludePathList));
+
+	FOR r AS SELECT name, resPath, resType, subType FROM /shared/ASAssets/Utilities/repository/getResourceListRecursive(startingPath, &apos;CONTAINER&apos;) DO
+
+		-- Check whether to include paths first
+		set includePathFlag = true;
+		IF (isEmpty(includePathList) = notEmpty) THEN
+			-- Default the include path to false to start out with
+			set includePathFlag = false;
+			-- If the resource path is in the include list then process it
+			includeLoop:
+			for p as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(includePathList, &apos;,&apos;, 0) do
+				set resPath = REPLACE(TRIM(p.splitElement)||&apos;/&apos;, &apos;//&apos;,&apos;/&apos;);
+				-- If the include path is anywhere in the resource path, then proces it.  
+				if (POSITION(resPath IN r.resPath||&apos;/&apos;) &gt; 0) then
+					set includePathFlag = true;
+					--call print(&apos;INCLUDE FOUND=&apos;||resPath);
+					leave includeLoop;
+				end if;
+			end for;
+		END IF;
+
+		-- Check to see if the path should be excluded from processing
+		set excludePathFlag = false;
+		IF (isEmpty(excludePathList) = notEmpty) THEN
+			-- If the resource path is in the exclude list then don&apos;t process it
+			excludeLoop:
+			for p as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludePathList, &apos;,&apos;, 0) do
+				set resPath = REPLACE(TRIM(p.splitElement)||&apos;/&apos;, &apos;//&apos;,&apos;/&apos;);
+				-- If the excluded path is in the resource path, then exclude it from processing.  
+				if (POSITION(resPath IN r.resPath||&apos;/&apos;) &gt; 0) then
+					set excludePathFlag = true;
+					--call print(&apos;EXCLUDE FOUND=&apos;||resPath);
+					leave excludeLoop;
+				end if;
+			end for;
+		END IF;
+
+		-- Act upon the folder according to the filter settings
+		if (includePathFlag and not excludePathFlag) then
+			FOR c AS SELECT * FROM /shared/ASAssets/Utilities/repository/getResourceCacheConfigCursor(r.resPath, r.resType) DO
+				set rec.operation = operation;
+				if (c.configured &gt; 0) then
+					if (c.enabled = 1) then
+						set rec.prevStatus = &apos;ENABLED&apos;;
+					else
+						set rec.prevStatus = &apos;DISABLE&apos;;
+					end if;
+					set rec.resourcePath = r.resPath;
+					set rec.resourceType = r.resType;
+
+					CASE upper(operation)
+						WHEN &apos;R&apos; THEN
+							set rec.currStatus = rec.prevStatus;
+							INSERT INTO result VALUES(rec);
+						WHEN &apos;E&apos; THEN
+							set rec.currStatus = &apos;ENABLED&apos;;
+							call /shared/ASAssets/Utilities/repository/updateResourceCacheEnabled(r.resPath, r.resType, &apos;true&apos;, success, createResponse, faultResponse);
+							if (faultResponse is not null) then
+								raise ex value &apos;ERROR ENABLING CACHE: &apos;||cast(faultResponse as LONGVARCHAR);
+							end if;
+							INSERT INTO result VALUES(rec);
+						WHEN &apos;D&apos; THEN
+							set rec.currStatus = &apos;DISABLED&apos;;
+							call /shared/ASAssets/Utilities/repository/updateResourceCacheEnabled(r.resPath, r.resType, &apos;false&apos;, success, createResponse, faultResponse);
+							if (faultResponse is not null) then
+								raise ex value &apos;ERROR ENABLING CACHE: &apos;||cast(faultResponse as LONGVARCHAR);
+							end if;
+							INSERT INTO result VALUES(rec);
+						ELSE
+							raise ex value &apos;ERROR: Invalid operation provided.  Can only be R=retrieve, E=enable, D=disable.&apos;;
+					END CASE;
+				end if;
+			END FOR;
+		end if;
+	END FOR;
+	set rec = null;
+	set rec.operation = &apos;FINISHED&apos;;
+	INSERT INTO result VALUES(rec);
+END</attribute>
+  <attribute name="creationDate" type="LONG">1383393161626</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_types" type="MAP">
+    <item>
+      <key type="STRING">cachedResourceType</key>
+      <value type="BYTE_ARRAY">EB8GAgASAGMAYQBjAGgAZQBkAFIAZQBzAG8AdQByAGMAZQBUAHkAcABlBikANQAvAHMAaABhAHIA
+ZQBkAC8AQQBTAEEAcwBzAGUAdABzAC8AVQB0AGkAbABpAHQAaQBlAHMALwByAGUAcABvAHMAaQB0
+AG8AcgB5AC8AYwBhAGMAaABlAGQAUgBlAHMAbwB1AHIAYwBlAHMGKgASAGMAYQBjAGgAZQBkAFIA
+ZQBzAG8AdQByAGMAZQBUAHkAcABlAxIAAAABAxIAAAABARMBCRQAAAAFECEGFQAJAG8AcABlAHIA
+YQB0AGkAbwBuAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAcAVgBB
+AFIAQwBIAEEAUgMSAAAAAgQEAAAAAAAAAP8BEwH/////ECEGFQAKAHAAcgBlAHYAUwB0AGEAdAB1
+AHMDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAL//xAhBhUACgBjAHUA
+cgByAFMAdABhAHQAdQBzAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC
+//8QIQYVAAwAcgBlAHMAbwB1AHIAYwBlAFQAeQBwAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAED
+IP////8DIgAAAAAIGRAbBgIADABSAGUAcwBvAHUAcgBjAGUAVAB5AHAAZQYpABoALwBsAGkAYgAv
+AHIAZQBzAG8AdQByAGMAZQAvAFIAZQBzAG8AdQByAGMAZQBEAGUAZgBzBioADABSAGUAcwBvAHUA
+cgBjAGUAVAB5AHAAZQMSAAAAAwQEAAAAAAAAACgBEwH/////ECEGFQAMAHIAZQBzAG8AdQByAGMA
+ZQBQAGEAdABoAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAwAUgBl
+AHMAbwB1AHIAYwBlAFAAYQB0AGgGKQAaAC8AbABpAGIALwByAGUAcwBvAHUAcgBjAGUALwBSAGUA
+cwBvAHUAcgBjAGUARABlAGYAcwYqAAwAUgBlAHMAbwB1AHIAYwBlAFAAYQB0AGgDEgAAAAQEBAAA
+AAAAABAAARMB////////</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

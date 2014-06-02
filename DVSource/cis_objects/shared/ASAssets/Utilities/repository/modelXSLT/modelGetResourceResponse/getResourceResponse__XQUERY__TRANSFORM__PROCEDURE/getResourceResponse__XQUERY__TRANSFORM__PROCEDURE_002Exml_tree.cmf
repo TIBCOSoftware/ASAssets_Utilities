@@ -1,0 +1,149 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getResourceResponse_XQUERY_TRANSFORM_PROCEDURE.xml" path="/shared/ASAssets/Utilities/repository/modelXSLT/modelGetResourceResponse/getResourceResponse_XQUERY_TRANSFORM_PROCEDURE/getResourceResponse_XQUERY_TRANSFORM_PROCEDURE.xml" type="TREE" subtype="XMLFILE" changeToken="0">
+  <dataType>
+    <datatype name="getResourceResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceType="{http://www.compositesw.com/services/system/admin/resource}getResourceResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getResourceResponse">
+      <schemaDatatype>
+        <datatype name="getResourceResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="ELEMENT_DECL" anonymous="true" type="TREE" refId="1">
+          <element name="resources" namespace="http://www.compositesw.com/services/system/admin/resource">
+            <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="2">
+              <element name="resource" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                  <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="subtype" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="id" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="integer" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="decimal" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DECIMAL" maxDigits="32" maxFractionalDigits="0"/>
+                  </element>
+                  <element name="changeId" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="integer" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="decimal" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DECIMAL" maxDigits="32" maxFractionalDigits="0"/>
+                  </element>
+                  <element name="ownerDomain" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="ownerName" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="impactLevel" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="enabled" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                  </element>
+                  <element name="attributes" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                      <element name="attribute" namespace="http://www.compositesw.com/services/system/util/common">
+                        <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
+                          <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                            <datatype name="NMTOKEN" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="token" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="value" namespace="http://www.compositesw.com/services/system/util/common">
+                            <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                  <element name="parameters" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
+                      <element name="parameter" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647">
+                        <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="7">
+                          <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="dataType" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="8">
+                              <element name="sqlType" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="9">
+                                  <element name="definition" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="NMTOKEN" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="token" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                </datatype>
+                              </element>
+                              <element name="xmlType" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="10">
+                                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="NMTOKEN" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="token" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                  <element name="namespace" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="anyURI" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                  <element name="referencePath" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                  <element name="proprietaryModel" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="base64Binary" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="BINARY"/>
+                                  </element>
+                                </datatype>
+                              </element>
+                            </datatype>
+                          </element>
+                          <element name="direction" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="isNullable" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="attributes" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                            <reference refId="4"/>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                  <element name="explicitlyDesigned" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                  </element>
+                  <element name="xqueryText" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="xqueryModel" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="11">
+                      <element name="version" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="integer" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="decimal" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DECIMAL" maxDigits="32" maxFractionalDigits="0"/>
+                      </element>
+                      <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="proprietaryModel" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="base64Binary" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="BINARY"/>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </element>
+        </datatype>
+      </schemaDatatype>
+    </datatype>
+  </dataType>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="charset" type="STRING">&lt;auto detect&gt;</attribute>
+  <attribute name="creationDate" type="LONG">1383622342104</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1383622352184</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="noNamespaceSchemaLocation" type="STRING"/>
+  <attribute name="path" type="STRING">\getResourceResponse_XQUERY_TRANSFORM_PROCEDURE.xml</attribute>
+  <attribute name="schemaLocation" type="STRING"/>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

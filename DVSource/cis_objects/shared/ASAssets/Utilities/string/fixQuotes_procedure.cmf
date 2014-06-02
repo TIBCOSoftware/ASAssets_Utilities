@@ -1,0 +1,71 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="fixQuotes" path="/shared/ASAssets/Utilities/string/fixQuotes" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>fixQuotes:
+	Turns single quotes into two single quotes so that when you are constructing a 
+	dynamic SQL statement this procedure insures that values with quotes in them are 
+	fixed to be double quoted and the SQL statement will execute correctly
+ 
+            Input:
+		inMessage - contains any varchar of length 255.  
+			Values: Any text value such as: this is a &apos;quoted&apos; string
+            Output:
+		outMessage - contains any varchar of length 255
+			Values: Return the incoming message with quotes fixed such as:  this is a &apos;&apos;quoted&apos;&apos; string
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inMessage" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="outMessage" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/* fixQuotes:
+	Turns single quotes into two single quotes so that when you are constructing a 
+	dynamic SQL statement this procedure insures that values with quotes in them are 
+	fixed to be double quoted and the SQL statement will execute correctly
+ 
+            Input:
+		inMessage - contains any varchar of length 255.  
+			Values: Any text value such as: this is a &apos;quoted&apos; string
+            Output:
+		outMessage - contains any varchar of length 255
+			Values: Return the incoming message with quotes fixed such as:  this is a &apos;&apos;quoted&apos;&apos; string
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE fixQuotes(
+	in inMessage	LONGVARCHAR,
+	out outMessage	LONGVARCHAR
+)
+BEGIN
+	set outMessage = REPLACE(inMessage, &apos;&apos;&apos;&apos;&apos;&apos;, &apos;&apos;&apos;&apos;);
+	IF (POSITION(&apos;&apos;&apos;&apos; in outMessage) &gt; 0) THEN
+		set outMessage = REPLACE(outMessage, &apos;&apos;&apos;&apos;, &apos;&apos;&apos;&apos;&apos;&apos;);
+	END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1392851976794</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

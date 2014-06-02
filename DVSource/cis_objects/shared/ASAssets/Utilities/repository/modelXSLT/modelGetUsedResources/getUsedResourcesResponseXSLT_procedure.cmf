@@ -1,0 +1,389 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getUsedResourcesResponseXSLT" path="/shared/ASAssets/Utilities/repository/modelXSLT/modelGetUsedResources/getUsedResourcesResponseXSLT" type="PROCEDURE" subtype="XSLT_TRANSFORM_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="outputs" direction="OUT" nullable="false">
+      <datatype name="outputs" type="TABLE" refId="1">
+        <element name="name">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="path">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="type">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="tableType">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="explicitlyDesigned">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="sqlText">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/repository/modelXSLT/modelGetUsedResources/getUsedResourcesResponseXML/getUsedResourcesResponse.xml" type="TREE">
+    <datatype name="getUsedResourcesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceType="{http://www.compositesw.com/services/system/admin/resource}getUsedResourcesResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getUsedResourcesResponse">
+      <schemaDatatype>
+        <datatype name="getUsedResourcesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="ELEMENT_DECL" anonymous="true" type="TREE" refId="1">
+          <element name="resources" namespace="http://www.compositesw.com/services/system/admin/resource">
+            <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="2">
+              <element name="resource" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647">
+                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                  <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="subtype" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="id" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="integer" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="decimal" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DECIMAL" maxDigits="32" maxFractionalDigits="0"/>
+                  </element>
+                  <element name="changeId" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="integer" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="decimal" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DECIMAL" maxDigits="32" maxFractionalDigits="0"/>
+                  </element>
+                  <element name="ownerDomain" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="ownerName" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="impactLevel" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="enabled" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                  </element>
+                  <element name="columns" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                      <element name="column" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647">
+                        <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
+                          <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="dataType" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
+                              <element name="sqlType" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="7">
+                                  <element name="definition" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                </datatype>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                  <element name="tableType" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="explicitlyDesigned" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                  </element>
+                  <element name="sqlText" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="sqlModel" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                    <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="8">
+                      <element name="version" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="integer" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="decimal" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DECIMAL" maxDigits="32" maxFractionalDigits="0"/>
+                      </element>
+                      <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="proprietaryModel" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype name="base64Binary" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="BINARY"/>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </element>
+        </datatype>
+      </schemaDatatype>
+    </datatype>
+  </dependency>
+  <attribute name="creationDate" type="LONG">1383622342013</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="sourcePath" type="STRING">/shared/ASAssets/Utilities/repository/modelXSLT/modelGetUsedResources/getUsedResourcesResponseXML/getUsedResourcesResponse.xml</attribute>
+  <attribute name="sourceType" type="SHORT">4</attribute>
+  <attribute name="transformModel" type="STRING">
+&lt;transformModel customized=&quot;false&quot;&gt;
+  &lt;signature&gt;
+    &lt;datatype type=&quot;TREE&quot; refId=&quot;1&quot;&gt;
+      &lt;element name=&quot;inputs&quot;&gt;
+        &lt;datatype name=&quot;inputs&quot; type=&quot;TREE&quot; refId=&quot;2&quot;&gt;
+          &lt;element name=&quot;getUsedResourcesResponse&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; nullable=&quot;false&quot;&gt;
+            &lt;datatype name=&quot;getUsedResourcesResponse&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; referenceType=&quot;{http://www.compositesw.com/services/system/admin/resource}getUsedResourcesResponse&quot; subType=&quot;ELEMENT_DECL&quot; type=&quot;XML&quot; contentConstraint=&quot;SEQUENCE&quot; schemaConstraint=&quot;ANY&quot; componentType=&quot;ELEMENT&quot; componentName=&quot;{http://www.compositesw.com/services/system/admin/resource}getUsedResourcesResponse&quot;&gt;
+              &lt;schemaDatatype&gt;
+                &lt;datatype name=&quot;getUsedResourcesResponse&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;ELEMENT_DECL&quot; anonymous=&quot;true&quot; type=&quot;TREE&quot; refId=&quot;3&quot;&gt;
+                  &lt;element name=&quot;resources&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                    &lt;datatype superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;4&quot;&gt;
+                      &lt;element name=&quot;resource&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; maxOccurs=&quot;2147483647&quot;&gt;
+                        &lt;datatype superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;5&quot;&gt;
+                          &lt;element name=&quot;name&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;NCName&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;path&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;string&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;type&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;NCName&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;subtype&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;NCName&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;id&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;integer&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;decimal&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;DECIMAL&quot; maxDigits=&quot;32&quot; maxFractionalDigits=&quot;0&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;changeId&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;integer&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;decimal&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;DECIMAL&quot; maxDigits=&quot;32&quot; maxFractionalDigits=&quot;0&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;ownerDomain&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;NCName&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;ownerName&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;NCName&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;impactLevel&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;NCName&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;enabled&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;boolean&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;0&quot; maxValue=&quot;1&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;columns&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;6&quot;&gt;
+                              &lt;element name=&quot;column&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; maxOccurs=&quot;2147483647&quot;&gt;
+                                &lt;datatype superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;7&quot;&gt;
+                                  &lt;element name=&quot;name&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                                    &lt;datatype name=&quot;NCName&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                                  &lt;/element&gt;
+                                  &lt;element name=&quot;dataType&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                                    &lt;datatype superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;8&quot;&gt;
+                                      &lt;element name=&quot;sqlType&quot; namespace=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+                                        &lt;datatype superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;9&quot;&gt;
+                                          &lt;element name=&quot;definition&quot; namespace=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+                                            &lt;datatype name=&quot;string&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                                          &lt;/element&gt;
+                                        &lt;/datatype&gt;
+                                      &lt;/element&gt;
+                                    &lt;/datatype&gt;
+                                  &lt;/element&gt;
+                                &lt;/datatype&gt;
+                              &lt;/element&gt;
+                            &lt;/datatype&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;tableType&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;NCName&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;explicitlyDesigned&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;boolean&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;0&quot; maxValue=&quot;1&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;sqlText&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                            &lt;datatype name=&quot;string&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                          &lt;/element&gt;
+                          &lt;element name=&quot;sqlModel&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
+                            &lt;datatype superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;10&quot;&gt;
+                              &lt;element name=&quot;version&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                                &lt;datatype name=&quot;integer&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;decimal&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;DECIMAL&quot; maxDigits=&quot;32&quot; maxFractionalDigits=&quot;0&quot;/&gt;
+                              &lt;/element&gt;
+                              &lt;element name=&quot;type&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                                &lt;datatype name=&quot;NCName&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
+                              &lt;/element&gt;
+                              &lt;element name=&quot;proprietaryModel&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+                                &lt;datatype name=&quot;base64Binary&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;BINARY&quot;/&gt;
+                              &lt;/element&gt;
+                            &lt;/datatype&gt;
+                          &lt;/element&gt;
+                        &lt;/datatype&gt;
+                      &lt;/element&gt;
+                    &lt;/datatype&gt;
+                  &lt;/element&gt;
+                &lt;/datatype&gt;
+              &lt;/schemaDatatype&gt;
+            &lt;/datatype&gt;
+          &lt;/element&gt;
+        &lt;/datatype&gt;
+      &lt;/element&gt;
+      &lt;element name=&quot;outputs&quot;&gt;
+        &lt;datatype name=&quot;outputs&quot; type=&quot;TREE&quot; refId=&quot;11&quot;&gt;
+          &lt;element name=&quot;outputs&quot;&gt;
+            &lt;datatype name=&quot;outputs&quot; type=&quot;TABLE&quot; refId=&quot;12&quot;&gt;
+              &lt;element name=&quot;name&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;path&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;type&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;subtype&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;enabled&quot;&gt;
+                &lt;datatype name=&quot;BIT&quot; type=&quot;INTEGER&quot; minValue=&quot;0&quot; maxValue=&quot;1&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;tableType&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;Name&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;explicitlyDesigned&quot;&gt;
+                &lt;datatype name=&quot;BIT&quot; type=&quot;INTEGER&quot; minValue=&quot;0&quot; maxValue=&quot;1&quot;/&gt;
+              &lt;/element&gt;
+              &lt;element name=&quot;sqlText&quot;&gt;
+                &lt;datatype name=&quot;VARCHAR&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;32768&quot;/&gt;
+              &lt;/element&gt;
+            &lt;/datatype&gt;
+          &lt;/element&gt;
+        &lt;/datatype&gt;
+      &lt;/element&gt;
+    &lt;/datatype&gt;
+  &lt;/signature&gt;
+  &lt;xslt&gt;
+&amp;lt;xslt:stylesheet version=&amp;quot;2.0&amp;quot; xmlns:csw-xform=&amp;quot;http://www.compositesw.com/2003/xform&amp;quot; xmlns:ns1=&amp;quot;http://www.compositesw.com/services/system/admin/resource&amp;quot; xmlns:xs=&amp;quot;http://www.w3.org/2001/XMLSchema&amp;quot; xmlns:xslt=&amp;quot;http://www.w3.org/1999/XSL/Transform&amp;quot;&amp;gt;
+  &amp;lt;xslt:template match=&amp;quot;/&amp;quot;&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_name&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_path&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_type&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_subtype&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_enabled&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_tableType&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_explicitlyDesigned&amp;quot;/&amp;gt;
+    &amp;lt;xslt:variable name=&amp;quot;_sqlText&amp;quot;/&amp;gt;
+    &amp;lt;xslt:element name=&amp;quot;results&amp;quot;&amp;gt;
+      &amp;lt;xslt:for-each select=&amp;quot;ns1:getUsedResourcesResponse&amp;quot;&amp;gt;
+        &amp;lt;xslt:for-each select=&amp;quot;ns1:resources&amp;quot;&amp;gt;
+          &amp;lt;xslt:for-each select=&amp;quot;ns1:resource&amp;quot;&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_name&amp;quot; select=&amp;quot;ns1:name&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_path&amp;quot; select=&amp;quot;ns1:path&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_type&amp;quot; select=&amp;quot;ns1:type&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_subtype&amp;quot; select=&amp;quot;ns1:subtype&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_enabled&amp;quot; select=&amp;quot;ns1:enabled&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_tableType&amp;quot; select=&amp;quot;ns1:tableType&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_explicitlyDesigned&amp;quot; select=&amp;quot;ns1:explicitlyDesigned&amp;quot;/&amp;gt;
+            &amp;lt;xslt:variable name=&amp;quot;_sqlText&amp;quot; select=&amp;quot;ns1:sqlText&amp;quot;/&amp;gt;
+            &amp;lt;xslt:element name=&amp;quot;result&amp;quot;&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;name&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_name&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;path&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_path&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;type&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_type&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;subtype&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_subtype&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;enabled&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_enabled&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;tableType&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_tableType&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;explicitlyDesigned&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_explicitlyDesigned&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+              &amp;lt;xslt:element name=&amp;quot;sqlText&amp;quot;&amp;gt;
+                &amp;lt;xslt:value-of select=&amp;quot;$_sqlText&amp;quot;/&amp;gt;
+              &amp;lt;/xslt:element&amp;gt;
+            &amp;lt;/xslt:element&amp;gt;
+          &amp;lt;/xslt:for-each&amp;gt;
+        &amp;lt;/xslt:for-each&amp;gt;
+      &amp;lt;/xslt:for-each&amp;gt;
+    &amp;lt;/xslt:element&amp;gt;
+  &amp;lt;/xslt:template&amp;gt;
+&amp;lt;/xslt:stylesheet&amp;gt;&lt;/xslt&gt;
+  &lt;links&gt;
+    &lt;link source=&quot;/inputs/getUsedResourcesResponse/resources/resource/name&quot; target=&quot;/outputs/outputs/name&quot;/&gt;
+    &lt;link source=&quot;/inputs/getUsedResourcesResponse/resources/resource/path&quot; target=&quot;/outputs/outputs/path&quot;/&gt;
+    &lt;link source=&quot;/inputs/getUsedResourcesResponse/resources/resource/tableType&quot; target=&quot;/outputs/outputs/tableType&quot;/&gt;
+    &lt;link source=&quot;/inputs/getUsedResourcesResponse/resources/resource/subtype&quot; target=&quot;/outputs/outputs/subtype&quot;/&gt;
+    &lt;link source=&quot;/inputs/getUsedResourcesResponse/resources/resource/enabled&quot; target=&quot;/outputs/outputs/enabled&quot;/&gt;
+    &lt;link source=&quot;/inputs/getUsedResourcesResponse/resources/resource/sqlText&quot; target=&quot;/outputs/outputs/sqlText&quot;/&gt;
+    &lt;link source=&quot;/inputs/getUsedResourcesResponse/resources/resource/type&quot; target=&quot;/outputs/outputs/type&quot;/&gt;
+    &lt;link source=&quot;/inputs/getUsedResourcesResponse/resources/resource/explicitlyDesigned&quot; target=&quot;/outputs/outputs/explicitlyDesigned&quot;/&gt;
+  &lt;/links&gt;
+&lt;/transformModel&gt;</attribute>
+  <attribute name="xqueryModel" type="NULL"/>
+  <attribute name="xslt" type="STRING">
+&lt;xslt:stylesheet version=&quot;2.0&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;
+  &lt;xslt:template match=&quot;/&quot;&gt;
+    &lt;xslt:variable name=&quot;_name&quot;/&gt;
+    &lt;xslt:variable name=&quot;_path&quot;/&gt;
+    &lt;xslt:variable name=&quot;_type&quot;/&gt;
+    &lt;xslt:variable name=&quot;_subtype&quot;/&gt;
+    &lt;xslt:variable name=&quot;_enabled&quot;/&gt;
+    &lt;xslt:variable name=&quot;_tableType&quot;/&gt;
+    &lt;xslt:variable name=&quot;_explicitlyDesigned&quot;/&gt;
+    &lt;xslt:variable name=&quot;_sqlText&quot;/&gt;
+    &lt;xslt:element name=&quot;results&quot;&gt;
+      &lt;xslt:for-each select=&quot;ns1:getUsedResourcesResponse&quot;&gt;
+        &lt;xslt:for-each select=&quot;ns1:resources&quot;&gt;
+          &lt;xslt:for-each select=&quot;ns1:resource&quot;&gt;
+            &lt;xslt:variable name=&quot;_name&quot; select=&quot;ns1:name&quot;/&gt;
+            &lt;xslt:variable name=&quot;_path&quot; select=&quot;ns1:path&quot;/&gt;
+            &lt;xslt:variable name=&quot;_type&quot; select=&quot;ns1:type&quot;/&gt;
+            &lt;xslt:variable name=&quot;_subtype&quot; select=&quot;ns1:subtype&quot;/&gt;
+            &lt;xslt:variable name=&quot;_enabled&quot; select=&quot;ns1:enabled&quot;/&gt;
+            &lt;xslt:variable name=&quot;_tableType&quot; select=&quot;ns1:tableType&quot;/&gt;
+            &lt;xslt:variable name=&quot;_explicitlyDesigned&quot; select=&quot;ns1:explicitlyDesigned&quot;/&gt;
+            &lt;xslt:variable name=&quot;_sqlText&quot; select=&quot;ns1:sqlText&quot;/&gt;
+            &lt;xslt:element name=&quot;result&quot;&gt;
+              &lt;xslt:element name=&quot;name&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_name&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;path&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_path&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;type&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_type&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;subtype&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_subtype&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;enabled&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_enabled&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;tableType&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_tableType&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;explicitlyDesigned&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_explicitlyDesigned&quot;/&gt;
+              &lt;/xslt:element&gt;
+              &lt;xslt:element name=&quot;sqlText&quot;&gt;
+                &lt;xslt:value-of select=&quot;$_sqlText&quot;/&gt;
+              &lt;/xslt:element&gt;
+            &lt;/xslt:element&gt;
+          &lt;/xslt:for-each&gt;
+        &lt;/xslt:for-each&gt;
+      &lt;/xslt:for-each&gt;
+    &lt;/xslt:element&gt;
+  &lt;/xslt:template&gt;
+&lt;/xslt:stylesheet&gt;</attribute>
+</metadata>

@@ -1,0 +1,12 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="examples" path="/shared/ASAssets/Utilities/examples" type="CONTAINER" subtype="FOLDER" changeToken="0">
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="creationDate" type="LONG">1376699583728</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1376699584052</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+</metadata>

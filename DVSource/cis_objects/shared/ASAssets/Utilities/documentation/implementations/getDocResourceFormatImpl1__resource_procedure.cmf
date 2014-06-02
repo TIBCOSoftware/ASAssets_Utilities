@@ -1,0 +1,534 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getDocResourceFormatImpl1_resource" path="/shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1_resource" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getDocResourceFormatImpl1_resource:
+
+	This procedure provides an implementation to retrieve and format the documentation for a single CIS resource.
+
+	This procedure is invoked by the getDocResourceFormatImpl1 which controls the loop.  
+	The output of this procedure provides the formatting for a single CIS resource.  
+	The idea behind this procedure is that it provides a template for an implementation.  
+	A user of the documentation utilities may choose to copy and create a new implementation and then customize it for their project.  
+	Any new implementation “must” follow the input and output interface definitions as shown below.
+
+	Input:
+		resourcePath 				The the path to the resource.
+										Values: e.g. /shared/examples/CompositeView
+		resourceType				The type of resource
+										Values: e.g. TABLE
+		constantPath				This is the path to the constants file
+										e.g. /shared/ASAssets/Utilities/documentation/constants()
+		switches					Provides guidance on what to print for documentation and save files.  
+										The format is print_switch=[option1|{default_option2}|option3]
+										This is a space separate list with no spaces before or after the equal sign.
+											print_containers=[{none}|all] - print the resource container (folder)
+											print_annotations=[none|{all}|nonblank|blank] - print all annotations whether they are blank or not
+											print_resource_projections=[none|{all}] - print the resource projections
+											print_resources_used=[none|{all}] - print the immediate child resources used by the parent resource
+											print_datasource_accessed=[none|{all}] - print the data source accessed list
+											print_datasource_lineage=[none|{all}] - print the data source lineage
+											print_time=[{no}|yes] - print the time it takes to retrieve the full documentation for each resource and the final time
+ 											save_file=[{no}|yes] - save the results to a file
+											save_file_intermediate=[{no}|yes] - save the file intermediately after each resource is completed
+										Example:
+											1) switches: when left blank or null then the defaults are taken
+											   result: all documentation modules are printed
+											2) switches: print_annotations=nonblank print_resource_projections=none print_resources_used=none print_datasource_lineage=none
+											   result: only non-blank annotations are printed and nothing else
+	Output: 
+		formattedText - formatted text is out output complete with a separator at the beginning of the resource.
+
+	Exceptions:  none
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	07/25/2012		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Modified to print out timings and save to a file after each resource.
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="constantPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="switches" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="formattedText" direction="OUT" nullable="true">
+      <datatype name="Text" referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="constantName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/parseDocSwitches" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="switches" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="command" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="commandOptionValue" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/modules/getDocDataSourceLineage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="commandOptionValueDsAccessed" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="commandOptionValueDsLineage" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="formattedText" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/modules/getDocResourceProjection" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="formattedText" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/modules/getDocResourcesUsed" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="formattedText" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/applyReservedListToPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="fixedResourcePath" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="path">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="type">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="id">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="changeid">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="ownerDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="ownerName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="impactLevel">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="scriptText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="mode" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="folderName" direction="OUT">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="folderPath" direction="OUT">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/applyReservedListToPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getDocConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/parseDocSwitches" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getDocResourceFormatImpl1_resource:
+
+	This procedure provides an implementation to retrieve and format the documentation for a single CIS resource.
+
+	This procedure is invoked by the getDocResourceFormatImpl1 which controls the loop.  
+	The output of this procedure provides the formatting for a single CIS resource.  
+	The idea behind this procedure is that it provides a template for an implementation.  
+	A user of the documentation utilities may choose to copy and create a new implementation and then customize it for their project.  
+	Any new implementation “must” follow the input and output interface definitions as shown below.
+
+	Input:
+		resourcePath 				The the path to the resource.
+										Values: e.g. /shared/examples/CompositeView
+		resourceType				The type of resource
+										Values: e.g. TABLE
+		constantPath				This is the path to the constants file
+										e.g. /shared/ASAssets/Utilities/documentation/constants()
+		switches					Provides guidance on what to print for documentation and save files.  
+										The format is print_switch=[option1|{default_option2}|option3]
+										This is a space separate list with no spaces before or after the equal sign.
+											print_containers=[{none}|all] - print the resource container (folder)
+											print_annotations=[none|{all}|nonblank|blank] - print all annotations whether they are blank or not
+											print_resource_projections=[none|{all}] - print the resource projections
+											print_resources_used=[none|{all}] - print the immediate child resources used by the parent resource
+											print_datasource_accessed=[none|{all}] - print the data source accessed list
+											print_datasource_lineage=[none|{all}] - print the data source lineage
+											print_time=[{no}|yes] - print the time it takes to retrieve the full documentation for each resource and the final time
+ 											save_file=[{no}|yes] - save the results to a file
+											save_file_intermediate=[{no}|yes] - save the file intermediately after each resource is completed
+										Example:
+											1) switches: when left blank or null then the defaults are taken
+											   result: all documentation modules are printed
+											2) switches: print_annotations=nonblank print_resource_projections=none print_resources_used=none print_datasource_lineage=none
+											   result: only non-blank annotations are printed and nothing else
+	Output: 
+		formattedText - formatted text is out output complete with a separator at the beginning of the resource.
+
+	Exceptions:  none
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	07/25/2012		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Modified to print out timings and save to a file after each resource.
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getDocResourceFormatImpl1_resource(
+    IN resourcePath		 			/shared/ASAssets/Utilities/TypeDefinitions.pathType,  
+	IN resourceType					VARCHAR,
+	IN constantPath					/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	IN switches						LONGVARCHAR,
+	OUT formattedText				/lib/util/System.Text
+)
+BEGIN
+	DECLARE moduleName 					/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType DEFAULT &apos;getDocResourceFormatImpl1_resource&apos;;
+	DECLARE debug 						CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debug&apos;);
+	DECLARE debugTime					CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debugTime&apos;);
+ 	DECLARE moduleText					LONGVARCHAR;
+	DECLARE resPath						LONGVARCHAR;
+	DECLARE resourceName				VARCHAR;
+	DECLARE beginSeparator				VARCHAR DEFAULT getDocConstant(constantPath, &apos;beginSeparator&apos;);
+	DECLARE endSeparator				VARCHAR DEFAULT getDocConstant(constantPath, &apos;endSeparator&apos;);
+	DECLARE minorSeparator 				VARCHAR DEFAULT getDocConstant(constantPath, &apos;minorSeparator&apos;);
+	DECLARE eol							VARCHAR DEFAULT getDocConstant(constantPath, &apos;eol&apos;);
+	DECLARE commandOptionValue			INTEGER;  -- The result command value [0,1,2,3] - none=0, all=1, nonblank=2, blank=3
+	DECLARE commandOptionValueDsAccessed INTEGER; -- The result command value [0,1,2,3] - none=0, all=1, nonblank=2, blank=3
+	DECLARE commandOptionValueDsLineage	INTEGER;  -- The result command value [0,1,2,3] - none=0, all=1, nonblank=2, blank=3
+	DECLARE startTimeOverall			TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+	DECLARE startTimeColumnProjections	TIMESTAMP;
+	DECLARE startTimeResourcesUsed		TIMESTAMP;
+	DECLARE startTimeDatasourceLineage 	TIMESTAMP;
+	DECLARE duration					INTERVAL DAY TO SECOND;
+
+	set formattedText = &apos;&apos;;
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debugTime,&apos;Overall Resource Start:: &apos;||RPAD(emptyStr(resourceType),30,&apos; &apos;)||emptyStr(resourcePath));
+
+	-- Retrieve information about the resource such as key elements: impactLevel and scriptText
+	for r as select * from /shared/ASAssets/Utilities/repository/getBasicResourceCursor(resourcePath, resourceType) do
+	/*	CURSOR (
+		name VARCHAR(255), 			-- name of the resource
+		&quot;path&quot; VARCHAR(32768), 		-- full path to the resource
+		&quot;type&quot; VARCHAR(32768), 		-- type of resource as described in the TYPE/SUBTYPE section below
+		subtype VARCHAR(255), 		-- subtype of resource as described in the TYPE/SUBTYPE section below
+		enabled BIT,				-- 0=resource not enabled, 1=resource enabled
+		id INTEGER,					-- resource unique identifier within CIS repository
+		changeId INTEGER,			-- resource change identifier within the CIS repository
+		ownerDomain VARCHAR(255),	-- the domain of the owner
+		ownerName VARCHAR(255),		-- the owner of the resource
+		impactLevel VARCHAR(255),	-- impact level &quot;NONE&quot;
+		annotation LONGVARCHAR,		-- a custom annotation for the resource (documentation)
+		explicitlyDesigned BIT,		-- 0=fals, not explicitly designed as in updated via an API, 1=true, explicitly designed through Studio
+		tableType VARCHAR(255),		-- type of table
+		sqlText LONGVARCHAR,		-- The entire SQL Text for resources of type TABLE
+		scriptText LONGVARCHAR		-- The entire Script Text for resources of type PROCEDURE
+		)
+	*/
+		call /shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath(r.&quot;path&quot;,&apos;E&apos;,resourceName,resPath);
+
+		/*****************************************************************************
+		 * Format the Resource
+		 *****************************************************************************/
+		-- Parse the switches for the &apos;print_containers&apos; option
+		set commandOptionValue = parseDocSwitches(switches, &apos;print_containers&apos;); 
+
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;::  path=&apos;||r.&quot;path&quot;||&apos;  type=&apos;||r.&quot;type&quot;||&apos; print_containers=&apos;||commandOptionValue);
+
+		-- Only process the resource if it is not impacted and it is not a CONTAINER or the user explicitly wants to print CONTAINER information.
+		--        resource not impacted                        &apos;none&apos;    and not a CONTAINER               &apos;all&apos;   
+		if ( UPPER(r.impactLevel) = &apos;NONE&apos; and ( (commandOptionValue = 0 and r.&quot;type&quot; != &apos;CONTAINER&apos;) or (commandOptionValue = 1) ) ) then
+
+			/*****************************************************************************
+			 * Format the Resource basic information
+			 *****************************************************************************/
+			set formattedText = formattedText || beginSeparator || eol;
+			set formattedText = formattedText || &apos;Resource Name: &apos; || emptyStr(r.name) || eol;
+			set formattedText = formattedText || &apos;Resource Path: &apos; || emptyStr(applyReservedListToPath(resourcePath,&apos;N&apos;)) || eol;
+			set formattedText = formattedText || &apos;Resource Type: &apos; || emptyStr(r.&quot;type&quot;) || eol;
+			set formattedText = formattedText || &apos;      Subtype: &apos; || emptyStr(r.subtype) || eol;
+			set formattedText = formattedText || eol;
+			
+			/*****************************************************************************
+			 * Format resource annotation
+			 *****************************************************************************/
+			-- Parse the switches for the &apos;print_annotations&apos; option
+			set commandOptionValue = parseDocSwitches(switches, &apos;print_annotations&apos;); 
+			-- &apos;none&apos;
+			if (commandOptionValue = 0) then
+				-- do nothing
+			end if;
+			-- &apos;all&apos;
+			if (commandOptionValue = 1) then
+				set formattedText = formattedText || &apos;Description:&apos; || eol;
+				set formattedText = formattedText || &apos;------------&apos; || eol;
+				if (isEmpty(r.annotation) = 0) then
+					set formattedText = formattedText || emptyStr(r.annotation) || eol;
+				else
+					set formattedText = formattedText || &apos;None&apos; || eol;
+				end if;
+				set formattedText = formattedText || eol;
+			end if;
+			-- &apos;nonblank&apos;
+			if (commandOptionValue = 2) then
+				if (isEmpty(r.annotation) = 0) then
+					set formattedText = formattedText || &apos;Description:&apos; || eol;
+					set formattedText = formattedText || &apos;------------&apos; || eol;
+					set formattedText = formattedText || emptyStr(r.annotation) || eol;
+					set formattedText = formattedText || eol;
+				end if;
+			end if;
+				-- &apos;blank&apos;
+			if (commandOptionValue = 3) then
+				if (isEmpty(r.annotation) = 1) then
+					set formattedText = formattedText || &apos;Description:&apos; || eol;
+					set formattedText = formattedText || &apos;------------&apos; || eol;
+					set formattedText = formattedText || &apos;None&apos; || eol;
+					set formattedText = formattedText || eol;
+				end if;
+			end if;
+
+			/*****************************************************************************
+			 * Format resource column projection
+			 *****************************************************************************/
+			-- Parse the switches for the &apos;print_resource_projections&apos; option
+			set startTimeColumnProjections = CURRENT_TIMESTAMP;
+			set commandOptionValue = parseDocSwitches(switches, &apos;print_resource_projections&apos;); 
+			if (commandOptionValue = 1) then
+				call /shared/ASAssets/Utilities/documentation/modules/getDocResourceProjection(r.&quot;path&quot;, r.&quot;type&quot;, constantPath, moduleText);
+				if (moduleText is null) then
+					set moduleText = &apos;&apos;;
+				end if;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;------getDocResourceProjection::&apos;||eol||moduleText);
+				if (isEmpty(moduleText) = 0) then
+					set formattedText = formattedText || moduleText;
+				end if;
+			end if;
+			set duration = CURRENT_TIMESTAMP - startTimeColumnProjections;
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debugTime,&apos;    Column Projections::  duration=&apos;||emptyStr(duration));
+
+			/*****************************************************************************
+			 * Format resources used by this resource
+			 *****************************************************************************/
+			-- Parse the switches for the &apos;print_resources_used&apos; option
+			set startTimeResourcesUsed = CURRENT_TIMESTAMP;
+			set commandOptionValue = parseDocSwitches(switches, &apos;print_resources_used&apos;); 
+			if (commandOptionValue = 1) then
+				call /shared/ASAssets/Utilities/documentation/modules/getDocResourcesUsed(r.&quot;path&quot;, r.&quot;type&quot;, constantPath, moduleText);
+				if (moduleText is null) then
+					set moduleText = &apos;&apos;;
+				end if;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;------getDocResourcesUsed::&apos;||eol||moduleText);
+				if (isEmpty(moduleText) = 0) then
+					set formattedText = formattedText || moduleText;
+				end if;
+			end if;
+			set duration = CURRENT_TIMESTAMP - startTimeResourcesUsed;
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debugTime,&apos;        Resources Used::  duration=&apos;||emptyStr(duration));
+
+			/*****************************************************************************
+			 * Format data source lineage for this resource
+			 *****************************************************************************/
+			-- Parse the switches for the &apos;print_datasource_lineage&apos; option
+			set startTimeDatasourceLineage = CURRENT_TIMESTAMP;
+			set commandOptionValueDsAccessed = parseDocSwitches(switches, &apos;print_datasource_accessed&apos;); 
+			set commandOptionValueDsLineage = parseDocSwitches(switches, &apos;print_datasource_lineage&apos;); 
+			if (commandOptionValueDsAccessed = 1 OR commandOptionValueDsLineage = 1) then
+				call /shared/ASAssets/Utilities/documentation/modules/getDocDataSourceLineage(
+					r.&quot;path&quot;, r.&quot;type&quot;, constantPath, commandOptionValueDsAccessed, commandOptionValueDsLineage, moduleText);
+				if (moduleText is null) then
+					set moduleText = &apos;&apos;;
+				end if;
+				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;------getDocDataSourceLineage::&apos;||eol||moduleText);
+				if (isEmpty(moduleText) = 0) then
+					set formattedText = formattedText || moduleText;
+				end if;
+			end if;
+			set duration = CURRENT_TIMESTAMP - startTimeDatasourceLineage;
+			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debugTime,&apos;    Datasource Lineage::  duration=&apos;||emptyStr(duration));
+		end if;
+	end for;
+
+	set duration = CURRENT_TIMESTAMP - startTimeOverall;
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debugTime,&apos;      Overall Resource::  duration=&apos;||emptyStr(duration) || &apos;  resourcePath=&apos;||emptyStr(resourcePath));
+
+	-- Determine whether to print the timings for each resource
+	if (parseDocSwitches(switches, &apos;print_time&apos;) = 1) then
+		set formattedText = formattedText || eol;
+		set formattedText = formattedText ||  &apos;Resource Documentation Generation Time=&apos;||emptyStr(duration)||eol;
+	end if;
+
+	-- Add the end separator
+	set formattedText = formattedText || endSeparator || eol;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397496379452</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

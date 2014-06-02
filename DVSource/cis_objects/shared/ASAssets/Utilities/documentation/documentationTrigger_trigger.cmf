@@ -1,0 +1,82 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="documentationTrigger" path="/shared/ASAssets/Utilities/documentation/documentationTrigger" type="TRIGGER" subtype="NONE" changeToken="0">
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/documentation/getDocumentationDriver" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <attribute name="actionProperties" type="MAP">
+    <item>
+      <key type="STRING">PARAMETERS</key>
+      <value type="STRING">&apos;&apos;,&apos;&apos;,&apos;&apos;,&apos;&apos;,&apos;&apos;,&apos;&apos;,&apos;&apos;,&apos;&apos;,&apos;&apos;</value>
+    </item>
+    <item>
+      <key type="STRING">PATH</key>
+      <value type="STRING">/shared/ASAssets/Utilities/documentation/getDocumentationDriver</value>
+    </item>
+  </attribute>
+  <attribute name="actionType" type="STRING">PROCEDURE</attribute>
+  <attribute name="conditionProperties" type="MAP"></attribute>
+  <attribute name="conditionSchedule" type="MAP">
+    <item>
+      <key type="STRING">startTime</key>
+      <value type="LONG">1345582807000</value>
+    </item>
+    <item>
+      <key type="STRING">recurringDay</key>
+      <value type="INTEGER">-1</value>
+    </item>
+    <item>
+      <key type="STRING">lastScheduledTime</key>
+      <value type="LONG">0</value>
+    </item>
+    <item>
+      <key type="STRING">isCluster</key>
+      <value type="BOOLEAN">true</value>
+    </item>
+    <item>
+      <key type="STRING">count</key>
+      <value type="INTEGER">0</value>
+    </item>
+    <item>
+      <key type="STRING">interval</key>
+      <value type="INTEGER">0</value>
+    </item>
+    <item>
+      <key type="STRING">fromTimeInADay</key>
+      <value type="LONG">-1</value>
+    </item>
+    <item>
+      <key type="STRING">period</key>
+      <value type="INTEGER">0</value>
+    </item>
+    <item>
+      <key type="STRING">endTime</key>
+      <value type="LONG">0</value>
+    </item>
+    <item>
+      <key type="STRING">endTimeInADay</key>
+      <value type="LONG">-1</value>
+    </item>
+    <item>
+      <key type="STRING">lastRunTime</key>
+      <value type="LONG">0</value>
+    </item>
+    <item>
+      <key type="STRING">mode</key>
+      <value type="STRING">NONE</value>
+    </item>
+  </attribute>
+  <attribute name="conditionType" type="STRING">TIMER</attribute>
+  <attribute name="creationDate" type="LONG">1383622340388</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="enabled" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="maxEventsQueued" type="INTEGER">1</attribute>
+</metadata>

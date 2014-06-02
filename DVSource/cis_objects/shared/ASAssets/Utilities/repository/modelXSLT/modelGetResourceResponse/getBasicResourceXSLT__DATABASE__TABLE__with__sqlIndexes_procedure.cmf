@@ -1,0 +1,299 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getBasicResourceXSLT_DATABASE_TABLE_with_sqlIndexes" path="/shared/ASAssets/Utilities/repository/modelXSLT/modelGetResourceResponse/getBasicResourceXSLT_DATABASE_TABLE_with_sqlIndexes" type="PROCEDURE" subtype="XSLT_TRANSFORM_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="outputs" direction="OUT" nullable="false">
+      <datatype name="outputs" type="TABLE" refId="1">
+        <element name="sqlIndexName">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="sqlIndexType">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="sqlIndexUnique">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="sqlIndexColName">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="sqlIndexColOrder">
+          <datatype name="VARCHAR" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/repository/modelXSLT/modelGetResourceResponse/getResourceResponse_DATABASE_TABLE_w_Indexes/getBasicResourceXML_DATABASE_TABLE.xml" type="TREE">
+    <datatype name="getResourceResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceType="{http://www.compositesw.com/services/system/admin/resource}getResourceResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getResourceResponse">
+      <schemaDatatype>
+        <datatype name="getResourceResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="ELEMENT_DECL" anonymous="true" type="TREE" refId="1">
+          <element name="resources" namespace="http://www.compositesw.com/services/system/admin/resource">
+            <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="2">
+              <element name="resource" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                  <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="subtype" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="id" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="integer" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="decimal" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DECIMAL" maxDigits="32" maxFractionalDigits="0"/>
+                  </element>
+                  <element name="changeId" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="integer" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="decimal" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DECIMAL" maxDigits="32" maxFractionalDigits="0"/>
+                  </element>
+                  <element name="ownerDomain" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="ownerName" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="impactLevel" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="enabled" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                  </element>
+                  <element name="attributes" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                      <element name="attribute" namespace="http://www.compositesw.com/services/system/util/common">
+                        <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
+                          <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="value" namespace="http://www.compositesw.com/services/system/util/common">
+                            <datatype name="integer" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="decimal" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DECIMAL" maxDigits="32" maxFractionalDigits="0"/>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                  <element name="columns" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
+                      <element name="column">
+                        <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="7">
+                          <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="order" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                        </datatype>
+                      </element>
+                      <element name="column" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647">
+                        <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="8">
+                          <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="dataType" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="9">
+                              <element name="sqlType" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="10">
+                                  <element name="definition" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                  <element name="nativeType" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                  <element name="proprietaryModel" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="base64Binary" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="BINARY"/>
+                                  </element>
+                                </datatype>
+                              </element>
+                            </datatype>
+                          </element>
+                          <element name="isNullable" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                  <element name="tableType" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="explicitlyDesigned" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                  </element>
+                  <element name="sqlIndexes" namespace="http://www.compositesw.com/services/system/admin/resource">
+                    <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="11">
+                      <element name="index" namespace="http://www.compositesw.com/services/system/admin/resource">
+                        <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="12">
+                          <element name="name" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="NCName" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="Name" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                          </element>
+                          <element name="unique" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                          </element>
+                          <element name="columns" namespace="http://www.compositesw.com/services/system/admin/resource">
+                            <reference refId="6"/>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </element>
+        </datatype>
+      </schemaDatatype>
+    </datatype>
+  </dependency>
+  <attribute name="creationDate" type="LONG">1383622342049</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="sourcePath" type="STRING">/shared/ASAssets/Utilities/repository/modelXSLT/modelGetResourceResponse/getResourceResponse_DATABASE_TABLE_w_Indexes/getBasicResourceXML_DATABASE_TABLE.xml</attribute>
+  <attribute name="sourceType" type="SHORT">4</attribute>
+  <attribute name="transformModel" type="BYTE_ARRAY">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
+BQYAAAAAAQABAC8AAAApCQAAAAA=</attribute>
+  <attribute name="xqueryModel" type="NULL"/>
+  <attribute name="xslt" type="STRING">
+&lt;xslt:stylesheet version=&quot;2.0&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;
+  &lt;xslt:template match=&quot;/&quot;&gt;
+    &lt;xslt:variable name=&quot;_sqlIndexName&quot;/&gt;
+    &lt;xslt:variable name=&quot;_sqlIndexType&quot;/&gt;
+    &lt;xslt:variable name=&quot;_sqlIndexUnique&quot;/&gt;
+    &lt;xslt:variable name=&quot;_sqlIndexColName&quot;/&gt;
+    &lt;xslt:variable name=&quot;_sqlIndexColOrder&quot;/&gt;
+    &lt;xslt:element name=&quot;results&quot;&gt;
+      &lt;xslt:for-each select=&quot;ns1:getResourceResponse&quot;&gt;
+        &lt;xslt:for-each select=&quot;ns1:resources&quot;&gt;
+          &lt;xslt:for-each select=&quot;ns1:resource&quot;&gt;
+            &lt;xslt:for-each select=&quot;ns1:sqlIndexes&quot;&gt;
+              &lt;xslt:for-each select=&quot;ns1:index&quot;&gt;
+                &lt;xslt:variable name=&quot;_sqlIndexName&quot; select=&quot;ns1:name&quot;/&gt;
+                &lt;xslt:variable name=&quot;_sqlIndexType&quot; select=&quot;ns1:type&quot;/&gt;
+                &lt;xslt:variable name=&quot;_sqlIndexUnique&quot; select=&quot;ns1:unique&quot;/&gt;
+                &lt;xslt:for-each select=&quot;ns1:columns&quot;&gt;
+                  &lt;xslt:for-each select=&quot;column&quot;&gt;
+                    &lt;xslt:variable name=&quot;_sqlIndexColName&quot; select=&quot;ns1:name&quot;/&gt;
+                    &lt;xslt:variable name=&quot;_sqlIndexColOrder&quot; select=&quot;ns1:order&quot;/&gt;
+                    &lt;xslt:element name=&quot;result&quot;&gt;
+                      &lt;xslt:element name=&quot;sqlIndexName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlIndexName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;sqlIndexType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlIndexType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;sqlIndexUnique&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlIndexUnique&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;sqlIndexColName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlIndexColName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;sqlIndexColOrder&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlIndexColOrder&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                    &lt;/xslt:element&gt;
+                  &lt;/xslt:for-each&gt;
+                  &lt;xslt:for-each select=&quot;column&quot;&gt;
+                    &lt;xslt:variable name=&quot;_sqlIndexColName&quot; select=&quot;ns1:name&quot;/&gt;
+                    &lt;xslt:variable name=&quot;_sqlIndexColOrder&quot; select=&quot;ns1:order&quot;/&gt;
+                    &lt;xslt:element name=&quot;result&quot;&gt;
+                      &lt;xslt:element name=&quot;sqlIndexName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlIndexName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;sqlIndexType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlIndexType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;sqlIndexUnique&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlIndexUnique&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;sqlIndexColName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlIndexColName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;sqlIndexColOrder&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlIndexColOrder&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                    &lt;/xslt:element&gt;
+                  &lt;/xslt:for-each&gt;
+                &lt;/xslt:for-each&gt;
+                &lt;xslt:element name=&quot;result&quot;&gt;
+                  &lt;xslt:element name=&quot;sqlIndexName&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_sqlIndexName&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;sqlIndexType&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_sqlIndexType&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;sqlIndexUnique&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_sqlIndexUnique&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;sqlIndexColName&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_sqlIndexColName&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                  &lt;xslt:element name=&quot;sqlIndexColOrder&quot;&gt;
+                    &lt;xslt:value-of select=&quot;$_sqlIndexColOrder&quot;/&gt;
+                  &lt;/xslt:element&gt;
+                &lt;/xslt:element&gt;
+              &lt;/xslt:for-each&gt;
+            &lt;/xslt:for-each&gt;
+          &lt;/xslt:for-each&gt;
+        &lt;/xslt:for-each&gt;
+      &lt;/xslt:for-each&gt;
+    &lt;/xslt:element&gt;
+  &lt;/xslt:template&gt;
+&lt;/xslt:stylesheet&gt;</attribute>
+</metadata>

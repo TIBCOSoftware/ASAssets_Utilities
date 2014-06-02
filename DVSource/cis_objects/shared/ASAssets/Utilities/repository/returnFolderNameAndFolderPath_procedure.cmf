@@ -1,0 +1,157 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="returnFolderNameAndFolderPath" path="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>returnFolderNameAndFolderPath:
+	-- CIS Repository Helper Procedure --
+	Return the root folder name and the remaing folder path.  Used for traversing folder structures either
+	top down or bottom up.  This procedure is also used when creating a folder structure from beginning to end.
+ 
+	Input:
+		fullResourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/Utilities/repository
+		mode - defines the mode by which to extract folder path and root name  
+			Values: B or E, &apos;B&apos;=beginning folder and remaining folder path, 
+					&apos;E&apos;=ending folder remaining folder path
+	Output:
+		folderName - contains the root folder name extracted from the incoming fullResourcePath
+			Values: example:
+				when &apos;B&apos; then &apos;shared&apos;
+				when &apos;E&apos; then &apos;repository&apos;
+		folderPath - contains the remaining folder path
+			Values: example:
+				when &apos;B&apos; then &apos;/Utilities/repository&apos;
+				when &apos;E&apos; then &apos;/shared/Utilities&apos;
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="fullResourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="mode" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="folderName" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="folderPath" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* returnFolderNameAndFolderPath:
+	-- CIS Repository Helper Procedure --
+	Return the root folder name and the remaing folder path.  Used for traversing folder structures either
+	top down or bottom up.  This procedure is also used when creating a folder structure from beginning to end.
+ 
+	Input:
+		fullResourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/Utilities/repository
+		mode - defines the mode by which to extract folder path and root name  
+			Values: B or E, &apos;B&apos;=beginning folder and remaining folder path, 
+					&apos;E&apos;=ending folder remaining folder path
+	Output:
+		folderName - contains the root folder name extracted from the incoming fullResourcePath
+			Values: example:
+				when &apos;B&apos; then &apos;shared&apos;
+				when &apos;E&apos; then &apos;repository&apos;
+		folderPath - contains the remaining folder path
+			Values: example:
+				when &apos;B&apos; then &apos;/Utilities/repository&apos;
+				when &apos;E&apos; then &apos;/shared/Utilities&apos;
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE returnFolderNameAndFolderPath(
+	IN fullResourcePath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType,  -- full path to resource
+	IN mode					CHAR(1), -- &apos;B&apos;=beginning folder and remaining folder path, &apos;E&apos;=ending folder remaining folder path
+	OUT folderName			varchar(255),
+	OUT folderPath  		/shared/ASAssets/Utilities/TypeDefinitions.pathType
+)
+BEGIN
+	DECLARE i 		integer;
+	DECLARE foundMarker 	boolean DEFAULT false;
+	DECLARE currFolderPath	VARCHAR;
+
+	-- Trim any leading or trailing spaces
+	set folderPath = TRIM(fullResourcePath);
+	-- Normalize separators to make it easier
+	set folderPath = REPLACE(folderPath,&apos;\&apos;,&apos;/&apos;);
+	-- Make sure there is only a single separator
+	set folderPath = REPLACE(folderPath,&apos;//&apos;,&apos;/&apos;); 
+
+	-- A path should look like this:
+	-- /shared/ICDL_SDK/Datasource_Tier/ExampleFileSource
+	-- Add leading / but only if a windows drive is not present such as c:
+	if (SUBSTRING(folderPath,1,1) &lt;&gt; &apos;/&apos; and POSITION(&apos;:&apos; in folderPath) = 0) then
+		set folderPath = &apos;/&apos;||folderPath;
+	end if;
+	-- Remove trailing /
+	if (SUBSTRING(folderPath,length(folderPath),1) = &apos;/&apos;) then
+		set folderPath = SUBSTRING(folderPath,1,length(folderPath)-1);
+	end if;
+
+	-- Extract the beginning folder part
+	if (upper(mode) = &apos;B&apos;) then
+	    if (SUBSTRING(folderPath,1,1) = &apos;/&apos;) then
+		set folderPath = SUBSTRING(folderPath,2,LENGTH(folderPath));
+	    end if;
+	    set i = POSITION(&apos;/&apos; IN folderPath);
+	    if (i &gt; 0) then
+		set folderName = TRIM(SUBSTRING(folderPath, 1, i));
+		set folderPath = TRIM(REPLACE(&apos;/&apos;||SUBSTRING(folderPath, i+1, length(folderPath)),&apos;//&apos;,&apos;/&apos;));
+		-- Remove trailing /
+		if (SUBSTRING(folderPath,length(folderPath),1) = &apos;/&apos;) then
+			set folderPath = SUBSTRING(folderPath,1,length(folderPath)-1);
+		end if;
+	    else
+		set folderName = folderPath;
+		set folderPath = &apos;&apos;;
+	    end if;
+	    -- Remove trailing /
+	    if (SUBSTRING(folderName,length(folderName),1) = &apos;/&apos;) then
+		set folderName = SUBSTRING(folderName,1,length(folderName)-1);
+	    end if;
+	else -- &apos;E&apos;=extract the Ending folder part
+	    set i = length(folderPath);
+	    pathLoop:
+	    while (i &gt; 0) do
+		if (SUBSTRING(folderPath, i, 1) = &apos;/&apos;) then
+			set foundMarker = true;
+			leave pathLoop;
+		end if;
+		set i = i - 1;
+	    end while;
+	    if (foundMarker) then
+		set folderName = SUBSTRING(folderPath,i+1,LENGTH(folderPath)-i);
+		set folderPath = SUBSTRING(folderPath,1,i-1);
+	    end if;
+
+	end if;
+--	call print(&apos;folderPath=&apos;||EmptyStr(folderPath));
+--	call print(&apos;folderName=&apos;||EmptyStr(folderName));
+END</attribute>
+  <attribute name="creationDate" type="LONG">1376679119330</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

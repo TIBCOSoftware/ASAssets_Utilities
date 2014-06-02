@@ -1,0 +1,628 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getDocResourceFormatImpl1" path="/shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getDocResourceFormatImpl1:
+
+	This procedure provides an implementation to retrieve and format the documentation for all resources located in the passed in starting folder.
+
+	This procedure is invoked by the getAllDocumentationAPI.  
+	This procedure recursively loops through all of the resources found within the given starting folder (CONTAINER).
+	The output of this procedure provides the formatting for all CIS resource.  
+	The idea behind this procedure is that it provides a template for an implementation.  
+	A user of the documentation utilities may choose to copy and create a new implementation and then customize it for their project.  
+	Any new implementation “must” follow the input and output interface definitions as shown below.
+
+	Input:
+		startingResourcePath		The starting folder path from which to start formatting the documentation.  It is always of type CONTAINER.
+										Values: e.g. /shared/examples
+		startingResourceType		The resource type of the resource path.
+										Values: e.g. CONTAINER
+		constantPath				This is the path to the constants file
+										Values: e.g. /shared/ASAssets/Utilities/documentation/constants()
+		switches					Provides guidance on what to print for documentation and save files.  
+										The format is print_switch=[option1|{default_option2}|option3]
+										This is a space separate list with no spaces before or after the equal sign.
+											print_containers=[{none}|all] - print the resource container (folder)
+											print_annotations=[none|{all}|nonblank|blank] - print all annotations whether they are blank or not
+											print_resource_projections=[none|{all}] - print the resource projections
+											print_resources_used=[none|{all}] - print the immediate child resources used by the parent resource
+											print_datasource_accessed=[none|{all}] - print the data source accessed list
+											print_datasource_lineage=[none|{all}] - print the data source lineage
+											print_time=[{no}|yes] - print the time it takes to retrieve the full documentation for each resource and the final time
+ 											save_file=[{no}|yes] - save the results to a file
+											save_file_intermediate=[{no}|yes] - save the file intermediately after each resource is completed
+										Example:
+											1) switches: when left blank or null then the defaults are taken
+											   result: all documentation modules are printed
+											2) switches: print_annotations=nonblank print_resource_projections=none print_resources_used=none print_datasource_lineage=none
+											   result: only non-blank annotations are printed and nothing else
+		excludeKeywordsInPathList	Exclude keywords in path, case insensitive.  Comma separated list.  These are whole words and not wild cards.  
+										A word is defined by what exists between folder separators &quot;/&quot;. 
+										i.e. &apos;analysis,archive&apos;
+		excludePathsList			Exclude actual paths.  Double quotes are not required.  Comma separated list.
+										The exclude path list simply has to be present in any part of the resource path.  
+										This means that it can be a partial path.
+		filePath 					The full file system path to generate the documentation file to.
+	Output: 
+		formattedText - formatted text is out output complete with a separator at the beginning of the resource.
+
+	Exceptions:  none
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	07/25/2012		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Modified to print out timings and save to a file after each resource.
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="startingResourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="startingResourceType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="constantPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="switches" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="excludeKeywordsInPathList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="excludePathsList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="filePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="formattedText">
+          <datatype name="Text" referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/util/System" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="constantName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocCounts" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="numResources" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numContainers" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numConnectors" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numDefinitionSets" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numTriggers" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numViews" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numProcs" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numTree" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numDatasources" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numPublished" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numOtherType" direction="INOUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocCounts" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/parseDocSwitches" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="switches" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="command" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="commandOptionValue" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1_resource" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="switches" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="formattedText" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1_resource" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="filePath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="append" direction="IN">
+        <datatype type="INTEGER" minValue="-32768" maxValue="32767"/>
+      </element>
+      <element name="fileContent" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="resourceTreeList" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resPath">
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creationDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="creationDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="creatorUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creatorUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="lastModifiedDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="lastModifiedUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getDocConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getDocConstant" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/parseDocSwitches" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/parseDocSwitches" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getDocResourceFormatImpl1:
+
+	This procedure provides an implementation to retrieve and format the documentation for all resources located in the passed in starting folder.
+
+	This procedure is invoked by the getAllDocumentationAPI.  
+	This procedure recursively loops through all of the resources found within the given starting folder (CONTAINER).
+	The output of this procedure provides the formatting for all CIS resource.  
+	The idea behind this procedure is that it provides a template for an implementation.  
+	A user of the documentation utilities may choose to copy and create a new implementation and then customize it for their project.  
+	Any new implementation “must” follow the input and output interface definitions as shown below.
+
+	Input:
+		startingResourcePath		The starting folder path from which to start formatting the documentation.  It is always of type CONTAINER.
+										Values: e.g. /shared/examples
+		startingResourceType		The resource type of the resource path.
+										Values: e.g. CONTAINER
+		constantPath				This is the path to the constants file
+										Values: e.g. /shared/ASAssets/Utilities/documentation/constants()
+		switches					Provides guidance on what to print for documentation and save files.  
+										The format is print_switch=[option1|{default_option2}|option3]
+										This is a space separate list with no spaces before or after the equal sign.
+											print_containers=[{none}|all] - print the resource container (folder)
+											print_annotations=[none|{all}|nonblank|blank] - print all annotations whether they are blank or not
+											print_resource_projections=[none|{all}] - print the resource projections
+											print_resources_used=[none|{all}] - print the immediate child resources used by the parent resource
+											print_datasource_accessed=[none|{all}] - print the data source accessed list
+											print_datasource_lineage=[none|{all}] - print the data source lineage
+											print_time=[{no}|yes] - print the time it takes to retrieve the full documentation for each resource and the final time
+ 											save_file=[{no}|yes] - save the results to a file
+											save_file_intermediate=[{no}|yes] - save the file intermediately after each resource is completed
+										Example:
+											1) switches: when left blank or null then the defaults are taken
+											   result: all documentation modules are printed
+											2) switches: print_annotations=nonblank print_resource_projections=none print_resources_used=none print_datasource_lineage=none
+											   result: only non-blank annotations are printed and nothing else
+		excludeKeywordsInPathList	Exclude keywords in path, case insensitive.  Comma separated list.  These are whole words and not wild cards.  
+										A word is defined by what exists between folder separators &quot;/&quot;. 
+										i.e. &apos;analysis,archive&apos;
+		excludePathsList			Exclude actual paths.  Double quotes are not required.  Comma separated list.
+										The exclude path list simply has to be present in any part of the resource path.  
+										This means that it can be a partial path.
+		filePath 					The full file system path to generate the documentation file to.
+	Output: 
+		formattedText - formatted text is out output complete with a separator at the beginning of the resource.
+
+	Exceptions:  none
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	07/25/2012		Mike Tinius			5.2.0			Created new
+	11/12/2012		Mike Tinius			5.2.0			Modified to print out timings and save to a file after each resource.
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getDocResourceFormatImpl1(
+    IN startingResourcePath			/shared/ASAssets/Utilities/TypeDefinitions.pathType,  
+	IN startingResourceType			VARCHAR,
+	IN constantPath					/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	IN switches						LONGVARCHAR,
+	IN excludeKeywordsInPathList	LONGVARCHAR,
+	IN excludePathsList				LONGVARCHAR,
+	IN filePath						/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	OUT result						PIPE (formattedText	/lib/util/System.Text)
+)
+BEGIN
+	DECLARE moduleName 					/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType DEFAULT &apos;getDocResourceFormatImpl1&apos;;
+	DECLARE debug 						CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debug&apos;);
+    DECLARE resourcePath			 	/shared/ASAssets/Utilities/TypeDefinitions.pathType;
+    DECLARE resourceType 				VARCHAR(255);
+	DECLARE formattedText				/lib/util/System.Text DEFAULT &apos;&apos;;
+	DECLARE resourceText				/lib/util/System.Text;
+	DECLARE resPath						LONGVARCHAR;
+	DECLARE resourceName				VARCHAR;
+	DECLARE beginSeparator				VARCHAR DEFAULT getDocConstant(constantPath, &apos;beginSeparator&apos;);
+	DECLARE endSeparator				VARCHAR DEFAULT getDocConstant(constantPath, &apos;endSeparator&apos;);
+	DECLARE minorSeparator 				VARCHAR DEFAULT getDocConstant(constantPath, &apos;minorSeparator&apos;);
+	DECLARE eol							VARCHAR DEFAULT getDocConstant(constantPath, &apos;eol&apos;);
+	DECLARE i,j							INTEGER DEFAULT 1;
+	DECLARE excludeKeywordVect			VECTOR(VARCHAR(1024)) DEFAULT VECTOR[(null)];
+	DECLARE excludePathVect				VECTOR(LONGVARCHAR) DEFAULT VECTOR[(null)];
+	DECLARE resourceVect				VECTOR(
+		ROW(
+			resourcePath 				/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+			resourceType 				VARCHAR(255) 
+			)							) 	DEFAULT VECTOR[(null)];
+	DECLARE pathPart					VARCHAR(1024);
+	DECLARE usePath						BOOLEAN;
+	DECLARE numResources				INTEGER DEFAULT 0;
+	DECLARE numContainers				INTEGER DEFAULT 0;
+	DECLARE numConnectors 				INTEGER DEFAULT 0;
+	DECLARE numDefinitionSets			INTEGER DEFAULT 0;
+	DECLARE numTriggers					INTEGER DEFAULT 0;
+	DECLARE numViews					INTEGER DEFAULT 0;
+	DECLARE numProcs					INTEGER DEFAULT 0;
+	DECLARE numTree						INTEGER DEFAULT 0;
+	DECLARE numDatasources				INTEGER DEFAULT 0;
+	DECLARE numPublished				INTEGER DEFAULT 0;
+	DECLARE numOtherType				INTEGER DEFAULT 0;
+	DECLARE startTime					TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+	DECLARE duration					INTERVAL DAY TO SECOND;
+	DECLARE NotEmpty					INTEGER DEFAULT 0;
+
+	-- Create the exclude keyword vector
+	set i = 1;
+	for e as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludeKeywordsInPathList,&apos;,&apos;,0) do
+		-- First trim the value and then remove any double quotes surrounding it.  Do not want to trim after remove the double quotes in case there are leading/trailing spaces.
+		if (isEmpty(e.splitElement) = 0) then
+			set excludeKeywordVect[i] = REPLACE(TRIM(e.splitElement),&apos;&quot;&apos;,&apos;&apos;);
+			set excludeKeywordVect = EXTEND(excludeKeywordVect,1);
+			set i = i + 1;
+		end if;
+	end for;
+	set excludeKeywordVect = TRUNCATE(excludeKeywordVect,1);
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;Exclude Keyword Vector num=&apos;||CARDINALITY(excludeKeywordVect));
+
+	-- Create the exclude path vector
+	set i = 1;
+	for e as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludePathsList,&apos;,&apos;,0) do
+		-- First trim the value and then remove any double quotes surrounding it.  Do not want to trim after remove the double quotes in case there are leading/trailing spaces.
+		if (isEmpty(e.splitElement) = 0) then
+			set excludePathVect[i] = REPLACE(TRIM(e.splitElement),&apos;&quot;&apos;,&apos;&apos;);
+			set excludePathVect = EXTEND(excludePathVect,1);
+			set i = i + 1;
+		end if;
+	end for;
+	set excludePathVect = TRUNCATE(excludePathVect,1);
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;Exclude Path Vector num=&apos;||CARDINALITY(excludePathVect));
+
+	-- Add the single resource to the vector when it is not a CONTAINER or DATA_SOURCE
+	if (startingResourceType != &apos;CONTAINER&apos; and startingResourceType != &apos;DATA_SOURCE&apos;) then
+		set resourceVect[1].resourcePath = startingResourcePath;
+		set resourceVect[1].resourceType = startingResourceType;
+	else
+		-- Ignore the resource itself if it is a CONTAINER (folder)
+		if (startingResourceType = &apos;CONTAINER&apos;) then
+			set resourceVect = TRUNCATE(resourceVect, 1);
+			set i = 0;
+		else
+			-- Add the resource itself to the vector if it is a DATA_SOURCE
+			set i = 1;
+			set resourceVect[i].resourcePath = startingResourcePath;
+			set resourceVect[i].resourceType = startingResourceType;
+		end if;
+		-- Loop through and retrieve all the resources from a given starting resource path.
+		for r as select * from /shared/ASAssets/Utilities/repository/getResourceListRecursive(startingResourcePath, startingResourceType) do
+			set i = i + 1;
+			set resourceVect = EXTEND(resourceVect, 1);
+			-- set the full resource path
+			set resourceVect[i].resourcePath = r.resPath;
+			set resourceVect[i].resourceType = r.resType;
+		end for;
+	end if;
+
+	set i = 1;
+	WHILE (i &lt;= CARDINALITY(resourceVect)) DO
+		set resourcePath = resourceVect[i].resourcePath;
+		set resourceType = resourceVect[i].resourceType;
+--call print(&apos;i=&apos;||emptyStr(i));
+--call print(&apos;resourcePath=&apos;||emptyStr(resourcePath));
+--call print(&apos;resourceType=&apos;||emptyStr(resourceType));
+
+		-- check for resource paths matching any portion of the exclude path list.  
+		--		The exclude path list simply has to be present in any part of the resource path.  This means that it can be a partial path.
+		-- set the full resource path
+		set resPath = REPLACE(TRIM(resourcePath),&apos;&quot;&apos;,&apos;&apos;);
+		set usePath = true;
+		set j = 1;
+		usePathLoop1:
+		while (j &lt;= CARDINALITY(excludePathVect)) do
+			-- if the any portion of the exclude path is found within the path then don&apos;t use the path.
+			if (POSITION(excludePathVect[j] IN resPath) &gt; 0) then
+				set usePath = false;
+				leave usePathLoop1;
+			end if;
+			set j = j + 1;
+		end while;
+
+		-- Check for keywords in the path
+		if (usePath) then
+			usePathLoop2:
+			for s as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(resourcePath, &apos;/&apos;, 0) do
+				set pathPart = REPLACE(TRIM(s.splitElement),&apos;&quot;&apos;,&apos;&apos;);
+				if (isEmpty(pathPart) = 0) then
+					set j = 1;
+					while (j &lt;= CARDINALITY(excludeKeywordVect)) do
+						-- If the keyword is found in the path then don&apos;t use the path
+						if (UPPER(pathPart) = UPPER(excludeKeywordVect[j])) then
+							set usePath = false;
+							leave usePathLoop2;
+						end if;
+						set j = j + 1;
+					end while;
+				end if;
+			end for;
+		end if;
+
+		-- Only continue if this path should be used
+		if (usePath) then
+				-- Count the number of resources, containers, views, procedures and published resources for the summary
+				call /shared/ASAssets/Utilities/documentation/helpers/getDocCounts(resourceType, numResources, numContainers, numConnectors, numDefinitionSets, numTriggers, numViews, numProcs, numTree, numDatasources, numPublished, numOtherType);
+
+				-- Format the resource
+				call /shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1_resource(resourcePath, resourceType, constantPath, switches, resourceText);
+				set formattedText = formattedText || resourceText;
+
+			/********************************
+			 * Save File Intermediate
+			 *******************************/
+			-- Save the documentation to the file if there is documentation and the file path is not empty and the switch save_file_intermediate=yes
+				--  no=0 which means to overwrite the file because it was not saved previously.  Write it all at once at the end. 
+				-- yes=1 which means append the contents since it has been saved intermediately along the way.
+			if ( (isEmpty(formattedText) = NotEmpty) and 
+				 (isEmpty(filePath) = NotEmpty) and 
+				 (parseDocSwitches(switches, &apos;save_file&apos;) = 1) and 
+				 (parseDocSwitches(switches, &apos;save_file_intermediate&apos;) = 1) ) then
+					call /shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii(filePath,1,formattedText);
+					call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;Resource documentation text has been saved.&apos;);
+					set formattedText = &apos;&apos;;
+			else
+					set formattedText = formattedText || eol;
+			end if; 
+
+		end if;
+		set i = i + 1;
+	end while;
+	set duration = CURRENT_TIMESTAMP - startTime;
+
+	-- Add the summary of views processed
+	set formattedText = formattedText || beginSeparator || eol;
+	set formattedText = formattedText || &apos;---------------------&apos; || eol;
+	set formattedText = formattedText || &apos;Documentation Summary&apos; || eol;
+	set formattedText = formattedText || &apos;---------------------&apos; || eol;
+	set formattedText = formattedText || &apos;Starting Root Path: &apos; || emptyStr(startingResourcePath) || eol;
+	set formattedText = formattedText || &apos;Starting Path Type: &apos; || emptyStr(startingResourceType) || eol;
+	set formattedText = formattedText || &apos;---------------------------------------------------------&apos; || eol;
+	set formattedText = formattedText || &apos;Print Switches Input: &apos; || emptyStr(switches) || eol;
+	set formattedText = formattedText || eol;
+	set formattedText = formattedText || &apos;print_containers=&apos;||parseDocSwitches(switches, &apos;print_containers&apos;)|| &apos;             Key:[{none}=0|all=1]&apos; || eol;
+	set formattedText = formattedText || &apos;print_annotations=&apos;||parseDocSwitches(switches, &apos;print_annotations&apos;)||&apos;            Key:[none=0|{all}=1|nonblank=2|blank=3]&apos; || eol;
+	set formattedText = formattedText || &apos;print_resource_projections=&apos;||parseDocSwitches(switches, &apos;print_resource_projections&apos;)||&apos;   Key:[none=0|{all}=1]&apos; || eol;
+	set formattedText = formattedText || &apos;print_resources_used=&apos;||parseDocSwitches(switches, &apos;print_resources_used&apos;)||&apos;         Key:[none=0|{all}=1]&apos; || eol;
+	set formattedText = formattedText || &apos;print_datasource_accessed=&apos;||parseDocSwitches(switches, &apos;print_datasource_accessed&apos;)||&apos;    Key:[none=0|{all}=1]&apos; || eol;
+	set formattedText = formattedText || &apos;print_datasource_lineage=&apos;||parseDocSwitches(switches, &apos;print_datasource_lineage&apos;)||&apos;     Key:[none=0|{all}=1]&apos; || eol;
+	set formattedText = formattedText || &apos;print_time=&apos;||parseDocSwitches(switches, &apos;print_time&apos;)||&apos;                   Key:[{no}=0|yes=1]&apos; || eol;
+	set formattedText = formattedText || &apos;save_file=&apos;||parseDocSwitches(switches, &apos;save_file&apos;)||&apos;                    Key:[{no}=0|yes=1]&apos; || eol;
+	set formattedText = formattedText || &apos;save_file_intermediate=&apos;||parseDocSwitches(switches, &apos;save_file_intermediate&apos;)||&apos;       Key:[{no}=0|yes=1]&apos; || eol;
+	set formattedText = formattedText || eol;
+	set formattedText = formattedText || &apos;---------------------------------------------------------&apos; || eol;
+	set formattedText = formattedText || &apos;Total Number of Resources:               &apos; || emptyStr(numResources) || eol;
+	set formattedText = formattedText || &apos;---------------------------------------------------------&apos; || eol;
+	set formattedText = formattedText || &apos;Number of Published    (LINK):           &apos; || emptyStr(numPublished) || eol;
+	set formattedText = formattedText || &apos;Number of Folders      (CONTAINER):      &apos; || emptyStr(numContainers) || eol;
+	set formattedText = formattedText || &apos;Number of Views        (TABLE):          &apos; || emptyStr(numViews) || eol;
+	set formattedText = formattedText || &apos;Number of Procedures   (PROCEDURE):      &apos; || emptyStr(numProcs) || eol;
+	set formattedText = formattedText || &apos;Number of Data Sources (DATA_SOURCE):    &apos; || emptyStr(numDatasources) || eol;
+	set formattedText = formattedText || &apos;Number of XML          (TREE):           &apos; || emptyStr(numTree) || eol;
+	set formattedText = formattedText || &apos;Number of Triggers     (TRIGGER):        &apos; || emptyStr(numTriggers) || eol;
+	set formattedText = formattedText || &apos;Number of Connectors   (CONNECTOR):      &apos; || emptyStr(numConnectors) || eol;
+	set formattedText = formattedText || &apos;Number of Def. Sets    (DEFINITION_SET): &apos; || emptyStr(numDefinitionSets) || eol;
+	set formattedText = formattedText || &apos;Number of Other resource type:           &apos; || emptyStr(numOtherType) || eol;
+
+	-- Determine whether to print the timings for the entire documentation gathering process
+	if (parseDocSwitches(switches, &apos;print_time&apos;) = 1) then
+		set formattedText = formattedText || &apos;---------------------------------------------------------&apos; || eol;
+		set formattedText = formattedText || &apos;Documentation Generation Time=&apos;||emptyStr(duration)||eol;
+	end if;
+	set formattedText = formattedText || endSeparator || eol;
+
+	-- Insert the results into the output pipe
+	insert into result values(formattedText);
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

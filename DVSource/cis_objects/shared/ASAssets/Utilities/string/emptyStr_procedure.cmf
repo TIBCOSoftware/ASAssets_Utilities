@@ -1,0 +1,72 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="emptyStr" path="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>emptyStr:
+	Return a blank (&apos;&apos;) if input is null or blank – used extensively when writing to the log – 
+	null strings result in null output which is not useful.  If the string is not blank, 
+	then return the original string.
+ 
+	Input:
+		inputString - contains any string.  
+			Values: Any text value
+	Output:
+		outputString - return blank (&apos;&apos;) or the original text if not blank or null
+			Values: Any text value
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inputString" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="outputString" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/* emptyStr:
+	Return a blank (&apos;&apos;) if input is null or blank – used extensively when writing to the log – 
+	null strings result in null output which is not useful.  If the string is not blank, 
+	then return the original string.
+ 
+	Input:
+		inputString - contains any string.  
+			Values: Any text value
+	Output:
+		outputString - return blank (&apos;&apos;) or the original text if not blank or null
+			Values: Any text value
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE emptyStr(
+	in inputString 		longvarchar,
+	out outputString	longvarchar
+)
+BEGIN
+	IF (inputString is null) then
+		set outputString = &apos;&apos;;
+	else
+		set outputString = inputString;
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1392754648782</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

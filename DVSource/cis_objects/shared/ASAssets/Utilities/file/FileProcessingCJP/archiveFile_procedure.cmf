@@ -1,0 +1,43 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="archiveFile" path="/shared/ASAssets/Utilities/file/FileProcessingCJP/archiveFile" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>/*
+ * Source File: ArchiveFile.java
+ *
+ * Description: This Composite CJP moves a file from the source file system to an archival directory.
+ *
+ *   Note: The import [import com.compositesw.extension.*] requires CIS_HOME\apps\extension\lib\csext.jar\
+ * 
+ *	Input:
+ *		filePath - full path to a file that is to be archived.				Types.VARCHAR, DIRECTION_IN
+ *		archivalDirectoryPath - directory path to archive the file to.		Types.VARCHAR, DIRECTION_IN
+ *
+ *	Output: none
+ *
+ *	Exceptions:  CustomProcedureException, SQLException
+ *	Author:      Mike Tinius
+ *	Date:        8/6/2010
+ *	CSW Version: 5.1.0
+ *
+ *  © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+ */</annotation>
+  <parameters>
+    <parameter name="filePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="archivalDirectoryPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.file.ArchiveFile</attribute>
+  <attribute name="creationDate" type="LONG">1366122592839</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392747361934</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

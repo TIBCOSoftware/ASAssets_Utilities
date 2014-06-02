@@ -1,0 +1,546 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="recoverFailedCacheRefresh" path="/shared/ASAssets/Utilities/repository/recoverFailedCacheRefresh" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>recoverFailedCacheRefresh:
+    
+      Occasionally a cache refresh request will exit without CIS noticing it. This script clears the cache 
+      status that says a refresh is &quot;in progress&quot; so that CIS will be able to kick off a new refresh.
+
+      Because the data will presumably be in an inconsistent state if an incremental cache refresh is
+      cancelled, this script will change the &quot;in progress&quot; state to &quot;failed&quot; so that any future incremental
+      refresh requests will be forced to do a full refresh.
+
+      DO NOT run this on views whose cache refreshes really are in progress. 
+    
+    Input: 
+    
+      inResourcePath - Full path to the view that is cached. 
+        Values: Any valid path to a cached resource.
+        
+    
+    Output:
+    
+      resultCode: Code indicating the status of the call 
+        Values: 0 indicates success, any other integer indicates a failure of some kind (see resultMessage.)
+
+      resultMessage: Message indicating the status of the call
+        Values: Success or failure message.
+    
+    Exceptions:  
+        N/A
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	10/04/2010		Calvin Goodrich		5.1.0			Created new
+    11/19/2013      Matthew Lee		    6.2.4           Expanded code comments, modified procedure to accept resource type, and to set the cache status to &apos;F&apos;, indicating a failed refresh.
+    01/29/2014      Matthew Lee		    6.2.5           Modified procedure to handle incremental and normal caches. Added logic to clear the incrementalstatus column.
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inResourcePath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="inResourceType" direction="IN" nullable="true">
+      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+    </parameter>
+    <parameter name="resultCode" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="resultMessage" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="65536"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/LoadResourceCacheStatus" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="version" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceVersion" type="STRING" maxLength="255"/>
+      </element>
+      <element name="exists" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/resource/UpdateResourceCacheKeyStatus" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="cacheKey" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="status" direction="IN">
+        <datatype type="BOOLEAN"/>
+      </element>
+      <element name="startTime" direction="IN">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="message" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getDataSourceCacheConfig" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inDataSourcePath" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="StatusTablePath" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="TrackingTablePath" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceCacheConfigCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="inType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="configured">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="storageMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageDataSourcePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageTargetName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storagePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageType">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="refreshMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="scheduleMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="startTime">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="fromTimeInADay">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="endTimeInADay">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="recurringDay">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="interval">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="period">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="count">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="isCluster">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="expirationPeriod">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="clearRule">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="allOrNothing">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="incremental">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="storageBucketMode">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketCatalog">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketSchema">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketPrefix">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketNumBuckets">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="storageDropCreateIdx">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="firstRefreshCallback">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="secondRefreshCallback">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexFind" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexFind" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/*
+    recoverFailedCacheRefresh:
+    
+      Occasionally a cache refresh request will exit without CIS noticing it. This script clears the cache 
+      status that says a refresh is &quot;in progress&quot; so that CIS will be able to kick off a new refresh.
+
+      Because the data will presumably be in an inconsistent state if an incremental cache refresh is
+      cancelled, this script will change the &quot;in progress&quot; state to &quot;failed&quot; so that any future incremental
+      refresh requests will be forced to do a full refresh.
+
+      DO NOT run this on views whose cache refreshes really are in progress. 
+    
+    Input: 
+    
+      inResourcePath - Full path to the view that is cached. 
+        Values: Any valid path to a cached resource.
+        
+    
+    Output:
+    
+      resultCode: Code indicating the status of the call 
+        Values: 0 indicates success, any other integer indicates a failure of some kind (see resultMessage.)
+
+      resultMessage: Message indicating the status of the call
+        Values: Success or failure message.
+    
+    Exceptions:  
+        N/A
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	10/04/2010		Calvin Goodrich		5.1.0			Created new
+    11/19/2013      Matthew Lee		    6.2.4           Expanded code comments, modified procedure to accept resource type, and to set the cache status to &apos;F&apos;, indicating a failed refresh.
+    01/29/2014      Matthew Lee		    6.2.5           Modified procedure to handle incremental and normal caches. Added logic to clear the incrementalstatus column.
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE recoverFailedCacheRefresh(
+    IN inResourcePath /lib/resource/ResourceDefs.ResourcePath, -- Can be either the cached view itself or (if partitioning configured) the union view (the original location of the view being cached.)
+	IN inResourceType /lib/resource/ResourceDefs.ResourceType,
+    OUT resultCode INTEGER,
+    OUT resultMessage VARCHAR(65536)
+)
+proc:
+BEGIN
+    PATH /lib/resource;
+
+    -- constants
+    --
+    DECLARE PROC_NAME CONSTANT VARCHAR DEFAULT &apos;recoverCanceledCacheRefresh()&apos;;
+    DECLARE NL CONSTANT CHAR(1) DEFAULT &apos;
+&apos;;
+
+    -- local variables
+    --
+    DECLARE resourcePath ResourceDefs.ResourcePath DEFAULT inResourcePath;
+	DECLARE resourceType ResourceDefs.ResourceType DEFAULT inResourceType;
+    DECLARE resourceName ResourceDefs.ResourceName DEFAULT RegexFind (inResourcePath, &apos;(?&lt;=/)[^/]+&apos;, -1); -- RegexFind here is performing the same operation as UNIX&apos;s &quot;basename&quot; program
+    DECLARE resourceExists BOOLEAN;
+    DECLARE cacheConfigured BIT;
+    DECLARE cacheEnabled BIT;
+    DECLARE cacheDSPath, cacheStatusPath, cacheTrackingPath ResourceDefs.ResourcePath;
+    DECLARE latestStartTime TIMESTAMP;
+    DECLARE currentCacheKey BIGINT;
+    DECLARE currentCacheStatus CHAR(1);
+	DECLARE currentCacheIncrStatus CHAR(1);
+	DECLARE currentCacheIncrLevel VARCHAR(255);
+
+    DECLARE cursCacheStatus CURSOR (
+        starttime TIMESTAMP,
+        status CHAR(1),
+        cachekey BIGINT,
+		incrementalstatus CHAR(1),
+		incrementalmaintenancelevel VARCHAR(255)
+    );
+
+	--Confirm that the identified resource exists in Composite
+    CALL ResourceExists(
+        resourcePath,
+        resourceType,
+        NULL,
+        resourceExists
+    ); 
+    IF (NOT resourceExists) THEN
+        RAISE System.IllegalArgumentException VALUE &apos;&quot;&apos; || resourcePath || &apos;&quot;: view/table does not exist. Exiting.&apos;;
+    END IF;
+
+    -- make sure caching is configured and enabled for the target resource
+    SELECT
+        configured,
+        enabled,
+        storageDataSourcePath
+    INTO
+        cacheConfigured,
+        cacheEnabled,
+        cacheDSPath
+    FROM
+        /shared/ASAssets/Utilities/repository/getResourceCacheConfigCursor(
+            resourcePath,
+            resourceType
+        );
+
+	--If caching is not configured or enabled for the resource, then throw an exception
+    IF (cacheConfigured &lt;&gt; 1) THEN
+        RAISE System.IllegalArgumentException VALUE &apos;&quot;&apos; || resourcePath || &apos;&quot;: view/table is not configured for caching. Exiting.&apos;;
+    END IF;
+
+    IF (cacheEnabled &lt;&gt; 1) THEN
+        RAISE System.IllegalArgumentException VALUE &apos;&quot;&apos; || resourcePath || &apos;&quot;: view/table&apos;&apos;s caching is disabled. Exiting.&apos;;
+    END IF;
+
+	--Get the resource&apos;s cache configuration properties.
+    CALL /shared/ASAssets/Utilities/repository/getDataSourceCacheConfig(
+        cacheDSPath,
+        cacheStatusPath,
+        cacheTrackingPath
+    ); 
+
+	--If the cache status table path hasn&apos;t been set then throw an exception
+    IF (cacheStatusPath IS NULL) THEN
+        RAISE System.IllegalArgumentException VALUE &apos;&quot;&apos; || cacheDSPath || &apos;&quot;: configured caching database is not itself configured for caching. Exiting.&apos;;
+    END IF;
+
+    -- look up and verify the latest cache status
+	--Query is built dynamically to handle caches being saved to different cache data sources
+    OPEN cursCacheStatus FOR 
+&apos;       SELECT
+            MAX(starttime) starttime,
+            status,
+            cachekey,
+			incrementalstatus, 
+			incrementalmaintenancelevel
+        FROM
+            &apos; || cacheStatusPath || &apos; 
+        WHERE
+            resourceid = &apos;&apos;&apos; || resourcePath || &apos;&apos;&apos;
+        GROUP BY
+            status,
+            cachekey,
+			incrementalstatus,
+			incrementalmaintenancelevel
+        ORDER BY
+            MAX(starttime) DESC
+&apos;;
+    FETCH cursCacheStatus INTO latestStartTime, currentCacheStatus, currentCacheKey, currentCacheIncrStatus, currentCacheIncrLevel;
+    CLOSE cursCacheStatus;
+
+    IF (currentCacheStatus IS NULL) THEN
+        SET resultCode = 0;
+        SET resultMessage = &apos;The cache for &quot;&apos; || resourcePath || &apos;&quot; has not been loaded. Taking no action and exiting.&apos;;
+        LEAVE proc;
+    END IF;
+
+    IF (currentCacheStatus NOT IN (&apos;I&apos;, &apos;P&apos;)) THEN
+		--Code change to handle both caches configured for incremental and non-incremental caching
+		IF ( currentCacheIncrLevel IS NULL OR (currentCacheIncrLevel IS NOT NULL AND currentCacheIncrStatus NOT IN (&apos;I&apos;)) ) THEN
+	        SET resultCode = 0;
+    	    SET resultMessage = &apos;The latest cache status for &quot;&apos; || resourcePath || &apos;&quot; is &quot;&apos; || currentCacheStatus || &apos;&quot;. Taking no action and exiting.&apos;;
+
+	        LEAVE proc;
+		END IF;
+    END IF;
+
+    -- mark latest in-progress cache refresh as failed  and set the message value as &apos;Incremental refresh request failed due to exception.&apos;
+    --
+    EXECUTE IMMEDIATE
+&apos;       UPDATE
+            &apos; || cacheStatusPath || &apos; 
+        SET
+            status = &apos;&apos;F&apos;&apos;,
+			incrementalstatus=NULL,
+            finishtime = CURRENT_TIMESTAMP,
+            message = &apos;&apos;Incremental refresh failed due to exception.&apos;&apos;
+        WHERE
+            resourceid = &apos;&apos;&apos; || resourcePath || &apos;&apos;&apos; AND
+            cachekey = &apos;&apos;&apos; || currentCacheKey || &apos;&apos;&apos;
+&apos;;
+
+    -- Force Composite to refresh its cache status.
+    CALL LoadResourceCacheStatus(
+        resourcePath, 
+        resourceType
+    );
+    CALL UpdateResourceCacheKeyStatus(
+        resourcePath,
+        resourceType,
+        currentCacheKey,
+        &apos;true&apos;,
+        latestStartTime,
+        &apos;Incremental refresh request canceled by user.&apos;
+    );
+
+    SET resultCode = 0;
+    SET resultMessage = &apos;Cache status update successful.&apos;;
+
+EXCEPTION
+    ELSE
+        SET resultCode = -1;
+        SET resultMessage = &apos;ERROR: &apos; || CURRENT_EXCEPTION.MESSAGE;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486501474</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">15/85</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">23/57</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/105</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/78</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceExists</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/109</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/121</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/180</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>LoadResourceCacheStatus</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">26/56</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/184</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>UpdateResourceCacheKeyStatus</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">26/58</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">61/62</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

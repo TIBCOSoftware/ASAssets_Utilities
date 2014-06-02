@@ -1,0 +1,139 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="applyReservedListToWord" path="/shared/ASAssets/Utilities/repository/applyReservedListToWord" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>applyReservedListToWord:
+
+    DEPRECATED: Will be removed in future release
+        Replaced with Utilities/RepoUtils/applyReservedListToWord
+
+    -- CIS Repository Helper Procedure --
+    This procedure is used to fix the leading characters and CIS reserved words used in a word. It is assumed that 
+    a word is really a portion of a path representing the value in between two slashes &apos;/&apos;. 
+    Any word that contains a reserved word, leading underscore &apos;_&apos; or a number &apos;0123456789&apos; must have 
+    double quotes inserted around it.  This procedure would be called in conjunction with other procedures.  
+    For example, when generating a view based off of another view, the SELECT statement&apos;s FROM clause would 
+    require that the path to the underlying view be fixed with double quotes if it finds.
+ 
+    Dependencies:
+    =============
+    /shared/Utilities/repository/ConfigureReservedList - Provides a list of reserved words and characters
+    	that are used to match with the various parts of a folder path.  Add any new CIS reserved words
+    	that appear from release to release in this list.
+
+    Input:
+        word - The word to assess and fix.  Assumed to be a portion of a folder path.
+        	Values: e.g. XML
+
+    Output:
+        result - Fixed word
+            Values: e.g. &quot;XML&quot;
+
+    Exceptions:  none
+
+    Author:      Mike Tinius
+    Date:        8/2/2010
+    CSW Version: 5.1.0
+
+    Updated By:  Calvin Goodrich
+    Date:        6/2/2011
+    CSW Version: 5.1.0
+    Reason:      Updated to use regular expressions
+
+    Updated By:  Calvin Goodrich
+    Date:        10/10/2011
+    CSW Version: 5.1.0
+    Reason:      Replaced debug input parameter for Best Practices scripts.
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="word" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/repository/RepoUtils/applyReservedListToWord" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inWord" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* applyReservedListToWord:
+
+    DEPRECATED: Will be removed in future release
+        Replaced with Utilities/RepoUtils/applyReservedListToWord
+
+    -- CIS Repository Helper Procedure --
+    This procedure is used to fix the leading characters and CIS reserved words used in a word. It is assumed that 
+    a word is really a portion of a path representing the value in between two slashes &apos;/&apos;. 
+    Any word that contains a reserved word, leading underscore &apos;_&apos; or a number &apos;0123456789&apos; must have 
+    double quotes inserted around it.  This procedure would be called in conjunction with other procedures.  
+    For example, when generating a view based off of another view, the SELECT statement&apos;s FROM clause would 
+    require that the path to the underlying view be fixed with double quotes if it finds.
+ 
+    Dependencies:
+    =============
+    /shared/Utilities/repository/ConfigureReservedList - Provides a list of reserved words and characters
+    	that are used to match with the various parts of a folder path.  Add any new CIS reserved words
+    	that appear from release to release in this list.
+
+    Input:
+        word - The word to assess and fix.  Assumed to be a portion of a folder path.
+        	Values: e.g. XML
+
+    Output:
+        result - Fixed word
+            Values: e.g. &quot;XML&quot;
+
+    Exceptions:  none
+
+    Author:      Mike Tinius
+    Date:        8/2/2010
+    CSW Version: 5.1.0
+
+    Updated By:  Calvin Goodrich
+    Date:        6/2/2011
+    CSW Version: 5.1.0
+    Reason:      Updated to use regular expressions
+
+    Updated By:  Calvin Goodrich
+    Date:        10/10/2011
+    CSW Version: 5.1.0
+    Reason:      Replaced debug input parameter for Best Practices scripts.
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE applyReservedListToWord(
+    IN word    LONGVARCHAR,
+    IN debug   CHAR(1),
+    OUT result LONGVARCHAR
+)
+BEGIN
+    CALL /shared/ASAssets/Utilities/repository/RepoUtils/applyReservedListToWord(word, debug, result);
+END</attribute>
+  <attribute name="creationDate" type="LONG">1369417729294</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

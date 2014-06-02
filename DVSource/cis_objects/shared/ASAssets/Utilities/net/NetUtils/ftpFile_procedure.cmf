@@ -1,0 +1,64 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="ftpFile" path="/shared/ASAssets/Utilities/net/NetUtils/ftpFile" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>ftpFile
+
+Description: This Composite CJP uses the FTP protocol to transfer a file from an FTP server.
+
+
+Input:
+    fileName   - Filename to FTP. 
+    hostIp     - IP address of FTP server.
+    userId     - UserId to connect to FTP server.
+    userPass   - Password for the user.
+    ftpDirName - Directory where the source file resides on FTP server.
+    dirName    - Destination directory on the CIS host.
+
+
+Output: 
+    success    - true/1=file ftp success, false/0=failed w/exception.
+
+
+Exceptions:  CustomProcedureException, SQLException
+
+
+Modified Date:	Modified By:		CSW Version:	Reason:
+11/05/2013		Niraj Vora			6.2.4			Created new
+
+
+© 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="fileName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="hostIp" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="userId" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="userPass" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="ftpDirName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="dirName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BOOLEAN" subType="DATASOURCE_TYPE" type="BOOLEAN"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.net.FtpFile</attribute>
+  <attribute name="creationDate" type="LONG">1399489889814</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1399490522746</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

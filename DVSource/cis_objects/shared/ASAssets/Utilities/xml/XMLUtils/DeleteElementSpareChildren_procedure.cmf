@@ -1,0 +1,64 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="DeleteElementSpareChildren" path="/shared/ASAssets/Utilities/xml/XMLUtils/DeleteElementSpareChildren" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>DeleteElementSpareChildren:
+
+This CJP removes an element from an XML structure and moves it&apos;s children under the element&apos;s parent.
+
+
+Input:
+  inXml - The XML structure to modify.  
+    Values: Any XML document
+
+  inElementName - The name of the XML element to remove.
+    Values: Any XML element name
+
+  inElementNamespace - The namespace of the XML element to remove.
+    Values: Any XML element namespace URI
+
+  occurrence - The ordinal number of the occurrence of the element to remove (negative values here mean to start at the end of the XML document and work backwards.)
+    Values: A non-zero integer
+
+
+Output:
+  result - The XML document with the specified element removed.
+    Values: Any XML document
+
+
+Exceptions:  none
+
+
+Author:      Calvin Goodrich
+Date:        8/13/2009
+CSW Version: 4.6.0
+
+© 2009, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inXML" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="inElementName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="inElementNamespace" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="occurrance" direction="IN" nullable="true">
+      <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.xml.DeleteElementSpareChildren</attribute>
+  <attribute name="creationDate" type="LONG">1383622342553</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392758724018</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

@@ -1,0 +1,102 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="convertBit" path="/shared/ASAssets/Utilities/conversions/convertBit" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>convertBit:
+	Convert an incoming request to a bit (1/0) response
+	If the request is not parsable then NULL.
+ 
+	Input:
+		request - contains a request varchar of length 255 with various values.  
+			Values: YES,NO,TRUE,FALSE,1,0 in upper or lower case.
+
+	Output:
+		response - conversion of the incoming values to 1 or 0
+			Values: 1, 0 or null
+
+	Exceptions:  none
+
+
+	Author:      Calvin Goodrich
+	Date:        4/8/2011
+	CSW Version: 5.1.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="request" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="response" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexPosition" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* convertBit:
+	Convert an incoming request to a bit (1/0) response
+	If the request is not parsable then NULL.
+ 
+	Input:
+		request - contains a request varchar of length 255 with various values.  
+			Values: YES,NO,TRUE,FALSE,1,0 in upper or lower case.
+
+	Output:
+		response - conversion of the incoming values to 1 or 0
+			Values: 1, 0 or null
+
+	Exceptions:  none
+
+
+	Author:      Calvin Goodrich
+	Date:        4/8/2011
+	CSW Version: 5.1.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE convertBit(
+	IN request VARCHAR(255),
+	OUT response BIT
+)
+BEGIN
+    IF (RegexPosition (request, &apos;(?i)^(true|yes|1)&apos;, 1) &gt; 0) THEN
+        SET response = 1;
+    ELSEIF (RegexPosition (request, &apos;(?i)^(false|no|0)&apos;, 1) &gt; 0) THEN
+        SET response = 0;
+    ELSE
+        SET response = NULL;
+    END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486501474</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

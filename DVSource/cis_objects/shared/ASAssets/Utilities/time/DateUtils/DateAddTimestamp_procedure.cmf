@@ -1,0 +1,57 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="DateAddTimestamp" path="/shared/ASAssets/Utilities/time/DateUtils/DateAddTimestamp" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>Description:
+  Returns a new Timestamp value based on adding a datePart to the specified Timestamp.
+
+
+Inputs:
+  datePart   - Unit of measure for the output &quot;dateLength&quot;.
+    values: ‘second’, ‘minute’, ‘hour’,  ‘day’, ‘week’, ‘month’ and ‘year’ (not case sensitive)
+
+  dateLength - The number of dateParts to add
+    values: 
+
+  startDate  - The specified start date
+    values: Any valid date value.
+
+
+Outputs:
+  endDate - The end Date resulting from adding dateLength number of datePart&apos;s
+            to the start date.
+
+Exceptions:
+  None
+
+
+Author:      Jerry Joplin
+Date:        3/1/2012
+CSW Version: 5.2.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="datePart" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="dateLength" direction="IN" nullable="true">
+      <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="startDate" direction="IN" nullable="true">
+      <datatype name="TIMESTAMP" subType="DATASOURCE_TYPE" type="DATETIME"/>
+    </parameter>
+    <parameter name="endDate" direction="OUT" nullable="true">
+      <datatype name="TIMESTAMP" subType="DATASOURCE_TYPE" type="DATETIME"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.date.DateAddTimestamp</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392758514048</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

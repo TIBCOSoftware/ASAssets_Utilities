@@ -1,0 +1,137 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="logDebugMessage" path="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>logDebugMessage:
+	Provides the developer with a built in mechanism to log a message to the CIS log file 
+	whereby a single parameter can turn debugging on or off globally.  Additionally the log 
+	message will contain the CIS module (procedure) where the message was registered.  
+	This allows a developer to locate the problem area more quickly.
+ 
+	Input:
+		moduleName - The name of the invoking procedure with a length of VARCHAR(255).
+			Values: Any text value. e.g. &apos;procedureName&apos;
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+		messageText - The message to be to be sent or stored
+			Values: Any text value
+	Output: none
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="moduleName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="1"/>
+    </parameter>
+    <parameter name="messageText" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Log" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToLog" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* logDebugMessage:
+	Provides the developer with a built in mechanism to log a message to the CIS log file 
+	whereby a single parameter can turn debugging on or off globally.  Additionally the log 
+	message will contain the CIS module (procedure) where the message was registered.  
+	This allows a developer to locate the problem area more quickly.
+ 
+	Input:
+		moduleName - The name of the invoking procedure with a length of VARCHAR(255).
+			Values: Any text value. e.g. &apos;procedureName&apos;
+		debug - defines the debugging options for this procedure.  
+			Values: Y or T = debugging turned on, N or F = debugging turned off
+		messageText - The message to be to be sent or stored
+			Values: Any text value
+	Output: none
+	Exceptions:  none
+	Author:      Mike Tinius
+	Date:        8/2/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE logDebugMessage(
+	IN moduleName 	/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType, 
+	IN debug 	VARCHAR(1),
+	IN messageText 	LONGVARCHAR
+)
+BEGIN
+	DECLARE localModuleName 	/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType DEFAULT &apos;&lt;no module defined&gt;&apos;;
+	DECLARE localMessageText 	/shared/ASAssets/Utilities/TypeDefinitions.messageType DEFAULT &apos;&lt;no message text&gt;&apos;;
+	DECLARE localDebug 		VARCHAR(1) DEFAULT &apos;N&apos;;
+	DECLARE messageLen		INTEGER;
+	DECLARE messageTrim		VARCHAR 
+		DEFAULT &apos;[...MESSAGE TRIMMED TO LEN=&apos;|| /shared/ASAssets/Utilities/TypeDefinitions.messageTypeConstant||&apos;]&apos;;
+
+	IF ((debug IS NOT NULL) OR (LENGTH(debug) &gt; 0)) then
+		SET localDebug = UPPER(debug);
+	END IF;
+	if (localDebug = &apos;Y&apos; or localDebug = &apos;T&apos;) then
+		SET messageLen = /shared/ASAssets/Utilities/TypeDefinitions.messageTypeConstant;
+		IF (moduleName IS NOT NULL) THEN
+			set localModuleName = moduleName;
+		END IF;
+		IF (messageText IS NOT NULL) THEN
+			if (LENGTH(messageText) &gt; messageLen) then
+				set messageLen = messageLen - LENGTH(messageTrim);
+				set localMessageText = SUBSTRING(messageText,1,messageLen) || messageTrim;
+			else
+				set localMessageText = messageText;
+			end if;
+		END IF;	
+		call log  (localModuleName || &apos; : &apos; || localMessageText);
+		call print(localModuleName || &apos; : &apos; || localMessageText);
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1376679119252</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">8/51</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">8/52</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

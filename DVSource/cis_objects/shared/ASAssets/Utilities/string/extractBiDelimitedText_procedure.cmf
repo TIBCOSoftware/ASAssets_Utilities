@@ -1,0 +1,241 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="extractBiDelimitedText" path="/shared/ASAssets/Utilities/string/extractBiDelimitedText" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>extractBiDelimitedText:
+	Extract bi-delimited text refers to the ability to locate text based on a search term where the search term
+	encloses the sought after text in a beginning and ending delimiter thus bi-delimited.  Where this can be useful
+	is when you have to throw an exception and you want to embed both the custom error code and error message in the 
+	exception:   raise ex VALUE &apos;Custom exception: ERROR_CODE(C1) ERROR_MESSAGE(Error is foo.)&apos;.   This allows you
+	to have a generic error processing routine that can extract specific error codes and values.  Of course this is
+	not limited to that.  You can be very creative in the usage of this routine.
+ 
+	Input:
+		inText - Text to search 
+			examples:  	ERROR_CODE(C1), ERROR_CODE((C1)) 
+						ERROR_CODE{C2}, ERROR_CODE{{C2}}
+						ERROR_CODE[C3], ERROR_CODE[[C3]]
+						ERROR_CODE&lt;C4&gt;, ERROR_CODE&lt;&lt;C4&gt;&gt;
+		searchTerm - a word with no spaces that represents the keyword search term to locate
+		openingDelim - The beginning delimiter which directly follows the searchTerm
+			Allowed: Single: &apos;[&apos;, &apos;(&apos;, &apos;{&apos;,  &apos;&lt;&apos;     Doubles: &apos;[[&apos;, &apos;((&apos;, &apos;{{&apos;, &apos;&lt;&lt;&apos;
+		closingDelim - The ending delimiter which directly follows the content
+			Allowed: Single: &apos;]&apos;, &apos;)&apos;, &apos;}&apos;, &apos;&gt;&apos;      Doubles: &apos;]]&apos;, &apos;))&apos;, &apos;}}&apos;, &apos;&gt;&gt;&apos;
+		inOccurrence - the occurrence of the searchTerm to return (default=1).
+				The value of the occurrence input value determines which 
+				  occurrence to return (numbered starting at 1 from left to right. Use negative values to 
+				  number occurrences from right to left.) If a NULL value or zero is passed in for occurrence,
+				  a default of 1 is used.  
+		trimText - 0=do not trim result, 1=do trim result text (default=0)
+		caseSensitive - 0=no search term case sensitivity, 1=case sensitive search term
+	Output:
+		result - the result
+
+	Exceptions:  INVALID_DELIMITER
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	03/01/2013		Mike Tinius			5.2.0			created new for Best Practices 7.0.
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inText" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="searchTerm" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="openingDelim" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="closingDelim" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="inOccurrence" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="inTrimText" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="caseSensitive" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexPosition" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* extractBiDelimitedText:
+	Extract bi-delimited text refers to the ability to locate text based on a search term where the search term
+	encloses the sought after text in a beginning and ending delimiter thus bi-delimited.  Where this can be useful
+	is when you have to throw an exception and you want to embed both the custom error code and error message in the 
+	exception:   raise ex VALUE &apos;Custom exception: ERROR_CODE(C1) ERROR_MESSAGE(Error is foo.)&apos;.   This allows you
+	to have a generic error processing routine that can extract specific error codes and values.  Of course this is
+	not limited to that.  You can be very creative in the usage of this routine.
+ 
+	Input:
+		inText - Text to search 
+			examples:  	ERROR_CODE(C1), ERROR_CODE((C1)) 
+						ERROR_CODE{C2}, ERROR_CODE{{C2}}
+						ERROR_CODE[C3], ERROR_CODE[[C3]]
+						ERROR_CODE&lt;C4&gt;, ERROR_CODE&lt;&lt;C4&gt;&gt;
+		searchTerm - a word with no spaces that represents the keyword search term to locate
+		openingDelim - The beginning delimiter which directly follows the searchTerm
+			Allowed: Single: &apos;[&apos;, &apos;(&apos;, &apos;{&apos;,  &apos;&lt;&apos;     Doubles: &apos;[[&apos;, &apos;((&apos;, &apos;{{&apos;, &apos;&lt;&lt;&apos;
+		closingDelim - The ending delimiter which directly follows the content
+			Allowed: Single: &apos;]&apos;, &apos;)&apos;, &apos;}&apos;, &apos;&gt;&apos;      Doubles: &apos;]]&apos;, &apos;))&apos;, &apos;}}&apos;, &apos;&gt;&gt;&apos;
+		inOccurrence - the occurrence of the searchTerm to return (default=1).
+				The value of the occurrence input value determines which 
+				  occurrence to return (numbered starting at 1 from left to right. Use negative values to 
+				  number occurrences from right to left.) If a NULL value or zero is passed in for occurrence,
+				  a default of 1 is used.  
+		trimText - 0=do not trim result, 1=do trim result text (default=0)
+		caseSensitive - 0=no search term case sensitivity, 1=case sensitive search term
+	Output:
+		result - the result
+
+	Exceptions:  INVALID_DELIMITER
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	03/01/2013		Mike Tinius			5.2.0			created new for Best Practices 7.0.
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE extractBiDelimitedText(
+	IN inText			 	LONGVARCHAR,  -- text to parse
+	IN searchTerm			VARCHAR, -- word to search for
+	IN openingDelim			VARCHAR, --Allowed: Single: &apos;[&apos;, &apos;(&apos;, &apos;{&apos;,  &apos;&lt;&apos;     Doubles: &apos;[[&apos;, &apos;((&apos;, &apos;{{&apos;, &apos;&lt;&lt;&apos;
+	IN closingDelim			VARCHAR, --Allowed: Single: &apos;]&apos;, &apos;)&apos;, &apos;}&apos;, &apos;&gt;&apos;      Doubles: &apos;]]&apos;, &apos;))&apos;, &apos;}}&apos;, &apos;&gt;&gt;&apos;
+	IN inOccurrence			INTEGER,
+	IN inTrimText			INTEGER, --0 do not trim, 1=do trim
+	IN caseSensitive		INTEGER, --0=no, 1=yes case sensitive search term
+	OUT result  			LONGVARCHAR
+)
+BEGIN
+	DECLARE startPos 				INTEGER;
+	DECLARE endPos					INTEGER;
+	DECLARE tempText				LONGVARCHAR;
+	DECLARE closingDelimEscaped		VARCHAR;
+	DECLARE delim					VARCHAR;
+	DECLARE occurrence				INTEGER DEFAULT inOccurrence;
+	DECLARE trimText				INTEGER DEFAULT inTrimText;
+	DECLARE validClosingDelimdList	VARCHAR DEFAULT &apos;),},],&gt;,/,\,~,#,$,%,^,&amp;,*,+,=&apos;;
+	DECLARE INVALID_DELIMITER		EXCEPTION;
+
+	if (isEmpty(openingDelim) = 1 or isEmpty(closingDelim) = 1) then
+		raise INVALID_DELIMITER value &apos;The opening and/or closing delimiter may not be null or empty.&apos;;
+	end if;
+	if (openingDelim = closingDelim) then
+		raise INVALID_DELIMITER value &apos;The opening and closing delimiter may not be the same: &quot;&apos;||openingDelim||&apos;&quot;&apos;;
+	end if;
+
+	for r as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(validClosingDelimdList,&apos;\,&apos;,0) do
+		set delim = TRIM(r.splitElement);
+		if (SUBSTRING(closingDelim,1,1) = delim) then
+			set closingDelimEscaped = REPLACE(closingDelim, delim, &apos;\&apos;||delim);
+--			call print(&apos;delim=&apos;||delim||&apos;  closingDelimEscaped=&apos;||closingDelimEscaped);
+		end if;
+	end for;
+	if (occurrence is null or occurrence = 0) then
+		set occurrence = 1;
+	end if;
+	if (trimText is null) then
+		set trimText = 0;
+	end if;
+
+	if (caseSensitive = 0) then
+		set startPos = RegexPosition(UPPER(inText), UPPER(searchTerm), occurrence);
+	else
+		set startPos = RegexPosition(inText, searchTerm, occurrence);
+	end if;
+	if (startPos &gt; 0) then
+		set tempText = SUBSTRING(inText, startPos+LENGTH(searchTerm));
+--		call print(&apos;startPos=&apos;||startPos||&apos;  tempText=&apos;||emptyStr(tempText));
+		set endPos = RegexPosition(tempText, closingDelimEscaped, 1);
+		if (endPos &gt; 0) then
+			set tempText = SUBSTRING(tempText, 1, endPos-1);
+		end if;
+--		call print(&apos;endPos=&apos;||endPos||&apos;  tempText=&apos;||emptyStr(tempText));
+		if ( LENGTH(openingDelim)+1 &lt;= LENGTH(tempText)) then
+			set result = SUBSTRING(tempText, LENGTH(openingDelim)+1);
+			if (trimText = 1) then
+				set result = TRIM(result);
+			end if;
+		else
+			set result = &apos;&apos;;
+		end if;
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

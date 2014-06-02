@@ -1,0 +1,331 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_remove" path="/shared/ASAssets/Utilities_regression_tests/file/FileProcessingCJP/Test_remove" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="numTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="numSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/existsDir" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="dirPath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/existsFile" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="filePath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/remove" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="objectPath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/getCisHome" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/getFileSeparator" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/existsDir" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/existsFile" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisHome" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getFileSeparator" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/remove" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE Test_remove(
+    OUT numTests INTEGER,
+    OUT numErrors INTEGER,
+    OUT numSkipped INTEGER
+)
+BEGIN
+    -- a bug prevents putting these in a central script and declaring them public.
+    --
+    DECLARE CIS_HOME CONSTANT VARCHAR(4096) DEFAULT getCisHome();
+    DECLARE FS CONSTANT CHAR(1) DEFAULT getFileSeparator();
+
+    DECLARE test_name VARCHAR DEFAULT &apos;file/FileProcessingCJP/Test_remove&apos;;
+    DECLARE test_file VARCHAR(4096);
+    DECLARE args LONGVARCHAR;
+    DECLARE success BOOLEAN;
+
+    SET numTests = 0;
+    SET numErrors = 0;
+    SET numSkipped = 0;
+
+    -- start test
+    --
+    test_block_1: 
+    BEGIN
+        SET test_file = CIS_HOME || FS || &apos;tmp&apos; || FS || &apos;utils_test&apos; || FS || &apos;archive_test&apos; || FS || &apos;test2.txt&apos;;
+        SET args = &apos;&apos;&apos;&apos; || test_file || &apos;&apos;&apos;&apos;;
+
+        SET numTests = numTests + 1;
+
+        IF (NOT existsFile(test_file)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, does not exist: SKIPPING&apos;);
+            SET numSkipped = numSkipped + 1;
+            LEAVE test_block_1;
+        END IF;
+    
+        SET success = remove(test_file);
+        IF (NOT success) THEN
+            SET numErrors = numErrors + 1;
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: FAILED&apos;);
+            LEAVE test_block_1;
+        END IF;
+        
+        IF (NOT existsFile(test_file)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: OK&apos;);
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+        END IF;
+    EXCEPTION
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE);
+            SET numErrors = numErrors + 1;
+    END; -- test_block_1
+    --
+    -- end test
+
+    -- start test
+    --
+    test_block_2: 
+    BEGIN
+        SET test_file = CIS_HOME || FS || &apos;tmp&apos; || FS || &apos;utils_test&apos; || FS || &apos;archive_test&apos; || FS || &apos;test1&apos;;
+        SET args = &apos;&apos;&apos;&apos; || test_file || &apos;&apos;&apos;&apos;;
+
+        SET numTests = numTests + 1;
+
+        IF (NOT existsDir(test_file)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, does not exist: SKIPPING&apos;);
+            SET numSkipped = numSkipped + 1;
+            LEAVE test_block_2;
+        END IF;
+    
+        SET success = remove(test_file);    
+        IF (success) THEN
+            SET numErrors = numErrors + 1;
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, fails (child file exists): FAILED&apos;);
+            LEAVE test_block_2;
+        END IF;
+        
+        IF (existsDir(test_file)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, fails (child file exists): OK&apos;);
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, fails (child file exists): FAILED&apos;);
+            SET numErrors = numErrors + 1;
+        END IF;
+    EXCEPTION
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE);
+            SET numErrors = numErrors + 1;
+    END; -- test_block_2
+    --
+    -- end test
+
+    -- start test
+    --
+    test_block_3: BEGIN
+        SET test_file = CIS_HOME || FS || &apos;tmp&apos; || FS || &apos;utils_test&apos; || FS || &apos;archive_test&apos; || FS || &apos;test1&apos;;
+        SET args = &apos;&apos;&apos;&apos; || test_file || &apos;&apos;&apos;&apos;;
+
+        IF (NOT existsDir(test_file)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;, does not exist: SKIPPING&apos;);
+            SET numSkipped = numSkipped + 1;
+            LEAVE test_block_3;
+        END IF;
+    
+        SET success = remove(test_file || FS || &apos;test2.txt&apos;);    
+        SET success = remove(test_file);    
+        IF (NOT success) THEN
+            SET numErrors = numErrors + 1;
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: FAILED&apos;);
+            LEAVE test_block_3;
+        END IF;
+        
+        IF (NOT existsDir(test_file)) THEN
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: OK&apos;);
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: FAILED&apos;);
+            SET numErrors = numErrors + 1;
+        END IF;
+    END; -- test_block_3
+    --
+    -- end test
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">18/114</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/116</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/100</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/109</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/67</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/31</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/80</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/44</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/82</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/51</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/46</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/75</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/39</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/87</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

@@ -1,0 +1,46 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="BigintToTimestamp" path="/shared/ASAssets/Utilities/time/DateUtils/BigintToTimestamp" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>BigintToTimestamp
+
+    Description:
+      Returns a new TIMESTAMP value based on a BIGINT value.
+    
+    
+    Inputs:
+      inBigint   - The BIGINT value to convert.
+        values: Any long integer
+    
+    
+    Outputs:
+      result     - The Timestamp result.
+        values: A timestamp
+    
+    Exceptions:
+      None
+    
+    
+    Modified Date:  Modified By:      CSW Version:  Reason:
+    08/04/2013      Calvin Goodirch   6.2.0         Created new
+    
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inBigint" direction="IN" nullable="true">
+      <datatype name="BIGINT" subType="DATASOURCE_TYPE" type="INTEGER"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="TIMESTAMP" subType="DATASOURCE_TYPE" type="DATETIME"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.date.BigintToTimestamp</attribute>
+  <attribute name="creationDate" type="LONG">1375671691206</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392758490243</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

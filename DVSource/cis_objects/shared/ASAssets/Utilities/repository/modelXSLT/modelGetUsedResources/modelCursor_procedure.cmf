@@ -1,0 +1,181 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="modelCursor" path="/shared/ASAssets/Utilities/repository/modelXSLT/modelGetUsedResources/modelCursor" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="resourceName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="id">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="tableType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="explicitlyDesigned">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="sqlText">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getUsedResourcesXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inXML" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="id">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE modelCursor(
+    OUT result CURSOR (
+        resourceName VARCHAR(32768), 
+        resourcePath VARCHAR(32768), 
+        resourceType VARCHAR(32768), 
+        subtype VARCHAR(32768), 
+        enabled BIT, 
+        id INTEGER, 
+        tableType VARCHAR(32768), 
+        explicitlyDesigned BIT, 
+        sqlText VARCHAR(32768)
+        )
+    )
+    BEGIN
+        OPEN result FOR 
+            SELECT 
+                *
+            FROM      
+                /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getUsedResourcesXSLT(&apos;&lt;XML xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;/&gt;&apos;) getUsedResourcesXSLT;
+    END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="BYTE_ARRAY">EIMGBwALAG0AbwBkAGUAbABDAHUAcgBzAG8AcgkEAAAAARBSBgEAFABnAGUAdABVAHMAZQBkAFIA
+ZQBzAG8AdQByAGMAZQBzAFgAUwBMAFQGAgAUAGcAZQB0AFUAcwBlAGQAUgBlAHMAbwB1AHIAYwBl
+AHMAWABTAEwAVAML/////wMK/////wsRAAYABgBzAGgAYQByAGUAZAAIAEEAUwBBAHMAcwBlAHQA
+cwAJAFUAdABpAGwAaQB0AGkAZQBzAAoAcgBlAHAAbwBzAGkAdABvAHIAeQAUAGwAbwB3AGUAcgBM
+AGUAdgBlAGwAUAByAG8AYwBlAGQAdQByAGUAcwAUAGcAZQB0AFUAcwBlAGQAUgBlAHMAbwB1AHIA
+YwBlAHMAWABTAEwAVAkQAAAAARBDBgIAAAoOEBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAA
+AABoBAQAAAAAAAAAaAETAf//EAAAAGg8WE1MIHhtbG5zOnhzPSJodHRwOi8vd3d3LnczLm9yZy8y
+MDAxL1hNTFNjaGVtYSIgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVt
+YS1pbnN0YW5jZSIvPv////8DBQAAAAAIAhAxBgH//wECAQEGAAEDAAEEAAEFAAMHAAAAAAcJAAAA
+AQAAAAAJCgAAAAEQQQYBAAEAKgYCAAAGA///BgT//wMK/////wYF//8GBgAABgcAAAYIAAD/////
+CQYAAAABEIIDCgAAAHIDCwAAAG0DDAAAAMgDDQAAAKj//wgDEHEDAQAAAAsDAgAAADIJAwAAAiYQ
+dAMGAAAAAP//EHIGBP////8Qc///EHUBBwH//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb/
+/xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkG
+DP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr/
+//////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/
+////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEH
+AP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////
+EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//
+EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//
+EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//
+EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM
+/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv//
+/////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC///
+//8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA
+//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Q
+c///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8Q
+cgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Q
+dv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Q
+dv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/
+////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////
+////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL////
+/xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD/
+/xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz
+//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xBy
+BgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2
+//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2
+//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP//
+//8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr/////
+//8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////
+EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//
+EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP/
+/xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIG
+BP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb/
+/xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb/
+/xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM////
+/xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv//////
+/xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8Q
+dwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8Q
+eAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///
+EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE
+/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//
+EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//
+EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////
+EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////
+EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3
+Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4
+Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8Q
+dQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/
+////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8Q
+dP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Q
+dv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Q
+dv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8Q
+eQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcD
+Cv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgG
+C/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1
+AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP//
+//8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0
+//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2
+//8Qdv///////w==</attribute>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

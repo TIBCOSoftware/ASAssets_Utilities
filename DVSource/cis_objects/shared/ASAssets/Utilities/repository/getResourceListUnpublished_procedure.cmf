@@ -1,0 +1,468 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getResourceListUnpublished" path="/shared/ASAssets/Utilities/repository/getResourceListUnpublished" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getResourceListUnpublished:
+
+	This procedure looks at the resources in a starting folder and reports on any that cannot
+    be traced to a dependency that is either a published resource or trigger. In other words, it
+    reports on any orphaned resources that cannot be accessed by an external user over one of the
+    data access protocols.
+
+
+	Input:
+		startingFolder - The starting CIS folder to begin recursing through to find resources that 
+                         don&apos;t lead to a published link or trigger. 
+			Values: Any container path
+
+		excludeTypes - A comma separated list of Composite types to exclude from processing.  
+                       Default=CONTAINER, TRIGGER.  
+			Values: Any comma separated list of Composite resource types. (See 
+                    /lib/resource/ResourceDefs&apos; Constants tab.)
+
+		excludePathsList - A comma separated list of resource paths or partials paths to exclude 
+                           from processing.  A &apos;/&apos; is added to the end of each path to ensure 
+                           uniqueness. 
+			Values: Any comma separated list of Composite resource paths.
+
+
+	Output:
+		result - A cursor containing the search results.
+			Values: (See result row definition.)
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	01/07/2014		Jeremy Akers		6.2.0			Created new
+	03/28/2014		Mike Tinius			6.2.0			Added a 3rd parameter defaulted to null fro getDependentResourcesRecurseCursor().
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="startingFolder" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="excludeTypes" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+    </parameter>
+    <parameter name="excludePathsList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="ResourceListUnpublishedResultRow" type="TABLE" refId="1">
+        <element name="name">
+          <datatype name="ResourceName" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceName" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resPath">
+          <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+        </element>
+        <element name="resType">
+          <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+        </element>
+        <element name="subType">
+          <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+        </element>
+        <element name="creationDate">
+          <datatype name="TIMESTAMP" type="DATETIME"/>
+        </element>
+        <element name="creationDateBigint">
+          <datatype name="BIGINT" type="INTEGER"/>
+        </element>
+        <element name="creatorUserDomain">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="creatorUserName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="lastModifiedDate">
+          <datatype name="TIMESTAMP" type="DATETIME"/>
+        </element>
+        <element name="lastModifiedDateBigint">
+          <datatype name="BIGINT" type="INTEGER"/>
+        </element>
+        <element name="lastModifiedUserDomain">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="lastModifiedUserName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getDependentResourcesRecurseCursor" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getDependentResourcesRecurseCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="inLineageResourceIdList" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="4096"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="40"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="40"/>
+          </element>
+          <element name="id">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="ownerDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="ownerName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="impactLevel">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="impactMessage">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="resourceTreeList" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resPath">
+            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creationDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="creationDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="creatorUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creatorUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="lastModifiedDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="lastModifiedUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getResourceListUnpublished:
+
+	This procedure looks at the resources in a starting folder and reports on any that cannot
+    be traced to a dependency that is either a published resource or trigger. In other words, it
+    reports on any orphaned resources that cannot be accessed by an external user over one of the
+    data access protocols.
+
+
+	Input:
+		startingFolder - The starting CIS folder to begin recursing through to find resources that 
+                         don&apos;t lead to a published link or trigger. 
+			Values: Any container path
+
+		excludeTypes - A comma separated list of Composite types to exclude from processing.  
+                       Default=CONTAINER, TRIGGER.  
+			Values: Any comma separated list of Composite resource types. (See 
+                    /lib/resource/ResourceDefs&apos; Constants tab.)
+
+		excludePathsList - A comma separated list of resource paths or partials paths to exclude 
+                           from processing.  A &apos;/&apos; is added to the end of each path to ensure 
+                           uniqueness. 
+			Values: Any comma separated list of Composite resource paths.
+
+
+	Output:
+		result - A cursor containing the search results.
+			Values: (See result row definition.)
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	01/07/2014		Jeremy Akers		6.2.0			Created new
+	03/28/2014		Mike Tinius			6.2.0			Added a 3rd parameter defaulted to null fro getDependentResourcesRecurseCursor().
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getResourceListUnpublished(
+	IN startingFolder			/lib/resource/ResourceDefs.ResourcePath,	-- the starting CIS folder to begin recursing through to find resources that don&apos;t lead to a published link or trigger.
+	IN excludeTypes				VARCHAR(1024),	                            -- a comma separate list of Composite types to exclude from processing.  Default=CONTAINER, TRIGGER
+	IN excludePathsList			LONGVARCHAR,	                            -- a comma separated list of resource paths or partials paths to exclude from processing.  A &apos;/&apos; is added to the end of each path to ensure uniqueness.
+	OUT result PIPE ResourceListUnpublishedResultRow
+)
+BEGIN
+	DECLARE PUBLIC TYPE ResourceListUnpublishedResultRow ROW (
+		name					/lib/resource/ResourceDefs.ResourceName,
+		resPath					/lib/resource/ResourceDefs.ResourcePath,
+		resType					/lib/resource/ResourceDefs.ResourceType,
+		subType					/lib/resource/ResourceDefs.ResourceType,
+		creationDate			TIMESTAMP,
+		creationDateBigint		BIGINT,
+		creatorUserDomain		VARCHAR(255),
+		creatorUserName			VARCHAR(255),
+		lastModifiedDate		TIMESTAMP,
+		lastModifiedDateBigint	BIGINT,
+		lastModifiedUserDomain	VARCHAR(255),
+		lastModifiedUserName	VARCHAR(255)
+	);
+	DECLARE PUBLIC TYPE ResourceListUnpublishedResult CURSOR ResourceListUnpublishedResultRow; -- to be used by callers of this procedure
+
+	DECLARE moduleName			VARCHAR DEFAULT &apos;getResourceListUnpublished&apos;;
+	DECLARE debug				CHAR(1) DEFAULT &apos;N&apos;;
+	DECLARE excludePathsList_	LONGVARCHAR DEFAULT excludePathsList;
+	DECLARE excludePath 		/lib/resource/ResourceDefs.ResourcePath;
+	DECLARE startingType		/lib/resource/ResourceDefs.ResourceType DEFAULT &apos;CONTAINER&apos;;
+	DECLARE hasPublished		BOOLEAN;
+	DECLARE processType			BOOLEAN;
+	DECLARE processPath			BOOLEAN;
+	DECLARE excludeTypesDefault	VARCHAR(1024) DEFAULT &apos;CONTAINER,TRIGGER&apos;;
+
+	-- Combine excludeTypes and excludeTypesDefault to create a single list
+	if (excludeTypes is not null and length(excludeTypes) &gt; 0) then
+		set excludeTypesDefault = excludeTypesDefault||&apos;,&apos;||excludeTypes;
+	end if;
+
+	-- If the excludePathsList is empty make it null
+	if (excludePathsList_ IS NOT NULL AND LENGTH(TRIM(excludePathsList_)) = 0) then
+		set excludePathsList_ = null;
+	end if;
+	-- Log the exclude path list
+	for p as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludePathsList_, &apos;,&apos;, 0) do
+		-- Log a single resourcePath from the list
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;Exclude path=[&apos;||emptyStr(TRIM(p.splitElement))||&apos;]&apos;);
+	end for;
+
+	-- Recursively loop through the starting folder path analyzing resources which don&apos;t lead to a published link or trigger.
+	for r as select * from /shared/ASAssets/Utilities/repository/getResourceListRecursive(startingFolder, startingType) do
+		-- Don&apos;t process this resource if the type is found in the exclude type list
+		set processType = true;
+		if (POSITION(r.resType IN excludeTypesDefault) &gt; 0) then
+			set processType = false;
+		end if;
+
+		-- If the resource path is in the exclude list then don&apos;t process it
+		set processPath = true;
+
+		excludeLoop:
+		for p as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludePathsList_, &apos;,&apos;, 0) do
+			set excludePath = REPLACE(TRIM(p.splitElement)||&apos;/&apos;,&apos;//&apos;,&apos;/&apos;);
+			-- Check the resource path against the exclude list
+			if (POSITION(excludePath IN REPLACE(r.resPath||&apos;/&apos;,&apos;//&apos;,&apos;/&apos;)) &gt; 0) then
+				set processPath = false;
+				leave excludeLoop;
+			end if;
+		end for;
+
+		if (processType and processPath) then
+			set hasPublished = false;
+
+            gdrrc:
+			for d as select * from /shared/ASAssets/Utilities/repository/getDependentResourcesRecurseCursor(r.resPath, r.resType, null) do
+				IF d.resourceType = &apos;LINK&apos; OR d.resourceType = &apos;TRIGGER&apos; THEN
+					set hasPublished = true;
+					LEAVE gdrrc;
+				END IF;
+			end for;
+
+			if (not hasPublished) then
+				insert into result values (
+					r.name, r.resPath, r.resType, r.subType, 
+					r.creationDate, r.creationDateBigint, r.creatorUserDomain, r.creatorUserName, 
+					r.lastModifiedDate, r.lastModifiedDateBigint, r.lastModifiedUserDomain, r.lastModifiedUserName
+				);
+			end if;
+		end if;
+	end for;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1389130103785</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_types" type="MAP">
+    <item>
+      <key type="STRING">ResourceListUnpublishedResult</key>
+      <value type="BYTE_ARRAY">EB8GAgAgAFIAZQBzAG8AdQByAGMAZQBMAGkAcwB0AFUAbgBwAHUAYgBsAGkAcwBoAGUAZABSAGUA
+cwB1AGwAdABSAG8AdwYpAEAALwBzAGgAYQByAGUAZAAvAEEAUwBBAHMAcwBlAHQAcwAvAFUAdABp
+AGwAaQB0AGkAZQBzAC8AcgBlAHAAbwBzAGkAdABvAHIAeQAvAGcAZQB0AFIAZQBzAG8AdQByAGMA
+ZQBMAGkAcwB0AFUAbgBwAHUAYgBsAGkAcwBoAGUAZAYqAB0AUgBlAHMAbwB1AHIAYwBlAEwAaQBz
+AHQAVQBuAHAAdQBiAGwAaQBzAGgAZQBkAFIAZQBzAHUAbAB0AxIAAAABAxIAAAABARMBCRQAAAAM
+ECEGFQAEAG4AYQBtAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAbBgIA
+DABSAGUAcwBvAHUAcgBjAGUATgBhAG0AZQYpABoALwBsAGkAYgAvAHIAZQBzAG8AdQByAGMAZQAv
+AFIAZQBzAG8AdQByAGMAZQBEAGUAZgBzBioADABSAGUAcwBvAHUAcgBjAGUATgBhAG0AZQMSAAAA
+AgQEAAAAAAAAAP8BEwH/////ECEGFQAHAHIAZQBzAFAAYQB0AGgDLwAAAAEDFgAAAAADGgAAAAED
+GwAAAAEDIP////8DIgAAAAAIGRAbBgIADABSAGUAcwBvAHUAcgBjAGUAUABhAHQAaAYpABoALwBs
+AGkAYgAvAHIAZQBzAG8AdQByAGMAZQAvAFIAZQBzAG8AdQByAGMAZQBEAGUAZgBzBioADABSAGUA
+cwBvAHUAcgBjAGUAUABhAHQAaAMSAAAAAwQEAAAAAAAAEAABEwH/////ECEGFQAHAHIAZQBzAFQA
+eQBwAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAbBgIADABSAGUAcwBv
+AHUAcgBjAGUAVAB5AHAAZQYpABoALwBsAGkAYgAvAHIAZQBzAG8AdQByAGMAZQAvAFIAZQBzAG8A
+dQByAGMAZQBEAGUAZgBzBioADABSAGUAcwBvAHUAcgBjAGUAVAB5AHAAZQMSAAAABAQEAAAAAAAA
+ACgBEwH/////ECEGFQAHAHMAdQBiAFQAeQBwAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP//
+//8DIgAAAAADEgAAAAT//xAhBhUADABjAHIAZQBhAHQAaQBvAG4ARABhAHQAZQMvAAAAAQMWAAAA
+AAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBYGAgAJAFQASQBNAEUAUwBUAEEATQBQAxIAAAAF
+/////xAhBhUAEgBjAHIAZQBhAHQAaQBvAG4ARABhAHQAZQBCAGkAZwBpAG4AdAMvAAAAAQMWAAAA
+AAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBkGAgAGAEIASQBHAEkATgBUAxIAAAAGBAeAAAAA
+AAAAAP////8QIQYVABEAYwByAGUAYQB0AG8AcgBVAHMAZQByAEQAbwBtAGEAaQBuAy8AAAABAxYA
+AAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAcAVgBBAFIAQwBIAEEAUgMSAAAABwQE
+AAAAAAAAAP8BEwH/////ECEGFQAPAGMAcgBlAGEAdABvAHIAVQBzAGUAcgBOAGEAbQBlAy8AAAAB
+AxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAH//8QIQYVABAAbABhAHMAdABNAG8A
+ZABpAGYAaQBlAGQARABhAHQAZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMS
+AAAABf//ECEGFQAWAGwAYQBzAHQATQBvAGQAaQBmAGkAZQBkAEQAYQB0AGUAQgBpAGcAaQBuAHQD
+LwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAb//xAhBhUAFgBsAGEAcwB0
+AE0AbwBkAGkAZgBpAGUAZABVAHMAZQByAEQAbwBtAGEAaQBuAy8AAAABAxYAAAAAAxoAAAABAxsA
+AAABAyD/////AyIAAAAAAxIAAAAH//8QIQYVABQAbABhAHMAdABNAG8AZABpAGYAaQBlAGQAVQBz
+AGUAcgBOAGEAbQBlAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAH////
+/w==</value>
+    </item>
+    <item>
+      <key type="STRING">ResourceListUnpublishedResultRow</key>
+      <value type="BYTE_ARRAY">EB8GAgAgAFIAZQBzAG8AdQByAGMAZQBMAGkAcwB0AFUAbgBwAHUAYgBsAGkAcwBoAGUAZABSAGUA
+cwB1AGwAdABSAG8AdwYpAEAALwBzAGgAYQByAGUAZAAvAEEAUwBBAHMAcwBlAHQAcwAvAFUAdABp
+AGwAaQB0AGkAZQBzAC8AcgBlAHAAbwBzAGkAdABvAHIAeQAvAGcAZQB0AFIAZQBzAG8AdQByAGMA
+ZQBMAGkAcwB0AFUAbgBwAHUAYgBsAGkAcwBoAGUAZAYqACAAUgBlAHMAbwB1AHIAYwBlAEwAaQBz
+AHQAVQBuAHAAdQBiAGwAaQBzAGgAZQBkAFIAZQBzAHUAbAB0AFIAbwB3AxIAAAABAxIAAAABARMB
+CRQAAAAMECEGFQAEAG4AYQBtAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAI
+GRAbBgIADABSAGUAcwBvAHUAcgBjAGUATgBhAG0AZQYpABoALwBsAGkAYgAvAHIAZQBzAG8AdQBy
+AGMAZQAvAFIAZQBzAG8AdQByAGMAZQBEAGUAZgBzBioADABSAGUAcwBvAHUAcgBjAGUATgBhAG0A
+ZQMSAAAAAgQEAAAAAAAAAP8BEwH/////ECEGFQAHAHIAZQBzAFAAYQB0AGgDLwAAAAEDFgAAAAAD
+GgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAbBgIADABSAGUAcwBvAHUAcgBjAGUAUABhAHQAaAYp
+ABoALwBsAGkAYgAvAHIAZQBzAG8AdQByAGMAZQAvAFIAZQBzAG8AdQByAGMAZQBEAGUAZgBzBioA
+DABSAGUAcwBvAHUAcgBjAGUAUABhAHQAaAMSAAAAAwQEAAAAAAAAEAABEwH/////ECEGFQAHAHIA
+ZQBzAFQAeQBwAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAbBgIADABS
+AGUAcwBvAHUAcgBjAGUAVAB5AHAAZQYpABoALwBsAGkAYgAvAHIAZQBzAG8AdQByAGMAZQAvAFIA
+ZQBzAG8AdQByAGMAZQBEAGUAZgBzBioADABSAGUAcwBvAHUAcgBjAGUAVAB5AHAAZQMSAAAABAQE
+AAAAAAAAACgBEwH/////ECEGFQAHAHMAdQBiAFQAeQBwAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAA
+AAEDIP////8DIgAAAAADEgAAAAT//xAhBhUADABjAHIAZQBhAHQAaQBvAG4ARABhAHQAZQMvAAAA
+AQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBYGAgAJAFQASQBNAEUAUwBUAEEATQBQ
+AxIAAAAF/////xAhBhUAEgBjAHIAZQBhAHQAaQBvAG4ARABhAHQAZQBCAGkAZwBpAG4AdAMvAAAA
+AQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBkGAgAGAEIASQBHAEkATgBUAxIAAAAG
+BAeAAAAAAAAAAP////8QIQYVABEAYwByAGUAYQB0AG8AcgBVAHMAZQByAEQAbwBtAGEAaQBuAy8A
+AAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAcAVgBBAFIAQwBIAEEAUgMS
+AAAABwQEAAAAAAAAAP8BEwH/////ECEGFQAPAGMAcgBlAGEAdABvAHIAVQBzAGUAcgBOAGEAbQBl
+Ay8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAH//8QIQYVABAAbABhAHMA
+dABNAG8AZABpAGYAaQBlAGQARABhAHQAZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMi
+AAAAAAMSAAAABf//ECEGFQAWAGwAYQBzAHQATQBvAGQAaQBmAGkAZQBkAEQAYQB0AGUAQgBpAGcA
+aQBuAHQDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAb//xAhBhUAFgBs
+AGEAcwB0AE0AbwBkAGkAZgBpAGUAZABVAHMAZQByAEQAbwBtAGEAaQBuAy8AAAABAxYAAAAAAxoA
+AAABAxsAAAABAyD/////AyIAAAAAAxIAAAAH//8QIQYVABQAbABhAHMAdABNAG8AZABpAGYAaQBl
+AGQAVQBzAGUAcgBOAGEAbQBlAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIA
+AAAH/////w==</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

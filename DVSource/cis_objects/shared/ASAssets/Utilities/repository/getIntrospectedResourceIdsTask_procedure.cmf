@@ -1,0 +1,325 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getIntrospectedResourceIdsTask" path="/shared/ASAssets/Utilities/repository/getIntrospectedResourceIdsTask" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getIntrospectedResourceIdsTask:
+
+	This procedure begins an asynchronous thread that scans a data source for introspected 
+    objects. This asynchronous thread will survive server restarts. This is used to scan
+    the existing introspection cache (not actually scan the data source.) Use 
+    getIntrospectableResourceIdsResult to retrieve the results. If a full reintrospection 
+    is necessary please use getIntrospectableResourceIdsTask and
+    getIntrospectableResourceIdsResult.
+
+
+    Input:
+        dsPath             - The path to the data source.  
+            Values: Any valid data source path.
+
+
+    Output:
+        taskId             - The introspection task ID. Use this with getIntrospectedResourceIdsResult.
+            Values: A task ID
+
+        totalResults       - Total size of the result set (if known.)
+            Values: A positive integer or NULL.
+
+
+    Exceptions:
+        System.NotFoundException - Thrown when input data source does not exist.
+
+        System.IllegalArgumentException - Thrown when input cannot be validated.
+
+
+    Author:      Calvin Goodrich
+    Date:        10/4/2012
+    CSW Version: 6.2.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="dsPath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="taskId" direction="OUT" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="totalResults" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="version" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceVersion" type="STRING" maxLength="255"/>
+      </element>
+      <element name="exists" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getIntrospectedResourceIdsTaskXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getIntrospectedResourceIdsTask" direction="IN">
+        <datatype name="getIntrospectedResourceIdsTask" extendedName="{http://www.compositesw.com/services/system/admin/resource}getIntrospectedResourceIdsTask" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getIntrospectedResourceIdsTask" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getIntrospectedResourceIdsTask">
+          <schemaDatatype>
+            <datatype name="getIntrospectedResourceIdsTask" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="getIntrospectedResourceIdsTaskRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="attributes" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                <datatype name="attributeList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                  <element name="attribute" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                    <datatype name="attribute" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                      <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
+                        <datatype name="attributeType" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="value" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                        <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                        <datatype name="attributeTypeValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="5">
+                          <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="attributeTypeValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
+                              <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype name="attributeType" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="value" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="attributeTypeValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="7">
+                                  <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                    <reference refId="6"/>
+                                  </element>
+                                </datatype>
+                              </element>
+                              <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="attributeTypeValueMap" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="8">
+                                  <element name="entry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                    <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="9">
+                                      <element name="key" namespace="http://www.compositesw.com/services/system/util/common">
+                                        <reference refId="6"/>
+                                      </element>
+                                      <element name="value" namespace="http://www.compositesw.com/services/system/util/common">
+                                        <reference refId="6"/>
+                                      </element>
+                                    </datatype>
+                                  </element>
+                                </datatype>
+                              </element>
+                              <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                <datatype name="attributeSimpleValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="10">
+                                  <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                    <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                </datatype>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                      <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                        <datatype name="attributeTypeValueMap" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="11">
+                          <element name="entry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                            <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="12">
+                              <element name="key" namespace="http://www.compositesw.com/services/system/util/common">
+                                <datatype name="attributeTypeValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="13">
+                                  <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
+                                    <datatype name="attributeType" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                  <element name="value" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                    <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                                  </element>
+                                  <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                    <reference refId="5"/>
+                                  </element>
+                                  <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                    <reference refId="11"/>
+                                  </element>
+                                  <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                                    <datatype name="attributeSimpleValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="14">
+                                      <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                        <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                                      </element>
+                                    </datatype>
+                                  </element>
+                                </datatype>
+                              </element>
+                              <element name="value" namespace="http://www.compositesw.com/services/system/util/common">
+                                <reference refId="13"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                      <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                        <reference refId="14"/>
+                      </element>
+                      <element name="unset" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                        <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="15">
+          <element name="taskId">
+            <datatype namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="totalResults">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="decimal" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DECIMAL" maxDigits="32" maxFractionalDigits="0"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+    getIntrospectedResourceIdsTask:
+
+	This procedure begins an asynchronous thread that scans a data source for introspected 
+    objects. This asynchronous thread will survive server restarts. Use 
+    getIntrospectableResourceIdsResult to retrieve the results. If a full reintrospection 
+    is necessary please use getIntrospectableResourceIdsTask and
+    getIntrospectableResourceIdsResult.
+
+
+    Input:
+        dsPath             - The path to the data source.  
+            Values: Any valid data source path.
+
+
+    Output:
+        taskId             - The introspection task ID. Use this with getIntrospectedResourceIdsResult.
+            Values: A task ID
+
+        totalResults       - Total size of the result set (if known.)
+            Values: A positive integer or NULL.
+
+
+    Exceptions:
+        System.NotFoundException - Thrown when input data source does not exist.
+
+        System.IllegalArgumentException - Thrown when input cannot be validated.
+
+
+    Author:      Calvin Goodrich
+    Date:        10/4/2012
+    CSW Version: 6.2.0
+
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getIntrospectedResourceIdsTask(
+    IN dsPath /lib/resource/ResourceDefs.ResourcePath,
+    OUT taskId LONGVARCHAR,
+    OUT totalResults INTEGER
+)
+BEGIN
+    PATH /lib/resource;
+
+    DECLARE PROC_NAME CONSTANT VARCHAR(255) DEFAULT &apos;getIntrospectedResourceIdsTask&apos;;
+    DECLARE resourceExists BOOLEAN;
+    DECLARE requestXML LONGVARCHAR;
+
+    IF (dsPath IS NULL) THEN
+        RAISE System.IllegalArgumentException VALUE PROC_NAME || &apos;: The input &quot;dsPath&quot; may not be NULL.&apos;;
+    END IF;
+
+    CALL ResourceExists (
+        dsPath,
+        ResourceDefs.RESOURCE_TYPE_DATA_SOURCE,
+        NULL,
+        resourceExists
+    );
+    IF (NOT resourceExists) THEN
+        RAISE System.NotFoundException VALUE PROC_NAME || &apos;: The input data source, &quot;&apos; || dsPath || &apos;&quot;, does not exist or is not a data source.&apos;;
+    END IF;
+
+    SET requestXML = 
+&apos;&lt;resource:getIntrospectedResourceIdsTask xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+    &lt;resource:path&gt;&apos; || CAST(XMLTEXT(dsPath) AS VARCHAR(2147483647)) || &apos;&lt;/resource:path&gt;
+&lt;/resource:getIntrospectedResourceIdsTask&gt;
+&apos;;
+
+    myLoop:
+    FOR r AS
+        SELECT 
+            taskId,
+            CAST(totalResults AS INTEGER) totalResults
+        FROM      
+            /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getIntrospectedResourceIdsTaskXSLT(requestXML)
+     DO
+         SET taskId = r.taskId;
+         SET totalResults = r.totalResults;
+         LEAVE myLoop;
+     END FOR;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1349386126080</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">15/49</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/54</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/52</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceExists</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/59</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

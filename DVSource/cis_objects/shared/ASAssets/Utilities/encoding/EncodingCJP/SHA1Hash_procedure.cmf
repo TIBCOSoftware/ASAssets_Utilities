@@ -1,0 +1,46 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="SHA1Hash" path="/shared/ASAssets/Utilities/encoding/EncodingCJP/SHA1Hash" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>SHA1Hash:
+
+    Accepts a string as input and returns the SHA1 hash value of the string.
+
+
+	Input:
+		inputString - The string to apply the SHA1 hash to.  
+			Values: Any text value
+
+
+	Output:
+		result - The input string with the SHA1 hash applied
+			Values: An SHA1 hash string.
+
+
+	Exceptions:  none
+
+
+	Author:      Gordon Rose
+	Date:        10/18/2010
+	CSW Version: 5.1.0
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="inputString" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.encoding.SHA1Hash</attribute>
+  <attribute name="creationDate" type="LONG">1392851631271</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392851780599</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

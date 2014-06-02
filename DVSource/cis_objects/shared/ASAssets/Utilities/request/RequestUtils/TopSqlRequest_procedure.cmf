@@ -1,0 +1,43 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="TopSqlRequest" path="/shared/ASAssets/Utilities/request/RequestUtils/TopSqlRequest" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>TopSqlRequest:
+
+Description:
+    Walks the stack of requests that resulted in the call to this CJP and
+    returns the SQL of the original client request (or highest level request
+    that generated an SQL statement, e.g. if the original request is a procedure, 
+    then TopSqlRequest will return the first SQL request in the chain.) Note 
+    that this CJP does not return code for procedure requests.
+
+Inputs:
+    N/A
+
+Outputs:
+    requestSrc - SQL source code of the request.
+
+Exceptions:
+    None
+
+Author:      Mike DeAngelo
+Date:        11/11/2011
+CSW Version: 6.0.0
+
+© 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="requestSrc" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.request.TopSqlRequest</attribute>
+  <attribute name="creationDate" type="LONG">1383622342459</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1392754116415</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

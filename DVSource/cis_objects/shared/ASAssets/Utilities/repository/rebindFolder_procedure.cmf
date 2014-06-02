@@ -1,0 +1,188 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="rebindFolder" path="/shared/ASAssets/Utilities/repository/rebindFolder" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>rebindFolder:
+	-- CIS Repository Helper Procedure --
+
+	This procedure provides the capability to rebind all the resources in a folder.
+	For example, if a View points to a data source table, you may want to rebind to a different data source
+	that has the same structure.  This may be useful when redeploying from Dev to Test to Production or
+	simply rebinding to a different development instance of the database.  Rules:
+		1) If a resource in the folder has both the source and the target sources present, it will
+			use rebindResource to do an explicit rebind.
+		2) If a resource in the folder does not have the source present, it will rebind using explicit
+			text modification techniques instead of rebindResource.  The following text modification
+			techniques are supported for the given resource type:
+				resourceType = &apos;TABLE&apos;
+					subtype = &apos;SQL_TABLE&apos; -- Regular View not a database table
+	
+				resourceType = &apos;PROCEDURE&apos;
+					subtype = &apos;SQL_SCRIPT_PROCEDURE&apos; -- Custom Procedure or Parameterized query
+					subtype = &apos;EXTERNAL_SQL_PROCEDURE&apos; -- Packaged Query Procedure
+ 					subtype = &apos;BASIC_TRANSFORM_PROCEDURE&apos; -- XSLT Basic Transformation definition
+					subtype = &apos;XSLT_TRANSFORM_PROCEDURE&apos; -- XSLT Transformation text
+					subtype = &apos;STREAM_TRANSFORM_PROCEDURE&apos; -- XSLT Stream Transformation text
+		3) if a resource in the folder does not have the target present, that is an error and an exception is raised.
+
+
+ 	Input:
+		startingResourceFolder - Full resource path to the starting folder to begin rebinding
+			Values: e.g. /shared/Utilities/repository/examples
+
+		rebindFromFolder - The source &quot;used&quot; resource folder to rebind from
+
+		rebindToFolder - The target &quot;used&quot; resource folder to rebind to
+
+
+	Output:
+		success	- true(1) or false(0)
+			Values: 1 or 0
+
+		faultResponse - null if succesful otherwise contains a fault resposne.
+			Values: Fault Resposne XML value
+
+
+	Exceptions:
+        N/A
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	04/24/2013		Mike Tinius			5.2.0			Created new
+
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="startingResourceFolder" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="rebindFromFolder" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="rebindToFolder" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="faultResponse" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/rebind/rebindFolderImpl" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="startingResourceFolder" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="rebindFromFolder" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="rebindToFolder" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+    rebindFolder:
+	-- CIS Repository Helper Procedure --
+
+	This procedure provides the capability to rebind all the resources in a folder.
+	For example, if a View points to a data source table, you may want to rebind to a different data source
+	that has the same structure.  This may be useful when redeploying from Dev to Test to Production or
+	simply rebinding to a different development instance of the database.  Rules:
+		1) If a resource in the folder has both the source and the target sources present, it will
+			use rebindResource to do an explicit rebind.
+		2) If a resource in the folder does not have the source present, it will rebind using explicit
+			text modification techniques instead of rebindResource.  The following text modification
+			techniques are supported for the given resource type:
+				resourceType = &apos;TABLE&apos;
+					subtype = &apos;SQL_TABLE&apos; -- Regular View not a database table
+	
+				resourceType = &apos;PROCEDURE&apos;
+					subtype = &apos;SQL_SCRIPT_PROCEDURE&apos; -- Custom Procedure or Parameterized query
+					subtype = &apos;EXTERNAL_SQL_PROCEDURE&apos; -- Packaged Query Procedure
+ 					subtype = &apos;BASIC_TRANSFORM_PROCEDURE&apos; -- XSLT Basic Transformation definition
+					subtype = &apos;XSLT_TRANSFORM_PROCEDURE&apos; -- XSLT Transformation text
+					subtype = &apos;STREAM_TRANSFORM_PROCEDURE&apos; -- XSLT Stream Transformation text
+		3) if a resource in the folder does not have the target present, that is an error and an exception is raised.
+
+
+ 	Input:
+		startingResourceFolder - Full resource path to the starting folder to begin rebinding
+			Values: e.g. /shared/Utilities/repository/examples
+
+		rebindFromFolder - The source &quot;used&quot; resource folder to rebind from
+
+		rebindToFolder - The target &quot;used&quot; resource folder to rebind to
+
+
+	Output:
+		success	- true(1) or false(0)
+			Values: 1 or 0
+
+		faultResponse - null if succesful otherwise contains a fault resposne.
+			Values: Fault Resposne XML value
+
+
+	Exceptions:
+        N/A
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	04/24/2013		Mike Tinius			5.2.0			Created new
+
+
+    © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE rebindFolder(
+	IN startingResourceFolder 	/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	IN rebindFromFolder			/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	IN rebindToFolder			/shared/ASAssets/Utilities/TypeDefinitions.pathType,
+	OUT success					BIT,
+	OUT faultResponse			XML
+)
+BEGIN
+	DECLARE debug			CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+
+	call /shared/ASAssets/Utilities/repository/rebind/rebindFolderImpl(startingResourceFolder, rebindFromFolder, rebindToFolder, debug, success, faultResponse);
+END
+</attribute>
+  <attribute name="creationDate" type="LONG">1369417729294</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399565923676</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:2:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

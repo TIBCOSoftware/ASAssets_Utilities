@@ -1,0 +1,139 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="RegexPatterns" path="/shared/ASAssets/Utilities/string/RegexPatterns" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>RegexPatterns:
+
+    This procedure does not actually perform any logic, but is a repository of commonly
+    used regular expressions.
+
+	(This procedure replaces the SQL definition set of the same name.)
+
+
+	Input:
+		N/A
+
+
+	Output:
+		N/A
+
+
+	Exceptions:  none
+
+
+	Author:      Calvin Goodrich
+	Date:        6/1/2011
+	CSW Version: 5.1.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters></parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="Script" type="STRING">/* 
+  RegexPatterns:
+
+    This procedure does not actually perform any logic, but is a repository of commonly
+    used regular expressions. See javadoc for java.lang.regex.Pattern for details.
+
+	(This procedure replaces the SQL definition set of the same name.)
+
+
+	Input:
+		N/A
+
+
+	Output:
+		N/A
+
+
+	Exceptions:  none
+
+
+	Author:      Calvin Goodrich
+	Date:        6/1/2011
+	CSW Version: 5.1.0
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE RegexPatterns()
+BEGIN
+    DECLARE PUBLIC NUMBER_INTEGER                            CONSTANT VARCHAR(255)  DEFAULT &apos;(?:\+|\-)?\d+&apos;;
+    DECLARE PUBLIC NUMBER_POSITIVE_INTEGER                   CONSTANT VARCHAR(255)  DEFAULT &apos;(?:\+)?[1-9]\d*&apos;;
+    DECLARE PUBLIC NUMBER_NEGATIVE_INTEGER                   CONSTANT VARCHAR(255)  DEFAULT &apos;-[1-9]\d*&apos;;
+    DECLARE PUBLIC NUMBER_DECIMAL                            CONSTANT VARCHAR(255)  DEFAULT NUMBER_INTEGER || &apos;\.\d+&apos;;
+    DECLARE PUBLIC NUMBER_SCIENTIFIC                         CONSTANT VARCHAR(255)  DEFAULT &apos;(?:\+|\-)?\d\.\d+[eE]&apos; || NUMBER_INTEGER;
+    DECLARE PUBLIC SQL_DATA_TYPE_NAMES                       CONSTANT VARCHAR(255)  DEFAULT &apos;BIGINT|BINARY|BLOB|CHAR|CLOB|DATE|DECIMAL|FLOAT|INT|INTEGER|INTERVAL DAY|INTERVAL YEAR|NUMERIC|REAL|SMALLINT|TIME|TIMESTAMP|TINYINT|VARBINARY|VARCHAR&apos;;
+    DECLARE PUBLIC SQL_DATA_TYPE_NAMES_W_SCALE               CONSTANT VARCHAR(255)  DEFAULT &apos;CHAR|DECIMAL|NUMERIC|VARCHAR&apos;;
+    DECLARE PUBLIC SQL_DATA_TYPE_NAMES_W_SCALE_AND_PRECISION CONSTANT VARCHAR(255)  DEFAULT &apos;DECIMAL|NUMERIC&apos;;
+    DECLARE PUBLIC SQL_DATA_TYPE                             CONSTANT VARCHAR(1024) DEFAULT &apos;(?i)\A(?:\s*)(?:(?:&apos; || SQL_DATA_TYPE_NAMES || &apos;)|(?:(?:&apos; || SQL_DATA_TYPE_NAMES_W_SCALE || &apos;)\s*\(\s*\d+\s*\))|(?:(?:&apos; || SQL_DATA_TYPE_NAMES_W_SCALE_AND_PRECISION || &apos;)\s*\(\s*\d+\s*,\s*\d+\s*\)))(?:\s*)\z&apos;;
+    DECLARE PUBLIC US_PHONE_NUMBER                           CONSTANT VARCHAR(255)  DEFAULT &apos;(?:\+|011)?\s*(1)?\s*\(?([2-9]\d{2})\)?(?:\s*|-?)([2-9]\d{2})(?:\s*|-?)(\d{4})&apos;;
+    DECLARE PUBLIC XML_DATE                                  CONSTANT VARCHAR(255)  DEFAULT &apos;(\-?\d+\-\d{2}\-\d{2})&apos;;
+    DECLARE PUBLIC XML_TIME                                  CONSTANT VARCHAR(255)  DEFAULT &apos;(\d{2}:\d{2}:\d{2}(?:\.\d+)?)([\+\-]\d{2}:\d{2}|Z)?&apos;;
+    DECLARE PUBLIC XML_DATE_TIME                             CONSTANT VARCHAR(255)  DEFAULT XML_DATE || &apos;T&apos; || XML_TIME;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1382377367849</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1392755070109</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_constants" type="MAP">
+    <item>
+      <key type="STRING">NUMBER_NEGATIVE_INTEGER</key>
+      <value type="BYTE_ARRAY">EBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAAAAAJBAQAAAAAAAAACQETAf//</value>
+    </item>
+    <item>
+      <key type="STRING">US_PHONE_NUMBER</key>
+      <value type="BYTE_ARRAY">EBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAAAABOBAQAAAAAAAAATgETAf//</value>
+    </item>
+    <item>
+      <key type="STRING">NUMBER_POSITIVE_INTEGER</key>
+      <value type="BYTE_ARRAY">EBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAAAAAPBAQAAAAAAAAADwETAf//</value>
+    </item>
+    <item>
+      <key type="STRING">SQL_DATA_TYPE</key>
+      <value type="BYTE_ARRAY">EBsGAgAGAFMAdAByAGkAbgBnAxIAAAABATsABAUAAAAAAAAAWgQEAAAAAAAAA1cBEwH//w==</value>
+    </item>
+    <item>
+      <key type="STRING">NUMBER_SCIENTIFIC</key>
+      <value type="BYTE_ARRAY">EBsGAgAGAFMAdAByAGkAbgBnAxIAAAABBAUAAAAAAAAAFQQEAAAAAAAAARQBEwH//w==</value>
+    </item>
+    <item>
+      <key type="STRING">SQL_DATA_TYPE_NAMES_W_SCALE</key>
+      <value type="BYTE_ARRAY">EBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAAAAAcBAQAAAAAAAAAHAETAf//</value>
+    </item>
+    <item>
+      <key type="STRING">XML_DATE_TIME</key>
+      <value type="BYTE_ARRAY">EBsGAgAGAFMAdAByAGkAbgBnAxIAAAABBAUAAAAAAAAAAQQEAAAAAAAAAf8BEwH//w==</value>
+    </item>
+    <item>
+      <key type="STRING">SQL_DATA_TYPE_NAMES_W_SCALE_AND_PRECISION</key>
+      <value type="BYTE_ARRAY">EBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAAAAAPBAQAAAAAAAAADwETAf//</value>
+    </item>
+    <item>
+      <key type="STRING">SQL_DATA_TYPE_NAMES</key>
+      <value type="BYTE_ARRAY">EBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAAAACVBAQAAAAAAAAAlQETAf//</value>
+    </item>
+    <item>
+      <key type="STRING">NUMBER_DECIMAL</key>
+      <value type="BYTE_ARRAY">EBsGAgAGAFMAdAByAGkAbgBnAxIAAAABATsABAUAAAAAAAAABQQEAAAAAAAAAQQBEwH//w==</value>
+    </item>
+    <item>
+      <key type="STRING">XML_DATE</key>
+      <value type="BYTE_ARRAY">EBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAAAAAWBAQAAAAAAAAAFgETAf//</value>
+    </item>
+    <item>
+      <key type="STRING">XML_TIME</key>
+      <value type="BYTE_ARRAY">EBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAAAAAzBAQAAAAAAAAAMwETAf//</value>
+    </item>
+    <item>
+      <key type="STRING">NUMBER_INTEGER</key>
+      <value type="BYTE_ARRAY">EBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAAAAANBAQAAAAAAAAADQETAf//</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

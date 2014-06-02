@@ -1,0 +1,67 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="packagedCustomerQuery" path="/shared/ASAssets/Utilities/examples/repository/source/Rebind/RebindFolder/Procedures/packagedCustomerQuery" type="PROCEDURE" subtype="EXTERNAL_SQL_PROCEDURE" changeToken="0">
+  <annotation/>
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype type="TABLE" refId="1">
+        <element name="CustomerID">
+          <datatype name="INTEGER" extendedName="INT" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="CompanyName">
+          <datatype name="VARCHAR" extendedName="VARCHAR(50)" subType="DATASOURCE_TYPE" type="STRING" maxLength="50"/>
+        </element>
+        <element name="ContactFirstName">
+          <datatype name="VARCHAR" extendedName="VARCHAR(30)" subType="DATASOURCE_TYPE" type="STRING" maxLength="30"/>
+        </element>
+        <element name="ContactLastName">
+          <datatype name="VARCHAR" extendedName="VARCHAR(50)" subType="DATASOURCE_TYPE" type="STRING" maxLength="50"/>
+        </element>
+        <element name="BillingAddress">
+          <datatype name="VARCHAR" extendedName="VARCHAR(255)" subType="DATASOURCE_TYPE" type="STRING" maxLength="255"/>
+        </element>
+        <element name="City">
+          <datatype name="VARCHAR" extendedName="VARCHAR(50)" subType="DATASOURCE_TYPE" type="STRING" maxLength="50"/>
+        </element>
+        <element name="StateOrProvince">
+          <datatype name="VARCHAR" extendedName="VARCHAR(20)" subType="DATASOURCE_TYPE" type="STRING" maxLength="20"/>
+        </element>
+        <element name="PostalCode">
+          <datatype name="VARCHAR" extendedName="VARCHAR(20)" subType="DATASOURCE_TYPE" type="STRING" maxLength="20"/>
+        </element>
+        <element name="CountryRegion">
+          <datatype name="VARCHAR" extendedName="VARCHAR(50)" subType="DATASOURCE_TYPE" type="STRING" maxLength="50"/>
+        </element>
+        <element name="ContactTitle">
+          <datatype name="VARCHAR" extendedName="VARCHAR(50)" subType="DATASOURCE_TYPE" type="STRING" maxLength="50"/>
+        </element>
+        <element name="PhoneNumber">
+          <datatype name="VARCHAR" extendedName="VARCHAR(30)" subType="DATASOURCE_TYPE" type="STRING" maxLength="30"/>
+        </element>
+        <element name="FaxNumber">
+          <datatype name="VARCHAR" extendedName="VARCHAR(30)" subType="DATASOURCE_TYPE" type="STRING" maxLength="30"/>
+        </element>
+      </datatype>
+      <attribute name="Customized" type="STRING">metadata.added;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/examples/repository/source/ds_orders" type="DATA_SOURCE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <attribute name="SQL" type="STRING">select * from customers</attribute>
+  <attribute name="creationDate" type="LONG">1382029188101</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="isSingleSelect" type="STRING">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="p:0:Customized" type="STRING">metadata.added;datatype.changed</attribute>
+  <attribute name="passThroughSource" type="STRING">/shared/ASAssets/Utilities/examples/repository/source/ds_orders</attribute>
+</metadata>

@@ -1,0 +1,138 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_getChildResourcesResponseXML" path="/shared/ASAssets/Utilities/examples/repository/test_getChildResourcesResponseXML" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="resourceName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="annotation">
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="columnName">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="isNullable">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="definition">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="name">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+        <element name="nativeType">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/examples/repository/returnGetChildResourcesResponseXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getChildResourcesXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inXML" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="1024"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="isNullable">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="columnName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="columnType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeBaseType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE test_getChildResourcesResponseXML(
+    OUT result CURSOR (
+        resourceName VARCHAR(32768), 
+        resourcePath VARCHAR(32768), 
+        resourceType VARCHAR(32768), 
+        subtype VARCHAR(32768), 
+        enabled BIT, 
+		annotation LONGVARCHAR,
+        columnName VARCHAR(32768), 
+        isNullable VARCHAR(32768), 
+        definition VARCHAR(32768), 
+        name VARCHAR(32768), 
+        nativeType VARCHAR(32768)
+        )
+)
+BEGIN
+	DECLARE inXML	XML;
+	
+	call /shared/ASAssets/Utilities/examples/repository/returnGetChildResourcesResponseXML(inXML);
+	open result for
+	select * from /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getChildResourcesXSLT(inXML);
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

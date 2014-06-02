@@ -1,0 +1,369 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="rebindResource" path="/shared/ASAssets/Utilities/repository/rebindResource" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>rebindResource:
+
+	-- CIS Repository Helper Procedure --
+	This procedure provides the capability to rebind the resources inside of the requested resource.  
+	For example, if a View points to a data source table, you may want to rebind to a different data source
+	that has the same structure.  This may be useful when redeploying from Dev to Test to Production or
+	simply rebinding to a different development instance of the database.
+
+ 
+	Input:
+		resourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/Utilities/repository/examples/source/PRODUCT_VIEW
+
+		resourceType - Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. TABLE
+
+		rebindVector - a vector that provides the rules for rebinding each of the associate resources
+			within the given resource.
+			VECTOR (rebindRow ROW (
+				oldPath		TypeDefinitions.pathType,
+				oldType		VARCHAR(255),
+				newPath		TypeDefinitions.pathType,
+				newType		VARCHAR(255)
+			));
+			Values: example:  rebind a data source resource from /shared/examples... to /shared/Utilities...
+				(&apos;/shared/examples/ds_inventory/products&apos;, 				
+				&apos;TABLE&apos;,
+				&apos;/shared/Utilities/repository/examples/source/ds_inventory/products&apos;,	
+				&apos;TABLE&apos; )
+
+
+	Output:
+		success	- true(1) or false(0)
+			Values: 1 or 0
+
+		createResponse - XML response representing what was created.
+			Values: Create Response XML value
+
+		faultResponse - null if succesful otherwise contains a fault resposne.
+			Values: Fault Resposne XML value
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			Created new
+	04/25/2013		Mike Tinius			5.2.0			moved implementation to the /repository/rebind/rebindResourceImpl procedure
+
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+	TYPES / SUBTYPES:
+	=================
+	The following resource types/subtypes are supported by this operation.  Resources
+	cannot be created under &quot;/services&quot; unless otherwise noted, and cannot be created
+	within a physical data source.  
+
+	(Basic CIS folder)
+	* CONTAINER / FOLDER_CONTAINER - A Composite folder.   Cannot be created anywhere under /services except in another FOLDER under /services/webservices.
+	* CONTAINER / DIRECTORY_CONTAINER - A Composite directory.
+	(Database)
+	* CONTAINER / CATALOG_CONTAINER - A Composite catalog folder under a data source.  Can only be created within a data source under /services/databases.
+	* CONTAINER / SCHEMA_CONTAINER - A Composite schema container.  Can only be created within a CATALOG that is under /services/databases.
+	(Web Services)
+	* CONTAINER / SERVICE_CONTAINER - A web service container for the service.  Can only be created within a Composite Web Services data source that is under /services/webservices.
+	* CONTAINER / OPERATIONS_CONTAINER - A web service container for the operations
+	* CONTAINER / PORT_CONTAINER - A Composite web service container for port.   Can only be created within a SERVICE under /services/webservices.
+	(Connectors)
+	* CONTAINER / CONNECTOR_CONTAINER - A Composite container for connectors.
+
+	* CONNECTOR / JMS - A Composite JMS Connector.  Created with no connection information
+	* CONNECTOR / HTTP - A Composite HTTP Connector.  Created with no connection information
+
+	* DATA_SOURCE / RELATIONAL_DATA_SOURCE - A relational database source.
+	* DATA_SOURCE / FILE_DATA_SOURCE - A comma separate file data source.
+	* DATA_SOURCE / XML_FILE_DATA_SOURCE - An XML file data source.
+	* DATA_SOURCE / WSDL_DATA_SOURCE - A Composite web service data source.
+	* DATA_SOURCE / XML_HTTP_DATA_SOURCE - An HTTP XML data source.
+	* DATA_SOURCE / NONE - A custom java procedure data source.
+
+	* DEFINITION_SET / SQL_DEFINITION_SET - A Composite SQL Definition set.
+	* DEFINITION_SET / XML_SCHEMA_DEFINITION_SET - A Composite XML Schema Defintion set.
+	* DEFINITION_SET / WSDL_DEFINITION_SET - A Composite WSDL Definition set.
+	* DEFINITION_SET / ABSTRACT_WSDL_DEFINITION_SET - A Composite Abstract WSDL Definition set such as the ones imported from Designer.
+	* DEFINITION_SET / SCDL_DEFINITION_SET - A Composite SCA composite Definition set imported from Designer.
+
+	* LINK / unknown at this time
+
+	(CIS procedures)
+	* PROCEDURE / SQL_SCRIPT_PROCEDURE - A Composite SQL Procedure.  Created with a simple default script body that is runnable.
+	(Custom procedures)
+	* PROCEDURE / JAVA_PROCEDURE - A Composite java data source procedure.  Created from a java data source (jar file).
+	(Database procedures)
+	* PROCEDURE / EXTERNAL_SQL_PROCEDURE - A Composite Packaged Query.  Created with no SQL text, so it is not runnable.  
+	* PROCEDURE / DATABASE_PROCEDURE - A database stored procedure.
+	(XML procedures)
+	* PROCEDURE / BASIC_TRANSFORM_PROCEDURE - A Composite Basic XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XSLT_TRANSFORM_PROCEDURE - A Composite XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / STREAM_TRANSFORM_PROCEDURE - A Composite XSLT Streaming Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XQUERY_TRANSFORM_PROCEDURE - A Composite XQUERY Transformation Procedure.  Created with no target schema and no model, so it is not runnable.
+	(Misc procedures)
+	* PROCEDURE / OPERATION_PROCEDURE - A Composite web service or HTTP procedure operation.
+
+	* TABLE / SQL_TABLE - A Composite View.  Created with no SQL text or model, so it is not runnable.  
+	* TABLE / DATABASE_TABLE - A Composite database table.
+	* TABLE / DELIMITED_FILE_TABLE - A Composite delimited file table
+	* TABLE / SYSTEM_TABLE - A Composite system table view.
+
+	* TREE / XML_FILE_TREE - The XML tree structure associated with a file-XML data source.
+
+	* TRIGGER / NONE - A Composite trigger.   Created disabled.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="rebindVector" direction="IN" nullable="true">
+      <datatype name="rebindVector" type="ARRAY" maxLength="0">
+        <itemDatatype>
+          <datatype name="rebindRow" type="TREE" refId="1">
+            <element name="oldPath">
+              <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+            </element>
+            <element name="oldType">
+              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+            </element>
+            <element name="newPath">
+              <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+            </element>
+            <element name="newType">
+              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+            </element>
+          </datatype>
+        </itemDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="createResponse" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+    </parameter>
+    <parameter name="faultResponse" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/rebind/rebindResourceImpl" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="rebindVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="rebindRow" type="TREE" refId="2">
+              <element name="oldPath">
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+              </element>
+              <element name="oldType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="newPath">
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+              </element>
+              <element name="newType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="3"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="3"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+    rebindResource:
+
+	-- CIS Repository Helper Procedure --
+	This procedure provides the capability to rebind the resources inside of the requested resource.  
+	For example, if a View points to a data source table, you may want to rebind to a different data source
+	that has the same structure.  This may be useful when redeploying from Dev to Test to Production or
+	simply rebinding to a different development instance of the database.
+
+ 
+	Input:
+		resourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/Utilities/repository/examples/source/PRODUCT_VIEW
+
+		resourceType - Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. TABLE
+
+		rebindVector - a vector that provides the rules for rebinding each of the associate resources
+			within the given resource.
+			VECTOR (rebindRow ROW (
+				oldPath		TypeDefinitions.pathType,
+				oldType		VARCHAR(255),
+				newPath		TypeDefinitions.pathType,
+				newType		VARCHAR(255)
+			));
+			Values: example:  rebind a data source resource from /shared/examples... to /shared/Utilities...
+				(&apos;/shared/examples/ds_inventory/products&apos;, 				
+				&apos;TABLE&apos;,
+				&apos;/shared/Utilities/repository/examples/source/ds_inventory/products&apos;,	
+				&apos;TABLE&apos; )
+
+
+	Output:
+		success	- true(1) or false(0)
+			Values: 1 or 0
+
+		createResponse - XML response representing what was created.
+			Values: Create Response XML value
+
+		faultResponse - null if succesful otherwise contains a fault resposne.
+			Values: Fault Resposne XML value
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			Created new
+	04/25/2013		Mike Tinius			5.2.0			moved implementation to the /repository/rebind/rebindResourceImpl procedure
+
+
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+	TYPES / SUBTYPES:
+	=================
+	The following resource types/subtypes are supported by this operation.  Resources
+	cannot be created under &quot;/services&quot; unless otherwise noted, and cannot be created
+	within a physical data source.  
+
+	(Basic CIS folder)
+	* CONTAINER / FOLDER_CONTAINER - A Composite folder.   Cannot be created anywhere under /services except in another FOLDER under /services/webservices.
+	* CONTAINER / DIRECTORY_CONTAINER - A Composite directory.
+	(Database)
+	* CONTAINER / CATALOG_CONTAINER - A Composite catalog folder under a data source.  Can only be created within a data source under /services/databases.
+	* CONTAINER / SCHEMA_CONTAINER - A Composite schema container.  Can only be created within a CATALOG that is under /services/databases.
+	(Web Services)
+	* CONTAINER / SERVICE_CONTAINER - A web service container for the service.  Can only be created within a Composite Web Services data source that is under /services/webservices.
+	* CONTAINER / OPERATIONS_CONTAINER - A web service container for the operations
+	* CONTAINER / PORT_CONTAINER - A Composite web service container for port.   Can only be created within a SERVICE under /services/webservices.
+	(Connectors)
+	* CONTAINER / CONNECTOR_CONTAINER - A Composite container for connectors.
+
+	* CONNECTOR / JMS - A Composite JMS Connector.  Created with no connection information
+	* CONNECTOR / HTTP - A Composite HTTP Connector.  Created with no connection information
+
+	* DATA_SOURCE / RELATIONAL_DATA_SOURCE - A relational database source.
+	* DATA_SOURCE / FILE_DATA_SOURCE - A comma separate file data source.
+	* DATA_SOURCE / XML_FILE_DATA_SOURCE - An XML file data source.
+	* DATA_SOURCE / WSDL_DATA_SOURCE - A Composite web service data source.
+	* DATA_SOURCE / XML_HTTP_DATA_SOURCE - An HTTP XML data source.
+	* DATA_SOURCE / NONE - A custom java procedure data source.
+
+	* DEFINITION_SET / SQL_DEFINITION_SET - A Composite SQL Definition set.
+	* DEFINITION_SET / XML_SCHEMA_DEFINITION_SET - A Composite XML Schema Defintion set.
+	* DEFINITION_SET / WSDL_DEFINITION_SET - A Composite WSDL Definition set.
+	* DEFINITION_SET / ABSTRACT_WSDL_DEFINITION_SET - A Composite Abstract WSDL Definition set such as the ones imported from Designer.
+	* DEFINITION_SET / SCDL_DEFINITION_SET - A Composite SCA composite Definition set imported from Designer.
+
+	* LINK / unknown at this time
+
+	(CIS procedures)
+	* PROCEDURE / SQL_SCRIPT_PROCEDURE - A Composite SQL Procedure.  Created with a simple default script body that is runnable.
+	(Custom procedures)
+	* PROCEDURE / JAVA_PROCEDURE - A Composite java data source procedure.  Created from a java data source (jar file).
+	(Database procedures)
+	* PROCEDURE / EXTERNAL_SQL_PROCEDURE - A Composite Packaged Query.  Created with no SQL text, so it is not runnable.  
+	* PROCEDURE / DATABASE_PROCEDURE - A database stored procedure.
+	(XML procedures)
+	* PROCEDURE / BASIC_TRANSFORM_PROCEDURE - A Composite Basic XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XSLT_TRANSFORM_PROCEDURE - A Composite XSLT Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / STREAM_TRANSFORM_PROCEDURE - A Composite XSLT Streaming Transformation procedure.  Created with no target procedure and no output columns, so it is not runnable.
+	* PROCEDURE / XQUERY_TRANSFORM_PROCEDURE - A Composite XQUERY Transformation Procedure.  Created with no target schema and no model, so it is not runnable.
+	(Misc procedures)
+	* PROCEDURE / OPERATION_PROCEDURE - A Composite web service or HTTP procedure operation.
+
+	* TABLE / SQL_TABLE - A Composite View.  Created with no SQL text or model, so it is not runnable.  
+	* TABLE / DATABASE_TABLE - A Composite database table.
+	* TABLE / DELIMITED_FILE_TABLE - A Composite delimited file table
+	* TABLE / SYSTEM_TABLE - A Composite system table view.
+
+	* TREE / XML_FILE_TREE - The XML tree structure associated with a file-XML data source.
+
+	* TRIGGER / NONE - A Composite trigger.   Created disabled.
+*/
+PROCEDURE rebindResource(
+	IN resourcePath			/shared/ASAssets/Utilities/TypeDefinitions.pathType, 	-- full folder path of the resource requiring a rebind of it&apos;s sources.
+	IN resourceType			VARCHAR,
+	IN rebindVector 		/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.rebindVector,	-- newDataSource
+	OUT success				BIT,
+	OUT createResponse 		XML,
+	OUT faultResponse		XML
+)
+BEGIN
+	DECLARE debug			CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+
+	call /shared/ASAssets/Utilities/repository/rebind/rebindResourceImpl(resourcePath, resourceType, rebindVector, debug, success, createResponse, faultResponse);
+END
+</attribute>
+  <attribute name="creationDate" type="LONG">1369417729294</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1399565923676</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:2:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:5:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

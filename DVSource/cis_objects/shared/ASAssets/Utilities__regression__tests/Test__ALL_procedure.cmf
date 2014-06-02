@@ -1,0 +1,441 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="Test_ALL" path="/shared/ASAssets/Utilities_regression_tests/Test_ALL" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="totalNumTests" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="totalNumErrors" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="totalNumSkipped" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/GetProperty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="property" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="PropertyName" type="STRING" maxLength="255"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="PropertyValue" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/getCisHome" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/getUtilitiesVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="version" direction="OUT">
+        <datatype type="FLOAT"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getImpactedResources" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="startingFolder" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="ResourcePath">
+            <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+          </element>
+          <element name="ResourceType">
+            <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+          </element>
+          <element name="ImpactLevel">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="ImpactMessage">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/activedirectory/Test_ALL" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="totalNumTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/calculations/Test_ALL" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="totalNumTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/conversions/Test_ALL" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="totalNumTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/encoding/Test_ALL" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="totalNumTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/file/Test_ALL" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="totalNumTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/log/Test_ALL" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="totalNumTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/repository/Test_ALL" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="totalNumTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/string/Test_ALL" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="totalNumTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/time/Test_ALL" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="totalNumTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/xml/Test_ALL" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="totalNumTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="totalNumSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisHome" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getUtilitiesVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">-- runs all regression tests. should return 0 total errors and 0 skipped tests.
+-- 
+-- IMPORTANT: Do not install any custom objects in /shared/examples. This folder
+-- is used in many of the tests and will cause some tests to fail if there are 
+-- any objects other than the ones created during the CIS installation.
+--
+PROCEDURE Test_ALL(
+    OUT totalNumTests INTEGER,
+    OUT totalNumErrors INTEGER,
+    OUT totalNumSkipped INTEGER
+)
+BEGIN
+    DECLARE numTests INTEGER;
+    DECLARE numErrors INTEGER;
+    DECLARE numSkipped INTEGER;
+    DECLARE hostname VARCHAR;
+    DECLARE portnum VARCHAR;
+    DECLARE impactedCount INTEGER DEFAULT 0;
+
+    SET totalNumTests = 0;
+    SET totalNumErrors = 0;
+    SET totalNumSkipped = 0;
+
+    CALL GetProperty(&apos;SERVER_HOSTNAME&apos;, hostname);
+    CALL GetProperty(&apos;SERVER_WEB_PORT&apos;, portnum);
+
+    CALL PRINT (&apos;Beginning tests on &apos; || hostname || &apos;:&apos; || portnum || &apos;.&apos;);
+    CALL PRINT (&apos;CIS install folder = &apos; || getCisHome());
+    CALL PRINT (&apos;CIS version = &apos; || getCisVersion());
+    CALL PRINT (&apos;Utilities version = &apos; || getUtilitiesVersion());
+
+    CALL PRINT (&apos;Checking for impacted resources ...&apos;);
+    FOR r AS
+        SELECT * FROM /shared/ASAssets/Utilities/repository/getImpactedResources(&apos;/shared/ASAssets/Utilities&apos;)
+    DO
+        CALL PRINT (r.ResourcePath || &apos;: &apos; || r.ImpactMessage);
+        SET impactedCount = impactedCount + 1;
+    END FOR; 
+    CALL PRINT (&apos;Done.&apos;);
+
+    IF (impactedCount &gt; 0) THEN
+        RAISE System.IllegalStateException VALUE &apos;Impacted resources detected. Halting regression test.&apos;;
+    END IF;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/activedirectory/Test_ALL (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/calculations/Test_ALL (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/conversions/Test_ALL (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/encoding/Test_ALL (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/file/Test_ALL (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/log/Test_ALL (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/repository/Test_ALL (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/string/Test_ALL (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/&quot;time&quot;/Test_ALL (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/&quot;xml&quot;/Test_ALL (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL PRINT (&apos;Tests complete: &apos; || totalNumTests || &apos; total tests, &apos; || totalNumErrors || &apos; total errors, &apos; || totalNumSkipped || &apos; skipped tests.&apos;);
+
+    IF (totalNumErrors &gt; 0) THEN
+        CALL PRINT (&apos;***** Total Errors = &apos; || totalNumErrors);
+    END IF;
+
+    IF (totalNumSkipped &gt; 0) THEN
+        CALL PRINT (&apos;***** Total Skipped = &apos; || totalNumSkipped);
+    END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1397496980343</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">10/95</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/102</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/98</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/27</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/29</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/28</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/39</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/25</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>GetProperty</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/24</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>GetProperty</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/36</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/32</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/30</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/42</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>
