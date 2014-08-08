@@ -1,0 +1,574 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getUsedResourcesRecurseCursor" path="/shared/ASAssets/Utilities/repository/getUsedResourcesRecurseCursor" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getUsedResourcesRecurseCursor:
+
+	This procedure recursively retrieves a cursor of metadata describing what resources are &quot;used&quot; by the resource path provided. 
+	For each child dependency resource found for the parent, retrieve its &quot;used&quot; dependencies until the entire lineage has been discovered.
+	The full resource path and resource type must be provided.   Use the resource type &quot;LINK&quot; for any published database or web service resources.
+ 
+	Input:
+		resourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/ASAssets/Utilities/repository/examples/source/proc1
+		resourceType - Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. PROCEDURE, TABLE, LINK
+			When the resourcePath points to a published database resource such as /services/databases/MYTEST/ViewSales2, use &quot;LINK&quot; for the resource type.
+	Output:
+		getUsedResourcesResponseType  - response containing the resource metadata
+        	resourceName 		VARCHAR(255), 
+        	resourcePath 		TypeDefinitions.pathType, 
+        	resourceType 		VARCHAR(255), 
+        	subtype 			VARCHAR(255), 
+        	enabled 			BIT, 
+			id					INTEGER,
+        	tableType 			VARCHAR(255), 
+        	explicitlyDesigned 	BIT, 
+        	sqlText 			VARCHAR(32768)
+		);
+
+	Values: example: INPUT: resourcePath=/services/databases/MYTEST/CAT1/SCH1/ViewSales2,  resourceType=LINK
+	----------------
+	resourceName					resourcePath																			resourceType	subtype					enabled	id			tableType	explicitlyDesigned	sqlText
+	ViewSales2						/services/databases/MYTEST/CAT1/SCH1/ViewSales2											LINK			NONE						1	138780107	[NULL]		[NULL]				[NULL]
+	ViewSales2						/shared/_regression/Application/Views/ViewSales2										TABLE			SQL_TABLE					1	138781301	UNKNOWN		0					&quot;SELECT...
+	productCatalog_Transformation	/shared/_regression/Physical/Formatting/Transformations/productCatalog_Transformation	PROCEDURE		XSLT_TRANSFORM_PROCEDURE	1	138783301	[NULL]		0					[NULL]
+	productCatalog.xml				/shared/_regression/Physical/Metadata/XML/ds_XML/productCatalog.xml						TREE			XML_FILE_TREE				1	138782427	[NULL]		[NULL]				[NULL]
+	Order_Details					/shared/_regression/Physical/Formatting/ds_orders1/Order_Details						TABLE			SQL_TABLE					1	138783504	VIEW		0					&quot;SELECT...
+	orderdetails					/shared/_regression/Physical/Metadata/MysqlSource/ORDERS1/ds_orders1/orderdetails		TABLE			DATABASE_TABLE				1	138782599	TABLE		0					[NULL]
+
+	Values: example: INPUT: resourcePath=/services/webservices/TEST00/testWebService_bare/getCustomerById,  resourceType=LINK
+	resourceName					resourcePath																			resourceType	subtype					enabled	id			tableType	explicitlyDesigned	sqlText
+	getCustomerById					/services/webservices/TEST00/testWebService_bare/getCustomerById						LINK			NONE						1	137950129	[NULL]		[NULL]				[NULL]
+	getCustomerById					/shared/test00/TestSecurity/getCustomerById												PROCEDURE		SQL_SCRIPT_PROCEDURE		1	137952495	[NULL]		0					&quot;PROCEDURE getCustomerById(
+	customers						/shared/test00/DataSources/ds_orders/customers											TABLE			DATABASE_TABLE				1	137950739	TABLE		0					[NULL]
+
+	Values: example: INPUT: resourcePath=/shared/examples/CompositeView,  resourceType=TABLE
+	----------------
+	resourceName					resourcePath																			resourceType	subtype					enabled	id			tableType	explicitlyDesigned	sqlText
+	CompositeView						/shared/examples/CompositeView															TABLE			SQL_TABLE				1	21874			UNKNOWN		0					&quot;SELECT 
+	ViewOrder							/shared/examples/ViewOrder																TABLE			SQL_TABLE				1	21981			UNKNOWN		0					&quot;SELECT 
+	customers							/shared/examples/ds_orders/customers													TABLE			DATABASE_TABLE			1	21963			TABLE		0					[NULL]
+	orderdetails						/shared/examples/ds_orders/orderdetails													TABLE			DATABASE_TABLE			1	21901			TABLE		0					[NULL]
+	orders								/shared/examples/ds_orders/orders														TABLE			DATABASE_TABLE			1	21928			TABLE		0					[NULL]
+	ds_orders							/shared/examples/ds_orders																DATA_SOURCE		RELATIONAL_DATA_SOURCE	1	21892			[NULL]		[NULL]				[NULL]
+	cache_status						/shared/examples/ds_orders/cache_status													TABLE			DATABASE_TABLE			1	21951			TABLE		0					[NULL]
+	cache_tracking						/shared/examples/ds_orders/cache_tracking												TABLE			DATABASE_TABLE			1	21893			TABLE		0					[NULL]
+	orders_cache						/shared/examples/ds_orders/orders_cache													TABLE			DATABASE_TABLE			1	21911			TABLE		0					[NULL]
+	ViewSales							/shared/examples/ViewSales																TABLE			SQL_TABLE				1	22063			UNKNOWN		0					&quot;SELECT 
+	orderdetails						/shared/examples/ds_orders/orderdetails													TABLE			DATABASE_TABLE			1	21901			TABLE		0					[NULL]
+	productCatalog_Transformation		/shared/examples/productCatalog_Transformation											PROCEDURE		XSLT_TRANSFORM_PROCEDURE 1	22061			[NULL]		0					[NULL]
+	productCatalog.xml					/shared/examples/ds_XML/productCatalog.xml												TREE			XML_FILE_TREE			1	1122649			[NULL]		[NULL]				[NULL]
+	ViewSupplier						/shared/examples/ViewSupplier															TABLE			SQL_TABLE				1	22050			UNKNOWN		0					&quot;SELECT 
+	inventorytransactions				/shared/examples/ds_inventory/inventorytransactions										TABLE			DATABASE_TABLE			1	21991			TABLE		0					[NULL]
+	purchaseorders						/shared/examples/ds_inventory/purchaseorders											TABLE			DATABASE_TABLE			1	22004			TABLE		0					[NULL]
+	suppliers							/shared/examples/ds_inventory/suppliers													TABLE			DATABASE_TABLE			1	22029			TABLE		0					[NULL]
+
+	Exceptions:  none
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	07/03/2014		Mike Tinius			6.2.0			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+    </parameter>
+    <parameter name="inParentID" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+    <parameter name="inLineageResourceIdList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="inIgnoreResourceDoesNotExist" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="getUsedResourcesResponseType" type="TABLE" refId="1">
+        <element name="resourceName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resourcePath">
+          <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        </element>
+        <element name="resourceType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="subtype">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="enabled">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="id">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="tableType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="explicitlyDesigned">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="sqlText">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Log" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToLog" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="path">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="type">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="id">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="changeid">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="ownerDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="ownerName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="impactLevel">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="scriptText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getUsedResourcesRecurseCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="inParentID" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="inLineageResourceIdList" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inIgnoreResourceDoesNotExist" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="id">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getUsedResourcesXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="usedResourcesResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getUsedResourcesXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inXML" direction="IN">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="id">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getUsedResourcesRecurseCursor:
+
+	This procedure recursively retrieves a cursor of metadata describing what resources are &quot;used&quot; by the resource path provided. 
+	For each child dependency resource found for the parent, retrieve its &quot;used&quot; dependencies until the entire lineage has been discovered.
+	The full resource path and resource type must be provided.   Use the resource type &quot;LINK&quot; for any published database or web service resources.
+ 
+	Input:
+		resourcePath - Full resource path which includes the path and the resource name  
+			Values: e.g. /shared/ASAssets/Utilities/repository/examples/source/proc1
+		resourceType - Type of CIS resource to be created
+			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. PROCEDURE, TABLE, LINK
+			When the resourcePath points to a published database resource such as /services/databases/MYTEST/ViewSales2, use &quot;LINK&quot; for the resource type.
+	Output:
+		getUsedResourcesResponseType  - response containing the resource metadata
+        	resourceName 		VARCHAR(255), 
+        	resourcePath 		TypeDefinitions.pathType, 
+        	resourceType 		VARCHAR(255), 
+        	subtype 			VARCHAR(255), 
+        	enabled 			BIT, 
+			id					INTEGER,
+        	tableType 			VARCHAR(255), 
+        	explicitlyDesigned 	BIT, 
+        	sqlText 			VARCHAR(32768)
+		);
+
+	Values: example: INPUT: resourcePath=/services/databases/MYTEST/CAT1/SCH1/ViewSales2,  resourceType=LINK
+	----------------
+	resourceName					resourcePath																			resourceType	subtype					enabled	id			tableType	explicitlyDesigned	sqlText
+	ViewSales2						/services/databases/MYTEST/CAT1/SCH1/ViewSales2											LINK			NONE						1	138780107	[NULL]		[NULL]				[NULL]
+	ViewSales2						/shared/_regression/Application/Views/ViewSales2										TABLE			SQL_TABLE					1	138781301	UNKNOWN		0					&quot;SELECT...
+	productCatalog_Transformation	/shared/_regression/Physical/Formatting/Transformations/productCatalog_Transformation	PROCEDURE		XSLT_TRANSFORM_PROCEDURE	1	138783301	[NULL]		0					[NULL]
+	productCatalog.xml				/shared/_regression/Physical/Metadata/XML/ds_XML/productCatalog.xml						TREE			XML_FILE_TREE				1	138782427	[NULL]		[NULL]				[NULL]
+	Order_Details					/shared/_regression/Physical/Formatting/ds_orders1/Order_Details						TABLE			SQL_TABLE					1	138783504	VIEW		0					&quot;SELECT...
+	orderdetails					/shared/_regression/Physical/Metadata/MysqlSource/ORDERS1/ds_orders1/orderdetails		TABLE			DATABASE_TABLE				1	138782599	TABLE		0					[NULL]
+
+	Values: example: INPUT: resourcePath=/services/webservices/TEST00/testWebService_bare/getCustomerById,  resourceType=LINK
+	resourceName					resourcePath																			resourceType	subtype					enabled	id			tableType	explicitlyDesigned	sqlText
+	getCustomerById					/services/webservices/TEST00/testWebService_bare/getCustomerById						LINK			NONE						1	137950129	[NULL]		[NULL]				[NULL]
+	getCustomerById					/shared/test00/TestSecurity/getCustomerById												PROCEDURE		SQL_SCRIPT_PROCEDURE		1	137952495	[NULL]		0					&quot;PROCEDURE getCustomerById(
+	customers						/shared/test00/DataSources/ds_orders/customers											TABLE			DATABASE_TABLE				1	137950739	TABLE		0					[NULL]
+
+	Values: example: INPUT: resourcePath=/shared/examples/CompositeView,  resourceType=TABLE
+	----------------
+	resourceName					resourcePath																			resourceType	subtype					enabled	id			tableType	explicitlyDesigned	sqlText
+	CompositeView						/shared/examples/CompositeView															TABLE			SQL_TABLE				1	21874			UNKNOWN		0					&quot;SELECT 
+	ViewOrder							/shared/examples/ViewOrder																TABLE			SQL_TABLE				1	21981			UNKNOWN		0					&quot;SELECT 
+	customers							/shared/examples/ds_orders/customers													TABLE			DATABASE_TABLE			1	21963			TABLE		0					[NULL]
+	orderdetails						/shared/examples/ds_orders/orderdetails													TABLE			DATABASE_TABLE			1	21901			TABLE		0					[NULL]
+	orders								/shared/examples/ds_orders/orders														TABLE			DATABASE_TABLE			1	21928			TABLE		0					[NULL]
+	ds_orders							/shared/examples/ds_orders																DATA_SOURCE		RELATIONAL_DATA_SOURCE	1	21892			[NULL]		[NULL]				[NULL]
+	cache_status						/shared/examples/ds_orders/cache_status													TABLE			DATABASE_TABLE			1	21951			TABLE		0					[NULL]
+	cache_tracking						/shared/examples/ds_orders/cache_tracking												TABLE			DATABASE_TABLE			1	21893			TABLE		0					[NULL]
+	orders_cache						/shared/examples/ds_orders/orders_cache													TABLE			DATABASE_TABLE			1	21911			TABLE		0					[NULL]
+	ViewSales							/shared/examples/ViewSales																TABLE			SQL_TABLE				1	22063			UNKNOWN		0					&quot;SELECT 
+	orderdetails						/shared/examples/ds_orders/orderdetails													TABLE			DATABASE_TABLE			1	21901			TABLE		0					[NULL]
+	productCatalog_Transformation		/shared/examples/productCatalog_Transformation											PROCEDURE		XSLT_TRANSFORM_PROCEDURE 1	22061			[NULL]		0					[NULL]
+	productCatalog.xml					/shared/examples/ds_XML/productCatalog.xml												TREE			XML_FILE_TREE			1	1122649			[NULL]		[NULL]				[NULL]
+	ViewSupplier						/shared/examples/ViewSupplier															TABLE			SQL_TABLE				1	22050			UNKNOWN		0					&quot;SELECT 
+	inventorytransactions				/shared/examples/ds_inventory/inventorytransactions										TABLE			DATABASE_TABLE			1	21991			TABLE		0					[NULL]
+	purchaseorders						/shared/examples/ds_inventory/purchaseorders											TABLE			DATABASE_TABLE			1	22004			TABLE		0					[NULL]
+	suppliers							/shared/examples/ds_inventory/suppliers													TABLE			DATABASE_TABLE			1	22029			TABLE		0					[NULL]
+
+	Exceptions:  none
+
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	07/03/2014		Mike Tinius			6.2.0			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getUsedResourcesRecurseCursor(
+    IN resourcePath 				/lib/resource/ResourceDefs.ResourcePath, 
+    IN resourceType 				/lib/resource/ResourceDefs.ResourceType,
+	IN inParentID					INTEGER, 		-- null to start with
+	IN inLineageResourceIdList		LONGVARCHAR,	-- null to start with.  A list of space separated resource ids built up as the resources are traversed. 
+								 					-- Used to prevent circular recursive calls by detecting if a parent resource id is found in this list on subsequent invocations.
+	IN inIgnoreResourceDoesNotExist	BIT, 			-- Ignore any resources that do not exist
+													-- 1 = Bypass the processing of that resource.
+													-- 0 = (default) Do not ignore any resources.  Throw an error that the resource does not exist.
+    OUT result		 				PIPE /shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.getUsedResourcesResponseType
+/*
+	DECLARE PUBLIC TYPE getUsedResourcesResponseType ROW (
+        	resourceName 		VARCHAR(255), 
+        	resourcePath 		/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+        	resourceType 		VARCHAR(255), 
+        	subtype 			VARCHAR(255), 
+        	enabled 			BIT, 
+			id					INTEGER,
+        	tableType 			VARCHAR(255), 
+        	explicitlyDesigned 	BIT, 
+        	sqlText 			VARCHAR(32768)
+	);
+*/
+)
+BEGIN
+	DECLARE parentID					INTEGER DEFAULT inParentID;
+	DECLARE lineageResourceIdList 		LONGVARCHAR DEFAULT TRIM(NVL(inLineageResourceIdList, &apos; &apos;));
+	DECLARE ignoreResourceDoesNotExist	INTEGER DEFAULT NVL(inIgnoreResourceDoesNotExist,0);
+	DECLARE usedResourcesResponse 		XML;
+	DECLARE moduleName					VARCHAR DEFAULT &apos;getUsedResourcesRecurseCursor&apos;;
+	DECLARE debug						CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	DECLARE warning						CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.warning;
+	DECLARE rec							/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.getUsedResourcesResponseType;
+	DECLARE message						LONGVARCHAR;
+	DECLARE circularReferenceFound		BOOLEAN DEFAULT FALSE;
+	DECLARE ex							EXCEPTION;
+
+	IF (ResourceExists(resourcePath, resourceType) = 1) then
+			-- Insert the parent resource into the pipe (first time only)
+			FOR resource AS	SELECT * FROM /shared/ASAssets/Utilities/repository/getBasicResourceCursor(resourcePath, resourceType) DO
+
+				-- Check this parent resource id against the resource id lineage list to detec circular references.
+				IF (POSITION(resource.id IN lineageResourceIdList) &gt; 0) THEN
+					SET circularReferenceFound = true;
+				ELSE
+					-- Add the resource id to the list so that it gets passed into the next invocation and resources can be tracked through recursive calls.
+					SET lineageResourceIdList = lineageResourceIdList || &apos; &apos; || resource.id;
+				END IF;
+
+				IF (debug = &apos;Y&apos;) THEN 
+					set message = moduleName||&apos; : &apos;||&apos;resourceID=&apos;||resource.id||&apos;  parentID=&apos;||emptyStr(parentID) ||&apos; name=&apos;||resource.name || &apos; circularReferenceFound=&apos;||circularReferenceFound||&apos; lineageResourceIdList=&apos;||lineageResourceIdList;
+					call log  (message);
+					call print(message);
+				END IF;
+				-- Add the record to the output
+				INSERT INTO result VALUES (resource.name, resource.&quot;path&quot;, resource.&quot;type&quot;, resource.subType, resource.enabled, resource.id, resource.tableType, resource.explicitlyDesigned, NVL(resource.sqlText, resource.scriptText));
+				set parentID = resource.id;
+			END FOR;
+
+		-- Continue if the resource id has not been invoked previously within the context of these recursive calls. 
+		-- Continue if no circular reference is detected.  Return with no action if a circular reference is found.
+		IF (NOT circularReferenceFound) THEN
+			call /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getUsedResourcesXML(resourcePath, resourceType, usedResourcesResponse);
+			FOR r AS SELECT * FROM /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getUsedResourcesXSLT(usedResourcesResponse) 
+/*	DECLARE PUBLIC TYPE getUsedResourcesResponseType ROW (
+        	resourceName 		VARCHAR(255), 
+        	resourcePath 		/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+        	resourceType 		VARCHAR(255), 
+        	subtype 			VARCHAR(255), 
+        	enabled 			BIT, 
+			id					INTEGER,
+        	tableType 			VARCHAR(255), 
+        	explicitlyDesigned 	BIT, 
+        	sqlText 			VARCHAR(32768) 	);
+*/
+			DO
+				IF (debug = &apos;Y&apos;) THEN 
+					set message = moduleName||&apos; : &apos;||&apos;resourceID=&apos;||r.id||&apos;  parentID=&apos;||emptyStr(parentID) ||&apos; name=&apos;||r.resourceName || &apos; circularReferenceFound=&apos;||circularReferenceFound;
+					call log  (message);
+					call print(message);
+				END IF;
+
+				-- Recursively get the children used resources until all dependencies are found
+				FOR s AS SELECT * FROM /shared/ASAssets/Utilities/repository/getUsedResourcesRecurseCursor(r.resourcePath, r.resourceType, parentID, lineageResourceIdList, inIgnoreResourceDoesNotExist) DO
+					-- Add the record to the output
+					INSERT INTO result VALUES (s.resourceName, s.resourcePath, s.resourceType, s.subType, s.enabled, s.id, s.tableType, s.explicitlyDesigned, s.sqlText);
+				END FOR;
+			END FOR;
+		END IF;
+	ELSE
+		IF (ignoreResourceDoesNotExist = 1) THEN
+			IF (warning = &apos;Y&apos;) THEN
+				set message = moduleName||&apos; : &apos;||&apos;WARNING: Resource does not exist: type=&apos;||emptyStr(resourceType)||&apos;  path=&apos;||emptyStr(resourcePath);
+				call log  (message);
+				call print(message);
+			END IF;
+		ELSE
+			raise ex value moduleName||&apos; : The resource type=&apos;||emptyStr(resourceType)||&apos; and path=&apos;||emptyStr(resourcePath)||&apos; does not exist.&apos;;
+		END IF;
+	END IF;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">1376679119329</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1407214978478</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">11/149</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/148</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/164</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/163</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/122</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/121</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

@@ -19,10 +19,10 @@
   <dependency target="/shared/ASAssets/Utilities/repository/updateStreamTransformProcedure" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="transformSourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="transformSourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -68,7 +68,7 @@
                         <datatype name="VARCHAR" type="STRING" maxLength="255"/>
                       </element>
                       <element name="referencePath">
-                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
                       </element>
                       <element name="referenceTypeName">
                         <datatype name="VARCHAR" type="STRING" maxLength="255"/>
@@ -103,7 +103,7 @@
                         <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
                       </element>
                       <element name="referencePath">
-                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
                       </element>
                       <element name="proprietaryModel">
                         <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>

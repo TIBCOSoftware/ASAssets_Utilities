@@ -688,7 +688,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -747,7 +747,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -1134,14 +1134,6 @@ END
   <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">10/140</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceExists</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">15/137</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
@@ -1150,19 +1142,11 @@ END
       </value>
     </item>
     <item>
-      <key type="STRING">31/173</key>
+      <key type="STRING">10/140</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">25/150</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
+        <item>ResourceExists</item>
       </value>
     </item>
     <item>
@@ -1174,11 +1158,19 @@ END
       </value>
     </item>
     <item>
-      <key type="STRING">15/133</key>
+      <key type="STRING">25/150</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>util</item>
-        <item>System</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">31/173</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
       </value>
     </item>
     <item>
@@ -1187,6 +1179,14 @@ END
         <item>lib</item>
         <item>resource</item>
         <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/133</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
       </value>
     </item>
   </attribute>

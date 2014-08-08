@@ -115,7 +115,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/createResource" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceName" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -148,7 +148,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/updateSqlTable" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="inScripttext" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
@@ -518,14 +518,6 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">103/160</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">10/112</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
@@ -534,11 +526,11 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">15/129</key>
+      <key type="STRING">103/160</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>util</item>
-        <item>System</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
       </value>
     </item>
     <item>
@@ -550,15 +542,7 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">15/139</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">15/87</key>
+      <key type="STRING">15/129</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -574,7 +558,31 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
+      <key type="STRING">15/87</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/139</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
       <key type="STRING">15/119</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/109</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -587,14 +595,6 @@ IP////8DIgAAAAADEgAAAAP/////</value>
         <item>lib</item>
         <item>resource</item>
         <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">15/109</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
       </value>
     </item>
     <item>
@@ -630,19 +630,19 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">9/134</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">15/93</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
         <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/134</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
       </value>
     </item>
   </attribute>

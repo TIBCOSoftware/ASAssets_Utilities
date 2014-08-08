@@ -148,7 +148,7 @@ CSW Version: 5.2.0
       <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
     </parameter>
     <parameter name="result" direction="OUT" nullable="true">
-      <datatype type="TABLE" caseSensitive="false" refId="1">
+      <datatype subType="DATASOURCE_TYPE" type="TABLE" caseSensitive="false" refId="1">
         <element name="cisType">
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
         </element>

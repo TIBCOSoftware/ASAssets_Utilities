@@ -81,7 +81,7 @@
     </parameter>
   </parameters>
   <security>
-    <owner user="nobody" domain="composite"/>
+    <owner user="admin" domain="composite"/>
   </security>
   <dependency target="/services/webservices/system/admin/resource/operations/ResourceSchema" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
@@ -337,7 +337,9 @@
   <attribute name="creatorUserDomain" type="STRING">conoco</attribute>
   <attribute name="creatorUserName" type="STRING">neusts</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1392763469816</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1406670407327</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="sourcePath" type="STRING">/services/webservices/system/admin/resource/operations/getLockedResources</attribute>

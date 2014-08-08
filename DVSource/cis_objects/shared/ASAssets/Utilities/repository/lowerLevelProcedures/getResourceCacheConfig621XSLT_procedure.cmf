@@ -24,6 +24,9 @@
         <element name="enabled">
           <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
         </element>
+        <element name="cachePolicy">
+          <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
+        </element>
         <element name="storageMode">
           <datatype name="VARCHAR" type="STRING" maxLength="32768"/>
         </element>
@@ -289,71 +292,73 @@
   <attribute name="explicitly.designed" type="BOOLEAN">true</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1392835936588</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1406676954771</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="p:1:Customized" type="STRING">datatype.changed</attribute>
   <attribute name="sourcePath" type="STRING">/services/webservices/system/admin/resource/operations/getResourceCacheConfig</attribute>
   <attribute name="sourceType" type="SHORT">3</attribute>
-  <attribute name="transformModel" type="BYTE_ARRAY">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</attribute>
+  <attribute name="transformModel" type="BYTE_ARRAY">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</attribute>
   <attribute name="xqueryModel" type="NULL"/>
   <attribute name="xslt" type="STRING">&lt;xslt:stylesheet xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;1.0&quot;&gt;
   &lt;xslt:template match=&quot;/&quot;&gt;
     &lt;xslt:variable name=&quot;_configured&quot;/&gt;
     &lt;xslt:variable name=&quot;_enabled&quot;/&gt;
+    &lt;xslt:variable name=&quot;_cachePolicy&quot;/&gt;
     &lt;xslt:variable name=&quot;_storageMode&quot;/&gt;
     &lt;xslt:variable name=&quot;_storageDataSourcePath&quot;/&gt;
     &lt;xslt:variable name=&quot;_storageTargetName&quot;/&gt;
@@ -386,6 +391,7 @@ AQAAAAAAAAAAAAAAAAAAAAAAc1BLBQYAAAAAAQABAC8AAACxCwAAAAA=</attribute>
         &lt;xslt:for-each select=&quot;ns1:cacheConfig&quot;&gt;
           &lt;xslt:variable name=&quot;_configured&quot; select=&quot;ns1:configured&quot;/&gt;
           &lt;xslt:variable name=&quot;_enabled&quot; select=&quot;ns1:enabled&quot;/&gt;
+          &lt;xslt:variable name=&quot;_cachePolicy&quot; select=&quot;ns1:cachePolicy&quot;/&gt;
           &lt;xslt:variable name=&quot;_storageMode&quot; select=&quot;ns1:storage/ns1:mode&quot;/&gt;
           &lt;xslt:variable name=&quot;_storageDataSourcePath&quot; select=&quot;ns1:storage/ns1:storageDataSourcePath&quot;/&gt;
           &lt;xslt:variable name=&quot;_storageTargetName&quot; select=&quot;ns1:storage/ns1:storageTargets/ns1:entry/ns1:targetName&quot;/&gt;
@@ -407,9 +413,9 @@ AQAAAAAAAAAAAAAAAAAAAAAAc1BLBQYAAAAAAQABAC8AAACxCwAAAAA=</attribute>
           &lt;xslt:variable name=&quot;_incremental&quot; select=&quot;ns1:incremental&quot;/&gt;
           &lt;xslt:variable name=&quot;_storageBucketMode&quot; select=&quot;ns1:storage/ns1:bucketMode&quot;/&gt;
           &lt;xslt:variable name=&quot;_storageBucketCatalog&quot; select=&quot;ns1:storage/ns1:bucketProperties/ns1:bucketCatalog&quot;/&gt;
-          &lt;xslt:variable name=&quot;_storageBucketSchema&quot; select=&quot;ns1:storage/ns1:bucketProperties/ns1:bucketCatalog&quot;/&gt;
-          &lt;xslt:variable name=&quot;_storageBucketPrefix&quot; select=&quot;ns1:storage/ns1:bucketProperties/ns1:bucketCatalog&quot;/&gt;
-          &lt;xslt:variable name=&quot;_storageBucketNumBuckets&quot; select=&quot;ns1:storage/ns1:bucketProperties/ns1:bucketCatalog&quot;/&gt;
+          &lt;xslt:variable name=&quot;_storageBucketSchema&quot; select=&quot;ns1:storage/ns1:bucketProperties/ns1:bucketSchema&quot;/&gt;
+          &lt;xslt:variable name=&quot;_storageBucketPrefix&quot; select=&quot;ns1:storage/ns1:bucketProperties/ns1:bucketPrefix&quot;/&gt;
+          &lt;xslt:variable name=&quot;_storageBucketNumBuckets&quot; select=&quot;ns1:storage/ns1:bucketProperties/ns1:numBuckets&quot;/&gt;
           &lt;xslt:variable name=&quot;_storageDropCreateIdx&quot; select=&quot;ns1:storage/ns1:dropCreateIdx&quot;/&gt;
           &lt;xslt:variable name=&quot;_firstRefreshCallback&quot; select=&quot;ns1:firstRefreshCallback&quot;/&gt;
           &lt;xslt:variable name=&quot;_secondRefreshCallback&quot; select=&quot;ns1:secondRefreshCallback&quot;/&gt;
@@ -419,6 +425,9 @@ AQAAAAAAAAAAAAAAAAAAAAAAc1BLBQYAAAAAAQABAC8AAACxCwAAAAA=</attribute>
             &lt;/xslt:element&gt;
             &lt;xslt:element name=&quot;enabled&quot;&gt;
               &lt;xslt:value-of select=&quot;$_enabled&quot;/&gt;
+            &lt;/xslt:element&gt;
+            &lt;xslt:element name=&quot;cachePolicy&quot;&gt;
+              &lt;xslt:value-of select=&quot;$_cachePolicy&quot;/&gt;
             &lt;/xslt:element&gt;
             &lt;xslt:element name=&quot;storageMode&quot;&gt;
               &lt;xslt:value-of select=&quot;$_storageMode&quot;/&gt;

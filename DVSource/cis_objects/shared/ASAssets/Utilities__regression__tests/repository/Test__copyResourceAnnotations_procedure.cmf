@@ -85,7 +85,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/createResource" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceName" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -129,7 +129,7 @@
       <element name="columnAnnotations" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="ColumnAnnotationRow" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="ColumnAnnotationRow" type="TREE" refId="2">
+            <datatype name="ColumnAnnotationRow" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="ColumnAnnotationRow" type="TREE" refId="2">
               <element name="columnName">
                 <datatype name="ResourceName" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceName" type="STRING" maxLength="255"/>
               </element>
@@ -165,7 +165,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/updateSqlTable" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="inScripttext" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
@@ -399,7 +399,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397499388318</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1406909144529</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

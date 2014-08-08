@@ -32,7 +32,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/rebindResource" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -42,13 +42,13 @@
           <itemDatatype>
             <datatype name="rebindRow" type="TREE" refId="2">
               <element name="oldPath">
-                <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
               </element>
               <element name="oldType">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
               </element>
               <element name="newPath">
-                <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
               </element>
               <element name="newType">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
