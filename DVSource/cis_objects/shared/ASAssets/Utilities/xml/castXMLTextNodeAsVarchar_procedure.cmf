@@ -32,9 +32,6 @@
   <security>
     <owner user="admin" domain="composite"/>
   </security>
-  <dependency target="/lib/util/System" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
@@ -77,9 +74,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexGetGroups" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/time/DateUtils/GetServerTimezone" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="displayType" direction="IN">
@@ -93,14 +87,8 @@
   <dependency target="/system/customfunctions/GetServerTimezone" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
-  <dependency target="/system/customfunctions/GetServerTimezone" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/system/customfunctions/RegexFind" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/RegexFind" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* castXMLTextNodeAsVarchar:
   	This script converts XML text node to varchar. Does appropriate conversion from XML schema dateTime

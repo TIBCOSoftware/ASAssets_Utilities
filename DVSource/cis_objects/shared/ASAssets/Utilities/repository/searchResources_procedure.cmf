@@ -141,9 +141,6 @@
     <owner user="admin" domain="composite"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="moduleName" direction="IN">
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
@@ -162,7 +159,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -218,9 +215,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getDataSourceAttributes" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="dataSourcePath" direction="IN">
@@ -238,9 +232,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/getDataSourceAttributes" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
@@ -255,7 +246,7 @@
             <datatype type="STRING" maxLength="255"/>
           </element>
           <element name="resPath">
-            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
           </element>
           <element name="resType">
             <datatype type="STRING" maxLength="255"/>
@@ -291,12 +282,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/getScriptText" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getScriptText" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
@@ -316,7 +301,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -346,9 +331,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/ParseCSVLine" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexPosition" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="Input Text" direction="IN">
@@ -364,9 +346,6 @@
         <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexPosition" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -387,9 +366,6 @@
         </datatype>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -412,25 +388,13 @@
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
-  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>

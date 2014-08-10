@@ -28,7 +28,7 @@
       <element name="ElemAttrVector" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="ElemAttrValuesType" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="ElemAttrValuesType" type="TREE" refId="2">
+            <datatype name="ElemAttrValuesType" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="ElemAttrValuesType" type="TREE" refId="2">
               <element name="qualElem">
                 <datatype name="VARCHAR" type="STRING" maxLength="2048"/>
               </element>

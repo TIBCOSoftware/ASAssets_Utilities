@@ -56,16 +56,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/RepoUtils/EncryptPassword" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="inString" direction="IN">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-      <element name="result" direction="OUT">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-    </datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
@@ -79,7 +69,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/updateResourceDataSource" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -130,9 +120,6 @@
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/Constants" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/EncryptPassword" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
@@ -214,7 +201,7 @@ BEGIN
         SET dataSourceType = &apos;MySQL 5.0&apos;;
         SET attrList = VECTOR[
             (&apos;login&apos;, &apos;STRING&apos;, &apos;tutorial&apos;),
-            (&apos;password&apos;, &apos;PASSWORD_STRING&apos;, &apos;Encrypted:&apos; || EncryptPassword(&apos;tutorial&apos;)),
+            (&apos;password&apos;, &apos;PASSWORD_STRING&apos;, &apos;tutorial&apos;),
 --            (&apos;url&apos;, &apos;STRING&apos;, &apos;jdbc:mysql://localhost:9408/inventory&apos;), -- this quietly fails (reports as success but none of the other attributes get set.)
             (&apos;urlDatabaseName&apos;, &apos;STRING&apos;, &apos;inventory&apos;),
             (&apos;urlIP&apos;, &apos;STRING&apos;, &apos;localhost&apos;),
@@ -287,7 +274,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397498343221</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1406909413041</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

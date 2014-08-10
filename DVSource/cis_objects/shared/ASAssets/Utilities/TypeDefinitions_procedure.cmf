@@ -152,12 +152,12 @@ END
       <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAAAABBAYAAAAAAAAAAf//</value>
     </item>
     <item>
-      <key type="STRING">messageTypeConstant</key>
-      <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAACcQBAYAAAAAAAAnEP//</value>
-    </item>
-    <item>
       <key type="STRING">notEmpty</key>
       <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAAAAABAYAAAAAAAAAAP//</value>
+    </item>
+    <item>
+      <key type="STRING">messageTypeConstant</key>
+      <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAACcQBAYAAAAAAAAnEP//</value>
     </item>
   </attribute>
   <attribute name="public_types" type="MAP">

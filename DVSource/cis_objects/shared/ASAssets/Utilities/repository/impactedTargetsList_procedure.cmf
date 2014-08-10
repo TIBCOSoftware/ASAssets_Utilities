@@ -69,7 +69,7 @@
   <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="moduleName" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
       </element>
       <element name="debug" direction="IN">
         <datatype type="STRING" maxLength="1"/>
@@ -79,13 +79,10 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -141,12 +138,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/getImpactedResources" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getImpactedResources" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="startingFolder" direction="IN">
@@ -171,9 +162,6 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getScriptText" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/getScriptText" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
@@ -188,9 +176,6 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -233,13 +218,7 @@
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>

@@ -27,12 +27,12 @@ END</attribute>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="public_constants" type="MAP">
     <item>
-      <key type="STRING">TMP_FOLDER</key>
-      <value type="BYTE_ARRAY">EBsGAgAGAFMAdAByAGkAbgBnAxIAAAABATsABAUAAAAAAAAABQQEAAAAAAAAEAUBEwH//w==</value>
-    </item>
-    <item>
       <key type="STRING">UTILS_REG_TEST_HOME</key>
       <value type="BYTE_ARRAY">EBsGAgAEAEMASABBAFIDEgAAAAEBOwAEBQAAAAAAAAArBAQAAAAAAAAAKwETAf//</value>
+    </item>
+    <item>
+      <key type="STRING">TMP_FOLDER</key>
+      <value type="BYTE_ARRAY">EBsGAgAGAFMAdAByAGkAbgBnAxIAAAABATsABAUAAAAAAAAABQQEAAAAAAAAEAUBEwH//w==</value>
     </item>
   </attribute>
   <attribute name="references" type="NULL"/>

@@ -170,7 +170,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>

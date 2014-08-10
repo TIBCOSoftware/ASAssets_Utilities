@@ -35,7 +35,7 @@
       <datatype name="CHAR" subType="DATASOURCE_TYPE" type="STRING" minLength="255" maxLength="255"/>
     </parameter>
     <parameter name="FileInfo" direction="OUT" nullable="true">
-      <datatype type="TABLE" caseSensitive="false" refId="1">
+      <datatype subType="DATASOURCE_TYPE" type="TABLE" caseSensitive="false" refId="1">
         <element name="filePath">
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
         </element>

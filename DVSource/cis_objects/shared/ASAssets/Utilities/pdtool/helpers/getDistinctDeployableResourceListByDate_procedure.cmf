@@ -53,6 +53,9 @@
     <parameter name="resourceTimestamp" direction="IN" nullable="true">
       <datatype name="TIMESTAMP" type="DATETIME"/>
     </parameter>
+    <parameter name="optionType" direction="IN" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
     <parameter name="includeBasePath" direction="IN" nullable="true">
       <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
     </parameter>
@@ -80,7 +83,7 @@
     </parameter>
   </parameters>
   <security>
-    <owner user="admin" domain="composite"/>
+    <owner user="nobody" domain="composite"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -103,6 +106,9 @@
       <element name="resourceTimestamp" direction="IN">
         <datatype type="DATETIME"/>
       </element>
+      <element name="optionType" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
       <element name="includeBasePath" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
@@ -118,7 +124,7 @@
             <datatype type="STRING" maxLength="255"/>
           </element>
           <element name="resPath">
-            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
           </element>
           <element name="resType">
             <datatype type="STRING" maxLength="255"/>
@@ -185,6 +191,13 @@
 	Input:
 		resourcePathList			LONGVARCHAR		- A comma separated list of resource paths to generate a plan for based on the lineage of all resources found.
 		resourceTimestamp			TIMESTAMP,	 	- resource timestamp value to compare with either the creation date or modified date of a resource with CIS 6.2.2 or higher
+		optionType					INTEGER, 		- 3=Compare with Modified Date, 5=Compare with Creation Date
+			-- 1: Find the n most recent modified resources in the path (default of n is 1).  results are not ordered
+			-- 2: Find the n least recent modified resources in the path (default of n is 1). results are not ordered
+			-- 3: Find all resources modified after the passed in resource date
+			-- 4: Find all resources modifed before the passed in resource date
+			-- 5: Find all resources created after the passed in resource date
+			-- 6: Find all resources created before the passed in resource date
 		includeBasePath				LONGVARCHAR, 	- If present, then include any resources found in this comma separated list of base paths and exclude all others.
 											 		   It is intended to allow the user to specify a base path for published resources and 
 											 		   /shared project folder resources that are related project level resources but exclude
@@ -214,12 +227,20 @@
 
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	07/30/2013		Mike Tinius			6.0.0			Created new
+	07/07/2014		Mike Tinius			6.2.0			Modified to use optionType to provide a choice of using Creation Date or Modified Date but not both at the same time.
 
     © 2013, 2014 Cisco and/or its affiliates. All rights reserved.
 */
 PROCEDURE getDistinctDeployableResourceListByDate(
 	IN resourcePathList			LONGVARCHAR,-- a comma separated list of resource paths
 	IN resourceTimestamp		TIMESTAMP,	-- resource timestamp value to compare with either the creation date or modified date of a resource with CIS 6.2.2 or higher
+	IN optionType				INTEGER, 	-- 3=Compare with Modified Date, 5=Compare with Creation Date
+			-- 1: Find the n most recent modified resources in the path (default of n is 1).  results are not ordered
+			-- 2: Find the n least recent modified resources in the path (default of n is 1). results are not ordered
+			-- 3: Find all resources modified after the passed in resource date
+			-- 4: Find all resources modifed before the passed in resource date
+			-- 5: Find all resources created after the passed in resource date
+			-- 6: Find all resources created before the passed in resource date
 	IN includeBasePath			LONGVARCHAR,-- If present, then include any resources found in this comma separated list of base paths and exclude all others.
 											--   It is intended to allow the user to specify a base path for published resources and 
 											--   /shared project folder resources that are related project level resources but exclude
@@ -233,7 +254,7 @@ BEGIN
 	DECLARE moduleName				VARCHAR DEFAULT &apos;getDistinctDeployableResourceList&apos;;
 	for r as 
 		select DISTINCT name, resPath, resType, subtype
-			from /shared/ASAssets/Utilities/pdtool/helpers/getDeployableResourceListByDate(resourcePathList, resourceTimestamp, includeBasePath, excludePathsList, debug)
+			from /shared/ASAssets/Utilities/pdtool/helpers/getDeployableResourceListByDate(resourcePathList, resourceTimestamp, optionType, includeBasePath, excludePathsList, debug)
 	do
 		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug,&apos;    DISTINCT  resource path=[&apos;||emptyStr(r.resPath)||&apos;]&apos;);
 		INSERT INTO resourceTreeList values(r);
@@ -245,7 +266,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397496598811</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1406742518774</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

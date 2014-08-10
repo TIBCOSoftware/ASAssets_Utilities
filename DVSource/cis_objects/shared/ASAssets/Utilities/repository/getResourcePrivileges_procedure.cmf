@@ -1,0 +1,881 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getResourcePrivileges" path="/shared/ASAssets/Utilities/repository/getResourcePrivileges" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getResourcePrivileges:
+
+    This procedure returns a list of user or group resource privileges for a specified resource path given various inclusion and exclusion filters.  
+	The various includePrivs... and excludePrivs... filters are applied against the combinedPrivs field.
+
+	The returned privileges per user or group are the privileges specifically given to that user or group.  In each &quot;privilegeEntry&quot;, the &quot;combinedPrivs&quot; 
+	element contains the effective privileges for that user or group based on their membership in all other groups.  In each &quot;privilegeEntry&quot;, the 
+	&quot;inheritedPrivs&quot; element only contains the privileges that were inherited due to group membership.  Logically OR&apos;ing the &quot;privs&quot; and &quot;inheritedPrivs&quot; 
+	is the same as the &quot;combinedPrivs&quot;.
+
+	A user with GRANT privilege or with READ_ALL_RESOURCES right will receive all privilege information for all users for a that resource.  Other users will 
+	only receive their own privilege information.
+
+    Dependencies:
+    =============
+    none
+
+    Input:
+        resourcePath - path to resource
+		resourceType - type of resource (e.g. LINK, CONTAINER, TABLE, PROCEDURE, TREE, DEFINITION_SET, TRIGGER, etc.)
+		nameTypeFilter - (optional) A filter that is set to null, USER or GROUP.
+		domainFilter - (optional) A filter that is set to null or the domain such as composite, dynamic or an LDAP domain name.
+		includeNameEqualFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;name =&quot; the incoming string.
+								When a list of names are passed in the where clause constructs &quot;OR&quot; statements where (name = &apos;name1&apos; or nanme = &apos;name2&apos;).
+		includeNameLikeFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;name LIKE&quot; the incoming string.
+								When a list of name are passed in the where clause constructs &quot;OR&quot; statements where (name LIKE &apos;name%&apos; or name LIKE &apos;myname%&apos;).
+		excludeNameNotEqualFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;name !=&quot; to the incoming string.
+								When a list of name are passed in the where clause constructs &quot;AND&quot; statements where name != &apos;name&apos; AND name != &apos;myname&apos;.
+		excludeNameNotLikeFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;name NOT LIKE&quot; the incoming string.
+								When a list of name are passed in the where clause constructs &quot;AND&quot; statements where name NOT LIKE &apos;name%&apos; AND name NOT LIKE &apos;myname%&apos;.
+		includePrivsEqualFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;combinedPrivs =&quot; the incoming string.
+								When a list of privs are passed in the where clause constructs &quot;OR&quot; statements where (combinedPrivs = &apos;NONE&apos; or combinedPrivs = &apos;READ&apos;).
+								&quot;combinedPrivs&quot; should be in this order: READ WRITE EXECUTE SELECT UPDATE INSERT DELETE GRANT
+								       &quot;combinedPrivs&quot; with no settings: NONE
+		includePrivsLikeFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;combinedPrivs LIKE&quot; the incoming string.
+								When a list of privs are passed in the where clause constructs &quot;OR&quot; statements where (combinedPrivs LIKE &apos;READ EXECUTE%&apos; or combinedPrivs LIKE &apos;READ%&apos;).
+								&quot;combinedPrivs&quot; should be in this order: READ WRITE EXECUTE SELECT UPDATE INSERT DELETE GRANT
+								       &quot;combinedPrivs&quot; with no settings: NONE
+		excludePrivsNotEqualFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;combinedPrivs !=&quot; to the incoming string.
+								When a list of privs are passed in the where clause constructs &quot;AND&quot; statements where combinedPrivs != &apos;NONE&apos; AND combinedPrivs != &apos;READ&apos;.
+								&quot;combinedPrivs&quot; should be in this order: READ WRITE EXECUTE SELECT UPDATE INSERT DELETE GRANT
+								       &quot;combinedPrivs&quot; with no settings: NONE
+		excludePrivsNotLikeFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;combinedPrivs NOT LIKE&quot; the incoming string.
+								When a list of privs are passed in the where clause constructs &quot;AND&quot; statements where combinedPrivs NOT LIKE &apos;READ EXECUTE%&apos; AND combinedPrivs NOT LIKE &apos;READ%&apos;.
+								&quot;combinedPrivs&quot; should be in this order: READ WRITE EXECUTE SELECT UPDATE INSERT DELETE GRANT
+								       &quot;combinedPrivs&quot; with no settings: NONE
+		includeColumnPrivs - (optional) A bit (1 or 0) that instructs whether to return column level privileges for resources such as tables that contain columns.
+								1=yes include column privileges, 0=no do not include column privileges
+		debug - (optional) A char(1) (null, Y or N) indicating whether to output debug statements like the SQL Stateement that will be executed.
+
+    Output (cursor):
+        path - Path for this resource (the same as resPath input parameter)
+        type - Type of resource (e.g. CONTAINER, PROCEDURE)
+        name - CIS username
+ 		nameType - CIS name type (USER, GROUP)
+        domain - CIS user domain
+        privs - explicitly defined privs for the user or group
+        combinedPrivs - combined (both explicit and inherited) privs for the user or group
+        inheritedPrivs - inherited (through groups) privs for the user or group
+		-- privs
+		p_N					BIT,-- NONE
+		p_R					BIT,-- READ
+		p_W					BIT,-- WRITE
+		p_E					BIT,-- EXECUTE
+		p_S					BIT,-- SELECT
+		p_U					BIT,-- UPDATE
+		p_I					BIT,-- INSERT
+		p_D					BIT,-- DELETE
+		p_G					BIT,-- GRANT
+		-- combined privs
+		c_N					BIT,-- NONE
+		c_R					BIT,-- READ
+		c_W					BIT,-- WRITE
+		c_E					BIT,-- EXECUTE
+		c_S					BIT,-- SELECT
+		c_U					BIT,-- UPDATE
+		c_I					BIT,-- INSERT
+		c_D					BIT,-- DELETE
+		c_G					BIT,-- GRANT
+		-- inherited privs
+		i_N					BIT,-- NONE
+		i_R					BIT,-- READ
+		i_W					BIT,-- WRITE
+		i_E					BIT,-- EXECUTE
+		i_S					BIT,-- SELECT
+		i_U					BIT,-- UPDATE
+		i_I					BIT,-- INSERT
+		i_D					BIT,-- DELETE
+		i_G					BIT -- GRANT
+
+    Exceptions: ex
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	05/22/2014		Mike Tinius			6.2.0			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+    </parameter>
+    <parameter name="nameTypeFilter" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="domainFilter" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="includeNameEqualFilter" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="includeNameLikeFilter" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="excludeNameNotEqualFilter" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="excludeNameNotLikeFilter" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="includePrivsEqualFilter" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="includePrivsLikeFilter" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="excludePrivsNotEqualFilter" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="excludePrivsNotLikeFilter" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="includeColumnPrivs" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="path">
+          <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+        </element>
+        <element name="type">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="name">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="nameType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="domain">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="privs">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="combinedPrivs">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="inheritedPrivs">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="p_N">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="p_R">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="p_W">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="p_E">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="p_S">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="p_U">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="p_I">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="p_D">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="p_G">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="c_N">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="c_R">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="c_W">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="c_E">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="c_S">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="c_U">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="c_I">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="c_D">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="c_G">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="i_N">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="i_R">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="i_W">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="i_E">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="i_S">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="i_U">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="i_I">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="i_D">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+        <element name="i_G">
+          <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Log" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToLog" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="1024"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="proprietaryModel">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="columnName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="columnType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeBaseType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Limit" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="splitElement">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getResourcePrivileges:
+
+    This procedure returns a list of user or group resource privileges for a specified resource path given various inclusion and exclusion filters.  
+	The various includePrivs... and excludePrivs... filters are applied against the combinedPrivs field.
+
+	The returned privileges per user or group are the privileges specifically given to that user or group.  In each &quot;privilegeEntry&quot;, the &quot;combinedPrivs&quot; 
+	element contains the effective privileges for that user or group based on their membership in all other groups.  In each &quot;privilegeEntry&quot;, the 
+	&quot;inheritedPrivs&quot; element only contains the privileges that were inherited due to group membership.  Logically OR&apos;ing the &quot;privs&quot; and &quot;inheritedPrivs&quot; 
+	is the same as the &quot;combinedPrivs&quot;.
+
+	A user with GRANT privilege or with READ_ALL_RESOURCES right will receive all privilege information for all users for a that resource.  Other users will 
+	only receive their own privilege information.
+
+    Dependencies:
+    =============
+    none
+
+    Input:
+        resourcePath - path to resource
+		resourceType - type of resource (e.g. LINK, CONTAINER, TABLE, PROCEDURE, TREE, DEFINITION_SET, TRIGGER, etc.)
+		nameTypeFilter - (optional) A filter that is set to null, USER or GROUP.
+		domainFilter - (optional) A filter that is set to null or the domain such as composite, dynamic or an LDAP domain name.
+		includeNameEqualFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;name =&quot; the incoming string.
+								When a list of names are passed in the where clause constructs &quot;OR&quot; statements where (name = &apos;name1&apos; or nanme = &apos;name2&apos;).
+		includeNameLikeFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;name LIKE&quot; the incoming string.
+								When a list of name are passed in the where clause constructs &quot;OR&quot; statements where (name LIKE &apos;name%&apos; or name LIKE &apos;myname%&apos;).
+		excludeNameNotEqualFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;name !=&quot; to the incoming string.
+								When a list of name are passed in the where clause constructs &quot;AND&quot; statements where name != &apos;name&apos; AND name != &apos;myname&apos;.
+		excludeNameNotLikeFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;name NOT LIKE&quot; the incoming string.
+								When a list of name are passed in the where clause constructs &quot;AND&quot; statements where name NOT LIKE &apos;name%&apos; AND name NOT LIKE &apos;myname%&apos;.
+		includePrivsEqualFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;combinedPrivs =&quot; the incoming string.
+								When a list of privs are passed in the where clause constructs &quot;OR&quot; statements where (combinedPrivs = &apos;NONE&apos; or combinedPrivs = &apos;READ&apos;).
+								&quot;combinedPrivs&quot; should be in this order: READ WRITE EXECUTE SELECT UPDATE INSERT DELETE GRANT
+								       &quot;combinedPrivs&quot; with no settings: NONE
+		includePrivsLikeFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;combinedPrivs LIKE&quot; the incoming string.
+								When a list of privs are passed in the where clause constructs &quot;OR&quot; statements where (combinedPrivs LIKE &apos;READ EXECUTE%&apos; or combinedPrivs LIKE &apos;READ%&apos;).
+								&quot;combinedPrivs&quot; should be in this order: READ WRITE EXECUTE SELECT UPDATE INSERT DELETE GRANT
+								       &quot;combinedPrivs&quot; with no settings: NONE
+		excludePrivsNotEqualFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;combinedPrivs !=&quot; to the incoming string.
+								When a list of privs are passed in the where clause constructs &quot;AND&quot; statements where combinedPrivs != &apos;NONE&apos; AND combinedPrivs != &apos;READ&apos;.
+								&quot;combinedPrivs&quot; should be in this order: READ WRITE EXECUTE SELECT UPDATE INSERT DELETE GRANT
+								       &quot;combinedPrivs&quot; with no settings: NONE
+		excludePrivsNotLikeFilter - (optional) A comma separated filter list that is used to retrieve privileges where the &quot;combinedPrivs NOT LIKE&quot; the incoming string.
+								When a list of privs are passed in the where clause constructs &quot;AND&quot; statements where combinedPrivs NOT LIKE &apos;READ EXECUTE%&apos; AND combinedPrivs NOT LIKE &apos;READ%&apos;.
+								&quot;combinedPrivs&quot; should be in this order: READ WRITE EXECUTE SELECT UPDATE INSERT DELETE GRANT
+								       &quot;combinedPrivs&quot; with no settings: NONE
+		includeColumnPrivs - (optional) A bit (1 or 0) that instructs whether to return column level privileges for resources such as tables that contain columns.
+								1=yes include column privileges, 0=no do not include column privileges
+		debug - (optional) A char(1) (null, Y or N) indicating whether to output debug statements like the SQL Stateement that will be executed.
+
+    Output (cursor):
+        path - Path for this resource (the same as resPath input parameter)
+        type - Type of resource (e.g. CONTAINER, PROCEDURE)
+        name - CIS username
+ 		nameType - CIS name type (USER, GROUP)
+        domain - CIS user domain
+        privs - explicitly defined privs for the user or group
+        combinedPrivs - combined (both explicit and inherited) privs for the user or group
+        inheritedPrivs - inherited (through groups) privs for the user or group
+		-- privs
+		p_N					BIT,-- NONE
+		p_R					BIT,-- READ
+		p_W					BIT,-- WRITE
+		p_E					BIT,-- EXECUTE
+		p_S					BIT,-- SELECT
+		p_U					BIT,-- UPDATE
+		p_I					BIT,-- INSERT
+		p_D					BIT,-- DELETE
+		p_G					BIT,-- GRANT
+		-- combined privs
+		c_N					BIT,-- NONE
+		c_R					BIT,-- READ
+		c_W					BIT,-- WRITE
+		c_E					BIT,-- EXECUTE
+		c_S					BIT,-- SELECT
+		c_U					BIT,-- UPDATE
+		c_I					BIT,-- INSERT
+		c_D					BIT,-- DELETE
+		c_G					BIT,-- GRANT
+		-- inherited privs
+		i_N					BIT,-- NONE
+		i_R					BIT,-- READ
+		i_W					BIT,-- WRITE
+		i_E					BIT,-- EXECUTE
+		i_S					BIT,-- SELECT
+		i_U					BIT,-- UPDATE
+		i_I					BIT,-- INSERT
+		i_D					BIT,-- DELETE
+		i_G					BIT -- GRANT
+
+    Exceptions: ex
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	05/22/2014		Mike Tinius			6.2.0			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getResourcePrivileges(
+    IN resourcePath 				/lib/resource/ResourceDefs.ResourcePath,
+    IN resourceType 				/lib/resource/ResourceDefs.ResourceType,
+	IN nameTypeFilter 				VARCHAR,	--[optional]
+	IN domainFilter					VARCHAR, 	--[optional]
+	IN includeNameEqualFilter 		LONGVARCHAR,--[optional]
+	IN includeNameLikeFilter 		LONGVARCHAR,--[optional]
+	IN excludeNameNotEqualFilter	LONGVARCHAR,--[optional]
+	IN excludeNameNotLikeFilter		LONGVARCHAR,--[optional]
+	IN includePrivsEqualFilter		VARCHAR, 	--[optional]
+	IN includePrivsLikeFilter		VARCHAR, 	--[optional]
+	IN excludePrivsNotEqualFilter	VARCHAR, 	--[optional]
+	IN excludePrivsNotLikeFilter	VARCHAR, 	--[optional]
+	IN includeColumnPrivs			BIT,	 	--[optional]
+	IN debug						CHAR(1), 	--[optional]
+    OUT result 						CURSOR ResultType
+)
+BEGIN
+	DECLARE moduleName		VARCHAR DEFAULT &apos;getResourcePrivileges&apos;;
+	DECLARE debug_			CHAR(1) DEFAULT UPPER(TRIM(NVL(debug,&apos;N&apos;)));
+	DECLARE nameType		VARCHAR DEFAULT UPPER(TRIM(nameTypeFilter));
+	DECLARE domainName		VARCHAR DEFAULT TRIM(domainFilter);
+ 	DECLARE includeNameEQ	LONGVARCHAR DEFAULT UPPER(TRIM(includeNameEqualFilter));
+ 	DECLARE includeNameLK	LONGVARCHAR DEFAULT UPPER(TRIM(includeNameLikeFilter));
+	DECLARE excludeNameNEQ	LONGVARCHAR DEFAULT UPPER(TRIM(excludeNameNotEqualFilter));
+	DECLARE excludeNameNLK	LONGVARCHAR DEFAULT UPPER(TRIM(excludeNameNotLikeFilter));
+
+ 	DECLARE includePrivsEQ	VARCHAR DEFAULT UPPER(TRIM(includePrivsEqualFilter));
+ 	DECLARE includePrivsLK	VARCHAR DEFAULT UPPER(TRIM(includePrivsLikeFilter));
+	DECLARE excludePrivsNEQ	VARCHAR DEFAULT UPPER(TRIM(excludePrivsNotEqualFilter));
+	DECLARE excludePrivsNLK	VARCHAR DEFAULT UPPER(TRIM(excludePrivsNotLikeFilter));
+	DECLARE basePath		VARCHAR(1024) DEFAULT &apos;/shared/ASAssets/Utilities&apos;;
+	DECLARE PUBLIC TYPE ResultType ROW (
+        &quot;path&quot; 				/lib/resource/ResourceDefs.ResourcePath, 
+        &quot;type&quot; 				VARCHAR(255), 
+        name 				VARCHAR(255), 
+        nameType 			VARCHAR(255), 
+        &quot;domain&quot; 			VARCHAR(255), 
+        privs 				VARCHAR(255), 
+        combinedPrivs 		VARCHAR(255), 
+        inheritedPrivs 		VARCHAR(255),
+		-- privs
+		p_N					BIT,-- NONE
+		p_R					BIT,-- READ
+		p_W					BIT,-- WRITE
+		p_E					BIT,-- EXECUTE
+		p_S					BIT,-- SELECT
+		p_U					BIT,-- UPDATE
+		p_I					BIT,-- INSERT
+		p_D					BIT,-- DELETE
+		p_G					BIT,-- GRANT
+		-- combined privs
+		c_N					BIT,-- NONE
+		c_R					BIT,-- READ
+		c_W					BIT,-- WRITE
+		c_E					BIT,-- EXECUTE
+		c_S					BIT,-- SELECT
+		c_U					BIT,-- UPDATE
+		c_I					BIT,-- INSERT
+		c_D					BIT,-- DELETE
+		c_G					BIT,-- GRANT
+		-- inherited privs
+		i_N					BIT,-- NONE
+		i_R					BIT,-- READ
+		i_W					BIT,-- WRITE
+		i_E					BIT,-- EXECUTE
+		i_S					BIT,-- SELECT
+		i_U					BIT,-- UPDATE
+		i_I					BIT,-- INSERT
+		i_D					BIT,-- DELETE
+		i_G					BIT -- GRANT
+    );
+    DECLARE privRequest 	LONGVARCHAR;
+    DECLARE privEntries 	LONGVARCHAR;
+	DECLARE includeColumns	LONGVARCHAR DEFAULT &apos;&apos;;
+	DECLARE privResponse 	XML;
+	DECLARE sqlStatement	LONGVARCHAR;
+	DECLARE whereClause		LONGVARCHAR;
+	DECLARE includeClause	LONGVARCHAR;
+	DECLARE message			LONGVARCHAR;
+	DECLARE ex 				EXCEPTION;
+
+	-- Evaluate the input
+	IF (nameType is not null and LENGTH(nameType) = 0) THEN
+		SET nameType = null;
+	END IF;
+	IF (domainName is not null and LENGTH(domainName) = 0) THEN
+		SET domainName = null;
+	END IF;
+	IF (includeNameEQ is not null and LENGTH(includeNameEQ) = 0) THEN
+		SET includeNameEQ = null;
+	END IF;
+	IF (includeNameLK is not null and LENGTH(includeNameLK) = 0) THEN
+		SET includeNameLK = null;
+	END IF;
+	IF (excludeNameNEQ is not null and LENGTH(excludeNameNEQ) = 0) THEN
+		SET excludeNameNEQ = null;
+	END IF;
+	IF (excludeNameNLK is not null and LENGTH(excludeNameNLK) = 0) THEN
+		SET excludeNameNLK = null;
+	END IF;
+	IF (includePrivsEQ is not null and LENGTH(includePrivsEQ) = 0) THEN
+		SET includePrivsEQ = null;
+	END IF;
+	IF (includePrivsLK is not null and LENGTH(includePrivsLK) = 0) THEN
+		SET includePrivsLK = null;
+	END IF;
+	IF (excludePrivsNEQ is not null and LENGTH(excludePrivsNEQ) = 0) THEN
+		SET excludePrivsNEQ = null;
+	END IF;
+	IF (excludePrivsNLK is not null and LENGTH(excludePrivsNLK) = 0) THEN
+		SET excludePrivsNLK = null;
+	END IF;
+
+	IF (nameType is not null and LENGTH(nameType) &gt; 0) THEN
+		IF (nameType != &apos;USER&apos; and nameType != &apos;GROUP&apos;) THEN
+			raise ex value &apos;The nameType provided is invalid.  The nameType must be blank or &quot;USER&quot; or &quot;GROUP&quot;.  nameType=&apos;||nameType;
+		END IF;
+	END IF;
+	IF (domainName is not null and domainName = &apos;COMPOSITE&apos;) THEN
+		SET domainName = LOWER(domainName);
+	END IF;
+
+	-- Construct privilege entry for the passed in resource and type
+	SET privEntries = &apos;
+             &lt;ns1:entry&gt;
+               &lt;ns1:path&gt;&apos; || CAST(XMLTEXT(resourcePath) AS LONGVARCHAR) || &apos;&lt;/ns1:path&gt;
+               &lt;ns1:type&gt;&apos; || CAST(XMLTEXT(resourceType) AS LONGVARCHAR) || &apos;&lt;/ns1:type&gt;
+             &lt;/ns1:entry&gt;&apos;;
+
+	-- Acquire a list of all of the columns for a view/table if the includeColumnPrivs=1
+	IF (includeColumnPrivs is not null and includeColumnPrivs = 1) THEN
+		IF (resourceType = &apos;TABLE&apos;) THEN
+			FOR c AS select * from /shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE(resourcePath, resourceType) WHERE columnName is not null DO
+				SET privEntries = privEntries || &apos;
+             &lt;ns1:entry&gt;
+               &lt;ns1:path&gt;&apos; || CAST(XMLTEXT(c.resourcePath||&apos;/&apos;||c.columnName) AS LONGVARCHAR) || &apos;&lt;/ns1:path&gt;
+               &lt;ns1:type&gt;COLUMN&lt;/ns1:type&gt;
+             &lt;/ns1:entry&gt;&apos;;
+			END FOR;
+		END IF;
+		-- mtinius 8/2/14: This entry appears to have no affect on the invocation but is left here commented out.
+		--SET includeColumns = &apos;
+        --   &lt;ns1:includeColumnPrivileges&gt;&apos;|| CAST(XMLTEXT(includeColumnPrivs) AS LONGVARCHAR) ||&apos;&lt;/ns1:includeColumnPrivileges&gt;&apos;;
+	END IF;
+
+	-- Construct the privilege request XML for getResourcePrivileges API call
+	SET privRequest =
+		&apos;&lt;ns1:getResourcePrivileges xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+           &lt;ns1:entries&gt;&apos;|| 
+			privEntries|| &apos;
+           &lt;/ns1:entries&gt;
+           &lt;ns1:filter&gt;&lt;/ns1:filter&gt;&apos; ||
+			includeColumns || &apos;
+         &lt;/ns1:getResourcePrivileges&gt;&apos;;
+
+	-- Get the privileges using the WHERE clause to limit the
+	-- results to USER privileges
+    SET sqlStatement = 
+        &apos;SELECT 
+            p.&quot;path&quot;, 
+            p.&quot;type&quot;, 
+            p.name, 
+            p.nameType, 
+            p.&quot;domain&quot;, 
+            p.privs, 
+            p.combinedPrivs, 
+            p.inheritedPrivs,
+            CASE WHEN POSITION(&apos;&apos;NONE&apos;&apos; IN p.privs) &gt; 0 THEN 1 ELSE 0 END AS p_N,
+            CASE WHEN POSITION(&apos;&apos;READ&apos;&apos; IN p.privs) &gt; 0  THEN 1 ELSE 0 END AS p_R,
+            CASE WHEN POSITION(&apos;&apos;WRITE&apos;&apos; IN p.privs) &gt; 0  THEN 1 ELSE 0 END AS p_W,
+            CASE WHEN POSITION(&apos;&apos;EXECUTE&apos;&apos; IN p.privs) &gt; 0  THEN 1 ELSE 0 END AS p_E,
+            CASE WHEN POSITION(&apos;&apos;SELECT&apos;&apos; IN p.privs) &gt; 0  THEN 1 ELSE 0 END AS p_S,
+            CASE WHEN POSITION(&apos;&apos;UPDATE&apos;&apos; IN p.privs) &gt; 0  THEN 1 ELSE 0 END AS p_U,
+            CASE WHEN POSITION(&apos;&apos;INSERT&apos;&apos; IN p.privs) &gt; 0  THEN 1 ELSE 0 END AS p_I,
+            CASE WHEN POSITION(&apos;&apos;DELETE&apos;&apos; IN p.privs) &gt; 0  THEN 1 ELSE 0 END AS p_D,
+            CASE WHEN POSITION(&apos;&apos;GRANT&apos;&apos; IN p.privs) &gt; 0  THEN 1 ELSE 0 END AS p_G,
+
+            CASE WHEN POSITION(&apos;&apos;NONE&apos;&apos; IN p.combinedPrivs) &gt; 0 THEN 1 ELSE 0 END AS c_N,
+            CASE WHEN POSITION(&apos;&apos;READ&apos;&apos; IN p.combinedPrivs) &gt; 0  THEN 1 ELSE 0 END AS c_R,
+            CASE WHEN POSITION(&apos;&apos;WRITE&apos;&apos; IN p.combinedPrivs) &gt; 0  THEN 1 ELSE 0 END AS c_W,
+            CASE WHEN POSITION(&apos;&apos;EXECUTE&apos;&apos; IN p.combinedPrivs) &gt; 0  THEN 1 ELSE 0 END AS c_E,
+            CASE WHEN POSITION(&apos;&apos;SELECT&apos;&apos; IN p.combinedPrivs) &gt; 0  THEN 1 ELSE 0 END AS c_S,
+            CASE WHEN POSITION(&apos;&apos;UPDATE&apos;&apos; IN p.combinedPrivs) &gt; 0  THEN 1 ELSE 0 END AS c_U,
+            CASE WHEN POSITION(&apos;&apos;INSERT&apos;&apos; IN p.combinedPrivs) &gt; 0  THEN 1 ELSE 0 END AS c_I,
+            CASE WHEN POSITION(&apos;&apos;DELETE&apos;&apos; IN p.combinedPrivs) &gt; 0  THEN 1 ELSE 0 END AS c_D,
+            CASE WHEN POSITION(&apos;&apos;GRANT&apos;&apos; IN p.combinedPrivs) &gt; 0  THEN 1 ELSE 0 END AS c_G,
+
+            CASE WHEN POSITION(&apos;&apos;NONE&apos;&apos; IN p.inheritedPrivs) &gt; 0 THEN 1 ELSE 0 END AS i_N,
+            CASE WHEN POSITION(&apos;&apos;READ&apos;&apos; IN p.inheritedPrivs) &gt; 0  THEN 1 ELSE 0 END AS i_R,
+            CASE WHEN POSITION(&apos;&apos;WRITE&apos;&apos; IN p.inheritedPrivs) &gt; 0  THEN 1 ELSE 0 END AS i_W,
+            CASE WHEN POSITION(&apos;&apos;EXECUTE&apos;&apos; IN p.inheritedPrivs) &gt; 0  THEN 1 ELSE 0 END AS i_E,
+            CASE WHEN POSITION(&apos;&apos;SELECT&apos;&apos; IN p.inheritedPrivs) &gt; 0  THEN 1 ELSE 0 END AS i_S,
+            CASE WHEN POSITION(&apos;&apos;UPDATE&apos;&apos; IN p.inheritedPrivs) &gt; 0  THEN 1 ELSE 0 END AS i_U,
+            CASE WHEN POSITION(&apos;&apos;INSERT&apos;&apos; IN p.inheritedPrivs) &gt; 0  THEN 1 ELSE 0 END AS i_I,
+            CASE WHEN POSITION(&apos;&apos;DELETE&apos;&apos; IN p.inheritedPrivs) &gt; 0  THEN 1 ELSE 0 END AS i_D,
+            CASE WHEN POSITION(&apos;&apos;GRANT&apos;&apos; IN p.inheritedPrivs) &gt; 0  THEN 1  ELSE  0 END AS i_G
+        FROM      
+            &apos;||basePath||&apos;/repository/lowerLevelProcedures/getResourcePrivilegesXSLT(&apos;&apos;&apos;||privRequest||&apos;&apos;&apos;) p
+        &apos;;
+
+	/**********************************
+	 * Construct the Where Clause
+	 **********************************/
+	-- Construct nameType
+	IF (nameType is not null) THEN
+		IF (whereClause is null) THEN
+			SET whereClause = &apos;WHERE &apos;;
+		END IF;
+		SET whereClause = whereClause || &apos; p.nameType = &apos;&apos;&apos;||nameType||&apos;&apos;&apos; &apos;;
+	END IF;
+
+	-- Construct domainName
+	IF (domainName is not null) THEN
+		IF (whereClause is null) THEN
+			SET whereClause = &apos;WHERE &apos;;
+		ELSE
+			SET whereClause = whereClause || &apos; AND &apos;;
+		END IF;
+		SET whereClause = whereClause || &apos; p.&quot;domain&quot; = &apos;&apos;&apos;||domainName||&apos;&apos;&apos; &apos;;
+	END IF;
+
+	-- Construct includeNameEQ equal list and/or includeNameLK like list
+	IF (includeNameEQ is not null or includeNameLK is not null) THEN
+		FOR r AS select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(includeNameEQ, &apos;,&apos;, 0) DO
+			SET includeNameEQ = TRIM(r.splitElement);
+			IF (LENGTH(includeNameEQ) &gt; 0) THEN
+				IF (whereClause is null) THEN
+					SET whereClause = &apos;WHERE (&apos;;
+					SET includeClause = &apos;&apos;;
+				ELSEIF (includeClause is null) THEN
+					SET includeClause = &apos; AND (&apos;;
+				ELSE
+					SET includeClause = includeClause || &apos; OR &apos;;
+				END IF;
+				SET includeClause = includeClause || &apos; p.name = &apos;&apos;&apos;||includeNameEQ||&apos;&apos;&apos; &apos;;
+			END IF;
+		END FOR;
+		FOR r AS select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(includeNameLK, &apos;,&apos;, 0) DO
+			SET includeNameLK = TRIM(r.splitElement);
+			IF (LENGTH(includeNameLK) &gt; 0) THEN
+				IF (whereClause is null) THEN
+					SET whereClause = &apos;WHERE (&apos;;
+					SET includeClause = &apos;&apos;;
+				ELSEIF (includeClause is null) THEN
+					SET includeClause = &apos; AND (&apos;;
+				ELSE
+					SET includeClause = includeClause || &apos; OR &apos;;
+				END IF;
+				SET includeClause = includeClause || &apos; p.name LIKE &apos;&apos;&apos;||includeNameLK||&apos;%&apos;&apos; &apos;;
+			END IF;
+		END FOR;
+		IF (includeClause is not null) THEN
+			SET whereClause = whereClause || includeClause || &apos;) &apos;;
+		END IF;
+	END IF;
+
+	-- Construct excludeNameNEQ not equal list and/or excludeNameNLK not like list
+	IF (excludeNameNEQ is not null or excludeNameNLK is not null) THEN
+		FOR r AS select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludeNameNEQ, &apos;,&apos;, 0) DO
+			SET excludeNameNEQ = TRIM(r.splitElement);
+			IF (LENGTH(excludeNameNEQ) &gt; 0) THEN
+				IF (whereClause is null) THEN
+					SET whereClause = &apos;WHERE &apos;;
+				ELSE
+					SET whereClause = whereClause || &apos; AND &apos;;
+				END IF;
+				SET whereClause = whereClause || &apos; p.name != &apos;&apos;&apos;||excludeNameNEQ||&apos;&apos;&apos; &apos;;
+			END IF;
+		END FOR;
+		FOR r AS select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludeNameNLK, &apos;,&apos;, 0) DO
+			SET excludeNameNLK = TRIM(r.splitElement);
+			IF (LENGTH(excludeNameNLK) &gt; 0) THEN
+				IF (whereClause is null) THEN
+					SET whereClause = &apos;WHERE &apos;;
+				ELSE
+					SET whereClause = whereClause || &apos; AND &apos;;
+				END IF;
+				SET whereClause = whereClause || &apos; p.name NOT LIKE &apos;&apos;&apos;||excludeNameNLK||&apos;%&apos;&apos; &apos;;
+			END IF;
+		END FOR;
+	END IF;
+
+	-- Construct includePrivsEQ equal list and/or includePrivsLK like list
+	IF (includePrivsEQ is not null or includePrivsLK is not null) THEN
+		FOR r AS select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(includePrivsEQ, &apos;,&apos;, 0) DO
+			SET includePrivsEQ = TRIM(r.splitElement);
+			IF (LENGTH(includePrivsEQ) &gt; 0) THEN
+				IF (whereClause is null) THEN
+					SET whereClause = &apos;WHERE (&apos;;
+					SET includeClause = &apos;&apos;;
+				ELSEIF (includeClause is null) THEN
+					SET includeClause = &apos; AND (&apos;;
+				ELSE
+					SET includeClause = includeClause || &apos; OR &apos;;
+				END IF;
+				SET includeClause = includeClause || &apos; p.combinedPrivs = &apos;&apos;&apos;||includePrivsEQ||&apos;&apos;&apos; &apos;;
+			END IF;
+		END FOR;
+		FOR r AS select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(includePrivsLK, &apos;,&apos;, 0) DO
+			SET includePrivsLK = TRIM(r.splitElement);
+			IF (LENGTH(includePrivsLK) &gt; 0) THEN
+				IF (whereClause is null) THEN
+					SET whereClause = &apos;WHERE (&apos;;
+					SET includeClause = &apos;&apos;;
+				ELSEIF (includeClause is null) THEN
+					SET includeClause = &apos; AND (&apos;;
+				ELSE
+					SET includeClause = includeClause || &apos; OR &apos;;
+				END IF;
+				SET includeClause = includeClause || &apos; p.combinedPrivs LIKE &apos;&apos;&apos;||includePrivsLK||&apos;%&apos;&apos; &apos;;
+			END IF;
+		END FOR;
+		IF (includeClause is not null) THEN
+			SET whereClause = whereClause || includeClause || &apos;) &apos;;
+		END IF;
+	END IF;
+
+	-- Construct excludePrivsNEQ not equal list and/or excludePrivsNLK not like list
+	IF (excludePrivsNEQ is not null or excludePrivsNLK is not null) THEN
+		FOR r AS select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludePrivsNEQ, &apos;,&apos;, 0) DO
+			SET excludePrivsNEQ = TRIM(r.splitElement);
+			IF (LENGTH(excludePrivsNEQ) &gt; 0) THEN
+				IF (whereClause is null) THEN
+					SET whereClause = &apos;WHERE &apos;;
+				ELSE
+					SET whereClause = whereClause || &apos; AND &apos;;
+				END IF;
+				SET whereClause = whereClause || &apos; p.combinedPrivs != &apos;&apos;&apos;||excludePrivsNEQ||&apos;&apos;&apos; &apos;;
+			END IF;
+		END FOR;
+		FOR r AS select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(excludePrivsNLK, &apos;,&apos;, 0) DO
+			SET excludePrivsNLK = TRIM(r.splitElement);
+			IF (LENGTH(excludePrivsNLK) &gt; 0) THEN
+				IF (whereClause is null) THEN
+					SET whereClause = &apos;WHERE &apos;;
+				ELSE
+					SET whereClause = whereClause || &apos; AND &apos;;
+				END IF;
+				SET whereClause = whereClause || &apos; p.combinedPrivs NOT LIKE &apos;&apos;&apos;||excludePrivsNLK||&apos;%&apos;&apos; &apos;;
+			END IF;
+		END FOR;
+	END IF;
+
+	-- Combine sql statement and where clause
+	IF (whereClause is not null) THEN
+		SET sqlStatement = sqlStatement || whereClause ||&apos; AND &quot;name&quot; is not null&apos;;
+	ELSE
+		SET sqlStatement = sqlStatement || &apos;WHERE &quot;name&quot; is not null&apos;;
+	END IF;
+	IF (debug_ is not null and debug_ = &apos;Y&apos;) THEN
+		SET message = moduleName ||&apos; : &apos;||&apos;sqlStatement=&apos;||sqlStatement;
+		CALL print(message);
+		CALL log(message);
+	END IF;
+
+	-- Execute the SQL
+    OPEN result FOR sqlStatement;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1376679119330</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1407214894200</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="public_types" type="MAP">
+    <item>
+      <key type="STRING">ResultType</key>
+      <value type="BYTE_ARRAY">EB8GAgAKAFIAZQBzAHUAbAB0AFQAeQBwAGUGKQA7AC8AcwBoAGEAcgBlAGQALwBBAFMAQQBzAHMA
+ZQB0AHMALwBVAHQAaQBsAGkAdABpAGUAcwAvAHIAZQBwAG8AcwBpAHQAbwByAHkALwBnAGUAdABS
+AGUAcwBvAHUAcgBjAGUAUAByAGkAdgBpAGwAZQBnAGUAcwYqAAoAUgBlAHMAdQBsAHQAVAB5AHAA
+ZQMSAAAAAQMSAAAAAQETAQkUAAAAIxAhBhUABABwAGEAdABoAy8AAAABAxYAAAAAAxoAAAABAxsA
+AAABAyD/////AyIAAAAACBkQGwYCAAwAUgBlAHMAbwB1AHIAYwBlAFAAYQB0AGgGKQAaAC8AbABp
+AGIALwByAGUAcwBvAHUAcgBjAGUALwBSAGUAcwBvAHUAcgBjAGUARABlAGYAcwYqAAwAUgBlAHMA
+bwB1AHIAYwBlAFAAYQB0AGgDEgAAAAIEBAAAAAAAABAAARMB/////xAhBhUABAB0AHkAcABlAy8A
+AAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAcAVgBBAFIAQwBIAEEAUgMS
+AAAAAwQEAAAAAAAAAP8BEwH/////ECEGFQAEAG4AYQBtAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAA
+AAEDIP////8DIgAAAAADEgAAAAP//xAhBhUACABuAGEAbQBlAFQAeQBwAGUDLwAAAAEDFgAAAAAD
+GgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAP//xAhBhUABgBkAG8AbQBhAGkAbgMvAAAAAQMW
+AAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAAA///ECEGFQAFAHAAcgBpAHYAcwMvAAAA
+AQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAAA///ECEGFQANAGMAbwBtAGIAaQBu
+AGUAZABQAHIAaQB2AHMDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAP/
+/xAhBhUADgBpAG4AaABlAHIAaQB0AGUAZABQAHIAaQB2AHMDLwAAAAEDFgAAAAADGgAAAAEDGwAA
+AAEDIP////8DIgAAAAADEgAAAAP//xAhBhUAAwBwAF8ATgMvAAAAAQMWAAAAAAMaAAAAAQMbAAAA
+AQMg/////wMiAAAAAAgZEBkGAgADAEIASQBUAxIAAAAEBAcAAAAAAAAAAAQGAAAAAAAAAAH/////
+ECEGFQADAHAAXwBSAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8Q
+IQYVAAMAcABfAFcDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT//xAh
+BhUAAwBwAF8ARQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABP//ECEG
+FQADAHAAXwBTAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8QIQYV
+AAMAcABfAFUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT//xAhBhUA
+AwBwAF8ASQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABP//ECEGFQAD
+AHAAXwBEAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8QIQYVAAMA
+cABfAEcDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT//xAhBhUAAwBj
+AF8ATgMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABP//ECEGFQADAGMA
+XwBSAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8QIQYVAAMAYwBf
+AFcDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT//xAhBhUAAwBjAF8A
+RQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABP//ECEGFQADAGMAXwBT
+Ay8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8QIQYVAAMAYwBfAFUD
+LwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT//xAhBhUAAwBjAF8ASQMv
+AAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABP//ECEGFQADAGMAXwBEAy8A
+AAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8QIQYVAAMAYwBfAEcDLwAA
+AAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT//xAhBhUAAwBpAF8ATgMvAAAA
+AQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABP//ECEGFQADAGkAXwBSAy8AAAAB
+AxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8QIQYVAAMAaQBfAFcDLwAAAAED
+FgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT//xAhBhUAAwBpAF8ARQMvAAAAAQMW
+AAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABP//ECEGFQADAGkAXwBTAy8AAAABAxYA
+AAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8QIQYVAAMAaQBfAFUDLwAAAAEDFgAA
+AAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT//xAhBhUAAwBpAF8ASQMvAAAAAQMWAAAA
+AAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABP//ECEGFQADAGkAXwBEAy8AAAABAxYAAAAA
+AxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8QIQYVAAMAaQBfAEcDLwAAAAEDFgAAAAAD
+GgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT/////</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">8/450</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">8/451</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

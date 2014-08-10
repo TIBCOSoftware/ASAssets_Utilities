@@ -141,7 +141,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -200,7 +200,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_ResourceAttributes" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -247,7 +247,7 @@
             <datatype type="STRING" maxLength="255"/>
           </element>
           <element name="resPath">
-            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
           </element>
           <element name="resType">
             <datatype type="STRING" maxLength="255"/>
@@ -749,12 +749,12 @@ END</attribute>
       <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAAAADBAYAAAAAAAAAA///</value>
     </item>
     <item>
-      <key type="STRING">OPTION_N_LEAST_RECENT</key>
-      <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAAAACBAYAAAAAAAAAAv//</value>
-    </item>
-    <item>
       <key type="STRING">OPTION_MODIFIED_BEFORE</key>
       <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAAAAEBAYAAAAAAAAABP//</value>
+    </item>
+    <item>
+      <key type="STRING">OPTION_N_LEAST_RECENT</key>
+      <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAAAACBAYAAAAAAAAAAv//</value>
     </item>
     <item>
       <key type="STRING">OPTION_N_MOST_RECENT</key>

@@ -43,30 +43,30 @@
     <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="Script" type="STRING">/* 
-  procedureTemplate:
+    procedureTemplate:
 
-	This entire procedure is a template that shows the best practice for documenting a CIS Procedure.
-	This is a procedure description that describes the purpose of this procedure.
-
-
-	Input:
-		inVar - contains any varchar of length 255.  
-			Values: Any text value
-
-		debug - defines the debugging options for this procedure.  
-			Values: Y or T = debugging turned on, N or F = debugging turned off
+    This entire procedure is a template that shows the best practice for documenting a CIS Procedure.
+    This is a procedure description that describes the purpose of this procedure.
 
 
-	Output:
-		outVar - contains any varchar of length 255
-			Values: Any text value
+    Input:
+        inVar - contains any varchar of length 255.  
+            Values: Any text value
+
+        debug - defines the debugging options for this procedure.  
+            Values: Y or T = debugging turned on, N or F = debugging turned off
 
 
-	Exceptions:  none
+    Output:
+        outVar - contains any varchar of length 255
+            Values: Any text value
 
 
-	Modified Date:	Modified By:		CSW Version:	Reason:
-	08/05/2010		Mike Tinius			5.2.0			Created new
+    Exceptions:  none
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    08/05/2010      Mike Tinius         5.2.0           Created new
     04/30/2013      Calvin Goodrich     6.2.0           Updated to illustrate new modification record format
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
@@ -93,7 +93,7 @@ END</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1392838692721</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1406674076008</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

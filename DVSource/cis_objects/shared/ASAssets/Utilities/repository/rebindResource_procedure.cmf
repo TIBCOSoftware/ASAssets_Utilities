@@ -176,7 +176,7 @@
   <dependency target="/shared/ASAssets/Utilities/repository/rebind/rebindResourceImpl" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -186,13 +186,13 @@
           <itemDatatype>
             <datatype name="rebindRow" type="TREE" refId="2">
               <element name="oldPath">
-                <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
               </element>
               <element name="oldType">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
               </element>
               <element name="newPath">
-                <datatype name="VARCHAR" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
               </element>
               <element name="newType">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
@@ -357,7 +357,7 @@ END
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1399565923676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1406829809179</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

@@ -356,7 +356,7 @@ seqNum	resourceID	parentID	resDepth	treeType	resName							resPath												re
             <datatype type="STRING" maxLength="255"/>
           </element>
           <element name="resPath">
-            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
           </element>
           <element name="resType">
             <datatype type="STRING" maxLength="255"/>
@@ -374,7 +374,7 @@ seqNum	resourceID	parentID	resDepth	treeType	resName							resPath												re
             <datatype type="STRING" maxLength="255"/>
           </element>
           <element name="dsResPath">
-            <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
           </element>
           <element name="dsResType">
             <datatype type="STRING" maxLength="255"/>

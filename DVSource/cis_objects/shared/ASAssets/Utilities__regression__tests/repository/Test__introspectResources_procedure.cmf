@@ -80,10 +80,10 @@
                 <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
               </element>
               <element name="type">
-                <datatype name="ResourceType" referenceDefinitionSet="/lib/Resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+                <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
               </element>
               <element name="subtype">
-                <datatype name="ResourceType" referenceDefinitionSet="/lib/Resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+                <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
               </element>
               <element name="action">
                 <datatype name="VARCHAR" type="STRING" maxLength="40"/>
@@ -110,9 +110,19 @@
         </datatype>
       </element>
       <element name="dsAttributes" direction="IN">
-        <datatype name="AttributesVectorType" type="ARRAY" maxLength="0">
+        <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <reference refId="3"/>
+            <datatype name="Attribute" type="TREE" refId="4">
+              <element name="name">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="type">
+                <datatype name="VARCHAR" type="STRING" maxLength="40"/>
+              </element>
+              <element name="value">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
           </itemDatatype>
         </datatype>
       </element>
@@ -350,7 +360,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397498846993</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1406909144529</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

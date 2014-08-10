@@ -102,7 +102,7 @@ BEGIN
     -- start test
     --
     SET args = &apos;&apos;&apos;select * from /shared/examples/ds_inventory/products&apos;&apos;, NULL, NULL, &apos;&apos;false&apos;&apos;, 8, &apos;&apos;&apos; || testFile || &apos;&apos;&apos;, 0, 10&apos;;
-    SET expectedResultCSV = &apos;0&apos;;
+    SET expectedResultCSV = &apos;1&apos;;
     SET expectedFileContent = 
 &apos;1,Maxtific 40GB ATA133 7200,Maxtific Storage  40 GB,1,221-887-3458,89.99,20,14 Days
 2,Mega Zip 750MB USB 2.0,Mega Zip 750 MB,1,5-76-9876,187.67,5,7 Days
@@ -166,7 +166,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397499074913</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1406910200301</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

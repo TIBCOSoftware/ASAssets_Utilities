@@ -143,7 +143,7 @@
       <element name="columnAnnotations" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="ColumnAnnotationRow" referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="ColumnAnnotationRow" type="TREE" refId="2">
+            <datatype name="ColumnAnnotationRow" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="ColumnAnnotationRow" type="TREE" refId="2">
               <element name="columnName">
                 <datatype name="ResourceName" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceName" type="STRING" maxLength="255"/>
               </element>
@@ -407,19 +407,19 @@ END
   <attribute name="p:6:Customized" type="STRING">datatype.changed</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">10/130</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceExists</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">15/125</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
         <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/130</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceExists</item>
       </value>
     </item>
     <item>

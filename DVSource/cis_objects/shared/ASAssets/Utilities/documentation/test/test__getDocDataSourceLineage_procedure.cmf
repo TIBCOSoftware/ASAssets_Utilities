@@ -24,7 +24,7 @@
   <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocConstant" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="constantPath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="constantName" direction="IN">
         <datatype type="STRING" maxLength="255"/>
@@ -37,13 +37,13 @@
   <dependency target="/shared/ASAssets/Utilities/documentation/modules/getDocDataSourceLineage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="resourceType" direction="IN">
         <datatype type="STRING" maxLength="255"/>
       </element>
       <element name="constantPath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/PSAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="commandOptionValueDsAccessed" direction="IN">
         <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>

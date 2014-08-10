@@ -75,10 +75,10 @@ BEGIN
 */ 
 	    WHEN &apos;6.1&apos; THEN
 -- Modified by Niraj, Added additional fields		    SET expectedResultCSV = &apos;1,1,DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL]&apos;;
-	   		SET expectedResultCSV = &apos;1,1,DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL],,0,,,,,,,,&apos;;
+	   		SET expectedResultCSV = &apos;1,1,[NULL],DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL],,0,,,,,,,,&apos;;
 		WHEN &apos;6.2&apos; THEN
 -- Modified by Niraj, Added additional fields		    SET expectedResultCSV = &apos;1,1,DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL]&apos;;
-    		SET expectedResultCSV = &apos;1,1,DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL],1,0,,,,,,,,&apos;;
+    		SET expectedResultCSV = &apos;1,1,[NULL],DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL],1,0,,,,,,,,&apos;;
 		END CASE;
 
     BEGIN
@@ -109,7 +109,7 @@ END
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397497614287</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1406909586633</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
