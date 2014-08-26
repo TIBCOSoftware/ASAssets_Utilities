@@ -113,7 +113,7 @@
           <datatype name="VARCHAR" type="STRING" maxLength="255"/>
         </element>
         <element name="value">
-          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+          <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
         </element>
       </datatype>
     </parameter>
@@ -162,7 +162,7 @@
             <datatype type="STRING" maxLength="255"/>
           </element>
           <element name="value">
-            <datatype type="STRING" maxLength="255"/>
+            <datatype type="STRING" maxLength="2147483647"/>
           </element>
         </datatype>
       </element>
@@ -187,7 +187,7 @@
 				actionType	VARCHAR(255)
         			name 		VARCHAR(255), 
         			&quot;type&quot; 		VARCHAR(255), 
-        			&quot;value&quot; 	VARCHAR(255)
+        			&quot;value&quot; 	LONGVARCHAR
         			)
 			Values: example:
 			actionType	name		type		value
@@ -196,9 +196,10 @@
 			PROCEDURE	PATH		STRING		/shared/Utilities/repository/examples/source/folder1/proc1
 			PROCEDURE	null		null		null
 	Exceptions:  none
-	Author:      Mike Tinius
-	Date:        8/2/2010
-	CSW Version: 5.1.0
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			Created new
+	08/25/2014		Mike Tinius			6.2.6			Changed type of &quot;value&quot; from VARCHAR(255) to LONGVARCHAR to accommodate larger strings.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -267,10 +268,10 @@ PROCEDURE getBasicResourceCursor_ActionAttributes(
     IN fullResourcePath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType,  
     IN resourceType 		VARCHAR, 
     OUT resourceCursor CURSOR (
-	actionType	VARCHAR(255),
+		actionType	VARCHAR(255),
         name 		VARCHAR(255), 
         &quot;type&quot; 		VARCHAR(255), 
-        &quot;value&quot;		 VARCHAR(255)
+        &quot;value&quot;		LONGVARCHAR
         )
     )
     BEGIN
@@ -285,7 +286,7 @@ PROCEDURE getBasicResourceCursor_ActionAttributes(
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1409002129108</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
