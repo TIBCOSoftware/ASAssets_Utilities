@@ -1,29 +1,32 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <metadata name="returnFolderNameAndFolderPath" path="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
-  <annotation>returnFolderNameAndFolderPath:
-	-- CIS Repository Helper Procedure --
+  <annotation>-- CIS Repository Helper Procedure --
 	Return the root folder name and the remaing folder path.  Used for traversing folder structures either
 	top down or bottom up.  This procedure is also used when creating a folder structure from beginning to end.
  
 	Input:
 		fullResourcePath - Full resource path which includes the path and the resource name  
-			Values: e.g. /shared/Utilities/repository
+			Values: e.g. /shared/f1/f2/r1
 		mode - defines the mode by which to extract folder path and root name  
 			Values: B or E, &apos;B&apos;=beginning folder and remaining folder path, 
 					&apos;E&apos;=ending folder remaining folder path
 	Output:
 		folderName - contains the root folder name extracted from the incoming fullResourcePath
-			Values: example:
-				when &apos;B&apos; then &apos;shared&apos;
-				when &apos;E&apos; then &apos;repository&apos;
 		folderPath - contains the remaining folder path
-			Values: example:
-				when &apos;B&apos; then &apos;/Utilities/repository&apos;
-				when &apos;E&apos; then &apos;/shared/Utilities&apos;
+
+		Example 1: CIS path example: /shared/f1/f2/r1
+				when &apos;B&apos; then folderName=&apos;shared&apos; and folderPath=&apos;/f1/f2/r1&apos;
+				when &apos;E&apos; then folderName=&apos;r1&apos; and folderPath=&apos;/shared/f1/f2&apos;
+
+		Example 2: Windows path example: C:\d1\d2\file1
+				when &apos;B&apos; then folderName=&apos;C:&apos; and folderPath=&apos;/d1/d2/file1&apos;
+				when &apos;E&apos; then folderName=&apos;file1&apos; and folderPath=&apos;C:/d1/d2&apos;
+
 	Exceptions:  none
-	Author:      Mike Tinius
-	Date:        8/2/2010
-	CSW Version: 5.1.0
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			Created new
+	09/08/2014		Mike Tinius			6.2.6			Modified code to use INSTR and SUBSTR instead of character looping.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
   <parameters>
@@ -53,23 +56,27 @@
  
 	Input:
 		fullResourcePath - Full resource path which includes the path and the resource name  
-			Values: e.g. /shared/Utilities/repository
+			Values: e.g. /shared/f1/f2/r1
 		mode - defines the mode by which to extract folder path and root name  
 			Values: B or E, &apos;B&apos;=beginning folder and remaining folder path, 
 					&apos;E&apos;=ending folder remaining folder path
 	Output:
 		folderName - contains the root folder name extracted from the incoming fullResourcePath
-			Values: example:
-				when &apos;B&apos; then &apos;shared&apos;
-				when &apos;E&apos; then &apos;repository&apos;
 		folderPath - contains the remaining folder path
-			Values: example:
-				when &apos;B&apos; then &apos;/Utilities/repository&apos;
-				when &apos;E&apos; then &apos;/shared/Utilities&apos;
+
+		Example 1: CIS path example: /shared/f1/f2/r1
+				when &apos;B&apos; then folderName=&apos;shared&apos; and folderPath=&apos;/f1/f2/r1&apos;
+				when &apos;E&apos; then folderName=&apos;r1&apos; and folderPath=&apos;/shared/f1/f2&apos;
+
+		Example 2: Windows path example: C:\d1\d2\file1
+				when &apos;B&apos; then folderName=&apos;C:&apos; and folderPath=&apos;/d1/d2/file1&apos;
+				when &apos;E&apos; then folderName=&apos;file1&apos; and folderPath=&apos;C:/d1/d2&apos;
+
 	Exceptions:  none
-	Author:      Mike Tinius
-	Date:        8/2/2010
-	CSW Version: 5.1.0
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			Created new
+	09/08/2014		Mike Tinius			6.2.6			Modified code to use INSTR and SUBSTR instead of character looping.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 */
@@ -80,9 +87,8 @@ PROCEDURE returnFolderNameAndFolderPath(
 	OUT folderPath  		/shared/ASAssets/Utilities/TypeDefinitions.pathType
 )
 BEGIN
-	DECLARE i 		integer;
-	DECLARE foundMarker 	boolean DEFAULT false;
-	DECLARE currFolderPath	VARCHAR;
+	DECLARE pos	 				INTEGER;
+	DECLARE windowsRoot			VARCHAR DEFAULT NULL;
 
 	-- Trim any leading or trailing spaces
 	set folderPath = TRIM(fullResourcePath);
@@ -91,56 +97,60 @@ BEGIN
 	-- Make sure there is only a single separator
 	set folderPath = REPLACE(folderPath,&apos;//&apos;,&apos;/&apos;); 
 
-	-- A path should look like this:
-	-- /shared/ICDL_SDK/Datasource_Tier/ExampleFileSource
+	-- A path should look like this: /shared/folder1/folder2/resource1
+	-- Extract the windows root portion of the path: C:/path/to/file
+	--      Extract &quot;C:&quot; into windowsRoot and the rest of the path into /path/to/file into folderPath
+	set pos = POSITION(&apos;:/&apos; in folderPath);
+	if (pos &gt; 0) then
+		set windowsRoot = SUBSTRING(folderPath, 1, pos);
+		set folderPath = SUBSTRING(folderPath, pos+1, LENGTH(folderPath));
+	end if;
+
 	-- Add leading / but only if a windows drive is not present such as c:
 	if (SUBSTRING(folderPath,1,1) &lt;&gt; &apos;/&apos; and POSITION(&apos;:&apos; in folderPath) = 0) then
 		set folderPath = &apos;/&apos;||folderPath;
 	end if;
+
 	-- Remove trailing /
 	if (SUBSTRING(folderPath,length(folderPath),1) = &apos;/&apos;) then
 		set folderPath = SUBSTRING(folderPath,1,length(folderPath)-1);
 	end if;
 
-	-- Extract the beginning folder part
+	-- Extract the beginning &quot;B&quot; folder part
 	if (upper(mode) = &apos;B&apos;) then
-	    if (SUBSTRING(folderPath,1,1) = &apos;/&apos;) then
-		set folderPath = SUBSTRING(folderPath,2,LENGTH(folderPath));
-	    end if;
-	    set i = POSITION(&apos;/&apos; IN folderPath);
-	    if (i &gt; 0) then
-		set folderName = TRIM(SUBSTRING(folderPath, 1, i));
-		set folderPath = TRIM(REPLACE(&apos;/&apos;||SUBSTRING(folderPath, i+1, length(folderPath)),&apos;//&apos;,&apos;/&apos;));
-		-- Remove trailing /
-		if (SUBSTRING(folderPath,length(folderPath),1) = &apos;/&apos;) then
-			set folderPath = SUBSTRING(folderPath,1,length(folderPath)-1);
+		-- When there is a windows root in the path then return it as the folder name the remaining path as the folder path
+		if (windowsRoot is not null) then
+			set folderName = windowsRoot;
+		else
+			-- Extract the position of the first folder occurrence at the beginning of the string
+			SET pos = INSTR(SUBSTR(folderPath,2,LENGTH(folderPath)), &apos;/&apos;) ;
+			if (pos &gt; 0) then
+				SET folderName = SUBSTR(folderPath, 2, pos-1);
+				SET folderPath = SUBSTR(folderPath, pos+1, LENGTH(folderPath));
+			else -- use case when the folder is like /a or c:/a with no other parts to it
+				-- If there is a windows root path then add it back into the folder name
+				SET folderName = SUBSTR(folderPath, 2, LENGTH(folderPath));
+				SET folderPath = &apos;&apos;;			
+			end if;
 		end if;
-	    else
-		set folderName = folderPath;
-		set folderPath = &apos;&apos;;
-	    end if;
-	    -- Remove trailing /
-	    if (SUBSTRING(folderName,length(folderName),1) = &apos;/&apos;) then
-		set folderName = SUBSTRING(folderName,1,length(folderName)-1);
-	    end if;
-	else -- &apos;E&apos;=extract the Ending folder part
-	    set i = length(folderPath);
-	    pathLoop:
-	    while (i &gt; 0) do
-		if (SUBSTRING(folderPath, i, 1) = &apos;/&apos;) then
-			set foundMarker = true;
-			leave pathLoop;
+	--  Extract the Ending &quot;E&quot; folder part
+	else 
+		-- Extract position of folder at the end of the string
+		SET pos = INSTR(REVERSE(folderPath), &apos;/&apos;) ;
+		SET folderName = REVERSE(SUBSTR(REVERSE(folderPath), 1, pos-1));
+		SET folderPath = REPLACE(folderPath, &apos;/&apos;||folderName, &apos;&apos;);
+		-- If there is a windows root path then add it back into the folder path
+		if (windowsRoot is not null) then
+			if (LENGTH(folderPath) &gt; 0) then
+				set folderPath = windowsRoot || folderPath;
+			else
+				set folderPath = windowsRoot;
+			end if;
 		end if;
-		set i = i - 1;
-	    end while;
-	    if (foundMarker) then
-		set folderName = SUBSTRING(folderPath,i+1,LENGTH(folderPath)-i);
-		set folderPath = SUBSTRING(folderPath,1,i-1);
-	    end if;
-
 	end if;
---	call print(&apos;folderPath=&apos;||EmptyStr(folderPath));
---	call print(&apos;folderName=&apos;||EmptyStr(folderName));
+	if (folderName is null) then
+		set folderPath = null;
+	end if;
 END</attribute>
   <attribute name="creationDate" type="LONG">1376679119330</attribute>
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
@@ -148,7 +158,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1410196487682</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
