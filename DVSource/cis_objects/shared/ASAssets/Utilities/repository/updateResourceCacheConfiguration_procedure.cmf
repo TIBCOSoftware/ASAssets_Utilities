@@ -23,20 +23,13 @@
             Values: &apos;true&apos;=cache enabled, &apos;false&apos;=cache disabled
 
         inStorageMode - Storage type used for the cache. 
-            Values: May be either &quot;AUTOMATIC&quot; or &quot;DATA_SOURCE&quot;
+            Values: May be either &quot;AUTOMATIC&quot;, &quot;DATA_SOURCE&quot;, &quot;DATA_SOURCE_OTPS&quot;
 
         inStorageDataSourcePath - If the mode is &quot;DATA_SOURCE&quot;, this identifies the path to the data source being used to store cache data.
             Values: Path to a cache configured data source
 
-        inStorageTargetName - Target name for the cached result.
-            Values: For a TABLE resource this is always &quot;result&quot;. For a PROCEDURE resource, this is the name of a cursor parameter,
-                    or an empty string for the scalar output parameters.
-
-        inStorageTargetPath - The path to the table used for storing this data.
-            Values: Path to an introspected cache database&apos;s table matching the resource&apos;s output.
-
-        inStorageTargetType - The resource time of the target resource
-            Values: This will always be /lib/resource/ResourceDefs.RESOURCE_TYPE_TABLE.
+        inStorageTargets - The list of database tables used as storage targets.
+            Values: A vector containing the list of target resources.
 
         inRefreshMode - How the cache should be refreshed.  
             Values: May be &quot;MANUAL&quot; or &quot;SCHEDULED&quot;.
@@ -47,8 +40,11 @@
         inStartTime - Start timestamp for the schedule
             Values: If &apos;inRefreshMode&quot; is &quot;SCHEDULED&quot;, A timestamp;
 
-        inInterval - Time in seconds between refreshes
-            Values: If &apos;inRefreshMode&quot; is &quot;SCHEDULED&quot;, Any positive integer
+        inPeriod - The units of measure for the interval between cache refreshes
+            Values: SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, or YEAR
+
+        inCount - The number of inPeriod units in the interval between cache refreshes
+            Values: Any positive integ
 
         inExpirationPeriod - The amount of time in milliseconds that the cache will be cleared after it is refreshed.  
             Values: If less than zero, the period will be set to zero.  If zero then the cache will never expire.  
@@ -62,6 +58,41 @@
                     normal behavior the old cache data will be cleared when a refresh fails.  If set to NULL, the
                     setting will be left unaltered.
 
+        inIncremental* - Indicates whether the cache refresh is full or incremental
+            Values: 1 (incremental) or 0 (full). Defaults to 0 if NULL.
+
+        inStorageBucketMode* - Indicates storage mode for multi-table storage. Ignored if storage mode is not &apos;DATA_SOURCE_OTPS&apos;
+            Values: May be &quot;AUTO_GEN&quot; or &quot;MANUAL&quot; for multi-table storage. NULL for single-table storage.
+
+        inStorageBucketCatalog* - Indicates the catalog to use for auto-generated multi-table storage. Ignored
+                                 if bucket mode isn&apos;t &quot;AUTO_GEN&quot;.
+            Values: A valid catalog name in the cache target database.
+
+        inStorageBucketSchema* - Indicates the catalog to use for auto-generated multi-table storage. Ignored
+                                if bucket mode isn&apos;t &quot;AUTO_GEN&quot;.
+            Values: A valid schema name in the cache target database.
+
+        inStorageBucketPrefix* - The string to use as the base table name (CIS appends numeric suffixes starting with
+                                0 to each storage target table name.) Ignored if bucket mode isn&apos;t &quot;AUTO_GEN&quot;.
+            Values: Any legal table name.
+
+        inStorageBucketNumBuckets* - The number of storage target tables to use (CIS then round robin&apos;s across
+                                    each target table in turn. Ignored if bucket mode isn&apos;t &quot;AUTO_GEN&quot;.
+            Values: Any positive integer
+
+        inStorageDropCreateIdx* - Indicates whether or not to drop indexes before the refresh and recreate them afterwards.
+            Values: 1 (true) or 0 (false)
+
+        inFirstRefreshCallback* - With full cache refreshes, this is the procedure to run before the refresh.
+                                 With incremental refreshes, this is the procedure that performs a full refresh.
+            Values: The path to a procedure
+
+        inSecondRefreshCallback* - With full cache refreshes, this is the procedure to run after the refresh.
+                                 With incremental refreshes, this is the procedure that performs an incremental refresh.
+            Values: The path to a procedure
+
+        * These inputs are ignored if not running in CIS 6.2.1 or greater
+
 
     Output:
         success	- true(1) or false(0)
@@ -74,9 +105,12 @@
 
     Exceptions:  none
 
-    Author:      Calvin Goodrich
-    Date:        9/14/2010
-    CSW Version: 5.1.0
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	09/14/2010		Calvin Goodrich		5.1.0			Created new
+    01/29/2013      Calvin Goodrich     6.2.1           Updated to support new caching features
+    04/10/2013      Calvin Goodrich     6.2.6           Updated for new scheduled interval specification and added support for multiple storage targets
+	09/05/2014		Mike Tinius			6.2.6			Fixed issue for configuring multi-table caching when inStorageMode=&apos;DATA_SOURCE_OTPS&apos;.  Added debug statements.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
   <parameters>
@@ -114,7 +148,7 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="inRefreshMode" direction="IN" nullable="true">
       <datatype name="VARCHAR" type="STRING" maxLength="255"/>
@@ -171,20 +205,20 @@
       <attribute name="Customized" type="STRING">datatype.changed</attribute>
     </parameter>
     <parameter name="updateResponse" direction="OUT" nullable="true">
-      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultResponse" direction="OUT" nullable="true">
-      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -418,7 +452,20 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
@@ -535,6 +582,7 @@ updateResourceCacheConfiguration:
 	09/14/2010		Calvin Goodrich		5.1.0			Created new
     01/29/2013      Calvin Goodrich     6.2.1           Updated to support new caching features
     04/10/2013      Calvin Goodrich     6.2.6           Updated for new scheduled interval specification and added support for multiple storage targets
+	09/05/2014		Mike Tinius			6.2.6			Fixed issue for configuring multi-table caching when inStorageMode=&apos;DATA_SOURCE_OTPS&apos;.  Added debug statements.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 */
@@ -570,7 +618,7 @@ BEGIN
     PATH /shared/ASAssets/Utilities/log;
     PATH /shared/ASAssets/Utilities/repository;
     PATH /lib/resource;
-
+	DECLARE debug  CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
     DECLARE PUBLIC TYPE StorageTargetType ROW (
         stName ResourceDefs.ResourceName, 
         stPath ResourceDefs.ResourcePath, 
@@ -582,6 +630,7 @@ BEGIN
     DECLARE is621 BOOLEAN DEFAULT FALSE;
     DECLARE requestXML System.Text;
     DECLARE i INTEGER;
+	DECLARE inStorageTargetsDebug LONGVARCHAR DEFAULT &apos;&apos;;
 
     SET success = 1;
 
@@ -590,6 +639,47 @@ BEGIN
     IF (RegexPosition(getCisVersion(), &apos;^(?:6\.2\.[1-9]|[7-9]|[1-9][0-9])&apos;, 1) = 1) THEN
        SET is621 = TRUE;
     END IF;
+
+	IF (UPPER(debug) = &apos;Y&apos; OR UPPER(debug) = &apos;T&apos;) THEN
+		SET i = 1;
+		SET inStorageTargetsDebug = inStorageTargetsDebug || &apos;VECTOR[&apos;||CHR(10);
+		WHILE (i &lt;= CARDINALITY(inStorageTargets)) DO
+			IF (i &gt; 1) THEN
+				SET inStorageTargetsDebug = inStorageTargetsDebug || &apos;,&apos;;
+			END IF;
+			SET inStorageTargetsDebug = inStorageTargetsDebug || &apos;(&apos;;
+			SET inStorageTargetsDebug = inStorageTargetsDebug || inStorageTargets[i].stName ||&apos;, &apos;;
+			SET inStorageTargetsDebug = inStorageTargetsDebug || inStorageTargets[i].stPath ||&apos;, &apos;;
+			SET inStorageTargetsDebug = inStorageTargetsDebug || inStorageTargets[i].stType;
+			SET inStorageTargetsDebug = inStorageTargetsDebug || &apos;)&apos; ||CHR(10);
+			SET i = i + 1;
+		END WHILE;
+		SET inStorageTargetsDebug = inStorageTargetsDebug || &apos;]&apos;;
+	END IF;
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;is621=&apos;||emptyStr(is621));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inResourcePath=&apos;||emptyStr(inResourcePath));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inResourceType=&apos;||emptyStr(inResourceType));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inConfigured=&apos;||emptyStr(inConfigured));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inEnabled=&apos;||emptyStr(inEnabled));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inStorageMode=&apos;||emptyStr(inStorageMode));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inStorageDataSourcePath=&apos;||emptyStr(inStorageDataSourcePath));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inStorageTargets=&apos;||emptyStr(inStorageTargetsDebug));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inRefreshMode=&apos;||emptyStr(inRefreshMode));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inScheduleMode=&apos;||emptyStr(inScheduleMode));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inStartTime=&apos;||emptyStr(inStartTime));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inPeriod=&apos;||emptyStr(inPeriod));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inCount=&apos;||emptyStr(inCount));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inExpirationPeriod=&apos;||emptyStr(inExpirationPeriod));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inClearRule=&apos;||emptyStr(inClearRule));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inIncremental=&apos;||emptyStr(inIncremental));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inStorageBucketMode=&apos;||emptyStr(inStorageBucketMode));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inStorageBucketCatalog=&apos;||emptyStr(inStorageBucketCatalog));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inStorageBucketSchema=&apos;||emptyStr(inStorageBucketSchema));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inStorageBucketPrefix=&apos;||emptyStr(inStorageBucketPrefix));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inStorageBucketNumBuckets=&apos;||emptyStr(inStorageBucketNumBuckets));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inStorageDropCreateIdx=&apos;||emptyStr(inStorageDropCreateIdx));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inFirstRefreshCallback=&apos;||emptyStr(inFirstRefreshCallback));
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, &apos;inSecondRefreshCallback=&apos;||emptyStr(inSecondRefreshCallback));
 
     SET requestXML = 
 &apos;&lt;ns1:updateResourceCacheConfig xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
@@ -657,7 +747,7 @@ BEGIN
 
         END IF;
 
-        IF (inStorageMode = &apos;DATA_SOURCE&apos;) THEN
+        IF (inStorageMode = &apos;DATA_SOURCE&apos; OR inStorageMode = &apos;DATA_SOURCE_OTPS&apos;) THEN
             SET requestXML = requestXML || &apos;
             &lt;ns1:storageDataSourcePath&gt;&apos; || CAST(XMLTEXT(inStorageDataSourcePath) AS VARCHAR(2147483647)) || &apos;&lt;/ns1:storageDataSourcePath&gt;&apos;;
         END IF;
@@ -772,7 +862,7 @@ BEGIN
     &lt;/ns1:cacheConfig&gt;
 &lt;/ns1:updateResourceCacheConfig&gt;&apos;;
 
-    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug, requestXML);
+    CALL /shared/ASAssets/Utilities/log/logDebugMessage(PROC_NAME, debug, requestXML);
     CALL /services/webservices/system/admin/resource/operations/updateResourceCacheConfig(requestXML, updateResponse, faultResponse);
 
     IF (faultResponse IS NOT NULL) THEN
@@ -785,7 +875,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406829809179</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1410196413051</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -793,9 +883,9 @@ END</attribute>
   <attribute name="p:16:Customized" type="STRING">datatype.changed</attribute>
   <attribute name="p:17:Customized" type="STRING">datatype.changed</attribute>
   <attribute name="p:23:Customized" type="STRING">datatype.changed</attribute>
-  <attribute name="p:24:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:25:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:24:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:25:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="public_types" type="MAP">
     <item>
       <key type="STRING">StorageTargetType</key>
@@ -834,19 +924,19 @@ ZQMSAAAABAQEAAAAAAAAACgBEwH///////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">24/157</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">16/149</key>
+      <key type="STRING">16/152</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
         <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">24/158</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
       </value>
     </item>
   </attribute>
