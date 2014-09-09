@@ -5,8 +5,8 @@
     This procedure returns the current version of /shared/ASAssets/Utilities. Can be used
     to enforce the minimum version of /shared/ASAssets/Utilities:
     
-        IF (getUtiltiesVersion() &lt; 2014.3) THEN
-            RAISE System.NotSupportedException VALUE ‘/shared/ASAssets/Utilities must be version 2014.3’;
+        IF (getUtiltiesVersion() &lt; 2014.303) THEN
+            RAISE System.NotSupportedException VALUE ‘/shared/ASAssets/Utilities must be version 2014.303’;
         END IF;
     
     Input:
@@ -36,8 +36,8 @@
     This procedure returns the current version of /shared/ASAssets/Utilities. Can be used
     to enforce the minimum version of /shared/ASAssets/Utilities:
     
-        IF (getUtiltiesVersion() &lt; 2014.3) THEN
-            RAISE System.NotSupportedException VALUE ‘/shared/ASAssets/Utilities must be version 2014.3’;
+        IF (getUtiltiesVersion() &lt; 2014.303) THEN
+            RAISE System.NotSupportedException VALUE ‘/shared/ASAssets/Utilities must be version 2014.303’;
         END IF;
     
     Input:
@@ -58,7 +58,7 @@ PROCEDURE getUtilitiesVersion(
     OUT version DOUBLE
 )
 BEGIN
-    SET version = 2014.3;
+    SET version = 2014.303;
 END</attribute>
   <attribute name="creationDate" type="LONG">0</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
@@ -66,7 +66,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406671351923</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1410279325286</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
