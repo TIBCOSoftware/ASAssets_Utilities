@@ -118,7 +118,7 @@
   <attribute name="explicitly.designed" type="BOOLEAN">true</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1410896065597</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="p:1:Customized" type="STRING">datatype.changed</attribute>
@@ -131,7 +131,7 @@
       &lt;element name=&quot;inputs&quot;&gt;
         &lt;datatype name=&quot;inputs&quot; type=&quot;TREE&quot; refId=&quot;2&quot;&gt;
           &lt;element name=&quot;XML&quot; nullable=&quot;false&quot;&gt;
-            &lt;datatype name=&quot;XML&quot; type=&quot;XML&quot; contentConstraint=&quot;SEQUENCE&quot; schemaConstraint=&quot;ANY&quot; componentType=&quot;TYPE&quot; componentName=&quot;XML&quot;&gt;
+            &lt;datatype name=&quot;XML&quot; referenceType=&quot;XML&quot; type=&quot;XML&quot; contentConstraint=&quot;SEQUENCE&quot; schemaConstraint=&quot;ANY&quot; componentType=&quot;TYPE&quot; componentName=&quot;XML&quot;&gt;
               &lt;schemaDatatype&gt;
                 &lt;datatype name=&quot;XML&quot; type=&quot;TREE&quot; refId=&quot;3&quot;&gt;&lt;/datatype&gt;
               &lt;/schemaDatatype&gt;
@@ -316,6 +316,52 @@
                       &amp;lt;/xslt:element&amp;gt;
                     &amp;lt;/xslt:element&amp;gt;
                   &amp;lt;/xslt:for-each&amp;gt;
+                  &amp;lt;xslt:for-each select=&amp;quot;ns2:xmlType&amp;quot;&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_columnType&amp;quot; select=&amp;quot;ns2:name&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_nativeBaseType&amp;quot; select=&amp;quot;ns2:definition&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:variable name=&amp;quot;_nativeType&amp;quot; select=&amp;quot;ns2:nativeType&amp;quot;/&amp;gt;
+                    &amp;lt;xslt:element name=&amp;quot;result&amp;quot;&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;resourceName&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_resourceName&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;resourcePath&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_resourcePath&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;resourceType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_resourceType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;subtype&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_subtype&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;enabled&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_enabled&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;annotation&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_annotation&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;tableType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_tableType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;sqlText&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_sqlText&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;proprietaryModel&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_proprietaryModel&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;columnName&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_columnName&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;columnType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_columnType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;nativeBaseType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_nativeBaseType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                      &amp;lt;xslt:element name=&amp;quot;nativeType&amp;quot;&amp;gt;
+                        &amp;lt;xslt:value-of select=&amp;quot;$_nativeType&amp;quot;/&amp;gt;
+                      &amp;lt;/xslt:element&amp;gt;
+                    &amp;lt;/xslt:element&amp;gt;
+                  &amp;lt;/xslt:for-each&amp;gt;
                 &amp;lt;/xslt:for-each&amp;gt;
               &amp;lt;/xslt:for-each&amp;gt;
             &amp;lt;/xslt:for-each&amp;gt;
@@ -324,7 +370,8 @@
       &amp;lt;/xslt:for-each&amp;gt;
     &amp;lt;/xslt:element&amp;gt;
   &amp;lt;/xslt:template&amp;gt;
-&amp;lt;/xslt:stylesheet&amp;gt;&lt;/xslt&gt;
+&amp;lt;/xslt:stylesheet&amp;gt;
+&lt;/xslt&gt;
 &lt;/transformModel&gt;</attribute>
   <attribute name="xqueryModel" type="NULL"/>
   <attribute name="xslt" type="STRING">&lt;xslt:stylesheet xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:ns2=&quot;http://www.compositesw.com/services/system/util/common&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;1.0&quot;&gt;
@@ -409,6 +456,52 @@
                   &lt;xslt:for-each select=&quot;ns2:sqlType&quot;&gt;
                     &lt;xslt:variable name=&quot;_columnType&quot; select=&quot;ns2:definition&quot;/&gt;
                     &lt;xslt:variable name=&quot;_nativeBaseType&quot; select=&quot;ns2:name&quot;/&gt;
+                    &lt;xslt:variable name=&quot;_nativeType&quot; select=&quot;ns2:nativeType&quot;/&gt;
+                    &lt;xslt:element name=&quot;result&quot;&gt;
+                      &lt;xslt:element name=&quot;resourceName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_resourceName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;resourcePath&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_resourcePath&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;resourceType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_resourceType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;subtype&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_subtype&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;enabled&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_enabled&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;annotation&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_annotation&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;tableType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_tableType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;sqlText&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_sqlText&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;proprietaryModel&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_proprietaryModel&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;columnName&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_columnName&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;columnType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_columnType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;nativeBaseType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_nativeBaseType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                      &lt;xslt:element name=&quot;nativeType&quot;&gt;
+                        &lt;xslt:value-of select=&quot;$_nativeType&quot;/&gt;
+                      &lt;/xslt:element&gt;
+                    &lt;/xslt:element&gt;
+                  &lt;/xslt:for-each&gt;
+                  &lt;xslt:for-each select=&quot;ns2:xmlType&quot;&gt;
+                    &lt;xslt:variable name=&quot;_columnType&quot; select=&quot;ns2:name&quot;/&gt;
+                    &lt;xslt:variable name=&quot;_nativeBaseType&quot; select=&quot;ns2:definition&quot;/&gt;
                     &lt;xslt:variable name=&quot;_nativeType&quot; select=&quot;ns2:nativeType&quot;/&gt;
                     &lt;xslt:element name=&quot;result&quot;&gt;
                       &lt;xslt:element name=&quot;resourceName&quot;&gt;
