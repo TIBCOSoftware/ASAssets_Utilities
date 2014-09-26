@@ -54,7 +54,7 @@
       <datatype name="VARCHAR" type="STRING" maxLength="255"/>
     </parameter>
     <parameter name="startingPath" direction="IN" nullable="true">
-      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
     </parameter>
     <parameter name="includePathList" direction="IN" nullable="true">
       <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
@@ -110,7 +110,7 @@
         <datatype type="STRING" maxLength="255"/>
       </element>
       <element name="startingPath" direction="IN">
-        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
       </element>
       <element name="includePathList" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
@@ -157,6 +157,9 @@
           </element>
           <element name="enabled">
             <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="cachePolicy">
+            <datatype type="STRING" maxLength="32768"/>
           </element>
           <element name="storageMode">
             <datatype type="STRING" maxLength="32768"/>
@@ -308,14 +311,14 @@
         <datatype type="INTEGER" minValue="0" maxValue="1"/>
       </element>
       <element name="createResponse" direction="OUT">
-        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
           <schemaDatatype>
             <datatype name="XML" type="TREE" refId="2"></datatype>
           </schemaDatatype>
         </datatype>
       </element>
       <element name="faultResponse" direction="OUT">
-        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
           <schemaDatatype>
             <reference refId="2"/>
           </schemaDatatype>
@@ -421,7 +424,7 @@
 */
 PROCEDURE cachedResources(
 	IN  operation				VARCHAR,	-- R=retrieve, E=enable cache, D=disable cache
-	IN	startingPath			/lib/resource/ResourceDefs.ResourceType,-- /shared/BestPracticesTest/Physical/Formatting
+	IN	startingPath			/lib/resource/ResourceDefs.ResourcePath,-- /shared/BestPracticesTest/Physical/Formatting
 	IN  includePathList			LONGVARCHAR, -- comma separated list of paths to include as filters (only execute on these paths).
 	IN  excludePathList			LONGVARCHAR, -- comma separated list of paths to exclude (do not execute on these paths).
 	IN 	debug					CHAR(1),	-- Y=debug is on, N=do not debug
@@ -546,7 +549,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1411771950242</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
