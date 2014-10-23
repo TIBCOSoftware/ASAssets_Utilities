@@ -85,24 +85,23 @@
   <security>
     <owner user="admin" domain="composite"/>
   </security>
+  <dependency target="/lib/util/System" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocConstant" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="constantPath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
-      </element>
-      <element name="constantName" direction="IN">
-        <datatype type="STRING" maxLength="255"/>
-      </element>
-      <element name="outValue" direction="OUT">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-    </datatype>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocCounts" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocCounts" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -158,6 +157,9 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1_resource" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1_resource" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
@@ -177,6 +179,9 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="filePath" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
@@ -188,6 +193,9 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -252,6 +260,12 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="Input Text" direction="IN">
@@ -282,6 +296,19 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/getConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="constantName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="request" direction="IN">
@@ -293,13 +320,25 @@
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
-  <dependency target="/system/customfunctions/getDocConstant" type="PROCEDURE">
+  <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/parseDocSwitches" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/parseDocSwitches" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
@@ -369,17 +408,17 @@ PROCEDURE getDocResourceFormatImpl1(
 )
 BEGIN
 	DECLARE moduleName 					/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType DEFAULT &apos;getDocResourceFormatImpl1&apos;;
-	DECLARE debug 						CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debug&apos;);
+	DECLARE debug 						CHAR(1) DEFAULT getConstant(constantPath, &apos;debug&apos;);
     DECLARE resourcePath			 	/shared/ASAssets/Utilities/TypeDefinitions.pathType;
     DECLARE resourceType 				VARCHAR(255);
 	DECLARE formattedText				/lib/util/System.Text DEFAULT &apos;&apos;;
 	DECLARE resourceText				/lib/util/System.Text;
 	DECLARE resPath						LONGVARCHAR;
 	DECLARE resourceName				VARCHAR;
-	DECLARE beginSeparator				VARCHAR DEFAULT getDocConstant(constantPath, &apos;beginSeparator&apos;);
-	DECLARE endSeparator				VARCHAR DEFAULT getDocConstant(constantPath, &apos;endSeparator&apos;);
-	DECLARE minorSeparator 				VARCHAR DEFAULT getDocConstant(constantPath, &apos;minorSeparator&apos;);
-	DECLARE eol							VARCHAR DEFAULT getDocConstant(constantPath, &apos;eol&apos;);
+	DECLARE beginSeparator				VARCHAR DEFAULT getConstant(constantPath, &apos;beginSeparator&apos;);
+	DECLARE endSeparator				VARCHAR DEFAULT getConstant(constantPath, &apos;endSeparator&apos;);
+	DECLARE minorSeparator 				VARCHAR DEFAULT getConstant(constantPath, &apos;minorSeparator&apos;);
+	DECLARE eol							VARCHAR DEFAULT getConstant(constantPath, &apos;eol&apos;);
 	DECLARE i,j							INTEGER DEFAULT 1;
 	DECLARE excludeKeywordVect			VECTOR(VARCHAR(1024)) DEFAULT VECTOR[(null)];
 	DECLARE excludePathVect				VECTOR(LONGVARCHAR) DEFAULT VECTOR[(null)];
@@ -580,7 +619,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1413903085445</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

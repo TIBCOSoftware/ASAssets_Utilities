@@ -1,0 +1,393 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getUser" path="/shared/ASAssets/Utilities/repository/user/getUser" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getUser:
+
+    Get the list of privileges for a given user name and domain and whether it exists or not.
+ 
+	Input:
+    		debug - Y=debug on, N=debug off 
+			userName - name of the group to be created
+			userDomain - domain for the group - default is &apos;composite&apos;
+			groupPrivileges - space separated list of privileges for the group chosen from this list:
+				ACCESS_TOOLS MODIFY_ALL_CONFIG MODIFY_ALL_RESOURCES MODIFY_ALL_STATUS MODIFY_ALL_USERS READ_ALL_CONFIG READ_ALL_RESOURCES READ_ALL_STATUS READ_ALL_USERS UNLOCK_RESOURCE
+
+
+	Output:
+		userExists				- 0=user does not exist, 1=user exists
+		userExplicitRights		- explicit privilges for this user
+		userEffectiveRights		- effective (combined) privileges for this user
+		userInheritedRights		- inherited privileges for this user
+
+
+	Exceptions:  Exception may be thrown.
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	10/20/2014		Mike Tinius			6.2.6			Created new.
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="debug" direction="IN" nullable="true">
+      <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
+    </parameter>
+    <parameter name="userName" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="userDomain" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="userExists" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="userExplicitRights" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="userEffectiveRights" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="userInheritedRights" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Log" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToLog" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/services/webservices/system/admin/user/operations/getUsers" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getUsers" direction="IN">
+        <datatype name="getUsers" extendedName="{http://www.compositesw.com/services/system/admin/user}getUsers" namespace="http://www.compositesw.com/services/system/admin/user" referenceDefinitionSet="/services/webservices/system/admin/user/operations/UserSchema" referenceType="{http://www.compositesw.com/services/system/admin/user}getUsers" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/user}getUsers">
+          <schemaDatatype>
+            <datatype name="getUsers" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="getUsersRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/user" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="domainName" namespace="http://www.compositesw.com/services/system/admin/user">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="names" namespace="http://www.compositesw.com/services/system/admin/user">
+                <datatype name="nameList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="getUsersResponse" direction="OUT">
+        <datatype name="getUsersResponse" extendedName="{http://www.compositesw.com/services/system/admin/user}getUsersResponse" namespace="http://www.compositesw.com/services/system/admin/user" referenceDefinitionSet="/services/webservices/system/admin/user/operations/UserSchema" referenceType="{http://www.compositesw.com/services/system/admin/user}getUsersResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/user}getUsersResponse">
+          <schemaDatatype>
+            <datatype name="getUsersResponse" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="getUsersResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/user" subType="ELEMENT_DECL" type="TREE" refId="4">
+              <element name="users" namespace="http://www.compositesw.com/services/system/admin/user">
+                <datatype name="userList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
+                  <element name="user" namespace="http://www.compositesw.com/services/system/admin/user" maxOccurs="2147483647" minOccurs="0">
+                    <datatype name="user" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
+                      <element name="name" namespace="http://www.compositesw.com/services/system/admin/user">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="domainName" namespace="http://www.compositesw.com/services/system/admin/user">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="id" namespace="http://www.compositesw.com/services/system/admin/user">
+                        <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                      </element>
+                      <element name="explicitRights" namespace="http://www.compositesw.com/services/system/admin/user">
+                        <datatype name="userRightsList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="effectiveRights" namespace="http://www.compositesw.com/services/system/admin/user">
+                        <datatype name="userRightsList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="inheritedRights" namespace="http://www.compositesw.com/services/system/admin/user">
+                        <datatype name="userRightsList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="annotation" namespace="http://www.compositesw.com/services/system/admin/user" minOccurs="0">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="isLocked" namespace="http://www.compositesw.com/services/system/admin/user" minOccurs="0">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="groupNames" namespace="http://www.compositesw.com/services/system/admin/user" minOccurs="0">
+                        <datatype name="domainMemberReferenceList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="7">
+                          <element name="entry" namespace="http://www.compositesw.com/services/system/admin/user" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="domainMemberReference" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="8">
+                              <element name="name" namespace="http://www.compositesw.com/services/system/admin/user">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="domain" namespace="http://www.compositesw.com/services/system/admin/user" minOccurs="0">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="fault" direction="OUT">
+        <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
+          <schemaDatatype>
+            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="9">
+              <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="10">
+                  <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="message" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="detail" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="severity" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="messageSeverity" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getUser:
+
+    Get the list of privileges for a given user name and domain and whether it exists or not.
+ 
+	Input:
+    		debug - Y=debug on, N=debug off 
+			userName - name of the group to be created
+			userDomain - domain for the group - default is &apos;composite&apos;
+			groupPrivileges - space separated list of privileges for the group chosen from this list:
+				ACCESS_TOOLS MODIFY_ALL_CONFIG MODIFY_ALL_RESOURCES MODIFY_ALL_STATUS MODIFY_ALL_USERS READ_ALL_CONFIG READ_ALL_RESOURCES READ_ALL_STATUS READ_ALL_USERS UNLOCK_RESOURCE
+
+
+	Output:
+		userExists				- 0=user does not exist, 1=user exists
+		userExplicitRights		- explicit privilges for this user
+		userEffectiveRights		- effective (combined) privileges for this user
+		userInheritedRights		- inherited privileges for this user
+
+
+	Exceptions:  Exception may be thrown.
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	10/20/2014		Mike Tinius			6.2.6			Created new.
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE getUser(
+	IN debug 					CHAR(1),-- e.g. Y or N
+	IN userName					VARCHAR(255),
+	IN userDomain 				VARCHAR(255),
+	OUT userExists				BIT,
+	OUT userExplicitRights		VARCHAR(255),
+	OUT userEffectiveRights		VARCHAR(255),
+	OUT userInheritedRights		VARCHAR(255)
+)
+BEGIN
+	DECLARE moduleName 				VARCHAR DEFAULT &apos;getUser&apos;;
+	DECLARE request 				VARCHAR(4096);
+	DECLARE response 				XML;
+	DECLARE fault 					XML;
+    DECLARE i 						INTEGER DEFAULT 1;
+	DECLARE userName_				VARCHAR DEFAULT userName;
+	DECLARE userDomain_				VARCHAR DEFAULT userDomain;
+	DECLARE message					LONGVARCHAR;
+	DECLARE user_exists				BOOLEAN DEFAULT true;
+    DECLARE ex 						EXCEPTION;
+
+	set userExists = 0;
+	set userExplicitRights = null;
+	set userEffectiveRights = null;
+	set userInheritedRights = null;
+   /*
+    * Step one: make sure the appropriate groups exist, and create them if they don&apos;t exist
+    */
+    BEGIN
+		if (userName is null or LENGTH(userName) = 0) then
+			raise ex value &apos;The &quot;userName&quot; parameter may not be null or empty.&apos;;
+		end if;
+		if (userDomain is null or LENGTH(userDomain) = 0) then
+			raise ex value &apos;The &quot;userDomain&quot; parameter may not be null or empty.&apos;;
+		end if;
+
+		-- when the domain is composite use all lower case for domains and group names
+		if (LOWER(userDomain_) = &apos;composite&apos;) then
+			set userName_ = LOWER(userName_);
+		end if;
+		if (LOWER(userDomain_) = &apos;composite&apos;) then
+			set userDomain_ = LOWER(userDomain_);
+		end if;
+
+		set request =
+&apos;&lt;user:getUsers xmlns:user=&quot;http://www.compositesw.com/services/system/admin/user&quot; xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+    &lt;user:domainName&gt;&apos;||userDomain_||&apos;&lt;/user:domainName&gt;
+    &lt;user:names&gt;
+       &lt;common:name&gt;&apos;||userName_||&apos;&lt;/common:name&gt;
+    &lt;/user:names&gt;
+&lt;/user:getUsers&gt;
+&apos;;
+
+		IF (debug IS NOT NULL AND UPPER(debug) = &apos;Y&apos;) THEN
+           	set message = &apos;Retrieve User.  request: &apos;||CHR(10)||request;
+			call log  (moduleName || &apos; : &apos; || message);
+			call print(moduleName || &apos; : &apos; || message);
+		END IF;
+
+		CALL /services/webservices/system/admin/&quot;user&quot;/operations/getUsers(request, response, fault);
+/* response:
+&lt;user:getUsersResponse xmlns:user=&quot;http://www.compositesw.com/services/system/admin/user&quot;&gt;
+  &lt;user:users&gt;
+    &lt;user:user&gt;
+      &lt;user:name&gt;coa&lt;/user:name&gt;
+      &lt;user:domainName&gt;composite&lt;/user:domainName&gt;
+      &lt;user:id&gt;1501&lt;/user:id&gt;
+      &lt;user:explicitRights&gt;NONE&lt;/user:explicitRights&gt;
+      &lt;user:effectiveRights&gt;ACCESS_TOOLS MODIFY_ALL_CONFIG MODIFY_ALL_RESOURCES MODIFY_ALL_STATUS MODIFY_ALL_USERS READ_ALL_CONFIG READ_ALL_RESOURCES READ_ALL_STATUS READ_ALL_USERS UNLOCK_RESOURCE&lt;/user:effectiveRights&gt;
+      &lt;user:inheritedRights&gt;ACCESS_TOOLS MODIFY_ALL_CONFIG MODIFY_ALL_RESOURCES MODIFY_ALL_STATUS MODIFY_ALL_USERS READ_ALL_CONFIG READ_ALL_RESOURCES READ_ALL_STATUS READ_ALL_USERS UNLOCK_RESOURCE&lt;/user:inheritedRights&gt;
+      &lt;user:annotation&gt;Organization Administrator user&lt;/user:annotation&gt;
+      &lt;user:isLocked&gt;N&lt;/user:isLocked&gt;
+      &lt;user:groupNames&gt;
+        &lt;user:entry&gt;
+          &lt;user:name&gt;all&lt;/user:name&gt;
+        &lt;/user:entry&gt;
+        &lt;user:entry&gt;
+          &lt;user:name&gt;composite_org_admin&lt;/user:name&gt;
+        &lt;/user:entry&gt;
+      &lt;/user:groupNames&gt;
+    &lt;/user:user&gt;
+  &lt;/user:users&gt;
+&lt;/user:getUsersResponse&gt;v
+
+		call print(&apos;response:&apos;||CHR(10)||cast(response as longvarchar));
+*/
+        EXCEPTION
+			WHEN System.SOAPFaultException THEN
+				IF LOWER(CURRENT_EXCEPTION.TRACE) LIKE &apos;%username%does not exist%&apos; THEN
+					IF (debug IS NOT NULL AND UPPER(debug) = &apos;Y&apos;) THEN
+   	    		    	set message = &apos;USER does NOT exist&apos;;
+						call log  (moduleName || &apos; : &apos; || message);
+						call print(moduleName || &apos; : &apos; || message);
+					END IF;
+					SET user_exists = FALSE;
+				ELSE
+					RAISE;                                   
+				END IF;
+        END;
+        IF (user_exists) THEN
+			set i = 1; 
+			domainGroupsLoop:
+			LOOP
+				SET userName_ = CAST(XPATH(response,&apos;//*[local-name()=&quot;user&quot;][&apos;|| i || &apos;]/*[local-name()=&quot;name&quot;]/text()&apos;) AS VARCHAR(4000));
+				IF userName_ IS NULL THEN
+					LEAVE domainGroupsLoop;
+				END IF;
+				SET userExplicitRights = CAST(XPATH(response,&apos;//*[local-name()=&quot;user&quot;][&apos;|| i || &apos;]/*[local-name()=&quot;explicitRights&quot;]/text()&apos;) AS VARCHAR(4000));
+				SET userEffectiveRights = CAST(XPATH(response,&apos;//*[local-name()=&quot;user&quot;][&apos;|| i || &apos;]/*[local-name()=&quot;effectiveRights&quot;]/text()&apos;) AS VARCHAR(4000));
+				SET userInheritedRights = CAST(XPATH(response,&apos;//*[local-name()=&quot;user&quot;][&apos;|| i || &apos;]/*[local-name()=&quot;inheritedRights&quot;]/text()&apos;) AS VARCHAR(4000));
+
+				IF (userName = userName_) then
+					set userExists = 1;
+					IF (debug IS NOT NULL AND UPPER(debug) = &apos;Y&apos;) THEN
+   	     		   	set message = &apos;Group Exists: &apos;||userName;
+						call log  (moduleName || &apos; : &apos; || message);
+						call print(moduleName || &apos; : &apos; || message);
+					END IF;
+					LEAVE domainGroupsLoop;
+				END IF;
+				set i = i + 1;
+			END LOOP;
+		END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1414099108416</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">12/119</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/114</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/142</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/118</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/143</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/82</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/83</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

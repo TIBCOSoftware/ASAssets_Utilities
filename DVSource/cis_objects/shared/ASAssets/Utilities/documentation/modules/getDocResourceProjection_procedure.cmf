@@ -53,18 +53,8 @@ Resource Column Projection:
   <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocConstant" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="constantPath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
-      </element>
-      <element name="constantName" direction="IN">
-        <datatype type="STRING" maxLength="255"/>
-      </element>
-      <element name="outValue" direction="OUT">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-    </datatype>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_PROCEDURE_CURSOR" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_PROCEDURE_CURSOR" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -127,6 +117,9 @@ Resource Column Projection:
         </datatype>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -194,6 +187,19 @@ Resource Column Projection:
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/getConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="constantName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="request" direction="IN">
@@ -205,13 +211,22 @@ Resource Column Projection:
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
-  <dependency target="/system/customfunctions/getDocConstant" type="PROCEDURE">
+  <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* 	getDocResourceProjection:
 
@@ -257,9 +272,9 @@ BEGIN
 	DECLARE CTsize			INTEGER DEFAULT 20;
 	DECLARE NBTsize			INTEGER DEFAULT 20;
 	DECLARE NTsize			INTEGER DEFAULT 20;
-	DECLARE padChar			VARCHAR DEFAULT getDocConstant(constantPath, &apos;padChar&apos;);
-	DECLARE eol				VARCHAR DEFAULT getDocConstant(constantPath, &apos;eol&apos;);
-	DECLARE indent4			VARCHAR DEFAULT getDocConstant(constantPath, &apos;indent4&apos;);
+	DECLARE padChar			VARCHAR DEFAULT getConstant(constantPath, &apos;padChar&apos;);
+	DECLARE eol				VARCHAR DEFAULT getConstant(constantPath, &apos;eol&apos;);
+	DECLARE indent4			VARCHAR DEFAULT getConstant(constantPath, &apos;indent4&apos;);
 	DECLARE line			LONGVARCHAR;
 	DECLARE field1			VARCHAR(1024);
 	DECLARE field2			VARCHAR(1024);
@@ -416,7 +431,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397496426640</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1413902551963</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

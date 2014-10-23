@@ -1,35 +1,50 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <metadata name="deleteUser" path="/shared/ASAssets/Utilities/repository/user/deleteUser" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
   <annotation>deleteUser:
-    * Delete the user
+
+	This procedure is used to delete a composite user.  It does not delete ldap users.
  
 	Input:
-    		debug - Y=debug on, N=debug off 
-			username - username to be deleted
-			domainName - domain which the user will belong to.  default is &apos;composite&apos;
+    	debug - Y=debug on, N=debug off 
+		username - username to create in composite
+		domainName - domain which the user will belong to.  default is &apos;composite&apos;
 	Output:
+		success - 1=success otherwise an exception is thrown
 
 	Exceptions:  Exception may be thrown.
 
-	Author:      Mike Tinius
-	Date:        11/20/2011
-	CSW Version: 5.2.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	10/20/2014		Mike Tinius			6.2.6			Created new.
 
-    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
   <parameters>
     <parameter name="debug" direction="IN" nullable="true">
       <datatype name="CHAR" type="STRING" minLength="1" maxLength="1"/>
     </parameter>
-    <parameter name="username" direction="IN" nullable="true">
+    <parameter name="userName" direction="IN" nullable="true">
       <datatype name="VARCHAR" type="STRING" maxLength="255"/>
     </parameter>
-    <parameter name="domainName" direction="IN" nullable="true">
+    <parameter name="userDomain" direction="IN" nullable="true">
       <datatype name="VARCHAR" type="STRING" maxLength="255"/>
     </parameter>
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
   </security>
+  <dependency target="/lib/debug/Log" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToLog" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
@@ -85,83 +100,121 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+  <dependency target="/shared/ASAssets/Utilities/repository/user/getUser" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
-      <element name="moduleName" direction="IN">
-        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
-      </element>
       <element name="debug" direction="IN">
-        <datatype type="STRING" maxLength="1"/>
+        <datatype type="STRING" minLength="1" maxLength="1"/>
       </element>
-      <element name="messageText" direction="IN">
-        <datatype type="STRING" maxLength="2147483647"/>
+      <element name="userName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="userDomain" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="userExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="userExplicitRights" direction="OUT">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="userEffectiveRights" direction="OUT">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="userInheritedRights" direction="OUT">
+        <datatype type="STRING" maxLength="255"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="inputString" direction="IN">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-      <element name="outputString" direction="OUT">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-    </datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* deleteUser:
-    * Delete the user
+
+	This procedure is used to delete a composite user.  It does not delete ldap users.
  
 	Input:
-    		debug - Y=debug on, N=debug off 
-			username - username to be deleted
-			domainName - domain which the user will belong to.  default is &apos;composite&apos;
+    	debug - Y=debug on, N=debug off 
+		username - username to create in composite
+		domainName - domain which the user will belong to.  default is &apos;composite&apos;
 	Output:
+		success - 1=success otherwise an exception is thrown
 
 	Exceptions:  Exception may be thrown.
 
-	Author:      Mike Tinius
-	Date:        11/20/2011
-	CSW Version: 5.2.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	10/20/2014		Mike Tinius			6.2.6			Created new.
 
-    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
+    © 2014 Cisco and/or its affiliates. All rights reserved.
 */
 PROCEDURE deleteUser(
 	IN debug 					CHAR(1),-- e.g. Y or N
-	IN username					VARCHAR(255), 
-	IN domainName 				VARCHAR(255)
+	IN userName					VARCHAR(255), 
+	IN userDomain 				VARCHAR(255)
 )
 BEGIN
 	DECLARE moduleName 			VARCHAR DEFAULT &apos;deleteUser&apos;;
+	DECLARE userName_			VARCHAR DEFAULT TRIM(userName);
+	DECLARE userDomain_ 		VARCHAR(255) DEFAULT TRIM(NVL(userDomain, &apos;composite&apos;));
 	DECLARE request 			VARCHAR(4096);
 	DECLARE response 			XML;
 	DECLARE fault 				XML;
-	DECLARE ex					EXCEPTION;
+    DECLARE userExists 			BIT;
+	DECLARE message				LONGVARCHAR;
+    DECLARE ex					EXCEPTION;
+	DECLARE userExplicitRights	VARCHAR(255);
+	DECLARE userEffectiveRights	VARCHAR(255);
+	DECLARE userInheritedRights	VARCHAR(255);
 
+   /*
+    * Step one: make sure the appropriate user exists
+    */
     BEGIN
-		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;Deleting user (&apos; ||username||&apos;) in domain (&apos;||domainName||&apos;)&apos;);
-		set request =
-               &apos;&lt;ns1:destroyUser xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/user&quot;
-                      xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
-                      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
-                    &lt;ns1:domainName&gt;&apos; || domainName || &apos;&lt;/ns1:domainName&gt;
-                    &lt;ns1:userName&gt;&apos; || username || &apos;&lt;/ns1:userName&gt;
-                 &lt;/ns1:destroyUser&gt;&apos;;
-		CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, request);
-		CALL /services/webservices/system/admin/&quot;user&quot;/operations/destroyUser(request, response, fault);
-    EXCEPTION                 
-		WHEN System.SOAPFaultException THEN
-			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, emptyStr(CURRENT_EXCEPTION.TRACE));
-			-- Don&apos;t raise an exception if the user does not exist.
-			IF (POSITION(&apos;The user &quot;&apos;||username||&apos;&quot; does not exist in domain &quot;&apos;||domainName||&apos;&quot;&apos; IN CURRENT_EXCEPTION.MESSAGE) = 0) THEN
-				raise ex value CURRENT_EXCEPTION.TRACE;   
-			END IF;  
+		if (userName_ is null or LENGTH(userName_) = 0) then
+			raise ex value &apos;The &quot;userName&quot; parameter may not be null or empty.&apos;;
+		end if;
+		if (userDomain_ is null or LENGTH(userDomain_) = 0) then
+			raise ex value &apos;The &quot;userDomain&quot; parameter may not be null or empty.&apos;;
+		end if;
+
+		-- when the domain is composite use all lower case for domains and group names
+		if (LOWER(userDomain_) = &apos;composite&apos;) then
+			set userName_ = LOWER(userName_);
+		end if;
+		if (LOWER(userDomain_) = &apos;composite&apos;) then
+			set userDomain_ = LOWER(userDomain_);
+		end if;
+
+		call /shared/ASAssets/Utilities/repository/&quot;user&quot;/getUser(debug, userName_, userDomain_, userExists, userExplicitRights, userEffectiveRights, userInheritedRights);
+
+		IF userExists = 1 AND userDomain_ = &apos;composite&apos; THEN
+            BEGIN
+				set request =
+                   &apos;&lt;ns1:destroyUser xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/user&quot;
+                         xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+                         xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+                       &lt;ns1:domainName&gt;&apos; || userDomain_ || &apos;&lt;/ns1:domainName&gt;
+                       &lt;ns1:userName&gt;&apos; || userName_ || &apos;&lt;/ns1:userName&gt;
+                    &lt;/ns1:destroyUser&gt;&apos;;
+
+				IF (debug IS NOT NULL AND UPPER(debug) = &apos;Y&apos;) THEN
+		           	set message = &apos;Delete Group.  request: &apos;||request;
+					call log  (moduleName || &apos; : &apos; || message);
+					call print(moduleName || &apos; : &apos; || message);
+				END IF;
+   /*
+    * Step two: delete the user if it exists
+    */
+				CALL /services/webservices/system/admin/&quot;user&quot;/operations/destroyUser(request, response, fault);
+            EXCEPTION                 
+				WHEN System.SOAPFaultException THEN
+					RAISE;
+            END;
+		END IF;
+
+    EXCEPTION
 		ELSE
-			call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, emptyStr(CURRENT_EXCEPTION.TRACE));
-			raise ex value CURRENT_EXCEPTION.TRACE;            
-    END;
+			set message = &apos;EXCEPTION: &apos;||CURRENT_EXCEPTION.TRACE;
+			call log  (moduleName || &apos; : &apos; || message);
+			call print(moduleName || &apos; : &apos; || message);
+			raise ex value CURRENT_EXCEPTION.TRACE;
+	END;
 END</attribute>
   <attribute name="creationDate" type="LONG">0</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
@@ -169,18 +222,50 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1414097133529</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">8/42</key>
+      <key type="STRING">10/79</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
         <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/71</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/72</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/88</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/87</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
       </value>
     </item>
   </attribute>

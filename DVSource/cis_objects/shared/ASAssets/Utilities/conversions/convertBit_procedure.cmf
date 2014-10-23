@@ -6,7 +6,7 @@
  
 	Input:
 		request - contains a request varchar of length 255 with various values.  
-			Values: YES,NO,TRUE,FALSE,1,0 in upper or lower case.
+			Values: Y,N,YES,NO,TRUE,FALSE,1,0 in upper or lower case.
 
 	Output:
 		response - conversion of the incoming values to 1 or 0
@@ -50,16 +50,13 @@
   <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
-  <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <attribute name="Script" type="STRING">/* convertBit:
 	Convert an incoming request to a bit (1/0) response
 	If the request is not parsable then NULL.
  
 	Input:
 		request - contains a request varchar of length 255 with various values.  
-			Values: YES,NO,TRUE,FALSE,1,0 in upper or lower case.
+			Values: Y,N,YES,NO,TRUE,FALSE,1,0 in upper or lower case.
 
 	Output:
 		response - conversion of the incoming values to 1 or 0
@@ -79,9 +76,9 @@ PROCEDURE convertBit(
 	OUT response BIT
 )
 BEGIN
-    IF (RegexPosition (request, &apos;(?i)^(true|yes|1)&apos;, 1) &gt; 0) THEN
+    IF (RegexPosition (lower(request), &apos;(?i)^(y|true|yes|1)&apos;, 1) &gt; 0) THEN
         SET response = 1;
-    ELSEIF (RegexPosition (request, &apos;(?i)^(false|no|0)&apos;, 1) &gt; 0) THEN
+    ELSEIF (RegexPosition (lower(request), &apos;(?i)^(n|false|no|0)&apos;, 1) &gt; 0) THEN
         SET response = 0;
     ELSE
         SET response = NULL;
@@ -93,7 +90,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1399486501474</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1414096949466</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
