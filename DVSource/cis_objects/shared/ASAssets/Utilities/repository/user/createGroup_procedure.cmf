@@ -1,10 +1,10 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <metadata name="createGroup" path="/shared/ASAssets/Utilities/repository/user/createGroup" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
   <annotation>createGroup:
-    * The grouplist is an array of group names and their associated system privs.
-    * If these groups do not exist they will be created.  If they do exist, their
-    * system privileges will be modified to match the list given here.
-    * If the group exists with rights and is not specified in this list, it will lose all rights
+
+	If these groups do not exist they will be created.  If they do exist, their
+	system privileges will be modified to match the list given here.
+	If the group exists with rights and is not specified in this list, it will lose all rights
  
 	Input:
     		debug - Y=debug on, N=debug off 
@@ -12,14 +12,14 @@
 			groupDomain - domain for the group - default is &apos;composite&apos;
 			groupPrivileges - space separated list of privileges for the group chosen from this list:
 				ACCESS_TOOLS MODIFY_ALL_CONFIG MODIFY_ALL_RESOURCES MODIFY_ALL_STATUS MODIFY_ALL_USERS READ_ALL_CONFIG READ_ALL_RESOURCES READ_ALL_STATUS READ_ALL_USERS UNLOCK_RESOURCE
-
+			annotation - the description of the group
 	Output:
 
 	Exceptions:  Exception may be thrown.
 
-	Author:      Mike Tinius
-	Date:        1/18/2011
-	CSW Version: 5.2.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	01/18/2011		Mike Tinius			5.2.0			Created new.
+	10/20/2014		Mike Tinius			6.2.6			Updated to add annotation.
 
     © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
   <parameters>
@@ -35,10 +35,27 @@
     <parameter name="groupPrivileges" direction="IN" nullable="true">
       <datatype name="VARCHAR" type="STRING" maxLength="255"/>
     </parameter>
+    <parameter name="annotation" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+    </parameter>
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
   </security>
+  <dependency target="/lib/debug/Log" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToLog" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
@@ -77,102 +94,6 @@
             <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="4">
               <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
                 <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
-                  <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
-                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
-                  </element>
-                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
-                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
-                  </element>
-                  <element name="message" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
-                  </element>
-                  <element name="detail" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
-                  </element>
-                  <element name="severity" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                    <datatype name="messageSeverity" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                  </element>
-                </datatype>
-              </element>
-            </datatype>
-          </schemaDatatype>
-        </datatype>
-      </element>
-    </datatype>
-  </dependency>
-  <dependency target="/services/webservices/system/admin/user/operations/getDomainGroups" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="getDomainGroups" direction="IN">
-        <datatype name="getDomainGroups" extendedName="{http://www.compositesw.com/services/system/admin/user}getDomainGroups" namespace="http://www.compositesw.com/services/system/admin/user" referenceDefinitionSet="/services/webservices/system/admin/user/operations/UserSchema" referenceType="{http://www.compositesw.com/services/system/admin/user}getDomainGroups" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/user}getDomainGroups">
-          <schemaDatatype>
-            <datatype name="getDomainGroups" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="getDomainGroupsRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/user" subType="ELEMENT_DECL" type="TREE" refId="2">
-              <element name="domainName" namespace="http://www.compositesw.com/services/system/admin/user">
-                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
-              </element>
-              <element name="scope" namespace="http://www.compositesw.com/services/system/admin/user">
-                <datatype name="scopeValue" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-              </element>
-            </datatype>
-          </schemaDatatype>
-        </datatype>
-      </element>
-      <element name="getDomainGroupsResponse" direction="OUT">
-        <datatype name="getDomainGroupsResponse" extendedName="{http://www.compositesw.com/services/system/admin/user}getDomainGroupsResponse" namespace="http://www.compositesw.com/services/system/admin/user" referenceDefinitionSet="/services/webservices/system/admin/user/operations/UserSchema" referenceType="{http://www.compositesw.com/services/system/admin/user}getDomainGroupsResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/user}getDomainGroupsResponse">
-          <schemaDatatype>
-            <datatype name="getDomainGroupsResponse" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="getDomainGroupsResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/user" subType="ELEMENT_DECL" type="TREE" refId="3">
-              <element name="groups" namespace="http://www.compositesw.com/services/system/admin/user">
-                <datatype name="groupList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
-                  <element name="group" namespace="http://www.compositesw.com/services/system/admin/user" maxOccurs="2147483647" minOccurs="0">
-                    <datatype name="group" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
-                      <element name="name" namespace="http://www.compositesw.com/services/system/admin/user">
-                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
-                      </element>
-                      <element name="domainName" namespace="http://www.compositesw.com/services/system/admin/user">
-                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
-                      </element>
-                      <element name="id" namespace="http://www.compositesw.com/services/system/admin/user">
-                        <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
-                      </element>
-                      <element name="explicitRights" namespace="http://www.compositesw.com/services/system/admin/user">
-                        <datatype name="userRightsList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                      </element>
-                      <element name="effectiveRights" namespace="http://www.compositesw.com/services/system/admin/user">
-                        <datatype name="userRightsList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                      </element>
-                      <element name="inheritedRights" namespace="http://www.compositesw.com/services/system/admin/user">
-                        <datatype name="userRightsList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                      </element>
-                      <element name="annotation" namespace="http://www.compositesw.com/services/system/admin/user" minOccurs="0">
-                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
-                      </element>
-                      <element name="userNames" namespace="http://www.compositesw.com/services/system/admin/user" minOccurs="0">
-                        <datatype name="domainMemberReferenceList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
-                          <element name="entry" namespace="http://www.compositesw.com/services/system/admin/user" maxOccurs="2147483647" minOccurs="0">
-                            <datatype name="domainMemberReference" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="7">
-                              <element name="name" namespace="http://www.compositesw.com/services/system/admin/user">
-                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
-                              </element>
-                              <element name="domain" namespace="http://www.compositesw.com/services/system/admin/user" minOccurs="0">
-                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
-                              </element>
-                            </datatype>
-                          </element>
-                        </datatype>
-                      </element>
-                    </datatype>
-                  </element>
-                </datatype>
-              </element>
-            </datatype>
-          </schemaDatatype>
-        </datatype>
-      </element>
-      <element name="fault" direction="OUT">
-        <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
-          <schemaDatatype>
-            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="8">
-              <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="9">
                   <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
                     <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
                   </element>
@@ -281,6 +202,31 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/user/getGroup" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="groupName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="groupDomain" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="groupExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="groupExplicitRights" direction="OUT">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="groupEffectiveRights" direction="OUT">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="groupInheritedRights" direction="OUT">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="inputString" direction="IN">
@@ -295,10 +241,10 @@
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* createGroup:
-    * The grouplist is an array of group names and their associated system privs.
-    * If these groups do not exist they will be created.  If they do exist, their
-    * system privileges will be modified to match the list given here.
-    * If the group exists with rights and is not specified in this list, it will lose all rights
+
+	If these groups do not exist they will be created.  If they do exist, their
+	system privileges will be modified to match the list given here.
+	If the group exists with rights and is not specified in this list, it will lose all rights
  
 	Input:
     		debug - Y=debug on, N=debug off 
@@ -306,14 +252,14 @@
 			groupDomain - domain for the group - default is &apos;composite&apos;
 			groupPrivileges - space separated list of privileges for the group chosen from this list:
 				ACCESS_TOOLS MODIFY_ALL_CONFIG MODIFY_ALL_RESOURCES MODIFY_ALL_STATUS MODIFY_ALL_USERS READ_ALL_CONFIG READ_ALL_RESOURCES READ_ALL_STATUS READ_ALL_USERS UNLOCK_RESOURCE
-
+			annotation - the description of the group
 	Output:
 
 	Exceptions:  Exception may be thrown.
 
-	Author:      Mike Tinius
-	Date:        1/18/2011
-	CSW Version: 5.2.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	01/18/2011		Mike Tinius			5.2.0			Created new.
+	10/20/2014		Mike Tinius			6.2.6			Updated to add annotation.
 
     © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
 */
@@ -321,99 +267,107 @@ PROCEDURE createGroup(
 	IN debug 				CHAR(1),-- e.g. Y or N
 	IN groupName			VARCHAR(255),
 	IN groupDomain 			VARCHAR(255),
-	IN groupPrivileges		VARCHAR(255)
+	IN groupPrivileges		VARCHAR(255),
+	IN annotation			VARCHAR(1024)
 )
 BEGIN
-	DECLARE moduleName 		VARCHAR DEFAULT &apos;createGroup&apos;;
-	DECLARE request 		VARCHAR(4096);
-	DECLARE response 		XML;
-	DECLARE fault 			XML;
-    DECLARE user_exists 	BOOLEAN;
-    DECLARE groups 			VECTOR(VARCHAR) DEFAULT VECTOR[];
-    DECLARE i 				INTEGER DEFAULT 1;
-	DECLARE tmp				VARCHAR;
-    DECLARE ex 				EXCEPTION;
-   /*
-    * The grouplist is an array of group names and their associated system privs.
-    * If these groups do not exist they will be created.  If they do exist, their
-    * system privileges will be modified to match the list given here.
-    * If the group exists with rights and is not specified in this list, it will lose all rights
-    */
-    DECLARE grouplist CONSTANT VECTOR(ROW(name VARCHAR(255), domainname VARCHAR(255), privs VARCHAR(255))) DEFAULT VECTOR[(groupName, groupDomain, REPLACE(groupPrivileges,&apos;|&apos;,&apos; &apos;))];
---        (&apos;admin&apos;, &apos;composite&apos;, &apos;ACCESS_TOOLS MODIFY_ALL_CONFIG MODIFY_ALL_RESOURCES MODIFY_ALL_STATUS MODIFY_ALL_USERS READ_ALL_CONFIG READ_ALL_RESOURCES READ_ALL_STATUS READ_ALL_USERS UNLOCK_RESOURCE&apos;),
---        (&apos;developers&apos;, &apos;composite&apos;, &apos;ACCESS_TOOLS&apos;),
---        (&apos;vipsuser&apos;, &apos;composite&apos;, &apos;&apos;)
+	DECLARE moduleName 				VARCHAR DEFAULT &apos;createGroup&apos;;
+	DECLARE groupName_				VARCHAR DEFAULT TRIM(groupName);
+	DECLARE groupDomain_			VARCHAR DEFAULT TRIM(groupDomain);
+	DECLARE annotation_				LONGVARCHAR DEFAULT NVL(annotation, &apos; &apos;);
+	DECLARE request 				VARCHAR(4096);
+	DECLARE response 				XML;
+	DECLARE fault 					XML;
+	DECLARE message					LONGVARCHAR;
+	DECLARE groupExists				BIT;
+	DECLARE groupExplicitRights		VARCHAR(255);
+	DECLARE groupEffectiveRights	VARCHAR(255);
+	DECLARE groupInheritedRights	VARCHAR(255);
+    DECLARE ex 						EXCEPTION;
+
    /*
     * Step one: make sure the appropriate groups exist, and create them if they don&apos;t exist
     */
     BEGIN
-    	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;Retrieving group list&apos;);
-		set request =
-	       &apos;&lt;ns1:getDomainGroups xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/user&quot;
-    	         xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
-        	     xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
-	           &lt;ns1:domainName&gt;composite&lt;/ns1:domainName&gt;
-    	       &lt;ns1:scope&gt;LOCAL_ONLY&lt;/ns1:scope&gt;
-        	&lt;/ns1:getDomainGroups&gt;&apos;;
-		CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, request);
-		CALL /services/webservices/system/admin/&quot;user&quot;/operations/getDomainGroups(request, response, fault);
+		if (groupName_ is null or LENGTH(groupName_) = 0) then
+			raise ex value &apos;The &quot;groupName&quot; parameter may not be null or empty.&apos;;
+		end if;
+		if (groupDomain_ is null or LENGTH(groupDomain_) = 0) then
+			raise ex value &apos;The &quot;groupDomain&quot; parameter may not be null or empty.&apos;;
+		end if;
 
-		set i = 1; 
-		domainGroupsLoop:
-		LOOP
-			SET tmp = CAST(XPATH(response,&apos;//*[local-name()=&quot;group&quot;][&apos;|| i || &apos;]/*[local-name()=&quot;name&quot;]/text()&apos;) AS VARCHAR(4000));
-			IF tmp IS NULL THEN
-				LEAVE domainGroupsLoop;
-			END IF;
-			SET i = i + 1;
-			SET groups = EXTEND(groups, 1);
-			SET groups[cardinality(groups)] = tmp;
-		END LOOP;
-     EXCEPTION                         
-        WHEN System.SOAPFaultException THEN
-			RAISE;                                   
-    END;
- 
-	set i = 1;
-    WHILE i &lt;= cardinality(grouplist)
-    DO
-        IF FIND_INDEX(grouplist[i].name,groups) = 0 AND grouplist[i].domainname = &apos;composite&apos; THEN
+		-- when the domain is composite use all lower case for domains and group names
+		if (LOWER(groupDomain_) = &apos;composite&apos;) then
+			set groupName_ = LOWER(groupName_);
+		end if;
+		if (LOWER(groupDomain_) = &apos;composite&apos;) then
+			set groupDomain_ = LOWER(groupDomain_);
+		end if;
+
+		call /shared/ASAssets/Utilities/repository/&quot;user&quot;/getGroup(debug, groupName_, groupDomain_, groupExists, groupExplicitRights, groupEffectiveRights, groupInheritedRights);
+
+		-- Escape any special characters 
+		set annotation_ = REPLACE(annotation_, &apos;&amp;&apos;, &apos;&amp;amp;&apos;);
+		set annotation_ = REPLACE(annotation_,  &apos;&lt;&apos;, &apos;&amp;lt;&apos;);
+		set annotation_ = REPLACE(annotation_, &apos;&gt;&apos;, &apos;&amp;gt;&apos;);
+		set annotation_ = REPLACE(annotation_, &apos;&apos;&apos;&apos;, &apos;&amp;apos;&apos;);
+		set annotation_ = REPLACE(annotation_, &apos;&quot;&apos;, &apos;&amp;quot;&apos;);
+
+		IF groupExists = 0 AND groupDomain_ = &apos;composite&apos; THEN
             BEGIN
-            	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;Create group (&apos; || grouplist[i].name || &apos;) with privileges (&apos;||grouplist[i].privs||&apos;)&apos;);
 				set request =
                    &apos;&lt;ns1:createGroup xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/user&quot;
                          xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
                          xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
-                       &lt;ns1:domainName&gt;&apos; || grouplist[i].domainname || &apos;&lt;/ns1:domainName&gt;
-                       &lt;ns1:groupName&gt;&apos; || grouplist[i].name || &apos;&lt;/ns1:groupName&gt;
-                       &lt;ns1:explicitRights&gt;&apos; || emptyStr(grouplist[i].privs) || &apos;&lt;/ns1:explicitRights&gt;
+                       &lt;ns1:domainName&gt;&apos; || groupDomain_ || &apos;&lt;/ns1:domainName&gt;
+                       &lt;ns1:groupName&gt;&apos; || groupName_ || &apos;&lt;/ns1:groupName&gt;
+                       &lt;ns1:explicitRights&gt;&apos; || emptyStr(REPLACE(groupPrivileges,&apos;|&apos;,&apos; &apos;)) || &apos;&lt;/ns1:explicitRights&gt;
+                       &lt;ns1:annotation&gt;&apos;||CAST(XMLTEXT(annotation_) AS LONGVARCHAR)||&apos;&lt;/ns1:annotation&gt;
                     &lt;/ns1:createGroup&gt;&apos;;
-				CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, request);
+
+				IF (debug IS NOT NULL AND UPPER(debug) = &apos;Y&apos;) THEN
+		           	set message = &apos;Create Group.  request: &apos;||request;
+					call log  (moduleName || &apos; : &apos; || message);
+					call print(moduleName || &apos; : &apos; || message);
+				END IF;
+
 				CALL /services/webservices/system/admin/&quot;user&quot;/operations/createGroup(request, response, fault);
             EXCEPTION                 
 				WHEN System.SOAPFaultException THEN
 					RAISE;
             END;
-        ELSE
+         ELSE
             BEGIN
-				call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;Update group (&apos; || grouplist[i].name || &apos;) with privileges (&apos;||grouplist[i].privs||&apos;)&apos;);
 				set request =
                    &apos;&lt;ns1:updateGroup xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/user&quot;
                          xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
                          xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
-                       &lt;ns1:domainName&gt;&apos; || grouplist[i].domainname || &apos;&lt;/ns1:domainName&gt;
-                       &lt;ns1:groupName&gt;&apos; || grouplist[i].name || &apos;&lt;/ns1:groupName&gt;
-                       &lt;ns1:explicitRights&gt;&apos; || emptyStr(grouplist[i].privs) || &apos;&lt;/ns1:explicitRights&gt;
+                       &lt;ns1:domainName&gt;&apos; ||groupDomain_ || &apos;&lt;/ns1:domainName&gt;
+                       &lt;ns1:groupName&gt;&apos; || groupName_ || &apos;&lt;/ns1:groupName&gt;
+                       &lt;ns1:explicitRights&gt;&apos; || emptyStr(REPLACE(groupPrivileges,&apos;|&apos;,&apos; &apos;)) || &apos;&lt;/ns1:explicitRights&gt;
+                       &lt;ns1:annotation&gt;&apos;||TRIM(annotation_)||&apos;&lt;/ns1:annotation&gt;
                     &lt;/ns1:updateGroup&gt;&apos;;
-				CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, request);
+
+				IF (debug IS NOT NULL AND UPPER(debug) = &apos;Y&apos;) THEN
+		           	set message = &apos;Update Group.  request: &apos;||request;
+					call log  (moduleName || &apos; : &apos; || message);
+					call print(moduleName || &apos; : &apos; || message);
+				END IF;
+
 				CALL /services/webservices/system/admin/&quot;user&quot;/operations/updateGroup(request, response, fault);
             EXCEPTION                 
 				WHEN System.SOAPFaultException THEN
 					RAISE;
             END;
         END IF;
-        SET i = i + 1;
-    END WHILE;
+
+    EXCEPTION
+		ELSE
+			set message = &apos;EXCEPTION: &apos;||CURRENT_EXCEPTION.TRACE;
+			call log  (moduleName || &apos; : &apos; || message);
+			call print(moduleName || &apos; : &apos; || message);
+			raise ex value CURRENT_EXCEPTION.TRACE;
+	END;
 
     EXCEPTION
 		ELSE
@@ -426,14 +380,22 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1414013151359</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">10/98</key>
+      <key type="STRING">11/89</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/94</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -441,7 +403,15 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/115</key>
+      <key type="STRING">11/88</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/117</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -449,11 +419,35 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/77</key>
+      <key type="STRING">11/111</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>util</item>
-        <item>System</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/112</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/125</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/126</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
       </value>
     </item>
   </attribute>

@@ -1,0 +1,266 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="modifyConstant" path="/shared/ASAssets/Utilities/string/modifyConstant" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>modifyConstants:
+
+	This script is used to modify a Constants procedure and change values at the time of deployment in order to enable automation.
+	The Constants file is any SQL Script procedure that contains a format:
+			SET varname = value;
+	This script will search for &quot;SET varname&quot; in the script text in order to modify the value.  
+	The value that is passed in is modified between the = and ; which means that any single quotes must be provided if the original value has them.
+	For example a Constants procedure may have many variables set but we are only interested in setting one of the variables which will be uniquely defined
+	within the context of the procedure.  Example:
+			SET EnvironmentType					= &apos;DEV&apos;;
+	In the above example the objective is to search for the namePair=EnvironmentType and replace the value with valuePair=&apos;UAT&apos;
+	Notice that the value contains all necessary surrounding quotes.  The chart below shows how to escape values such as single and double quotes if necessary.
+
+	The following values that are passed in may be escaped for the values passed in by the variable valuePair:
+		Description		Value		Escaped Value
+		quote 			(&quot;) 		&amp;quot; 
+		apostrophe 		(&apos;) 		&amp;apos; 
+		ampersand		(&amp;)			&amp;amp;
+		less than 		(&lt;) 		&amp;lt; 
+		greater than 	(&gt;) 		&amp;gt; 
+
+	INPUT:
+		constantsPath 	- Path to the application constants procedure.
+		namePair 		- The name of the name/value pair to modify
+		valuePair 		- The value of the name/value pair to modify. Values are modified between the = and ;
+						  Values must contain all single quotes around the data values if applicable.
+
+
+	OUTPUT:
+		none
+
+
+	EXCEPTIONS:
+		ex - throws an exception if anything goes wrong
+
+	Modified Date:	Modified By:		CIS Version:	Reason:
+	10/06/2014		Mike Tinius			6.2.6			Created new in order to support automated deployment. 
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="constantsPath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="namePair" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+    </parameter>
+    <parameter name="valuePair" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="version" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceVersion" type="STRING" maxLength="255"/>
+      </element>
+      <element name="exists" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getScriptText" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inSubType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="scriptText" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateSqlScript" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="scripttext" direction="INOUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexPosition" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="Input Text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Regular Expression" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="Occurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/unescapeXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inStr" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outStr" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* modifyConstants:
+
+	This script is used to modify a Constants procedure and change values at the time of deployment in order to enable automation.
+	The Constants file is any SQL Script procedure that contains a format:
+			SET varname = value;
+	This script will search for &quot;SET varname&quot; in the script text in order to modify the value.  
+	The value that is passed in is modified between the = and ; which means that any single quotes must be provided if the original value has them.
+	For example a Constants procedure may have many variables set but we are only interested in setting one of the variables which will be uniquely defined
+	within the context of the procedure.  Example:
+			SET EnvironmentType					= &apos;DEV&apos;;
+	In the above example the objective is to search for the namePair=EnvironmentType and replace the value with valuePair=&apos;UAT&apos;
+	Notice that the value contains all necessary surrounding quotes.  The chart below shows how to escape values such as single and double quotes if necessary.
+
+	The following values that are passed in may be escaped for the values passed in by the variable valuePair:
+		Description		Value		Escaped Value
+		quote 			(&quot;) 		&amp;quot; 
+		apostrophe 		(&apos;) 		&amp;apos; 
+		ampersand		(&amp;)			&amp;amp;
+		less than 		(&lt;) 		&amp;lt; 
+		greater than 	(&gt;) 		&amp;gt; 
+
+	INPUT:
+		constantsPath 	- Path to the application constants procedure.
+		namePair 		- The name of the name/value pair to modify
+		valuePair 		- The value of the name/value pair to modify. Values are modified between the = and ;
+						  Values must contain all single quotes around the data values if applicable.
+
+
+	OUTPUT:
+		none
+
+
+	EXCEPTIONS:
+		ex - throws an exception if anything goes wrong
+
+	Modified Date:	Modified By:		CIS Version:	Reason:
+	10/06/2014		Mike Tinius			6.2.6			Created new in order to support automated deployment. 
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+*/  
+PROCEDURE modifyConstant(
+	IN  constantsPath	 		VARCHAR(4096),	-- Path to the application constants procedure.
+	IN  namePair				VARCHAR,		-- The name of the name/value pair to modify
+	IN  valuePair				LONGVARCHAR		-- The value of the name/value pair to modify. Values are modified between the = and ;
+)
+
+BEGIN
+	DECLARE ResExists			BOOLEAN;
+	DECLARE scriptText			LONGVARCHAR;
+	DECLARE pos, posEq, posSC	INTEGER;
+	DECLARE newValue			LONGVARCHAR;
+	DECLARE NotEmpty			INTEGER DEFAULT 0;
+	DECLARE begScript			LONGVARCHAR;
+	DECLARE midScript			LONGVARCHAR;
+	DECLARE endScript			LONGVARCHAR;
+	DECLARE oldValue			LONGVARCHAR;
+	DECLARE success				BIT;
+	DECLARE createResponse 		XML;
+	DECLARE faultResponse		XML;
+	DECLARE ex					EXCEPTION;
+
+	-- Make sure the resource exists
+	CALL /lib/resource/ResourceExists(constantsPath, &apos;PROCEDURE&apos;, NULL, ResExists);
+	IF (ResExists AND isEmpty(namePair) = NotEmpty AND isEmpty(valuePair) = NotEmpty) THEN
+		-- Unescape any of the esaped values in valuePair
+		CALL /shared/ASAssets/Utilities/&quot;xml&quot;/unescapeXML(valuePair, newValue);
+		-- Get the script text
+		CALL /shared/ASAssets/Utilities/repository/getScriptText(constantsPath, &apos;PROCEDURE&apos;, NULL, scriptText);
+		-- Locate the namePair within the script text.  Use upper case to avoid the &quot;set&quot; being in lower case.
+		CALL /shared/ASAssets/Utilities/string/TextUtils/RegexPosition(UPPER(scriptText), &apos;SET &apos;||UPPER(namePair), 1, pos);
+		-- Extract the beginning portion of the script up to where the namePair was found.
+		SET begScript = SUBSTRING(scriptText, 1, pos-1);
+		-- Extract the end portion of the script
+		SET endScript = SUBSTRING(scriptText, pos, LENGTH(scriptText));
+		SET posSC = POSITION(&apos;;&apos; IN endScript);
+		-- Extract the mid portion of the script which represents the format: SET varname = value;
+		SET midScript = SUBSTRING(endScript, 1, posSC);
+		-- Extract the new end portion of the script that follows the mid script
+		SET endScript = SUBSTRING(endScript, posSC+1, LENGTH(endScript));
+		SET posEq = POSITION(&apos;=&apos; IN midScript);
+		SET posSC = POSITION(&apos;;&apos; IN midScript);
+		-- Extract the old value from the mid script
+		SET oldValue = TRIM(SUBSTRING(midScript, posEq+1, posSC-posEq-1));
+		-- Replace the old value with the new value that was passed in from valuePair.
+		SET midScript = REPLACE(midScript, oldValue, newValue);
+		-- Rebuild the script by concatenating the beginning, middle and end script portions together.
+		SET scriptText = begScript||midScript||endScript;
+
+		BEGIN INDEPENDENT TRANSACTION
+			-- Update the original script with the changed value
+			CALL /shared/ASAssets/Utilities/repository/updateSqlScript(constantsPath, scriptText, success, createResponse, faultResponse);
+		EXCEPTION
+			ELSE
+				RAISE;
+		END;
+		IF (faultResponse IS NOT NULL) THEN
+			RAISE ex VALUE CAST(faultResponse AS LONGVARCHAR);
+		END IF;
+	END IF;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1412609625958</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1414099265372</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

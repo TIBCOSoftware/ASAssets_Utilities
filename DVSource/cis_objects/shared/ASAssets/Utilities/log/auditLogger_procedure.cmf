@@ -1,0 +1,758 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="auditLogger" path="/shared/ASAssets/Utilities/log/auditLogger" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>auditLogger:
+
+	The auditLogger is meant to be generic implementation for audit logging purposes. 
+
+ 
+	Input:
+		messageText			- The message to log, print, insert into database or email.
+		attributeVect		- Name/Value pair list containing only the necessary attributes for audit logging.
+							The &quot;Name&quot; portion of the Name/Value pair attribute list is mandatory and the name is provided below with an explanation.
+
+				-- Example of how to declare a variable for attribute vector within the invoking procedure:
+					DECLARE attributeVect	VECTOR(/shared/ASAssets/Utilities/log/auditLogger.AttributeType);
+
+				-- Example of how to set the attribute vector to be passed into auditLogger()
+				SET attributeVect = VECTOR[
+					-- Name					Value							Description
+					-- General options
+					(&apos;debug&apos;, 				debug),							-- Y=debug or N=do not debug.  Debugging within the auditLogger procedure only.
+					(&apos;loggingType&apos;, 		loggingType),					-- The type of logging to perform.  One or more of this list: [LOG, EMAIL, DB, PRINT]
+																			--		LOG - write to the Composite log.
+																			--		EMAIL - send an email.  (not yet implemented)
+																			--		DB - insert the message into the AUDI_LOG table. (created and introspected by developer during initialization)
+																			--		PRINT - print to the Studio command line.
+					(&apos;notificationType&apos;, 	notificationType),				-- The type of notification that is being logged.  One and only one of [ERROR|INFO|DEBUG|AUDIT]
+    																		--		ERROR - Output error message with severity level ERROR.
+    																		--		AUDIT - Output audit message with severity level INFO.
+    																		--		INFO - Output info message with severity level INFO.
+    																		--		DEBUG - Output debug message with severity level INFO.
+					-- Database logging options
+					(&apos;auditTablePath&apos;, 		auditTablePath),				-- The CIS path to the AUDIT_LOG table. e.g. /shared/Cache_DB/Cache_Repo/CACHE1/AUDIT_LOG
+					(&apos;sequenceNum&apos;, 		CAST(sequenceNum AS VARCHAR)),	-- A sequence number used to correlate multiple messages across different log messages.  
+																			-- This allows a common code base or framework to generate a sequence number and use it across multiple invocations.
+					(&apos;organizationName&apos;, 	organizationName),				-- The name of the organization which can be used to filter messages. e.g. Mortgage, Operations, CustomerSatisfaction.
+					(&apos;applicationName&apos;, 	applicationName),				-- The application name that is using Composite within the organization which can be used as an additional filter. e.g. HomeLoans, Bankruptcy, etc.
+					(&apos;origUserName&apos;, 		origUserName),					-- The original user name from the application: format=username@domain.  e.g. user1@ldap or user2@composite
+					(&apos;resourceName&apos;, 		resourceName),					-- The name of the resource being acted upon such as VIEW_NAME_INCR.
+					(&apos;moduleName&apos;, 			moduleName),					-- The name of the module or procedure that is invoking the auditLoger which provides context for the code such as RefreshCache.
+					(&apos;cachekey&apos;, 			CAST(cachekey AS VARCHAR)),		-- The cachekey being used to refresh the cache or 0 if not applicable.  This is especially helpful when invoked from the incremental refresh scripts.
+					-- Send email options
+					(&apos;emailFrom&apos;, 			emailFrom),						-- The address the message is from.  NULL causes use of the server&apos;s configured &quot;from&quot; address.  Only NULL is supported in this release.
+					(&apos;emailReplyTo&apos;, 		emailReplyTo),					-- The address to place in the replyTo field of the message.
+					(&apos;emailTo&apos;, 			emailTo),						-- A comma separated list of e-mail addresses.
+					(&apos;emailCC&apos;, 			emailCC),						-- A comma separated list of e-mail addresses.
+					(&apos;emailBCC&apos;, 			emailBCC),						-- A comma separated list of e-mail addresses.
+					(&apos;emailSubject&apos;, 		emailSubject),					-- The message subject.
+					(&apos;emailContentType&apos;, 	emailContentType)				-- This can be &apos;TEXT_PLAIN&apos; or &apos;TEXT_HTML&apos;.
+				];
+
+	Output:
+		None
+
+	Exceptions:
+		Will throw exceptions if the logging is not successful.
+		IllegalArgumentException: If &quot;from&quot; is not NULL.
+		IllegalArgumentException: If any of the address lines are mis-formatted.
+		IllegalArgumentException: If there is not at least one &quot;to&quot; address.
+		IllegalArgumentException: If there is more than one address in the &quot;replyTo&quot;.
+		IllegalArgumentException: If &quot;contentType&quot; is not &apos;TEXT_PLAIN&apos; or &apos;TEXT_HTML&apos;.
+		IllegalStateException: If the server&apos;s &quot;from&quot; address is not configured.
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	10/20/2014		Mike Tinius			6.2.6			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+
+	*********************************************************************
+	* Sample DDL syntax for the AUDIT_LOG table.
+	* 
+	*   (1) Create the AUDIT_LOG table
+	*		[Option 1] Execute the DDL manually outside of Composite.
+	*		[Option 2] Automate the DDL creation within some sort of framework that will invoke this auditLogger.
+	*   (2) Once the table is created it must be introspected into Composite.  
+	*   (3) The path to the introspected table is what is provided to auditLogger via the &apos;auditTablePath&apos; attribute.	
+	*********************************************************************
+		ORACLE:
+        CREATE TABLE AUDIT_LOG(
+            &quot;cachekey&quot;              NUMERIC(10,0),  -- The cachekey is only relevant when a cache refresh is being performed.
+            SEQUENCE_NUM           	NUMERIC(19,0),  -- The unique sequence number that can be used to correlate a group of messages together as the Cache Framework does.
+            ORGANIZATION_NAME      	VARCHAR2(255),  -- The name of the organization.
+            APPLICATION_NAME       	VARCHAR2(255),  -- The name of the application [Business line, Business Area, Subject Area].
+            CURR_USER_NAME         	VARCHAR2(255),  -- The current user@domain captured in the auditLogger procedure.
+            ORIG_USER_NAME         	VARCHAR2(255),  -- The original user@domain who started the process and transcends sessions.
+            RESOURCE_NAME          	VARCHAR2(2048), -- The name of the CIS resource.
+            MODULE_NAME            	VARCHAR2(255),  -- The name of the CIS module (procedure) executing the code.
+            NOTIFICATION_TYPE      	VARCHAR2(10),   -- The type of notification [ERROR, AUDIT, INFO, DEBUG].
+            AUDIT_TIME             	TIMESTAMP(9),   -- The current timestamp when the log entry was made.
+            MESSAGE_TEXT           	VARCHAR2(2000)  -- The message to be inserted from the application.
+        );
+
+		SQL SERVER:
+        CREATE TABLE AUDIT_LOG(
+            &quot;cachekey&quot;              NUMERIC(10,0),  -- The cachekey is only relevant when a cache refresh is being performed.
+            SEQUENCE_NUM           	NUMERIC(19,0),  -- The unique sequence number that can be used to correlate a group of messages together as the Cache Framework does.
+            ORGANIZATION_NAME      	VARCHAR(255),   -- The name of the organization.
+            APPLICATION_NAME       	VARCHAR(255),   -- The name of the application [Business line, Business Area, Subject Area].
+            CURR_USER_NAME         	VARCHAR(255),   -- The current user@domain captured in the auditLogger procedure.
+            ORIG_USER_NAME         	VARCHAR(255),   -- The original user@domain who started the process and transcends sessions.
+            RESOURCE_NAME          	VARCHAR(2048),  -- The name of the CIS resource.
+            MODULE_NAME            	VARCHAR(255),   -- The name of the CIS module (procedure) executing the code.
+            NOTIFICATION_TYPE      	VARCHAR(10),    -- The type of notification [ERROR, AUDIT, INFO, DEBUG].
+            AUDIT_TIME             	DATETIME,       -- The current timestamp when the log entry was made.
+            MESSAGE_TEXT           	VARCHAR(2000)   -- The message to be inserted from the application.
+        );
+
+		NETEZZA:
+        CREATE TABLE AUDIT_LOG(
+            &quot;cachekey&quot;              NUMERIC(10,0),  -- The cachekey is only relevant when a cache refresh is being performed.
+            SEQUENCE_NUM           	NUMERIC(19,0),  -- The unique sequence number that can be used to correlate a group of messages together as the Cache Framework does.
+            ORGANIZATION_NAME      	VARCHAR(255),   -- The name of the organization.
+            APPLICATION_NAME       	VARCHAR(255),   -- The name of the application [Business line, Business Area, Subject Area].
+            CURR_USER_NAME         	VARCHAR(255),   -- The current user@domain captured in the auditLogger procedure.
+            ORIG_USER_NAME         	VARCHAR(255),   -- The original user@domain who started the process and transcends sessions.
+            RESOURCE_NAME          	VARCHAR(2048),  -- The name of the CIS resource.
+            MODULE_NAME            	VARCHAR(255),   -- The name of the CIS module (procedure) executing the code.
+            NOTIFICATION_TYPE      	VARCHAR(10),    -- The type of notification [ERROR, AUDIT, INFO, DEBUG].
+            AUDIT_TIME             	TIMESTAMP,      -- The current timestamp when the log entry was made.
+            MESSAGE_TEXT           	VARCHAR(2000)   -- The message to be inserted from the application.
+        );</annotation>
+  <parameters>
+    <parameter name="messageText" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+    </parameter>
+    <parameter name="attributeVect" direction="IN" nullable="true">
+      <datatype name="attributeVect" type="ARRAY" maxLength="0">
+        <itemDatatype>
+          <datatype name="AttributeType" type="TREE" refId="1">
+            <element name="attrName">
+              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+            </element>
+            <element name="attrValue">
+              <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+            </element>
+          </datatype>
+        </itemDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Log" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToLog" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/debug/LogError" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToLog" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="version" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceVersion" type="STRING" maxLength="255"/>
+      </element>
+      <element name="exists" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/GetProperty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="property" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="PropertyName" type="STRING" maxLength="255"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="PropertyValue" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/SendEMail" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="from" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="EMailAddress" type="STRING" maxLength="1024"/>
+      </element>
+      <element name="replyTo" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="EMailAddress" type="STRING" maxLength="1024"/>
+      </element>
+      <element name="to" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="EMailAddress" type="STRING" maxLength="1024"/>
+      </element>
+      <element name="cc" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="EMailAddress" type="STRING" maxLength="1024"/>
+      </element>
+      <element name="bcc" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="EMailAddress" type="STRING" maxLength="1024"/>
+      </element>
+      <element name="subject" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="PropertyValue" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="contentType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="PropertyName" type="STRING" maxLength="255"/>
+      </element>
+      <element name="content" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="Content" type="STRING" maxLength="65535"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/conversions/convertYN" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="1024"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="proprietaryModel">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="columnName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="columnType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeBaseType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/concatNotNull" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inputString1" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inputString2" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="mode" direction="IN">
+        <datatype type="INTEGER" minValue="-32768" maxValue="32767"/>
+      </element>
+      <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/extractBiDelimitedText" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="searchTerm" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="openingDelim" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="closingDelim" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="inOccurrence" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="inTrimText" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="caseSensitive" direction="IN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/fixQuotes" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inMessage" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outMessage" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/concatNotNull" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/convertYN" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/fixQuotes" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* auditLogger:
+
+	The auditLogger is meant to be generic implementation for audit logging purposes. 
+
+ 
+	Input:
+		messageText			- The message to log, print, insert into database or email.
+		attributeVect		- Name/Value pair list containing only the necessary attributes for audit logging.
+							The &quot;Name&quot; portion of the Name/Value pair attribute list is mandatory and the name is provided below with an explanation.
+
+				-- Example of how to declare a variable for attribute vector within the invoking procedure:
+					DECLARE attributeVect	VECTOR(/shared/ASAssets/Utilities/log/auditLogger.AttributeType);
+
+				-- Example of how to set the attribute vector to be passed into auditLogger()
+				SET attributeVect = VECTOR[
+					-- Name					Value							Description
+					-- General options
+					(&apos;debug&apos;, 				debug),							-- Y=debug or N=do not debug.  Debugging within the auditLogger procedure only.
+					(&apos;loggingType&apos;, 		loggingType),					-- The type of logging to perform.  One or more of this list: [LOG, EMAIL, DB, PRINT]
+																			--		LOG - write to the Composite log.
+																			--		EMAIL - send an email.  (not yet implemented)
+																			--		DB - insert the message into the AUDI_LOG table. (created and introspected by developer during initialization)
+																			--		PRINT - print to the Studio command line.
+					(&apos;notificationType&apos;, 	notificationType),				-- The type of notification that is being logged.  One and only one of [ERROR|INFO|DEBUG|AUDIT]
+    																		--		ERROR - Output error message with severity level ERROR.
+    																		--		AUDIT - Output audit message with severity level INFO.
+    																		--		INFO - Output info message with severity level INFO.
+    																		--		DEBUG - Output debug message with severity level INFO.
+					-- Database logging options
+					(&apos;auditTablePath&apos;, 		auditTablePath),				-- The CIS path to the AUDIT_LOG table. e.g. /shared/Cache_DB/Cache_Repo/CACHE1/AUDIT_LOG
+					(&apos;sequenceNum&apos;, 		CAST(sequenceNum AS VARCHAR)),	-- A sequence number used to correlate multiple messages across different log messages.  
+																			-- This allows a common code base or framework to generate a sequence number and use it across multiple invocations.
+					(&apos;organizationName&apos;, 	organizationName),				-- The name of the organization which can be used to filter messages. e.g. Mortgage, Operations, CustomerSatisfaction.
+					(&apos;applicationName&apos;, 	applicationName),				-- The application name that is using Composite within the organization which can be used as an additional filter. e.g. HomeLoans, Bankruptcy, etc.
+					(&apos;origUserName&apos;, 		origUserName),					-- The original user name from the application: format=username@domain.  e.g. user1@ldap or user2@composite
+					(&apos;resourceName&apos;, 		resourceName),					-- The name of the resource being acted upon such as VIEW_NAME_INCR.
+					(&apos;moduleName&apos;, 			moduleName),					-- The name of the module or procedure that is invoking the auditLoger which provides context for the code such as RefreshCache.
+					(&apos;cachekey&apos;, 			CAST(cachekey AS VARCHAR)),		-- The cachekey being used to refresh the cache or 0 if not applicable.  This is especially helpful when invoked from the incremental refresh scripts.
+					-- Send email options
+					(&apos;emailFrom&apos;, 			emailFrom),						-- The address the message is from.  NULL causes use of the server&apos;s configured &quot;from&quot; address.  Only NULL is supported in this release.
+					(&apos;emailReplyTo&apos;, 		emailReplyTo),					-- The address to place in the replyTo field of the message.
+					(&apos;emailTo&apos;, 			emailTo),						-- A comma separated list of e-mail addresses.
+					(&apos;emailCC&apos;, 			emailCC),						-- A comma separated list of e-mail addresses.
+					(&apos;emailBCC&apos;, 			emailBCC),						-- A comma separated list of e-mail addresses.
+					(&apos;emailSubject&apos;, 		emailSubject),					-- The message subject.
+					(&apos;emailContentType&apos;, 	emailContentType)				-- This can be &apos;TEXT_PLAIN&apos; or &apos;TEXT_HTML&apos;.
+				];
+
+	Output:
+		None
+
+	Exceptions:
+		Will throw exceptions if the logging is not successful.
+		IllegalArgumentException: If &quot;from&quot; is not NULL.
+		IllegalArgumentException: If any of the address lines are mis-formatted.
+		IllegalArgumentException: If there is not at least one &quot;to&quot; address.
+		IllegalArgumentException: If there is more than one address in the &quot;replyTo&quot;.
+		IllegalArgumentException: If &quot;contentType&quot; is not &apos;TEXT_PLAIN&apos; or &apos;TEXT_HTML&apos;.
+		IllegalStateException: If the server&apos;s &quot;from&quot; address is not configured.
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	10/20/2014		Mike Tinius			6.2.6			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+
+	*********************************************************************
+	* Sample DDL syntax for the AUDIT_LOG table.
+	* 
+	*   (1) Create the AUDIT_LOG table
+	*		[Option 1] Execute the DDL manually outside of Composite.
+	*		[Option 2] Automate the DDL creation within some sort of framework that will invoke this auditLogger.
+	*   (2) Once the table is created it must be introspected into Composite.  
+	*   (3) The path to the introspected table is what is provided to auditLogger via the &apos;auditTablePath&apos; attribute.	
+	*********************************************************************
+		ORACLE:
+        CREATE TABLE AUDIT_LOG(
+            &quot;cachekey&quot;              NUMERIC(10,0),  -- The cachekey is only relevant when a cache refresh is being performed.
+            SEQUENCE_NUM           	NUMERIC(19,0),  -- The unique sequence number that can be used to correlate a group of messages together as the Cache Framework does.
+            ORGANIZATION_NAME      	VARCHAR2(255),  -- The name of the organization.
+            APPLICATION_NAME       	VARCHAR2(255),  -- The name of the application [Business line, Business Area, Subject Area].
+            CURR_USER_NAME         	VARCHAR2(255),  -- The current user@domain captured in the auditLogger procedure.
+            ORIG_USER_NAME         	VARCHAR2(255),  -- The original user@domain who started the process and transcends sessions.
+            RESOURCE_NAME          	VARCHAR2(2048), -- The name of the CIS resource.
+            MODULE_NAME            	VARCHAR2(255),  -- The name of the CIS module (procedure) executing the code.
+            NOTIFICATION_TYPE      	VARCHAR2(10),   -- The type of notification [ERROR, AUDIT, INFO, DEBUG].
+            AUDIT_TIME             	TIMESTAMP(9),   -- The current timestamp when the log entry was made.
+            MESSAGE_TEXT           	VARCHAR2(2000)  -- The message to be inserted from the application.
+        );
+
+		SQL SERVER:
+        CREATE TABLE AUDIT_LOG(
+            &quot;cachekey&quot;              NUMERIC(10,0),  -- The cachekey is only relevant when a cache refresh is being performed.
+            SEQUENCE_NUM           	NUMERIC(19,0),  -- The unique sequence number that can be used to correlate a group of messages together as the Cache Framework does.
+            ORGANIZATION_NAME      	VARCHAR(255),   -- The name of the organization.
+            APPLICATION_NAME       	VARCHAR(255),   -- The name of the application [Business line, Business Area, Subject Area].
+            CURR_USER_NAME         	VARCHAR(255),   -- The current user@domain captured in the auditLogger procedure.
+            ORIG_USER_NAME         	VARCHAR(255),   -- The original user@domain who started the process and transcends sessions.
+            RESOURCE_NAME          	VARCHAR(2048),  -- The name of the CIS resource.
+            MODULE_NAME            	VARCHAR(255),   -- The name of the CIS module (procedure) executing the code.
+            NOTIFICATION_TYPE      	VARCHAR(10),    -- The type of notification [ERROR, AUDIT, INFO, DEBUG].
+            AUDIT_TIME             	DATETIME,       -- The current timestamp when the log entry was made.
+            MESSAGE_TEXT           	VARCHAR(2000)   -- The message to be inserted from the application.
+        );
+
+		NETEZZA:
+        CREATE TABLE AUDIT_LOG(
+            &quot;cachekey&quot;              NUMERIC(10,0),  -- The cachekey is only relevant when a cache refresh is being performed.
+            SEQUENCE_NUM           	NUMERIC(19,0),  -- The unique sequence number that can be used to correlate a group of messages together as the Cache Framework does.
+            ORGANIZATION_NAME      	VARCHAR(255),   -- The name of the organization.
+            APPLICATION_NAME       	VARCHAR(255),   -- The name of the application [Business line, Business Area, Subject Area].
+            CURR_USER_NAME         	VARCHAR(255),   -- The current user@domain captured in the auditLogger procedure.
+            ORIG_USER_NAME         	VARCHAR(255),   -- The original user@domain who started the process and transcends sessions.
+            RESOURCE_NAME          	VARCHAR(2048),  -- The name of the CIS resource.
+            MODULE_NAME            	VARCHAR(255),   -- The name of the CIS module (procedure) executing the code.
+            NOTIFICATION_TYPE      	VARCHAR(10),    -- The type of notification [ERROR, AUDIT, INFO, DEBUG].
+            AUDIT_TIME             	TIMESTAMP,      -- The current timestamp when the log entry was made.
+            MESSAGE_TEXT           	VARCHAR(2000)   -- The message to be inserted from the application.
+        );
+*/
+PROCEDURE auditLogger(
+	IN messageText 		LONGVARCHAR,			-- The message to log.
+	IN attributeVect	VECTOR(AttributeType)	-- The attributes that describe what and how to log the message.
+)
+BEGIN INDEPENDENT TRANSACTION
+	DECLARE thisModuleName			VARCHAR DEFAULT &apos;auditLogger&apos;;
+    DECLARE localDebug 				VARCHAR(1) 	DEFAULT &apos;N&apos;;
+	DECLARE localSequenceNum		BIGINT;
+    DECLARE localMessageText 		LONGVARCHAR;
+    DECLARE outputMessageText 		LONGVARCHAR;
+	DECLARE localLoggingType 		VARCHAR DEFAULT &apos;LOG&apos;;
+	DECLARE localNotificationType 	VARCHAR DEFAULT &apos;INFO&apos;;
+	DECLARE localModuleName			VARCHAR;
+	DECLARE defaultMessageLength 	INTEGER DEFAULT 4000;
+	DECLARE auditTableColumnList	VARCHAR DEFAULT &apos;cachekey, SEQUENCE_NUM, ORGANIZATION_NAME, APPLICATION_NAME, CURR_USER_NAME, ORIG_USER_NAME, RESOURCE_NAME, MODULE_NAME, NOTIFICATION_TYPE, AUDIT_TIME, MESSAGE_TEXT&apos;; 
+	DECLARE messageColumn			VARCHAR DEFAULT &apos;MESSAGE_TEXT&apos;;
+	DECLARE messageLengthStr		VARCHAR;
+ 	DECLARE currUserName			VARCHAR;
+ 	DECLARE userDomain				VARCHAR;
+	DECLARE sqlStatement			LONGVARCHAR;
+	DECLARE resourceExists			BOOLEAN;
+	DECLARE i						INTEGER;
+	DECLARE resourceNotExist		EXCEPTION;
+	DECLARE sequenceNum				BIGINT;  		-- sequence number used to correlate multiple messages across different inserts.
+	DECLARE organizationName		VARCHAR; 		-- e.g. Mortgage, Operations
+	DECLARE applicationName			VARCHAR; 		-- e.g. HomeLoans, Bankruptcy, etc.
+	DECLARE origUserName			VARCHAR;		-- original user name from the application: format=username@domain.  e.g. user@ldap or user@composite
+	DECLARE resourceName			VARCHAR(4096); 	-- e.g. Name of the resource being acted upon such as VIEW_NAME_INCR
+	DECLARE moduleName 				VARCHAR; 		-- e.g. RefreshCache - the name of the procedure that calls this method
+	DECLARE cachekey				BIGINT; 		-- e.g. the cachekey being used to refresh the cache or 0 if not applicable
+	DECLARE loggingType 			VARCHAR; 		-- one or more of [LOG, EMAIL, DB, PRINT]
+	DECLARE notificationType 		VARCHAR; 		-- one and only one of [ERROR, INFO, DEBUG, AUDIT]
+	DECLARE auditTablePath			VARCHAR(4096); 	-- /shared/Cache_DB/Cache_Repo/COMP6_CACHE1/AUDIT_LOG
+	DECLARE debug 					VARCHAR; 		-- Y or N
+	DECLARE emailFrom				VARCHAR(4096);	-- The address the message is from.  NULL causes use of the server&apos;s configured &quot;from&quot; address.  Only NULL is supported in this release.
+	DECLARE emailReplyTo			VARCHAR(4096);	-- The address to place in the replyTo field of the message.
+	DECLARE emailTo					VARCHAR(4096);	-- A comma separated list of e-mail addresses.
+	DECLARE emailCC					VARCHAR(4096);	-- A comma separated list of e-mail addresses.
+	DECLARE emailBCC				VARCHAR(4096);	-- A comma separated list of e-mail addresses.
+	DECLARE emailSubject			VARCHAR(4096);	-- The message subject.
+	DECLARE emailContentType		VARCHAR;		-- This can be &apos;TEXT_PLAIN&apos; or &apos;TEXT_HTML&apos;.
+
+	DECLARE attrName				VARCHAR;
+	DECLARE attrValue				LONGVARCHAR;
+    DECLARE PUBLIC TYPE AttributeType		 ROW (
+        attrName 		VARCHAR, 
+        attrValue 		LONGVARCHAR
+    );
+
+	-- Assign attributes to variables
+	SET i = 1;
+	WHILE (i &lt;= CARDINALITY(attributeVect)) DO
+		SET attrName = TRIM(attributeVect[i].attrName);
+		SET attrValue = TRIM(attributeVect[i].attrValue);
+		IF (attrName IS NOT NULL AND LENGTH(attrName) &gt; 0) THEN
+			CASE attrName
+				WHEN &apos;debug&apos; 					THEN SET debug = convertYN(attrValue);
+				WHEN &apos;loggingType&apos; 				THEN SET loggingType = CAST(attrValue AS VARCHAR(255));
+				WHEN &apos;notificationType&apos; 		THEN SET notificationType = CAST(attrValue AS VARCHAR(255));
+				-- Database logging options
+				WHEN &apos;sequenceNum&apos; 				THEN SET sequenceNum = CAST(attrValue AS BIGINT);
+				WHEN &apos;organizationName&apos; 		THEN SET organizationName = CAST(attrValue AS VARCHAR(255));
+				WHEN &apos;applicationName&apos; 			THEN SET applicationName = CAST(attrValue AS VARCHAR(255));
+				WHEN &apos;origUserName&apos; 			THEN SET origUserName = CAST(attrValue AS VARCHAR(255));
+				WHEN &apos;resourceName&apos; 			THEN SET resourceName = CAST(attrValue AS VARCHAR(4096));
+				WHEN &apos;moduleName&apos; 				THEN SET moduleName = CAST(attrValue AS VARCHAR(255));
+				WHEN &apos;cachekey&apos; 				THEN SET cachekey = CAST(attrValue AS BIGINT);
+				WHEN &apos;auditTablePath&apos; 			THEN SET auditTablePath = CAST(attrValue AS VARCHAR(4096));
+				-- Email logging options
+				WHEN &apos;emailFrom&apos; 				THEN SET emailFrom = CAST(attrValue AS VARCHAR(4096));
+				WHEN &apos;emailReplyTo&apos; 			THEN SET emailReplyTo = CAST(attrValue AS VARCHAR(4096));
+				WHEN &apos;emailTo&apos; 					THEN SET emailTo = CAST(attrValue AS VARCHAR(4096));
+				WHEN &apos;emailCC&apos; 					THEN SET emailCC = CAST(attrValue AS VARCHAR(4096));
+				WHEN &apos;emailBCC&apos; 				THEN SET emailBCC = CAST(attrValue AS VARCHAR(4096));
+				WHEN &apos;emailSubject&apos; 			THEN SET emailSubject = CAST(attrValue AS VARCHAR(4096));
+				WHEN &apos;emailContentType&apos; 		THEN SET emailContentType = CAST(attrValue AS VARCHAR(255));
+				ELSE
+			END CASE;
+		END IF; 
+		set i = i + 1;
+	END WHILE;
+	SET localSequenceNum = CAST(NVL(CAST(sequenceNum AS VARCHAR), &apos;0&apos;) AS BIGINT);
+	SET localModuleName = TRIM(NVL(moduleName, &apos; &apos;));
+
+	-- Get the user context:  user name and domain
+	call /lib/util/GetProperty(&apos;CURRENT_USER_NAME&apos;, currUserName);
+	call /lib/util/GetProperty(&apos;CURRENT_USER_DOMAIN&apos;, userDomain);
+	SET currUserName = currUserName ||&apos;@&apos;||userDomain;
+
+    IF (localDebug = &apos;N&apos; AND (debug IS NOT NULL or LENGTH(debug) &gt; 0)) then
+        SET localDebug = UPPER(debug);
+    END IF;
+	IF loggingType IS NOT NULL THEN
+		SET localLoggingType = loggingType;
+	END IF;
+	IF notificationType IS NOT NULL THEN
+		SET localNotificationType = notificationType;
+	END IF;
+	IF (LENGTH(localModuleName) &gt; 0) THEN
+		SET localModuleName = localModuleName || &apos;: &apos;;
+	END IF;
+
+	/***************************************
+	 * OUTPUT TO LOG OR LOGERROR
+	 ***************************************/
+	IF (POSITION(&apos;LOG&apos; IN localLoggingType) &gt; 0 AND localNotificationType IN (&apos;DEBUG&apos;, &apos;ERROR&apos;,&apos;INFO&apos;, &apos;AUDIT&apos;)) THEN
+		SET localMessageText = TRIM(NVL(messageText, &apos; &apos;));
+		SET localMessageText = concatNotNull(&apos;Seq#=&apos;, localSequenceNum, 2) || concatNotNull(&apos; origUserName=&apos;, origUserName, 2) || concatNotNull(&apos; ResName=&apos;, resourceName, 2) || concatNotNull(&apos; cachekey=&apos;, cachekey, 2) || concatNotNull(&apos; msg=&apos;, localMessageText, 2);
+		IF (LENGTH(localMessageText) &gt; defaultMessageLength) THEN
+		   SET localMessageText = SUBSTRING(localMessageText, 1, defaultMessageLength);
+		END IF;
+		SET outputMessageText = &apos;[&apos; || localNotificationType|| &apos;] &apos; || localModuleName || localMessageText;
+		IF (localNotificationType IN (&apos;ERROR&apos;)) THEN
+			-- Output error message to log file with severity level ERROR.
+			CALL LogError (outputMessageText);
+		ELSE
+			-- Output error message to log file with severity level INFO.
+			CALL LOG	  (outputMessageText);
+		END IF;
+	END IF;
+
+	/***************************************
+	 * OUTPUT TO PRINT COMMAND LINE
+	 ***************************************/
+	IF (POSITION(&apos;PRINT&apos; in localLoggingType) &gt; 0 AND localNotificationType IN (&apos;DEBUG&apos;, &apos;ERROR&apos;,&apos;INFO&apos;, &apos;AUDIT&apos;)) THEN
+		SET localMessageText = TRIM(NVL(messageText, &apos; &apos;));
+		SET localMessageText = concatNotNull(&apos;Seq#=&apos;, localSequenceNum, 2) || concatNotNull(&apos; origUserName=&apos;, origUserName, 2) || concatNotNull(&apos; ResName=&apos;, resourceName, 2) || concatNotNull(&apos; cachekey=&apos;, cachekey, 2) || concatNotNull(&apos; msg=&apos;, localMessageText, 2);
+		IF (LENGTH(localMessageText) &gt; defaultMessageLength) THEN
+		   SET localMessageText = SUBSTRING(localMessageText, 1, defaultMessageLength);
+		END IF;
+		SET outputMessageText = &apos;[&apos; || localNotificationType|| &apos;] &apos; || localModuleName || localMessageText;
+		CALL PRINT(outputMessageText);
+	END IF;
+
+	/***************************************
+	 * OUTPUT TO EMAIL
+	 ***************************************/
+	IF (POSITION(&apos;EMAIL&apos; in localLoggingType) &gt; 0 AND localNotificationType IN (&apos;DEBUG&apos;, &apos;ERROR&apos;, &apos;INFO&apos;, &apos;AUDIT&apos;)) THEN
+		SET localMessageText = TRIM(NVL(messageText, &apos; &apos;));
+		SET localMessageText = concatNotNull(&apos;Seq#=&apos;, localSequenceNum, 2) || concatNotNull(&apos; origUserName=&apos;, origUserName, 2) || concatNotNull(&apos; ResName=&apos;, resourceName, 2) || concatNotNull(&apos; cachekey=&apos;, cachekey, 2) || concatNotNull(&apos; msg=&apos;, localMessageText, 2);
+		IF (LENGTH(localMessageText) &gt; defaultMessageLength) THEN
+		   SET localMessageText = SUBSTRING(localMessageText, 1, defaultMessageLength);
+		END IF;
+		SET outputMessageText = &apos;[&apos; || localNotificationType|| &apos;] &apos; || localModuleName || localMessageText;
+
+		-- Validate email attributes
+		SET emailFrom = NULL; -- The current rule is for emailFrom to be set to NULL or the server will throw an exception.
+		IF (emailContentType != &apos;TEXT_PLAIN&apos; AND emailContentType != &apos;TEXT_HTML&apos;) THEN
+			SET emailContentType = &apos;TEXT_PLAIN&apos;;
+		END IF;
+		IF (emailContentType IS NULL OR LENGTH(emailContentType) = 0) THEN
+			SET emailContentType = &apos;[&apos; || localNotificationType|| &apos;] &apos; || localModuleName || &apos; CIS Generated Email.&apos;;
+		END IF;
+
+		-- Sends an e-mail message with the specified headers and content.
+		CALL /lib/util/SendEMail(
+				emailFrom,			-- The address the message is from.  NULL causes use of the server&apos;s configured &quot;from&quot; address.  Only NULL is supported in this release.
+				emailReplyTo,		-- The address to place in the replyTo field of the message.
+				emailTo,			-- A comma separated list of e-mail addresses.
+				emailCC,			-- A comma separated list of e-mail addresses.
+				emailBCC,			-- A comma separated list of e-mail addresses.
+				emailSubject,		-- The message subject.
+				emailContentType,	-- This can be &apos;TEXT_PLAIN&apos; or &apos;TEXT_HTML&apos;.
+				outputMessageText	-- The message body.
+			);
+	END IF;
+
+	/***************************************
+	 * OUTPUT TO DB AUDIT_LOG TABLE
+	 ***************************************/
+	IF (POSITION(&apos;DB&apos; in localLoggingType) &gt; 0 AND localNotificationType IN (&apos;DEBUG&apos;, &apos;ERROR&apos;, &apos;INFO&apos;, &apos;AUDIT&apos;)) THEN
+		SET localMessageText = TRIM(NVL(messageText, &apos; &apos;));
+
+		-- Make sure the database AUDIT_TABLE exists before trying to write to it
+		call /lib/resource/ResourceExists(auditTablePath, &apos;TABLE&apos;, null, resourceExists);
+		IF (NOT resourceExists) THEN
+			RAISE resourceNotExist VALUE &apos;The audit log table path provided does not exist.  auditTablePath=&apos;||NVL(auditTablePath, &apos; &apos;);
+		END if;
+
+		-- Determine the column length of the message text field so that the message length can be substringed dynamically.
+		FOR r AS SELECT * FROM /shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE(auditTablePath, &apos;TABLE&apos;) DO
+			IF (r.columnName = messageColumn) THEN
+				CALL /shared/ASAssets/Utilities/string/extractBiDelimitedText(r.columnType, &apos;VARCHAR&apos;, &apos;(&apos;, &apos;)&apos;, 1, 1, 0, messageLengthStr);
+				SET defaultMessageLength = CAST(messageLengthStr AS INTEGER);
+			END IF;
+		END FOR;
+		-- For every single quote add another to escape it so that the dynamic sql will execute
+		SET localMessageText = fixQuotes(localMessageText);
+		IF (LENGTH(localMessageText) &gt; defaultMessageLength) THEN
+			SET localMessageText = SUBSTRING(localMessageText, 1, defaultMessageLength);
+			-- Remove the odd single quote from the end as it will cause an error inserting.
+			-- All single quotes must be doubled within the string for the dynamic SQL insert to work.
+			-- The problem here is that the length of the string has been exceeded so this is a precaution.
+			-- The best approach is simply to remove all single quotes from the end of the line.
+			SET i = LENGTH(localMessageText);
+			msgLoop:
+			WHILE (i &gt; 0) DO
+				IF (SUBSTR(localMessageText, i, 1) != &apos;&apos;&apos;&apos;) THEN
+					leave msgLoop;
+				END IF;
+				SET i = i - 1;
+			END WHILE;
+			SET localMessageText = SUBSTRING(localMessageText, 1, i);
+		END IF;
+		SET localMessageText = 
+				NVL(cachekey, 0)||&apos;, &apos;&apos;&apos;||
+				localSequenceNum||&apos;&apos;&apos;, &apos;&apos;&apos;||
+				TRIM(NVL(organizationName,&apos; &apos;))||&apos;&apos;&apos;, &apos;&apos;&apos;||
+				TRIM(NVL(applicationName,&apos; &apos;))||&apos;&apos;&apos;, &apos;&apos;&apos;||
+				TRIM(NVL(currUserName,&apos; &apos;))||&apos;&apos;&apos;, &apos;&apos;&apos;||
+				TRIM(NVL(origUserName,&apos; &apos;))||&apos;&apos;&apos;, &apos;&apos;&apos;||
+				TRIM(NVL(resourceName,&apos; &apos;))||&apos;&apos;&apos;, &apos;&apos;&apos;||
+				TRIM(NVL(moduleName,&apos; &apos;))||&apos;&apos;&apos;, &apos;&apos;&apos;||
+				TRIM(NVL(localNotificationType,&apos; &apos;))||&apos;&apos;&apos;, &apos;||
+				&apos;CAST(&apos;&apos;&apos;||CURRENT_TIMESTAMP||&apos;&apos;&apos; AS TIMESTAMP), &apos;&apos;&apos; 
+				|| localMessageText||&apos;&apos;&apos;&apos;;
+		SET outputMessageText = &apos;[&apos; || localNotificationType|| &apos;] &apos; || localModuleName || localMessageText;
+
+		-- Create the dynamic sql statement and handle any null values
+		--	 Table Path example: /shared/Cache_DB/Cache_Repo/COMP6_CACHE1/AUDIT_LOG
+		set sqlStatement = &apos;INSERT INTO &apos;||auditTablePath||&apos;
+		(&apos;||auditTableColumnList||&apos;) 
+		VALUES (&apos;|| localMessageText ||&apos;)&apos;;
+		EXECUTE IMMEDIATE sqlStatement;
+	END IF;        
+
+	IF (localDebug = &apos;Y&apos; AND outputMessageText IS NOT NULL) THEN
+		CALL PRINT(thisModuleName||&apos; : &apos;||outputMessageText);
+	END IF;
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">1389654139807</attribute>
+  <attribute name="creatorUserDomain" type="STRING">ldap</attribute>
+  <attribute name="creatorUserName" type="STRING">nbklsvb</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1414096810829</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:0:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:1:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="public_types" type="MAP">
+    <item>
+      <key type="STRING">AttributeType</key>
+      <value type="BYTE_ARRAY">EB8GAgANAEEAdAB0AHIAaQBiAHUAdABlAFQAeQBwAGUGKQAqAC8AcwBoAGEAcgBlAGQALwBBAFMA
+QQBzAHMAZQB0AHMALwBVAHQAaQBsAGkAdABpAGUAcwAvAGwAbwBnAC8AYQB1AGQAaQB0AEwAbwBn
+AGcAZQByBioADQBBAHQAdAByAGkAYgB1AHQAZQBUAHkAcABlAxIAAAABAxIAAAABARMBCRQAAAAC
+ECEGFQAIAGEAdAB0AHIATgBhAG0AZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAA
+AAgZEBsGAgAHAFYAQQBSAEMASABBAFIDEgAAAAIEBAAAAAAAAAD/ARMB/////xAhBhUACQBhAHQA
+dAByAFYAYQBsAHUAZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBsGAgAL
+AEwATwBOAEcAVgBBAFIAQwBIAEEAUgMSAAAAAwQEAAAAAH////8BEwH///////8=</value>
+    </item>
+  </attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">8/347</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/234</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>LogError</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">8/251</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/237</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

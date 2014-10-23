@@ -1,10 +1,10 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <metadata name="createUser" path="/shared/ASAssets/Utilities/repository/user/createUser" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
   <annotation>createUser:
-    * userAssignments is an array of users.  If the user does not exist, it will be created
-    * with the specified password.  If the force_password flag is &apos;1&apos; the password will
-    * be reset even if the user exists.  In all cases, the group membership of the user will
-    * be updated to reflect the specified membership.
+    Create a user if it does not exist or update the user if it does exist.
+	Create the user with the specified password, membership details and domain.  
+	If the user already exists, update the user password only when forcePassword=Y is specified.
+	In all cases, the group membership of the user will be updated to reflect the specified membership.
  
 	Input:
     		debug - Y=debug on, N=debug off 
@@ -15,13 +15,14 @@
 			groupNameAndDomainList - a space separate list of group|domain pairs where the pairs are separated by a pipe (|)
 					   groupName|groupDomain groupName|groupDomain groupName|groupDomain			     
 				e.g.  comp_admin|composite    comp_dev|composite   comp_user|composite
+			annotation - the annotation for the group
 	Output:
 
 	Exceptions:  Exception may be thrown.
 
-	Author:      Mike Tinius
-	Date:        1/18/2011
-	CSW Version: 5.2.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	01/18/2011		Mike Tinius			5.2.0			Created new.
+	10/20/2014		Mike Tinius			6.2.6			Updated to add annotation.
 
     © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
   <parameters>
@@ -41,6 +42,9 @@
       <datatype name="VARCHAR" type="STRING" maxLength="255"/>
     </parameter>
     <parameter name="groupNameAndDomainList" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="annotation" direction="IN" nullable="true">
       <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
     </parameter>
   </parameters>
@@ -292,6 +296,16 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/conversions/convertBit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="request" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="response" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="moduleName" direction="IN">
@@ -341,14 +355,17 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/system/customfunctions/convertBit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* createUser:
-    * userAssignments is an array of users.  If the user does not exist, it will be created
-    * with the specified password.  If the force_password flag is &apos;1&apos; the password will
-    * be reset even if the user exists.  In all cases, the group membership of the user will
-    * be updated to reflect the specified membership.
+    Create a user if it does not exist or update the user if it does exist.
+	Create the user with the specified password, membership details and domain.  
+	If the user already exists, update the user password only when forcePassword=Y is specified.
+	In all cases, the group membership of the user will be updated to reflect the specified membership.
  
 	Input:
     		debug - Y=debug on, N=debug off 
@@ -359,13 +376,14 @@
 			groupNameAndDomainList - a space separate list of group|domain pairs where the pairs are separated by a pipe (|)
 					   groupName|groupDomain groupName|groupDomain groupName|groupDomain			     
 				e.g.  comp_admin|composite    comp_dev|composite   comp_user|composite
+			annotation - the annotation for the group
 	Output:
 
 	Exceptions:  Exception may be thrown.
 
-	Author:      Mike Tinius
-	Date:        1/18/2011
-	CSW Version: 5.2.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	01/18/2011		Mike Tinius			5.2.0			Created new.
+	10/20/2014		Mike Tinius			6.2.6			Updated to add annotation.
 
     © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
 */
@@ -373,12 +391,14 @@ PROCEDURE createUser(
 	IN debug 					CHAR(1),-- e.g. Y or N
 	IN username					VARCHAR(255), 
 	IN password 				VARCHAR(255), 
-	IN forcePassword			CHAR(1),
+	IN forcePassword			CHAR(1),	-- 0=do not force change or 1=force change
 	IN domainName 				VARCHAR(255),
-	IN groupNameAndDomainList 	LONGVARCHAR
+	IN groupNameAndDomainList 	LONGVARCHAR,
+	IN annotation				LONGVARCHAR
 )
 BEGIN
 	DECLARE moduleName 			VARCHAR DEFAULT &apos;createUser&apos;;
+	DECLARE annotation_			LONGVARCHAR DEFAULT NVL(annotation, &apos; &apos;);
 	DECLARE request 			VARCHAR(4096);
 	DECLARE response 			XML;
 	DECLARE fault 				XML;
@@ -401,7 +421,7 @@ BEGIN
     DECLARE userAssignments VECTOR(
         ROW(username VARCHAR, password VARCHAR, domain_name VARCHAR, force_password CHAR(1), group_membership VECTOR(groupMembershipRow) ) 
 		)
-        DEFAULT VECTOR[(username, password, domainName, forcePassword, VECTOR[(null)])];
+        DEFAULT VECTOR[(username, password, domainName, CAST(convertBit(forcePassword) AS CHAR(1)), VECTOR[(null)])];
 /*
         (&apos;user1&apos;, &apos;password1&apos;, &apos;composite&apos;, &apos;0&apos;, VECTOR[ (&apos;comp_admin&apos;, &apos;composite&apos;),(&apos;comp_dev&apos;, &apos;composite&apos;),&apos;comp_user&apos;, &apos;composite&apos;) ]),
         (&apos;user2&apos;, &apos;password2&apos;, &apos;composite&apos;, &apos;0&apos;, VECTOR[(&apos;comp_dev&apos;, &apos;composite&apos;),  (&apos;comp_user&apos;, &apos;composite&apos;)  ]),
@@ -434,6 +454,13 @@ BEGIN
 	end for;
 	set groupMembershipVect = TRUNCATE(groupMembershipVect, 1);
 	set userAssignments[1].group_membership = groupMembershipVect;
+
+	-- Escape any special characters 
+	set annotation_ = REPLACE(annotation_, &apos;&amp;&apos;, &apos;&amp;amp;&apos;);
+	set annotation_ = REPLACE(annotation_,  &apos;&lt;&apos;, &apos;&amp;lt;&apos;);
+	set annotation_ = REPLACE(annotation_, &apos;&gt;&apos;, &apos;&amp;gt;&apos;);
+	set annotation_ = REPLACE(annotation_, &apos;&apos;&apos;&apos;, &apos;&amp;apos;&apos;);
+	set annotation_ = REPLACE(annotation_, &apos;&quot;&apos;, &apos;&amp;quot;&apos;);
 
     SET i = 1;
     WHILE i &lt;= cardinality(userAssignments)
@@ -527,6 +554,7 @@ BEGIN
                    &lt;ns1:domainName&gt;&apos; || emptyStr(userAssignments[i].domain_name) || &apos;&lt;/ns1:domainName&gt;
                    &lt;ns1:userName&gt;&apos; || emptyStr(userAssignments[i].username) || &apos;&lt;/ns1:userName&gt;&apos; ||
                    tmp || &apos;
+                   &lt;ns1:annotation&gt;&apos;||CAST(XMLTEXT(annotation_) AS LONGVARCHAR)||&apos;&lt;/ns1:annotation&gt;
                 &lt;/ns1:updateUser&gt;&apos;;
 				CALL /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, request);
 				CALL /services/webservices/system/admin/&quot;user&quot;/operations/updateUser(request, response, fault);
@@ -548,14 +576,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1414011886559</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">10/142</key>
+      <key type="STRING">10/152</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -563,7 +591,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">9/115</key>
+      <key type="STRING">10/199</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -571,7 +599,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/188</key>
+      <key type="STRING">9/125</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>

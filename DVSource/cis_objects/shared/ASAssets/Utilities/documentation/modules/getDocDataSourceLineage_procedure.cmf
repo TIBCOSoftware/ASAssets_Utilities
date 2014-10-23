@@ -110,24 +110,20 @@ seqnum   id     pid    depth  resource path
   <security>
     <owner user="admin" domain="composite"/>
   </security>
+  <dependency target="/lib/util/System" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocConstant" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="constantPath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
-      </element>
-      <element name="constantName" direction="IN">
-        <datatype type="STRING" maxLength="255"/>
-      </element>
-      <element name="outValue" direction="OUT">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-    </datatype>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -142,8 +138,17 @@ seqnum   id     pid    depth  resource path
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getResourceLineageRecursive" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -231,12 +236,28 @@ seqnum   id     pid    depth  resource path
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceLineageRecursive" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="inputString" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
       <element name="outputString" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/getConstant" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="constantPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="constantName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="outValue" direction="OUT">
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
@@ -270,14 +291,26 @@ seqnum   id     pid    depth  resource path
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
-  <dependency target="/system/customfunctions/getDocConstant" type="PROCEDURE">
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/indent" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
+  <dependency target="/system/customfunctions/indent" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* 	getDocDataSourceLineage:
 
@@ -375,10 +408,10 @@ PROCEDURE getDocDataSourceLineage(
 )
 BEGIN
 	DECLARE moduleName 				/shared/ASAssets/Utilities/TypeDefinitions.moduleNameType DEFAULT &apos;getDocDataSourceLineage&apos;;
-	DECLARE debug					CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debug&apos;);
+	DECLARE debug					CHAR(1) DEFAULT getConstant(constantPath, &apos;debug&apos;);
 	DECLARE debug2					CHAR(1) DEFAULT &apos;N&apos;;
-	DECLARE debugTime				CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debugTime&apos;);
-	DECLARE debugTime2				CHAR(1) DEFAULT getDocConstant(constantPath, &apos;debugTime2&apos;);
+	DECLARE debugTime				CHAR(1) DEFAULT getConstant(constantPath, &apos;debugTime&apos;);
+	DECLARE debugTime2				CHAR(1) DEFAULT getConstant(constantPath, &apos;debugTime2&apos;);
 	DECLARE i						INTEGER;
 	DECLARE DNHeader				VARCHAR DEFAULT &apos;Datasource Name&apos;;	-- DN=Datasource Name header/size
 	DECLARE DNsize					INTEGER DEFAULT LENGTH(DNHeader)+1; -- DN=Datasource Name size, default len=16
@@ -391,9 +424,9 @@ BEGIN
 	DECLARE ENHeader				VARCHAR DEFAULT &apos;Enabled&apos;;			-- EN=dtasource ENabled header
 	DECLARE ENsize					INTEGER DEFAULT LENGTH(ENHeader);	-- EN=datasource ENabled size
 	DECLARE pid						VARCHAR;
-	DECLARE padChar					VARCHAR DEFAULT getDocConstant(constantPath, &apos;padChar&apos;);
-	DECLARE eol						VARCHAR DEFAULT getDocConstant(constantPath, &apos;eol&apos;);
-	DECLARE indent4					VARCHAR DEFAULT getDocConstant(constantPath, &apos;indent4&apos;);
+	DECLARE padChar					VARCHAR DEFAULT getConstant(constantPath, &apos;padChar&apos;);
+	DECLARE eol						VARCHAR DEFAULT getConstant(constantPath, &apos;eol&apos;);
+	DECLARE indent4					VARCHAR DEFAULT getConstant(constantPath, &apos;indent4&apos;);
 	DECLARE linePart1				/lib/util/System.Text;
 	DECLARE linePart2				/lib/util/System.Text;
 	DECLARE docVect					VECTOR (/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive.lineageTreeType) DEFAULT VECTOR[(null)];
@@ -423,7 +456,7 @@ BEGIN
 	DECLARE dsListText					/lib/util/System.Text;
 	DECLARE lineageHeader				VARCHAR(1024);
 	DECLARE lineageText					/lib/util/System.Text;
-	DECLARE excludeDSPathsList			LONGVARCHAR DEFAULT getDocConstant(constantPath, &apos;excludeDSPathsList&apos;);
+	DECLARE excludeDSPathsList			LONGVARCHAR DEFAULT getConstant(constantPath, &apos;excludeDSPathsList&apos;);
 	DECLARE datasourceAncestory			INTEGER DEFAULT 1;
 	DECLARE startTimeGetLineage			TIMESTAMP;
 	DECLARE startTimeDsAccessed TIMESTAMP;
@@ -623,7 +656,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397496403592</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1413902516816</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
