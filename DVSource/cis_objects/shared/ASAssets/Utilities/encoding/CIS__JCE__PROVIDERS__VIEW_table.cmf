@@ -1,0 +1,149 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="CIS_JCE_PROVIDERS_VIEW" path="/shared/ASAssets/Utilities/encoding/CIS_JCE_PROVIDERS_VIEW" type="TABLE" subtype="SQL_TABLE" changeToken="0" tableType="VIEW">
+  <annotation>CISSecurityProviders
+
+    Description:
+        A view that simply selects all the data from /shared/ASAssets/Utilities/encoding/EncodingCJP/CISSecurityProvider.
+
+    Input:
+        N/A
+
+
+    Output:
+        results - The list of providers and their respective algorithms and service descriptions
+            CURSOR (
+                Provider              LONGVARCHAR
+                Algorithm             LONGVARCHAR
+                &quot;Service Description&quot; LONGVARCHAR
+            )
+
+
+    Exceptions:  none
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    10/27/2014      Alex Dedov          6.2.6           Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <columns>
+    <column name="Provider" nullable="true">
+      <datatype type="STRING" maxLength="2147483647"/>
+      <security>
+        <owner user="admin" domain="composite"/>
+      </security>
+    </column>
+    <column name="Algorithm" nullable="true">
+      <datatype type="STRING" maxLength="2147483647"/>
+      <security>
+        <owner user="admin" domain="composite"/>
+      </security>
+    </column>
+    <column name="Service Description" nullable="true">
+      <datatype type="STRING" maxLength="2147483647"/>
+      <security>
+        <owner user="admin" domain="composite"/>
+      </security>
+    </column>
+  </columns>
+  <indexes></indexes>
+  <foreignKeys></foreignKeys>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/users/composite/admin/Utilities_newitems/assets_sec/SecurityUtil/CISSecurityProviders" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="results" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="Provider">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="Algorithm">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="Service Description">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="SQL" type="STRING">SELECT 
+    *
+FROM      
+    /users/composite/admin/Utilities_newitems/assets_sec/SecurityUtil/CISSecurityProviders() CISSecurityProviders</attribute>
+  <attribute name="creationDate" type="LONG">1413463858820</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">composite</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1415838190863</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="BYTE_ARRAY">EIEJBAAAAAEQUgYBABQAQwBJAFMAUwBlAGMAdQByAGkAdAB5AFAAcgBvAHYAaQBkAGUAcgBzBgIA
+FABDAEkAUwBTAGUAYwB1AHIAaQB0AHkAUAByAG8AdgBpAGQAZQByAHMDC/////8DCv////8LEQAH
+AAUAdQBzAGUAcgBzAAkAYwBvAG0AcABvAHMAaQB0AGUABQBhAGQAbQBpAG4AEgBVAHQAaQBsAGkA
+dABpAGUAcwBfAG4AZQB3AGkAdABlAG0AcwAKAGEAcwBzAGUAdABzAF8AcwBlAGMADABTAGUAYwB1
+AHIAaQB0AHkAVQB0AGkAbAAUAEMASQBTAFMAZQBjAHUAcgBpAHQAeQBQAHIAbwB2AGkAZABlAHIA
+cwkQAAAAAP//AwUAAAAACAIQMQYB//8BAgEBBgABAwABBAABBQADBwAAAAAHCQAAAAEAAAAACQoA
+AAABEEEGAQABACoGAgAABgP//wYE//8DCv////8GBf//BgYAAAYHAAAGCAAA/////wkGAAAAARCC
+AwoAAABfAwsAAAA2AwwAAADIAw0AAABi//8IAxBxAwEAAAALAwIAAAAyCQMAAAImEHQDBgAAAAD/
+/xByBgT/////EHP//xB1AQcB//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb/
+/xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb/
+/xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkG
+DP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr/
+//////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/
+////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEH
+AP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////
+EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//
+EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//
+EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//
+EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM
+/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv//
+/////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC///
+//8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA
+//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Q
+c///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8Q
+cgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Q
+dv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Q
+dv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/
+////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////
+////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL////
+/xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD/
+/xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz
+//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xBy
+BgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2
+//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2
+//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP//
+//8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr/////
+//8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////
+EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//
+EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP/
+/xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIG
+BP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb/
+/xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb/
+/xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM////
+/xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv//////
+/xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8Q
+dwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8Q
+eAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///
+EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE
+/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//
+EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//
+EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////
+EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////
+EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3
+Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4
+Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8Q
+dQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/
+////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8Q
+dP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Q
+dv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgGC/////8QdwMK////////EHkGDP////8Q
+dv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1AQcA//8QeAYL/////xB3Awr///////8Q
+eQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP////8Qc///EHUBBwD//xB4Bgv/////EHcD
+Cv///////xB5Bgz/////EHb//xB2//8Qdv//EHb//xB0//8QcgYE/////xBz//8QdQEHAP//EHgG
+C/////8QdwMK////////EHkGDP////8Qdv//EHb//xB2//8Qdv//EHT//xByBgT/////EHP//xB1
+AQcA//8QeAYL/////xB3Awr///////8QeQYM/////xB2//8Qdv//EHb//xB2//8QdP//EHIGBP//
+//8Qc///EHUBBwD//xB4Bgv/////EHcDCv///////xB5Bgz/////EHb//xB2//8Qdv//EHb/////
+//8=</attribute>
+</metadata>

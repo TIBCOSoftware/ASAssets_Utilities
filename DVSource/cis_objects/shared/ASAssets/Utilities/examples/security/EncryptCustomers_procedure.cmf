@@ -1,0 +1,137 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="EncryptCustomers" path="/shared/ASAssets/Utilities/examples/security/EncryptCustomers" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="CustomerID">
+          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+        </element>
+        <element name="CompanyName">
+          <datatype name="VARCHAR" type="STRING" maxLength="50"/>
+        </element>
+        <element name="ContactName">
+          <datatype name="VARCHAR" type="STRING" maxLength="100"/>
+        </element>
+        <element name="ContactTitle">
+          <datatype name="VARCHAR" type="STRING" maxLength="50"/>
+        </element>
+        <element name="PhoneNumber">
+          <datatype name="VARCHAR" type="STRING" maxLength="30"/>
+        </element>
+        <element name="BillingInfo">
+          <datatype name="VARCHAR" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/shared/ASAssets/Utilities/encoding/EncodingCJP/EncryptWithCISPubKey" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="plain text" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="keystore password" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="encrypted raw bytes" direction="OUT">
+        <datatype type="BINARY" maxLength="2147483647"/>
+      </element>
+      <element name="encrypted hex string" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/examples/ds_orders/customers" type="TABLE">
+    <datatype type="TABLE" refId="1">
+      <element name="CustomerID" nullable="false">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="CompanyName">
+        <datatype type="STRING" maxLength="50"/>
+      </element>
+      <element name="ContactFirstName">
+        <datatype type="STRING" maxLength="30"/>
+      </element>
+      <element name="ContactLastName">
+        <datatype type="STRING" maxLength="50"/>
+      </element>
+      <element name="BillingAddress">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="City">
+        <datatype type="STRING" maxLength="50"/>
+      </element>
+      <element name="StateOrProvince">
+        <datatype type="STRING" maxLength="20"/>
+      </element>
+      <element name="PostalCode">
+        <datatype type="STRING" maxLength="20"/>
+      </element>
+      <element name="CountryRegion">
+        <datatype type="STRING" maxLength="50"/>
+      </element>
+      <element name="ContactTitle">
+        <datatype type="STRING" maxLength="50"/>
+      </element>
+      <element name="PhoneNumber">
+        <datatype type="STRING" maxLength="30"/>
+      </element>
+      <element name="FaxNumber">
+        <datatype type="STRING" maxLength="30"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">PROCEDURE EncryptCustomers(
+    OUT result PIPE (
+        CustomerID INTEGER, 
+        CompanyName VARCHAR(50), 
+        ContactName VARCHAR(100), 
+        ContactTitle VARCHAR(50), 
+        PhoneNumber VARCHAR(30), 
+ 		BillingInfo VARCHAR(2147483647)
+    )
+)
+BEGIN
+
+	DECLARE encryptedAddressBin VARCHAR(2147483647) ;
+	DECLARE encryptedAddressString VARCHAR(2147483647) ;
+
+    FOR T AS 
+        SELECT 
+            *
+        FROM      
+            /shared/examples/ds_orders/customers customers
+	DO
+
+		CALL /shared/ASAssets/Utilities/encoding/EncodingCJP/EncryptWithCISPubKey(
+			T.BillingAddress||&apos;, &apos;||T.City||&apos;, &apos;||T.StateOrProvince||&apos; &apos;||T.PostalCode||&apos;, &apos;||T.CountryRegion, -- data
+			&apos;changeit&apos;, -- keystore password
+			encryptedAddressBin, -- out: encrypted binary data
+			encryptedAddressString -- out: encrypted string
+		) ;
+		INSERT INTO result VALUES (
+			T.CustomerID,
+			T.CompanyName, 
+			T.ContactLastName||&apos;, &apos;||T.ContactFirstName, 
+			T.ContactTitle, 
+			T.PhoneNumber,
+			encryptedAddressString
+		) ;
+	END FOR ; 
+
+END</attribute>
+  <attribute name="creationDate" type="LONG">1415029127849</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">composite</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1415837665627</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

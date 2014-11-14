@@ -69,13 +69,7 @@
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="DEFINITION_SET">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/documentation/helpers/parseDocSwitches" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -89,9 +83,6 @@
         <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/documentation/modules/getDocDataSourceLineage" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/documentation/modules/getDocDataSourceLineage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -131,9 +122,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/documentation/modules/getDocResourceProjection" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/documentation/modules/getDocResourcesUsed" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
@@ -149,12 +137,6 @@
         <datatype referenceDefinitionSet="/lib/util/System" referenceType="Text" type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/documentation/modules/getDocResourcesUsed" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -241,9 +223,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
@@ -259,9 +238,6 @@
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -297,31 +273,16 @@
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/applyReservedListToPath" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/applyReservedListToPath" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/parseDocSwitches" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/parseDocSwitches" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>

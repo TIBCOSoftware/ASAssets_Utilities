@@ -1,0 +1,302 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getResourceListChildren" path="/shared/ASAssets/Utilities/repository/getResourceListChildren" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>getResourceListChildren:
+
+	Return a list of the immediate child resources, resource path, type and subtype for a given folder  
+    path but not recursively. The input to this is a starting folder and not an actual resource. 
+ 
+	Input:
+   		resourcePath - CIS source folder path to begin deriving a list of resources
+			Values: e.g. /shared/ASAssets/Utilities [this folder]
+
+		resourceType - The type of folder. 
+			Values: e.g. CONTAINER|DATA_SOURCE
+
+
+	Output:
+		resourceTreeType - Cursor result set
+			PIPE (
+				name					VARCHAR(255),				name of the CIS resource
+				resPath					TypeDefinitions.pathType,	full path of the CIS resource
+				resType					VARCHAR(255),				resource type
+				subType					VARCHAR(255),				resource sub type
+				creationDate			TIMESTAMP,
+				creationDateBigint		BIGINT,
+				creatorUserDomain		VARCHAR(255),
+				creatorUserName			VARCHAR(255),
+				lastModifiedDate		TIMESTAMP,
+				lastModifiedDateBigint	BIGINT,
+				lastModifiedUserDomain	VARCHAR(255),
+				lastModifiedUserName	VARCHAR(255)
+			)
+
+	Exceptions:
+		Error:      Maximum Request Depth(30) exceeded.  Check request structure for unbounded recursion.  
+		Resoution:  Go to Administration, Configuration, Composite Server, Configuration, Transactions and set &quot;Maximum Request Depth&quot; to a higher number.
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	10/20/2014		Mike Tinius			6.2.6			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resourcePath" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="resourceType" direction="IN" nullable="true">
+      <datatype name="ResourceType" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+    </parameter>
+    <parameter name="resourceTreeList" direction="OUT" nullable="true">
+      <datatype name="resourceTreeType" type="TABLE" refId="1">
+        <element name="name">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="resPath">
+          <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+        </element>
+        <element name="resType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="subType">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="creationDate">
+          <datatype name="TIMESTAMP" type="DATETIME"/>
+        </element>
+        <element name="creationDateBigint">
+          <datatype name="BIGINT" type="INTEGER"/>
+        </element>
+        <element name="creatorUserDomain">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="creatorUserName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="lastModifiedDate">
+          <datatype name="TIMESTAMP" type="DATETIME"/>
+        </element>
+        <element name="lastModifiedDateBigint">
+          <datatype name="BIGINT" type="INTEGER"/>
+        </element>
+        <element name="lastModifiedUserDomain">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+        <element name="lastModifiedUserName">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_ResourceAttributes" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="type">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="value">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="valueList">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="valueMap">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getResourceListRecursiveXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getChildResources" direction="IN">
+        <datatype name="getChildResources" extendedName="{http://www.compositesw.com/services/system/admin/resource}getChildResources" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getChildResources" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getChildResources">
+          <schemaDatatype>
+            <datatype name="getChildResources" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="getChildResourcesRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="resourceType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="detail" namespace="http://www.compositesw.com/services/system/admin/resource">
+                <datatype name="detailLevel" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="name">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="path">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="type">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="subtype">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/time/DateUtils/BigintToTimestamp" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inBigint" direction="IN">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="DATETIME"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* getResourceListChildren:
+
+	Return a list of the immediate child resources, resource path, type and subtype for a given folder  
+    path but not recursively. The input to this is a starting folder and not an actual resource. 
+ 
+	Input:
+   		resourcePath - CIS source folder path to begin deriving a list of resources
+			Values: e.g. /shared/ASAssets/Utilities [this folder]
+
+		resourceType - The type of folder. 
+			Values: e.g. CONTAINER|DATA_SOURCE
+
+
+	Output:
+		resourceTreeType - Cursor result set
+			PIPE (
+				name					VARCHAR(255),				name of the CIS resource
+				resPath					TypeDefinitions.pathType,	full path of the CIS resource
+				resType					VARCHAR(255),				resource type
+				subType					VARCHAR(255),				resource sub type
+				creationDate			TIMESTAMP,
+				creationDateBigint		BIGINT,
+				creatorUserDomain		VARCHAR(255),
+				creatorUserName			VARCHAR(255),
+				lastModifiedDate		TIMESTAMP,
+				lastModifiedDateBigint	BIGINT,
+				lastModifiedUserDomain	VARCHAR(255),
+				lastModifiedUserName	VARCHAR(255)
+			)
+
+	Exceptions:
+		Error:      Maximum Request Depth(30) exceeded.  Check request structure for unbounded recursion.  
+		Resoution:  Go to Administration, Configuration, Composite Server, Configuration, Transactions and set &quot;Maximum Request Depth&quot; to a higher number.
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	10/20/2014		Mike Tinius			6.2.6			Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+*/ 
+PROCEDURE getResourceListChildren(
+  	IN resourcePath 		/lib/resource/ResourceDefs.ResourcePath, 
+ 	IN resourceType 		/lib/resource/ResourceDefs.ResourceType, 
+	OUT resourceTreeList 	PIPE /shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive.resourceTreeType
+)
+BEGIN
+	DECLARE moduleName				VARCHAR DEFAULT &apos;getResourceListParent&apos;;
+	DECLARE TYPE parentTreeType ROW (
+		name					VARCHAR(255),
+		resPath					/lib/resource/ResourceDefs.ResourcePath,
+		resType					VARCHAR(255),
+		subType					VARCHAR(255)
+	);
+	DECLARE parentTreeCursor 		CURSOR parentTreeType;
+	DECLARE childLeafCursor 		CURSOR /shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive.resourceTreeType;
+	DECLARE	creationDate			TIMESTAMP;
+	DECLARE	creationDateBigint		BIGINT;
+	DECLARE	creatorUserDomain		VARCHAR(255);
+	DECLARE	creatorUserName			VARCHAR(255);
+	DECLARE	lastModifiedDate		TIMESTAMP;
+	DECLARE	lastModifiedDateBigint	BIGINT;
+	DECLARE lastModifiedUserDomain	VARCHAR(255);
+	DECLARE	lastModifiedUserName	VARCHAR(255);
+	DECLARE ex						EXCEPTION;
+
+	BEGIN INDEPENDENT TRANSACTION
+
+    	OPEN parentTreeCursor FOR
+    	SELECT * FROM /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getResourceListRecursiveXSLT(
+    		&apos;&lt;ns1:getChildResources 
+    			xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; 
+    			xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; 
+    			xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+    			&lt;ns1:path&gt;&apos; || CAST(XMLTEXT(resourcePath) AS VARCHAR(2147483647)) || &apos;&lt;/ns1:path&gt;
+    			&lt;ns1:type&gt;&apos; || CAST(XMLTEXT(resourceType) AS VARCHAR(2147483647)) || &apos;&lt;/ns1:type&gt;
+    			&lt;ns1:detail&gt;SIMPLE&lt;/ns1:detail&gt;
+    		&lt;/ns1:getChildResources&gt;&apos;);
+    
+    	FOR parent AS parentTreeCursor DO
+    		-- Initialize the resource attributes
+    		set creationDate = null;
+    		set creationDateBigint = null;
+    		set creatorUserDomain = null;
+    		set creatorUserName = null;
+    		set lastModifiedDate = null;
+    		set lastModifiedDateBigint = null;
+    		set lastModifiedUserDomain = null;
+    		set lastModifiedUserName = null;
+    
+    		-- Obtain the resource attributes to located creation and modified attributes (starting with 6.2.2 and higher)
+    		FOR attr AS SELECT * FROM /shared/ASAssets/Utilities/repository/getBasicResourceCursor_ResourceAttributes(parent.resPath, parent.resType) DO
+    			CASE attr.name
+    				WHEN &apos;creationDate&apos; THEN 
+    					if (attr.&quot;value&quot; is not null and attr.&quot;value&quot; &gt; 0) then
+    						set creationDateBigint = attr.&quot;value&quot;;
+    						call /shared/ASAssets/Utilities/&quot;time&quot;/DateUtils/BigintToTimestamp(creationDateBigint, creationDate);
+    					end if;
+    				WHEN &apos;creatorUserDomain&apos; THEN set creatorUserDomain = attr.&quot;value&quot;;
+    				WHEN &apos;creatorUserName&apos; THEN set creatorUserName = attr.&quot;value&quot;;
+    				WHEN &apos;lastModifiedDate&apos; THEN 
+    					if (attr.&quot;value&quot; is not null and attr.&quot;value&quot; &gt; 0) then
+    						set lastModifiedDateBigint = attr.&quot;value&quot;;
+    						call /shared/ASAssets/Utilities/&quot;time&quot;/DateUtils/BigintToTimestamp(lastModifiedDateBigint, lastModifiedDate);
+    					end if;
+    				WHEN &apos;lastModifiedUserDomain&apos; THEN set lastModifiedUserDomain = attr.&quot;value&quot;;
+    				WHEN &apos;lastModifiedUserName&apos; THEN set lastModifiedUserName = attr.&quot;value&quot;;
+    				ELSE
+    			END CASE;
+    		END FOR;
+    
+    		INSERT INTO resourceTreeList VALUES (parent.name, parent.resPath, parent.resType, parent.subType, creationDate, creationDateBigint, creatorUserDomain, creatorUserName, lastModifiedDate, lastModifiedDateBigint, lastModifiedUserDomain, lastModifiedUserName);
+    	END FOR;
+
+	EXCEPTION
+		ELSE raise ex value moduleName||&apos;:  &apos;||cast(CURRENT_EXCEPTION.TRACE as longvarchar);
+	END;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1414098928774</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

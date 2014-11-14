@@ -1,0 +1,57 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="EncryptWithCISPubKey" path="/shared/ASAssets/Utilities/encoding/EncodingCJP/EncryptWithCISPubKey" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>EncryptWithCISPubKey() 
+
+    Description:
+        Encrypts a string using CIS&apos;s built in SSL certificate. 
+
+    Input:
+        &quot;plain text&quot; - The string to encrypt
+            Values - Any text string
+
+        &quot;keystore password&quot; - The password of the CIS SSL keystore.
+            Values - Any text string
+
+
+    Output:
+        &quot;encrypted raw bytes&quot; - The encrypted raw bytes.
+            Values - A byte array
+
+        &quot;encrypted hex string&quot; - The encrypted string.
+            Values - Any text string
+
+
+    Exceptions:  none
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    10/27/2014      Alex Dedov          6.2.6           Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="plain text" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="keystore password" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="encrypted raw bytes" direction="OUT" nullable="true">
+      <datatype name="VARBINARY" subType="DATASOURCE_TYPE" type="BINARY" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="encrypted hex string" direction="OUT" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.encoding.EncryptWithCISPubKey</attribute>
+  <attribute name="creationDate" type="LONG">1415837554909</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415837630994</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

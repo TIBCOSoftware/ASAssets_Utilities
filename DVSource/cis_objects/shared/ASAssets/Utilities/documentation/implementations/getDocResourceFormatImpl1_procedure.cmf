@@ -85,23 +85,11 @@
   <security>
     <owner user="admin" domain="composite"/>
   </security>
-  <dependency target="/lib/util/System" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="DEFINITION_SET">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocCounts" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/documentation/helpers/getDocCounts" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -157,9 +145,6 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1_resource" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/documentation/implementations/getDocResourceFormatImpl1_resource" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
@@ -179,9 +164,6 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="filePath" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
@@ -193,9 +175,6 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -260,12 +239,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="Input Text" direction="IN">
@@ -320,25 +293,13 @@
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/parseDocSwitches" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/parseDocSwitches" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>

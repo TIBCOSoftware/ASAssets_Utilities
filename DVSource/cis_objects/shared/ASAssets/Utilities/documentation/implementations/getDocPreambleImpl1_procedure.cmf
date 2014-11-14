@@ -107,20 +107,11 @@
   <security>
     <owner user="admin" domain="composite"/>
   </security>
-  <dependency target="/lib/util/System" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="DEFINITION_SET">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/getConstant" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -137,9 +128,6 @@
   </dependency>
   <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* getDocPreambleImpl1:
 

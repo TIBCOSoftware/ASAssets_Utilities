@@ -138,6 +138,9 @@
           <element name="enabled">
             <datatype type="INTEGER" minValue="0" maxValue="1"/>
           </element>
+          <element name="cachePolicy">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
           <element name="storageMode">
             <datatype type="STRING" maxLength="32768"/>
           </element>

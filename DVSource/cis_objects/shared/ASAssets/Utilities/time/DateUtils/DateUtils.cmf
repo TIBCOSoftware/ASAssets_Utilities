@@ -10,6 +10,9 @@
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="driverName" type="STRING">Custom Java Procedure</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415312468582</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="name" type="STRING">DateUtils</attribute>
   <attribute name="selectionState" type="INTEGER">1</attribute>
   <attribute name="type" type="STRING">CustomProc</attribute>

@@ -1,0 +1,220 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="generateOptFile" path="/shared/ASAssets/Utilities/repository/generateOptFile" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>generateOptFile:
+
+	This procedure loops through all of the data source connections inside the CIS instance and generates the -set lines needed
+	to create an &quot;options file&quot; to deploy those data sources to another CIS server.  You can export the lines to a file 
+	and then modify the parameters for each line to be suitable to the target deployment server.  For example you can run this 
+	script on &quot;development&quot; and then modify the host, port, username, password, etc to match &quot;Test&quot; and then use those -set lines
+	in your options file to perform the import into &quot;Test&quot;.
+
+
+    Input:
+        N/A
+
+
+    Output:
+        resultPipe - A cursor containing each -set line for each data source configured.
+            CURSOR (
+                line VARCHAR
+            )
+
+
+    Exceptions:  none
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    10/16/2014      Jeremy Akers        6.2.6           Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="resultPipe" direction="OUT" nullable="true">
+      <datatype name="resultPipe" type="TABLE" refId="1">
+        <element name="line">
+          <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="nobody" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/services/databases/system/SYS_DATASOURCES" type="TABLE">
+    <datatype type="TABLE" refId="1">
+      <element name="SOURCE_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="SOURCE_NAME">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="SOURCE_TYPE">
+        <datatype type="STRING" maxLength="60"/>
+      </element>
+      <element name="SOURCE_CATEGORY">
+        <datatype type="STRING" maxLength="60"/>
+      </element>
+      <element name="OWNER_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="OWNER">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="PARENT_PATH">
+        <datatype type="STRING" maxLength="65535"/>
+      </element>
+      <element name="STATUS">
+        <datatype type="STRING" maxLength="20"/>
+      </element>
+      <element name="NUM_REQUESTS">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="ACTIVE_REQUESTS">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="MAX_CONN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="NUM_CURRENT_CONN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="NUM_IN_USE_CONN">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="NUM_LOGINS">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="NUM_LOGOUTS">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="BYTES_TO">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="BYTES_FROM">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="MESSAGE">
+        <datatype type="STRING" maxLength="65535"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getDataSourceAttributes" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="dataSourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="attrName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="attrValue">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+    generateOptFile:
+
+	This procedure loops through all of the data source connections inside the CIS instance and generates the -set lines needed
+	to create an &quot;options file&quot; to deploy those data sources to another CIS server.  You can export the lines to a file 
+	and then modify the parameters for each line to be suitable to the target deployment server.  For example you can run this 
+	script on &quot;development&quot; and then modify the host, port, username, password, etc to match &quot;Test&quot; and then use those -set lines
+	in your options file to perform the import into &quot;Test&quot;.
+
+
+    Input:
+        N/A
+
+
+    Output:
+        resultPipe - A cursor containing each -set line for each data source configured.
+            CURSOR (
+                line VARCHAR
+            )
+
+
+    Exceptions:  none
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    10/16/2014      Jeremy Akers        6.2.6           Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE generateOptFile(
+    OUT resultPipe PIPE(
+        line VARCHAR
+    )
+)
+BEGIN
+    -- value to use if a data source attribute value hasn&apos;t been set (exists in the
+    -- repository but is set to NULL.) defaults to &quot;&quot; to maintain NULL setting.
+    --
+    DECLARE NULL_VALUE CONSTANT VARCHAR DEFAULT &apos;&quot;&quot;&apos;;
+
+    FOR r AS 
+        SELECT 
+            SYS_DATASOURCES.SOURCE_NAME,
+            SYS_DATASOURCES.SOURCE_TYPE,
+            SYS_DATASOURCES.SOURCE_CATEGORY,
+            SYS_DATASOURCES.OWNER,
+            SYS_DATASOURCES.PARENT_PATH
+        FROM /services/databases/system/SYS_DATASOURCES SYS_DATASOURCES
+        WHERE PARENT_PATH LIKE &apos;/shared%&apos; AND PARENT_PATH NOT LIKE &apos;/shared/examples%&apos; AND PARENT_PATH NOT LIKE &apos;/shared/PSAssets%&apos; AND PARENT_PATH NOT LIKE &apos;/shared/ASAssets%&apos; AND PARENT_PATH NOT LIKE &apos;/shared/Utilities%&apos;
+		ORDER BY SOURCE_NAME
+    DO
+        FOR rds AS 
+            SELECT 
+                CASE AttrName
+                    WHEN &apos;login&apos; THEN &apos;user&apos;
+					WHEN &apos;username&apos; THEN &apos;user&apos;
+                    WHEN &apos;urlDatabaseName&apos; THEN &apos;database&apos;
+                    WHEN &apos;urlIP&apos; THEN &apos;host&apos;
+					when &apos;url&apos; then &apos;raw:url&apos;
+                    WHEN &apos;urlPort&apos; THEN &apos;port&apos;
+                    ELSE AttrName
+                END AttrName,
+                CASE AttrName
+					WHEN &apos;password&apos; THEN &apos;CHANGE_PASSWORD&apos;
+					ELSE COALESCE (attrValue, NULL_VALUE)
+				END attrValue
+            FROM /shared/ASAssets/Utilities/repository/getDataSourceAttributes(r.PARENT_PATH || &apos;/&apos; || r.SOURCE_NAME)
+            WHERE AttrName IN (&apos;login&apos;, &apos;password&apos;, &apos;urlDatabaseName&apos;, &apos;urlIP&apos;, &apos;urlPort&apos;, &apos;username&apos;) OR (AttrName = &apos;url&apos; AND attrValue LIKE &apos;http%&apos;)
+        DO
+            CALL PRINT(&apos;-set &apos; || r.PARENT_PATH || &apos;/&apos; || r.SOURCE_NAME || &apos; DATA_SOURCE &apos; || rds.AttrName || &apos; &apos; || rds.attrValue);
+            INSERT INTO resultPipe VALUES (&apos;-set &apos; || r.PARENT_PATH || &apos;/&apos; || r.SOURCE_NAME || &apos; DATA_SOURCE &apos; || rds.AttrName || &apos; &apos; || rds.attrValue);
+        END FOR; -- select from getDataSourceAttributes()
+
+    END FOR; -- select from sys_datasources
+END</attribute>
+  <attribute name="creationDate" type="LONG">1412626753904</attribute>
+  <attribute name="creatorUserDomain" type="STRING">corptest</attribute>
+  <attribute name="creatorUserName" type="STRING">jakers</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1415314719085</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">18/70</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

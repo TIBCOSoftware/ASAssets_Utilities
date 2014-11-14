@@ -154,14 +154,21 @@
                             <element name="key">
                               <datatype name="key" type="ARRAY" maxLength="0">
                                 <itemDatatype>
-                                  <reference refId="6"/>
+                                  <datatype name="itemType" type="TREE" refId="8">
+                                    <element name="type">
+                                      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                                    </element>
+                                    <element name="value">
+                                      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                                    </element>
+                                  </datatype>
                                 </itemDatatype>
                               </datatype>
                             </element>
                             <element name="value">
                               <datatype name="value" type="ARRAY" maxLength="0">
                                 <itemDatatype>
-                                  <reference refId="6"/>
+                                  <reference refId="8"/>
                                 </itemDatatype>
                               </datatype>
                             </element>
@@ -228,14 +235,21 @@
                     <element name="key">
                       <datatype name="key" type="ARRAY" maxLength="0">
                         <itemDatatype>
-                          <reference refId="2"/>
+                          <datatype name="itemType" type="TREE" refId="4">
+                            <element name="type">
+                              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                            </element>
+                            <element name="value">
+                              <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                            </element>
+                          </datatype>
                         </itemDatatype>
                       </datatype>
                     </element>
                     <element name="value">
                       <datatype name="value" type="ARRAY" maxLength="0">
                         <itemDatatype>
-                          <reference refId="2"/>
+                          <reference refId="4"/>
                         </itemDatatype>
                       </datatype>
                     </element>
@@ -765,21 +779,14 @@
                               <element name="key">
                                 <datatype name="key" type="ARRAY" maxLength="0">
                                   <itemDatatype>
-                                    <datatype name="itemType" type="TREE" refId="9">
-                                      <element name="type">
-                                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
-                                      </element>
-                                      <element name="value">
-                                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
-                                      </element>
-                                    </datatype>
+                                    <reference refId="7"/>
                                   </itemDatatype>
                                 </datatype>
                               </element>
                               <element name="value">
                                 <datatype name="value" type="ARRAY" maxLength="0">
                                   <itemDatatype>
-                                    <reference refId="9"/>
+                                    <reference refId="7"/>
                                   </itemDatatype>
                                 </datatype>
                               </element>
@@ -941,7 +948,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1399488160970</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415388869224</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

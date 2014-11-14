@@ -148,7 +148,7 @@ CSW Version: 5.2.0
       <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
     </parameter>
     <parameter name="result" direction="OUT" nullable="true">
-      <datatype subType="DATASOURCE_TYPE" type="TABLE" caseSensitive="false" refId="1">
+      <datatype type="TABLE" caseSensitive="false" refId="1">
         <element name="cisType">
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
         </element>
@@ -159,13 +159,13 @@ CSW Version: 5.2.0
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
         </element>
         <element name="cisScale">
-          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
         </element>
         <element name="cisPrecision">
-          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
         </element>
         <element name="dataTypeId">
-          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
         </element>
         <element name="dataTypeName">
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
@@ -177,10 +177,10 @@ CSW Version: 5.2.0
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
         </element>
         <element name="nativeScale">
-          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
         </element>
         <element name="nativePrecision">
-          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
         </element>
       </datatype>
     </parameter>
@@ -194,7 +194,7 @@ CSW Version: 5.2.0
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1392747868558</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415312468582</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="selectionState" type="INTEGER">2</attribute>

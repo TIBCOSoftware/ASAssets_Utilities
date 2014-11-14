@@ -15,6 +15,7 @@
 
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	10/20/2014		Mike Tinius			6.2.6			Created new.
+	11/07/2014		Mike Tinius			6.2.6			Updated to insure username and groups are lower case when domain=composite.
 
     © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
   <parameters>
@@ -140,6 +141,7 @@
 
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	10/20/2014		Mike Tinius			6.2.6			Created new.
+	11/07/2014		Mike Tinius			6.2.6			Updated to insure username and groups are lower case when domain=composite.
 
     © 2014 Cisco and/or its affiliates. All rights reserved.
 */
@@ -194,7 +196,7 @@ BEGIN
                     &lt;/ns1:destroyUser&gt;&apos;;
 
 				IF (debug IS NOT NULL AND UPPER(debug) = &apos;Y&apos;) THEN
-		           	set message = &apos;Delete Group.  request: &apos;||request;
+		           	set message = &apos;Delete User.  request: &apos;||request;
 					call log  (moduleName || &apos; : &apos; || message);
 					call print(moduleName || &apos; : &apos; || message);
 				END IF;
@@ -222,14 +224,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1414097133529</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415733674707</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">10/79</key>
+      <key type="STRING">10/80</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -237,11 +239,11 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">11/71</key>
+      <key type="STRING">11/73</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
-        <item>Log</item>
+        <item>Print</item>
       </value>
     </item>
     <item>
@@ -249,7 +251,7 @@ END</attribute>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
-        <item>Print</item>
+        <item>Log</item>
       </value>
     </item>
     <item>
@@ -257,15 +259,15 @@ END</attribute>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
-        <item>Print</item>
+        <item>Log</item>
       </value>
     </item>
     <item>
-      <key type="STRING">9/87</key>
+      <key type="STRING">9/89</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
-        <item>Log</item>
+        <item>Print</item>
       </value>
     </item>
   </attribute>

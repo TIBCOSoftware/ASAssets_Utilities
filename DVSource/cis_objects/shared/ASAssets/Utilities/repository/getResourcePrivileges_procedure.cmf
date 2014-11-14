@@ -94,6 +94,7 @@
 
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	05/22/2014		Mike Tinius			6.2.0			Created new
+	11/06/2014		Mike Tinius			6.2.6			Fixed bug where includeNameEQ, includeNameLK, excludeNameNEQ, excludeNameNLK where forced UPPER which resulted in incorrect results.
 
     © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
   <parameters>
@@ -439,6 +440,7 @@
 
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	05/22/2014		Mike Tinius			6.2.0			Created new
+	11/06/2014		Mike Tinius			6.2.6			Fixed bug where includeNameEQ, includeNameLK, excludeNameNEQ, excludeNameNLK where forced UPPER which resulted in incorrect results.
 
     © 2014 Cisco and/or its affiliates. All rights reserved.
 */
@@ -464,10 +466,10 @@ BEGIN
 	DECLARE debug_			CHAR(1) DEFAULT UPPER(TRIM(NVL(debug,&apos;N&apos;)));
 	DECLARE nameType		VARCHAR DEFAULT UPPER(TRIM(nameTypeFilter));
 	DECLARE domainName		VARCHAR DEFAULT TRIM(domainFilter);
- 	DECLARE includeNameEQ	LONGVARCHAR DEFAULT UPPER(TRIM(includeNameEqualFilter));
- 	DECLARE includeNameLK	LONGVARCHAR DEFAULT UPPER(TRIM(includeNameLikeFilter));
-	DECLARE excludeNameNEQ	LONGVARCHAR DEFAULT UPPER(TRIM(excludeNameNotEqualFilter));
-	DECLARE excludeNameNLK	LONGVARCHAR DEFAULT UPPER(TRIM(excludeNameNotLikeFilter));
+ 	DECLARE includeNameEQ	LONGVARCHAR DEFAULT TRIM(includeNameEqualFilter);
+ 	DECLARE includeNameLK	LONGVARCHAR DEFAULT TRIM(includeNameLikeFilter);
+	DECLARE excludeNameNEQ	LONGVARCHAR DEFAULT TRIM(excludeNameNotEqualFilter);
+	DECLARE excludeNameNLK	LONGVARCHAR DEFAULT TRIM(excludeNameNotLikeFilter);
 
  	DECLARE includePrivsEQ	VARCHAR DEFAULT UPPER(TRIM(includePrivsEqualFilter));
  	DECLARE includePrivsLK	VARCHAR DEFAULT UPPER(TRIM(includePrivsLikeFilter));
@@ -807,7 +809,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1407214894200</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415395704544</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -862,11 +864,11 @@ GgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT/////</value>
   </attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">8/450</key>
+      <key type="STRING">8/452</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
-        <item>Print</item>
+        <item>Log</item>
       </value>
     </item>
     <item>
@@ -874,7 +876,7 @@ GgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT/////</value>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
-        <item>Log</item>
+        <item>Print</item>
       </value>
     </item>
   </attribute>

@@ -411,19 +411,19 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/117</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">11/111</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
         <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/117</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
       </value>
     </item>
     <item>

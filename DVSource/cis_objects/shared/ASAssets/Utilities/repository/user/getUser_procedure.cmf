@@ -23,6 +23,7 @@
 
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	10/20/2014		Mike Tinius			6.2.6			Created new.
+	11/07/2014		Mike Tinius			6.2.6			Updated to insure username and groups are lower case when domain=composite.
 
     © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
   <parameters>
@@ -194,6 +195,7 @@
 
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	10/20/2014		Mike Tinius			6.2.6			Created new.
+	11/07/2014		Mike Tinius			6.2.6			Updated to insure username and groups are lower case when domain=composite.
 
     © 2014 Cisco and/or its affiliates. All rights reserved.
 */
@@ -285,6 +287,7 @@ BEGIN
 */
         EXCEPTION
 			WHEN System.SOAPFaultException THEN
+call print(cast(CURRENT_EXCEPTION.TRACE as longvarchar));
 				IF LOWER(CURRENT_EXCEPTION.TRACE) LIKE &apos;%username%does not exist%&apos; THEN
 					IF (debug IS NOT NULL AND UPPER(debug) = &apos;Y&apos;) THEN
    	    		    	set message = &apos;USER does NOT exist&apos;;
@@ -311,7 +314,7 @@ BEGIN
 				IF (userName = userName_) then
 					set userExists = 1;
 					IF (debug IS NOT NULL AND UPPER(debug) = &apos;Y&apos;) THEN
-   	     		   	set message = &apos;Group Exists: &apos;||userName;
+   	     		   	set message = &apos;User Exists: &apos;||userName;
 						call log  (moduleName || &apos; : &apos; || message);
 						call print(moduleName || &apos; : &apos; || message);
 					END IF;
@@ -327,14 +330,22 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1414099108416</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415733732955</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">12/119</key>
+      <key type="STRING">12/120</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/121</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -342,7 +353,15 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">9/114</key>
+      <key type="STRING">9/84</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/115</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -350,7 +369,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">12/142</key>
+      <key type="STRING">9/83</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -358,15 +377,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">12/118</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">12/143</key>
+      <key type="STRING">6/116</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -374,7 +385,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">9/82</key>
+      <key type="STRING">12/144</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -382,7 +393,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">9/83</key>
+      <key type="STRING">12/145</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

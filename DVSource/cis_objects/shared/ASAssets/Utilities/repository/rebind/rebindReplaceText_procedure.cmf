@@ -378,21 +378,14 @@
                               <element name="key">
                                 <datatype name="key" type="ARRAY" maxLength="0">
                                   <itemDatatype>
-                                    <datatype name="itemType" type="TREE" refId="9">
-                                      <element name="type">
-                                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
-                                      </element>
-                                      <element name="value">
-                                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
-                                      </element>
-                                    </datatype>
+                                    <reference refId="7"/>
                                   </itemDatatype>
                                 </datatype>
                               </element>
                               <element name="value">
                                 <datatype name="value" type="ARRAY" maxLength="0">
                                   <itemDatatype>
-                                    <reference refId="9"/>
+                                    <reference refId="7"/>
                                   </itemDatatype>
                                 </datatype>
                               </element>
@@ -427,7 +420,7 @@
       <element name="attributeVector" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="AttributeCompleteType" type="TREE" refId="10">
+            <datatype name="AttributeCompleteType" type="TREE" refId="9">
               <element name="attrName">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
               </element>

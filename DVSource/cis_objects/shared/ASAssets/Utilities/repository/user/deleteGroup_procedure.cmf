@@ -11,9 +11,9 @@
 
 	Exceptions:  Exception may be thrown.
 
-	Author:      Mike Tinius
-	Date:        11/20/2011
-	CSW Version: 5.2.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	11/20/2011		Mike Tinius			5.2.0			Created new.
+	11/07/2014		Mike Tinius			6.2.6			Updated to insure username and groups are lower case when domain=composite.
 
     © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
   <parameters>
@@ -122,9 +122,9 @@
 
 	Exceptions:  Exception may be thrown.
 
-	Author:      Mike Tinius
-	Date:        11/20/2011
-	CSW Version: 5.2.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	11/20/2011		Mike Tinius			5.2.0			Created new.
+	11/07/2014		Mike Tinius			6.2.6			Updated to insure username and groups are lower case when domain=composite.
 
     © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
 */
@@ -134,14 +134,31 @@ PROCEDURE deleteGroup(
 	IN domainName 				VARCHAR(255)
 )
 BEGIN
-	DECLARE moduleName 			VARCHAR DEFAULT &apos;deleteUser&apos;;
+	DECLARE moduleName 			VARCHAR DEFAULT &apos;deleteGroup&apos;;
+	DECLARE groupName_			VARCHAR DEFAULT TRIM(groupName);
+	DECLARE domainName_ 		VARCHAR(255) DEFAULT TRIM(NVL(domainName, &apos;composite&apos;));
 	DECLARE request 			VARCHAR(4096);
 	DECLARE response 			XML;
 	DECLARE fault 				XML;
 	DECLARE ex					EXCEPTION;
 
     BEGIN
-		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;Deleting group (&apos; ||groupName||&apos;) in domain (&apos;||domainName||&apos;)&apos;);
+		if (groupName_ is null or LENGTH(groupName_) = 0) then
+			raise ex value &apos;The &quot;groupName&quot; parameter may not be null or empty.&apos;;
+		end if;
+		if (domainName_ is null or LENGTH(domainName_) = 0) then
+			raise ex value &apos;The &quot;domainName&quot; parameter may not be null or empty.&apos;;
+		end if;
+
+		-- when the domain is composite use all lower case for domains and group names
+		if (LOWER(domainName_) = &apos;composite&apos;) then
+			set groupName_ = LOWER(groupName_);
+		end if;
+		if (LOWER(domainName_) = &apos;composite&apos;) then
+			set domainName_ = LOWER(domainName_);
+		end if;
+
+		call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName,debug, &apos;Deleting group (&apos; ||groupName_||&apos;) in domain (&apos;||domainName_||&apos;)&apos;);
 		set request =
                &apos;&lt;ns1:destroyGroup xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/user&quot;
                       xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
@@ -170,14 +187,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415821456842</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">8/42</key>
+      <key type="STRING">8/59</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>

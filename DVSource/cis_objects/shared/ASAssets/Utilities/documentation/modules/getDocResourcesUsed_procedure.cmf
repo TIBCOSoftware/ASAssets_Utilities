@@ -57,9 +57,6 @@ Resources Used:
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getUsedResourcesCursor" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/getUsedResourcesCursor" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
@@ -134,19 +131,10 @@ Resources Used:
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>

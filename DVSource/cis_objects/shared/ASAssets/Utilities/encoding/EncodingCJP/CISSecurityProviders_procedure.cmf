@@ -1,0 +1,60 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="CISSecurityProviders" path="/shared/ASAssets/Utilities/encoding/EncodingCJP/CISSecurityProviders" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0">
+  <annotation>CISSecurityProviders
+
+    Description:
+        Lists all JCE providers, services and algorithms configured in the CIS JVM. A wrapper simple
+        view, CIS_JCE_PROVIDERS_VIEW, on top of the procedure allows for the lookup of algorithms. This
+        procedure can be used, for example, to track down the root cause of failures in a client certificate 
+        and/or mutual authentication schemes between CIS and secure data providers (REST and SOAP web-services, 
+        some DBMS with advanced security mechanisms) or clients (SOAP and REST service consumes, app 
+        servers, ESBs, etc.) when these failures are caused by unsupported security algorithms.
+
+    Input:
+        N/A
+
+
+    Output:
+        results - The list of providers and their respective algorithms and service descriptions
+            CURSOR (
+                Provider              LONGVARCHAR
+                Algorithm             LONGVARCHAR
+                &quot;Service Description&quot; LONGVARCHAR
+            )
+
+
+    Exceptions:  none
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    10/27/2014      Alex Dedov          6.2.6           Created new
+
+    © 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="results" direction="OUT" nullable="true">
+      <datatype type="TABLE" refId="1">
+        <element name="Provider">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="Algorithm">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+        <element name="Service Description">
+          <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.encoding.CISSecurityProviders</attribute>
+  <attribute name="creationDate" type="LONG">1415837554910</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415839047677</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>

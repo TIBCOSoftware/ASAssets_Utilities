@@ -24,7 +24,7 @@ CSW Version: 5.1.0
 © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
   <parameters>
     <parameter name="result" direction="OUT" nullable="true">
-      <datatype subType="DATASOURCE_TYPE" type="TABLE" caseSensitive="false" refId="1">
+      <datatype type="TABLE" caseSensitive="false" refId="1">
         <element name="Property">
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
         </element>
@@ -43,7 +43,7 @@ CSW Version: 5.1.0
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1392747895922</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415312468582</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="selectionState" type="INTEGER">2</attribute>

@@ -1,0 +1,64 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="HexToRaw" path="/shared/ASAssets/Utilities/string/TextUtils/HexToRaw" type="PROCEDURE" subtype="CUSTOM_PROCEDURE" changeToken="0" isFunction="true">
+  <annotation>HexToRaw:
+
+    This procedure converts a hexadecimal string into a binary array value.
+
+    NOTE - Calls to this procedure can be pushed to Oracle data sources by 
+    adding some custom code to the Oracle capabilities file. Simply edit the
+    $CIS_HOME/conf/adapters/system/oracle_&lt;ver&gt;_&lt;type&gt;_driver/oracle_&lt;ver&gt;_&lt;type&gt;_driver_values.xml  
+    by adding the following lines just before the closing &quot;&lt;/common:attributes&gt;&quot;
+    line. CIS may need to be restarted after making this change.
+
+    &lt;ns726:attribute xmlns:ns726=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+        &lt;ns726:name&gt;/custom/HexToRaw(@null)&lt;/ns726:name&gt;
+        &lt;ns726:type&gt;STRING&lt;/ns726:type&gt;
+        &lt;ns726:value&gt;HexToRaw($1)&lt;/ns726:value&gt;
+        &lt;ns726:configID&gt;HexToRaw(~string)&lt;/ns726:configID&gt;
+    &lt;/ns726:attribute&gt;
+    &lt;ns725:attribute xmlns:ns725=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
+        &lt;ns725:name&gt;/custom/RawToHex(@null)&lt;/ns725:name&gt;
+        &lt;ns725:type&gt;STRING&lt;/ns725:type&gt;
+        &lt;ns725:value&gt;RawToHex($1)&lt;/ns725:value&gt;
+        &lt;ns725:configID&gt;RawToHex(~binary)&lt;/ns725:configID&gt;
+    &lt;/ns725:attribute&gt; 
+	
+
+    Input:
+        hexVal - The string to convert into a binary array  
+            Values: Any text value whose characters are 0-9 and/or A-F
+
+
+    Output:
+        rawVal - The string converted to a binary array
+            Values: A binary array
+
+
+    Exceptions:  none
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    07/26/2011      Alex Dedov          5.2.0           Created new
+
+    © 2011, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="hexVal" direction="IN" nullable="true">
+      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="rawVal" direction="OUT" nullable="true">
+      <datatype name="VARBINARY" subType="DATASOURCE_TYPE" type="BINARY" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.HexToRaw</attribute>
+  <attribute name="creationDate" type="LONG">1415733336995</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1415816584248</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="selectionState" type="INTEGER">2</attribute>
+</metadata>
