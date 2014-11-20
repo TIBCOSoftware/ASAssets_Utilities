@@ -24,6 +24,20 @@
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
+
 Request Elements:
     path: A fully qualified path to the resource.
     detail: The level of detail of resources in the response.  May be &quot;NONE&quot;, &quot;SIMPLE&quot;,
@@ -417,6 +431,20 @@ Faults:
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
+
 Request Elements:
     path: A fully qualified path to the resource.
     detail: The level of detail of resources in the response.  May be &quot;NONE&quot;, &quot;SIMPLE&quot;,
@@ -459,8 +487,8 @@ BEGIN
 	DECLARE createInput 		LONGVARCHAR;
 	DECLARE scripttext		LONGVARCHAR;
 
-	SET scripttext = replace(inScripttext, &apos;&amp;lt;&apos;,&apos;&lt;&apos;);
-	SET scripttext = replace(scripttext, &apos;&amp;gt;&apos;,&apos;&gt;&apos;);
+	SET scripttext = replace(inScripttext, &apos;&lt;&apos;,&apos;&lt;&apos;);
+	SET scripttext = replace(scripttext, &apos;&gt;&apos;,&apos;&gt;&apos;);
 	--Replace XML carriage return/line feed with a space
 	set scripttext = TRIM(REPLACE(REPLACE(scripttext,&apos;&amp;#xd;&apos;,&apos; &apos;),&apos;&amp;#xD;&apos;,&apos; &apos;)); -- XML Carriage Return representation
 	set scripttext = TRIM(REPLACE(REPLACE(scripttext,&apos;&amp;#xa;&apos;,&apos; &apos;),&apos;&amp;#xA;&apos;,&apos; &apos;)); -- XML Line Feed representation
@@ -487,7 +515,7 @@ BEGIN
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

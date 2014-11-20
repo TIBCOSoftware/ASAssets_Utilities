@@ -43,7 +43,21 @@
 	Date:        2/14/2013
 	CSW Version: 6.2.2
 
-    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+</annotation>
   <parameters>
     <parameter name="getServerAttributeDefChildren" direction="IN" nullable="true">
       <datatype name="getServerAttributeDefChildren" extendedName="{http://www.compositesw.com/services/system/admin/server}getServerAttributeDefChildren" namespace="http://www.compositesw.com/services/system/admin/server" referenceDefinitionSet="/services/webservices/system/admin/server/operations/ServerSchema" referenceType="{http://www.compositesw.com/services/system/admin/server}getServerAttributeDefChildren" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/server}getServerAttributeDefChildren">
@@ -234,51 +248,50 @@
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1392832252570</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="sourcePath" type="STRING">/services/webservices/system/admin/server/operations/getServerAttributeDefChildren</attribute>
   <attribute name="sourceType" type="SHORT">3</attribute>
   <attribute name="transformModel" type="BYTE_ARRAY">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
-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
-AAA=</attribute>
+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</attribute>
   <attribute name="xqueryModel" type="NULL"/>
   <attribute name="xslt" type="STRING">
 &lt;xslt:stylesheet version=&quot;2.0&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/server&quot; xmlns:ns2=&quot;http://www.compositesw.com/services/system/util/common&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;
