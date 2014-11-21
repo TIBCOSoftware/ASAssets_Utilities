@@ -53,20 +53,20 @@
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
     </parameter>
     <parameter name="createResponse" direction="OUT" nullable="true">
-      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultResponse" direction="OUT" nullable="true">
-      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -441,8 +441,8 @@ PROCEDURE updateSqlScript(
 	DECLARE faultVal 		XML;
 	DECLARE createInput 		LONGVARCHAR;
 
-	SET scripttext = replace(scripttext, &apos;&lt;&apos;,&apos;&lt;&apos;);
-	SET scripttext = replace(scripttext, &apos;&gt;&apos;,&apos;&gt;&apos;);
+	SET scripttext = replace(scripttext, &apos;&amp;lt;&apos;,&apos;&lt;&apos;);
+	SET scripttext = replace(scripttext, &apos;&amp;gt;&apos;,&apos;&gt;&apos;);
 	SET success = 1;
         set createInput =
 	&apos;&lt;resource:updateSqlScriptProcedure 
@@ -468,12 +468,12 @@ PROCEDURE updateSqlScript(
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416535680321</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="p:3:Customized" type="STRING">datatype.changed</attribute>
-  <attribute name="p:4:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:3:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="NULL"/>
 </metadata>
