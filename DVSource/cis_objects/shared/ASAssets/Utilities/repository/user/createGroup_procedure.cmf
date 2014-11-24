@@ -274,6 +274,7 @@
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	01/18/2011		Mike Tinius			5.2.0			Created new.
 	10/20/2014		Mike Tinius			6.2.6			Updated to add annotation.
+	11/21/2014		Mike Tinius			6.2.6			Removed use of /XML/escapeXML() in favor of XMLTEXT which does the same thing.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -334,13 +335,6 @@ BEGIN
 
 		call /shared/ASAssets/Utilities/repository/&quot;user&quot;/getGroup(debug, groupName_, groupDomain_, groupExists, groupExplicitRights, groupEffectiveRights, groupInheritedRights);
 
-		-- Escape any special characters 
-		set annotation_ = REPLACE(annotation_, &apos;&amp;&apos;, &apos;&amp;amp;&apos;);
-		set annotation_ = REPLACE(annotation_,  &apos;&lt;&apos;, &apos;&lt;&apos;);
-		set annotation_ = REPLACE(annotation_, &apos;&gt;&apos;, &apos;&gt;&apos;);
-		set annotation_ = REPLACE(annotation_, &apos;&apos;&apos;&apos;, &apos;&amp;apos;&apos;);
-		set annotation_ = REPLACE(annotation_, &apos;&quot;&apos;, &apos;&amp;quot;&apos;);
-
 		IF groupExists = 0 AND groupDomain_ = &apos;composite&apos; THEN
             BEGIN
 				set request =
@@ -373,7 +367,7 @@ BEGIN
                        &lt;ns1:domainName&gt;&apos; ||groupDomain_ || &apos;&lt;/ns1:domainName&gt;
                        &lt;ns1:groupName&gt;&apos; || groupName_ || &apos;&lt;/ns1:groupName&gt;
                        &lt;ns1:explicitRights&gt;&apos; || emptyStr(REPLACE(groupPrivileges,&apos;|&apos;,&apos; &apos;)) || &apos;&lt;/ns1:explicitRights&gt;
-                       &lt;ns1:annotation&gt;&apos;||TRIM(annotation_)||&apos;&lt;/ns1:annotation&gt;
+                       &lt;ns1:annotation&gt;&apos;||CAST(XMLTEXT(annotation_) AS LONGVARCHAR)||&apos;&lt;/ns1:annotation&gt;
                     &lt;/ns1:updateGroup&gt;&apos;;
 
 				IF (debug IS NOT NULL AND UPPER(debug) = &apos;Y&apos;) THEN
@@ -408,14 +402,46 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">10/131</key>
+      <key type="STRING">11/119</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/97</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/96</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/133</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/102</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -423,59 +449,27 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/108</key>
+      <key type="STRING">11/120</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/134</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/125</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
         <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/126</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">9/140</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/125</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">9/139</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/102</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/103</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
       </value>
     </item>
   </attribute>

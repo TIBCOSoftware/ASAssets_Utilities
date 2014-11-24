@@ -392,14 +392,21 @@
                               <element name="key">
                                 <datatype name="key" type="ARRAY" maxLength="0">
                                   <itemDatatype>
-                                    <reference refId="7"/>
+                                    <datatype name="itemType" type="TREE" refId="9">
+                                      <element name="type">
+                                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                                      </element>
+                                      <element name="value">
+                                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                                      </element>
+                                    </datatype>
                                   </itemDatatype>
                                 </datatype>
                               </element>
                               <element name="value">
                                 <datatype name="value" type="ARRAY" maxLength="0">
                                   <itemDatatype>
-                                    <reference refId="7"/>
+                                    <reference refId="9"/>
                                   </itemDatatype>
                                 </datatype>
                               </element>
@@ -434,7 +441,7 @@
       <element name="attributeVector" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="AttributeCompleteType" type="TREE" refId="9">
+            <datatype name="AttributeCompleteType" type="TREE" refId="10">
               <element name="attrName">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
               </element>
@@ -1061,9 +1068,6 @@
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
-  <dependency target="/system/customfunctions/unescapeXML" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
   <attribute name="Script" type="STRING">/* 
     rebindReplaceText:
 
@@ -1229,7 +1233,7 @@ BEGIN
 			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:sqlText&apos;;
 			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), scriptText);
 			-- Unescape the XML in preparation for it to be escaped again during update
-			set scriptText = unescapeXML(scriptText);
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/unescapeXML(scriptText, scriptText);
 
 			if (POSITION(fromFolder_ IN scriptText) &gt; 0) then
 				set message = &apos;      UPDATED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
@@ -1266,7 +1270,7 @@ BEGIN
 			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:scriptText&apos;;
 			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), scriptText);
 			-- Unescape the XML in preparation for it to be escaped again during update
-			set scriptText = unescapeXML(scriptText);
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/unescapeXML(scriptText, scriptText);
 
 			if (POSITION(fromFolder_ IN scriptText) &gt; 0) then
 				set message = &apos;      UPDATED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
@@ -1312,7 +1316,7 @@ BEGIN
 			set xpath = &apos;/resource:getResourceResponse/resource:resources/resource:resource/resource:externalSqlText&apos;;
 			call /shared/ASAssets/Utilities/&quot;xml&quot;/getValueFromXML(debug, namespaces, xpath, CAST(xmlOut as LONGVARCHAR), scriptText);
 			-- Unescape the XML in preparation for it to be escaped again during update
-			set scriptText = unescapeXML(scriptText);
+			call /shared/ASAssets/Utilities/&quot;xml&quot;/unescapeXML(scriptText, scriptText);
 
 			if (POSITION(fromFolder_ IN externalDataSourcePath) &gt; 0) then
 				set message = &apos;      UPDATED: &apos;||LPAD(&apos;[&apos;||resourceType||&apos;]&apos;,11,&apos; &apos;)||LPAD(&apos;[&apos;||subtype||&apos;]&apos;,30,&apos; &apos;)||&apos; resourcePath=&apos;||resourcePath;
@@ -1500,7 +1504,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

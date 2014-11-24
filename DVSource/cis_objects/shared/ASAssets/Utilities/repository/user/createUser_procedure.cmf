@@ -321,6 +321,7 @@
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	01/18/2011		Mike Tinius			5.2.0			Created new.
 	11/07/2014		Mike Tinius			6.2.6			Updated to add annotation and insure username and groups are lower case when domain=composite.
+	11/21/2014		Mike Tinius			6.2.6			Removed use of /XML/escapeXML() in favor of XMLTEXT which does the same thing.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -388,13 +389,11 @@ BEGIN
 	-- Iterate over the groupNameAndDomainList and separate out the groupName and groupDomain
 	set j = 1;
 	for pair as
---		select * from /shared/ASAssets/Utilities/string/entityExtractToPipe(groupNameAndDomainList, &apos; &apos;,0,0,0)
 		select TRIM(splitElement) keyword FROM /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(groupNameAndDomainList, &apos; &apos;, 0)
 			WHERE splitElement IS NOT NULL AND LENGTH(TRIM(splitElement)) &gt; 0
 	do
 		set i = 1;
 		for item as
---			select * from /shared/ASAssets/Utilities/string/entityExtractToPipe(pair.keyword, &apos;|&apos;,0,0,0)
 			select TRIM(splitElement) keyword FROM /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(pair.keyword, &apos;\|&apos;, 0)
 				WHERE splitElement IS NOT NULL  AND LENGTH(TRIM(splitElement)) &gt; 0
 		do
@@ -418,13 +417,6 @@ BEGIN
 	end for;
 	set groupMembershipVect = TRUNCATE(groupMembershipVect, 1);
 	set userAssignments[1].group_membership = groupMembershipVect;
-
-	-- Escape any special characters 
-	set annotation_ = REPLACE(annotation_, &apos;&amp;&apos;, &apos;&amp;amp;&apos;);
-	set annotation_ = REPLACE(annotation_,  &apos;&lt;&apos;, &apos;&lt;&apos;);
-	set annotation_ = REPLACE(annotation_, &apos;&gt;&apos;, &apos;&gt;&apos;);
-	set annotation_ = REPLACE(annotation_, &apos;&apos;&apos;&apos;, &apos;&amp;apos;&apos;);
-	set annotation_ = REPLACE(annotation_, &apos;&quot;&apos;, &apos;&amp;quot;&apos;);
 
     SET i = 1;
     WHILE i &lt;= cardinality(userAssignments)
@@ -529,30 +521,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">12/214</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>Pause</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/145</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>Pause</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/162</key>
+      <key type="STRING">10/154</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -560,7 +536,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">12/164</key>
+      <key type="STRING">11/137</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -568,11 +544,27 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/212</key>
+      <key type="STRING">10/204</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
         <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/206</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>Pause</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">12/156</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>Pause</item>
       </value>
     </item>
   </attribute>

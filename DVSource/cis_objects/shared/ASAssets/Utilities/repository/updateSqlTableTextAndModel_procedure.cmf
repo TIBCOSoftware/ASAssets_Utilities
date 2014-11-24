@@ -86,20 +86,20 @@ Faults:
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
     </parameter>
     <parameter name="updateResponse" direction="OUT" nullable="true">
-      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
     </parameter>
     <parameter name="faultResponse" direction="OUT" nullable="true">
-      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -524,12 +524,6 @@ BEGIN
         RAISE System.IllegalArgumentException VALUE &apos;The input &quot;inModel&quot; may not be null.&apos;;
     END IF;
 
-	SET sqltext = replace(inSQL, &apos;&amp;lt;&apos;,&apos;&lt;&apos;);
-	SET sqltext = replace(sqltext, &apos;&amp;gt;&apos;,&apos;&gt;&apos;);
-	--Replace XML carriage return/line feed with a space
-	set sqltext = TRIM(REPLACE(REPLACE(sqltext,&apos;&amp;#xd;&apos;,&apos; &apos;),&apos;&amp;#xD;&apos;,&apos; &apos;)); -- XML Carriage Return representation
-	set sqltext = TRIM(REPLACE(REPLACE(sqltext,&apos;&amp;#xa;&apos;,&apos; &apos;),&apos;&amp;#xA;&apos;,&apos; &apos;)); -- XML Line Feed representation
-
     SET updateInput =
 &apos;&lt;resource:updateSqlTable 
 	xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot; 
@@ -537,7 +531,7 @@ BEGIN
 	xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
 	&lt;resource:path&gt;&apos; || CAST(XMLTEXT(fullResourcePath) AS LONGVARCHAR) || &apos;&lt;/resource:path&gt;
 	&lt;resource:detail&gt;FULL&lt;/resource:detail&gt;
-	&lt;resource:sqlText&gt;&apos; || CAST(XMLTEXT(sqltext) AS LONGVARCHAR) || &apos;&lt;/resource:sqlText&gt;
+	&lt;resource:sqlText&gt;&apos; || CAST(XMLTEXT(inSQL) AS LONGVARCHAR) || &apos;&lt;/resource:sqlText&gt;
 	&lt;resource:sqlModel&gt;
         &lt;resource:version&gt;1&lt;/resource:version&gt;
         &lt;resource:type&gt;PROPRIETARY_MODEL&lt;/resource:type&gt;
@@ -558,16 +552,16 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416536739932</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:5:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:5:Customized" type="STRING">datatype.changed</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">15/102</key>
+      <key type="STRING">15/98</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -575,7 +569,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">15/98</key>
+      <key type="STRING">15/102</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>

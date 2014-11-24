@@ -57,17 +57,16 @@
       </element>
     </datatype>
   </dependency>
-  <attribute name="Script" type="STRING">-- uses RegexGetGroups() to produce a result set containing the various components
--- of a NANP (North American Number Plan) phone number.
---
--- if the input matches a NANP phone number, this procedure should produce five rows:
---   group 0: the entire matched string (basically the input string).
---   group 1: the country code (NULL if not present.)
---   group 2: the area code.
---   group 3: the central office code (or trunk code.)
---   group 4: the subscriber number (or station code.)
---
-/*
+  <attribute name="Script" type="STRING">/* uses RegexGetGroups() to produce a result set containing the various components
+ of a NANP (North American Number Plan) phone number.
+
+ if the input matches a NANP phone number, this procedure should produce five rows:
+   group 0: the entire matched string (basically the input string).
+   group 1: the country code (NULL if not present.)
+   group 2: the area code.
+   group 3: the central office code (or trunk code.)
+   group 4: the subscriber number (or station code.)
+
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
     This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
@@ -116,7 +115,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416604229229</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

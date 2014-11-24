@@ -497,7 +497,6 @@
 														Invoking programs can filter on impactLevel=NONE to search for resources with no errors or impact being reported.
 	12/17/2013		Mike Tinius			6.2.0			Added &quot;force&quot; to allow the search to be forced when resources are impacted.  Added &quot;resourceText&quot; to the output cursor.
 
-
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
     This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
@@ -637,7 +636,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

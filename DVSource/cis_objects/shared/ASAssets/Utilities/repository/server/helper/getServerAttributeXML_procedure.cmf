@@ -28,6 +28,7 @@
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultResponse" direction="OUT" nullable="true">
       <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
@@ -173,6 +174,7 @@
 	Author:      Mike Tinius
 	Date:        2/10/2012
 	CSW Version: 5.2.0
+
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
     This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
@@ -266,11 +268,12 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416604063189</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="p:0:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:1:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="NULL"/>
 </metadata>

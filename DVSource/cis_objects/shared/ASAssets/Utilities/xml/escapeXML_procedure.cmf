@@ -83,14 +83,14 @@ Character in HDF5 Output Character in XML
 quote 			(&quot;) 		&amp;quot; 
 apostrophe 		(&apos;) 		&amp;apos; 
 ampersand		(&amp;)			&amp;amp;
-less than 		(&lt;) 		&lt; 
-greater than 	(&gt;) 		&gt; 
+less than 		(&lt;) 		&amp;lt; 
+greater than 	(&gt;) 		&amp;gt; 
 slash 			(\) 		No escape required 
 space 			( )			No escape required 
 */
     set outStr = REPLACE(inStr, &apos;&amp;&apos;, &apos;&amp;amp;&apos;);
-	set outStr = REPLACE(outStr,  &apos;&lt;&apos;, &apos;&lt;&apos;);
-	set outStr = REPLACE(outStr, &apos;&gt;&apos;, &apos;&gt;&apos;);
+	set outStr = REPLACE(outStr,  &apos;&lt;&apos;, &apos;&amp;lt;&apos;);
+	set outStr = REPLACE(outStr, &apos;&gt;&apos;, &apos;&amp;gt;&apos;);
 	set outStr = REPLACE(outStr, &apos;&apos;&apos;&apos;, &apos;&amp;apos;&apos;);
 	set outStr = REPLACE(outStr, &apos;&quot;&apos;, &apos;&amp;quot;&apos;);
 END</attribute>
@@ -100,7 +100,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

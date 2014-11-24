@@ -21,12 +21,12 @@
     <owner user="admin" domain="composite"/>
   </security>
   <attribute name="autoAddChildren" type="BOOLEAN">true</attribute>
-  <attribute name="classpath" type="STRING">/usr/local/Composite_Software/CIS_6.2.0/conf/customjars/jtidy-r938.jar;</attribute>
+  <attribute name="classpath" type="STRING">conf/customjars/jtidy-r938.jar;</attribute>
   <attribute name="creationDate" type="LONG">0</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="driverName" type="STRING">Custom Java Procedure</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="name" type="STRING">XMLUtils</attribute>

@@ -53,20 +53,20 @@
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
     </parameter>
     <parameter name="createResponse" direction="OUT" nullable="true">
-      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultResponse" direction="OUT" nullable="true">
-      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -384,6 +384,16 @@
   <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/unescapeXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inStr" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="outStr" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
   <attribute name="Script" type="STRING">/* updateSqlScript:
 	-- CIS Repository Helper Procedure --
 	This procedure is used to update the content of a SQL Procedure script.
@@ -407,9 +417,10 @@
 		faultResponse - null if succesful otherwise contains a fault resposne.
 			Values: Fault Resposne XML value
 	Exceptions:  none
-	Author:      Mike Tinius
-	Date:        8/2/2010
-	CSW Version: 5.1.0
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	8/2/2010		Mike Tinius			5.1.0			Created new
+	11/21/2014		Mike Tinius			6.2.6			Removed the use of actual use of REPLACE of escaped XML values in place of using unescapeXML() instead.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -428,21 +439,22 @@
 
 */
 PROCEDURE updateSqlScript(
-    	IN fullResourcePath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
-    	INOUT scripttext 	LONGVARCHAR,
-	OUT success		BIT,
-	OUT createResponse 	XML,
-	OUT faultResponse	XML
+	IN fullResourcePath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType, 
+	INOUT scripttext 		LONGVARCHAR,
+	OUT success				BIT,
+	OUT createResponse 		XML,
+	OUT faultResponse		XML
     )
     BEGIN
 	DECLARE moduleName		VARCHAR DEFAULT &apos;updateSqlScript()&apos;;
 	DECLARE debug			CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
-	DECLARE responseVal 		XML;
+	DECLARE responseVal 	XML;
 	DECLARE faultVal 		XML;
-	DECLARE createInput 		LONGVARCHAR;
+	DECLARE createInput 	LONGVARCHAR;
 
-	SET scripttext = replace(scripttext, &apos;&amp;lt;&apos;,&apos;&lt;&apos;);
-	SET scripttext = replace(scripttext, &apos;&amp;gt;&apos;,&apos;&gt;&apos;);
+	-- Unescape any of the esaped values in valuePair
+	CALL /shared/ASAssets/Utilities/&quot;xml&quot;/unescapeXML(scripttext, scripttext);
+
 	SET success = 1;
         set createInput =
 	&apos;&lt;resource:updateSqlScriptProcedure 
@@ -468,12 +480,12 @@ PROCEDURE updateSqlScript(
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416535680321</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="p:3:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
-  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+  <attribute name="p:3:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="NULL"/>
 </metadata>

@@ -157,14 +157,21 @@
                               <element name="key">
                                 <datatype name="key" type="ARRAY" maxLength="0">
                                   <itemDatatype>
-                                    <reference refId="7"/>
+                                    <datatype name="itemType" type="TREE" refId="9">
+                                      <element name="type">
+                                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                                      </element>
+                                      <element name="value">
+                                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                                      </element>
+                                    </datatype>
                                   </itemDatatype>
                                 </datatype>
                               </element>
                               <element name="value">
                                 <datatype name="value" type="ARRAY" maxLength="0">
                                   <itemDatatype>
-                                    <reference refId="7"/>
+                                    <reference refId="9"/>
                                   </itemDatatype>
                                 </datatype>
                               </element>
@@ -199,7 +206,7 @@
       <element name="attributeVector" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="AttributeCompleteType" type="TREE" refId="9">
+            <datatype name="AttributeCompleteType" type="TREE" refId="10">
               <element name="attrName">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
               </element>
@@ -252,6 +259,7 @@
     Copyright (c) 2010
     Composite Software, Inc.
     All Rights Reserved
+
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
     This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
@@ -304,7 +312,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

@@ -24,7 +24,7 @@
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -83,6 +83,7 @@
 	Output:
 		outXml - contains the incoming XML with nodes pruned
 			Values: e.g. &lt;rootnode xmlns:tns=&quot;http://mynamespace&quot;&gt;&lt;XYZ abc=&quot;def&quot;&gt;&lt;A foo=&quot;&quot;&gt;aa&lt;/A&gt;&lt;B&gt;bbb&lt;/B&gt;&lt;C/&gt;&lt;/XYZ&gt;&lt;/rootnode&gt;
+
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
     This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
@@ -119,11 +120,12 @@ END</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1416604433067</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="p:0:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:0:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="NULL"/>
 </metadata>

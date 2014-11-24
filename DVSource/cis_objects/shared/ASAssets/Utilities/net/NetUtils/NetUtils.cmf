@@ -20,12 +20,12 @@
   <security>
     <owner user="admin" domain="composite"/>
   </security>
-  <attribute name="classpath" type="STRING">/usr/local/Composite_Software/CIS_6.2.0/conf/customjars/commons-net-3.3.jar;</attribute>
+  <attribute name="classpath" type="STRING">conf/customjars/commons-net-3.3.jar;</attribute>
   <attribute name="creationDate" type="LONG">1399489884671</attribute>
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
   <attribute name="driverName" type="STRING">Custom Java Procedure</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="name" type="STRING">NetUtils</attribute>

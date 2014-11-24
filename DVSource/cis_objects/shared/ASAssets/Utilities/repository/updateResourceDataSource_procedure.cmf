@@ -127,7 +127,7 @@
       <datatype name="VARCHAR" type="STRING" maxLength="255"/>
     </parameter>
     <parameter name="dataSourceAttrVector" direction="IN" nullable="true">
-      <datatype name="AttributeVectorType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="AttributeVectorType" type="ARRAY" maxLength="0">
+      <datatype name="AttributeVectorType" type="ARRAY" maxLength="0">
         <itemDatatype>
           <datatype name="AttributeType" type="TREE" refId="1">
             <element name="attrName">
@@ -142,26 +142,26 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="success" direction="OUT" nullable="true">
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
     </parameter>
     <parameter name="createResponse" direction="OUT" nullable="true">
-      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultResponse" direction="OUT" nullable="true">
-      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -668,7 +668,7 @@ Enable Data Source: 		checked
 &lt;common:attribute xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
 &lt;common:name&gt;charset&lt;/common:name&gt;
 &lt;common:type&gt;STRING&lt;/common:type&gt;
-&lt;common:value&gt;&lt;auto detect&gt;&lt;/common:value&gt;
+&lt;common:value&gt;&lt;auto detec&gt;&lt;/common:value&gt;
 &lt;/common:attribute&gt;
 &lt;common:attribute xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
 &lt;common:name&gt;filters&lt;/common:name&gt;
@@ -730,9 +730,9 @@ Enable Data Source: 		checked
 &lt;common:type&gt;STRING&lt;/common:type&gt;
 &lt;common:updateRule&gt;READ_WRITE&lt;/common:updateRule&gt;
 &lt;common:required&gt;true&lt;/common:required&gt;
-&lt;common:defaultValue&gt;&lt;auto detect&gt;&lt;/common:defaultValue&gt;
+&lt;common:defaultValue&gt;&lt;auto detec&gt;&lt;/common:defaultValue&gt;
 &lt;common:suggestedValues&gt;
-&lt;common:item&gt;&lt;auto detect&gt;&lt;/common:item&gt;
+&lt;common:item&gt;&lt;auto detec&gt;&lt;/common:item&gt;
 &lt;common:item&gt;Cp1250&lt;/common:item&gt;
 &lt;common:item&gt;Cp1251&lt;/common:item&gt;
 &lt;common:item&gt;Cp1252&lt;/common:item&gt;
@@ -851,7 +851,7 @@ Enable Data Source: 		checked
 &lt;common:attribute xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
 &lt;common:name&gt;charset&lt;/common:name&gt;
 &lt;common:type&gt;STRING&lt;/common:type&gt;
-&lt;common:value&gt;&lt;auto detect&gt;&lt;/common:value&gt;
+&lt;common:value&gt;&lt;auto detec&gt;&lt;/common:value&gt;
 &lt;/common:attribute&gt;
 &lt;common:attribute xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
 &lt;common:name&gt;filters&lt;/common:name&gt;
@@ -946,7 +946,7 @@ Enable Data Source: 		checked
 &lt;common:type&gt;STRING&lt;/common:type&gt;
 &lt;common:updateRule&gt;READ_WRITE&lt;/common:updateRule&gt;
 &lt;common:required&gt;true&lt;/common:required&gt;
-&lt;common:defaultValue&gt;&lt;auto detect&gt;&lt;/common:defaultValue&gt;
+&lt;common:defaultValue&gt;&lt;auto detec&gt;&lt;/common:defaultValue&gt;
 &lt;common:suggestedValues&gt;
 &lt;common:item&gt;&lt;auto detect&gt;&lt;/common:item&gt;
 &lt;common:item&gt;Cp1250&lt;/common:item&gt;
@@ -1048,13 +1048,13 @@ Enable Data Source: 		checked
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416505422970</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416836024395</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:6:Customized" type="STRING">datatype.changed</attribute>
-  <attribute name="p:7:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+  <attribute name="p:7:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="NULL"/>
 </metadata>

@@ -160,7 +160,7 @@ BEGIN
 	&apos;|| namespaces || &apos;&gt;
   &lt;xslt:output method=&quot;xml&quot; encoding=&quot;UTF-8&quot; indent=&quot;yes&quot;/&gt;
   &lt;xslt:template match=&quot;@*[not(normalize-space(.))]&quot;/&gt;
-  &lt;xslt:template match=&quot;node()[ descendant-or-self::*[@* != &amp;apos;&amp;apos;] or  descendant-or-self::*[string-length(normalize-space(.)) &gt; 0] ]&quot;&gt;
+  &lt;xslt:template match=&quot;node()[ descendant-or-self::*[@* != &amp;apos;&amp;apos;] or  descendant-or-self::*[string-length(normalize-space(.)) &amp;gt; 0] ]&quot;&gt;
     &lt;xslt:copy&gt;
       &lt;xslt:apply-templates select=&quot;@*&quot;/&gt;
       &lt;xslt:apply-templates select=&quot;node()&quot;/&gt;
@@ -231,7 +231,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

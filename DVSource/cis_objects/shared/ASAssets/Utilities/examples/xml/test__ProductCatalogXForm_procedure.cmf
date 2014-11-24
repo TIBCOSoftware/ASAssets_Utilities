@@ -101,10 +101,11 @@
       </element>
     </datatype>
   </dependency>
-  <attribute name="Script" type="STRING">-- example of calling the resulting transform procedure (double check the resulting timestamps of 
--- the LastReorder column and make sure they&apos;ve been converted to your local CIS instance&apos;s time)
---
-/*
+  <attribute name="Script" type="STRING">/* -- example of calling the resulting transform
+
+	procedure (double check the resulting timestamps of 
+	 the LastReorder column and make sure they&apos;ve been converted to your local CIS instance&apos;s time)
+
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
     This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
@@ -439,7 +440,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416604383211</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

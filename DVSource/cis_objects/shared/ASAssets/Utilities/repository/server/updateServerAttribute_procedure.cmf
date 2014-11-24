@@ -438,7 +438,7 @@ execute /services/webservices/system/admin/server/operations/getServerAttributeD
 							&lt;common:name&gt;/server/memory/heap/javaHeapCurrent&lt;/common:name&gt;
 							&lt;common:type&gt;INTEGER&lt;/common:type&gt;
 							&lt;common:updateRule&gt;READ_ONLY&lt;/common:updateRule&gt;
-							&lt;common:annotation&gt;The amount of Java heap currently in use.     &lt;p&gt;&lt;b&gt;This value is a read-only value that indicates the current server state.&lt;/b&gt;&lt;/common:annotation&gt;
+							&lt;common:annotation&gt;The amount of Java heap currently in use.&lt;/common:annotation&gt;
 							&lt;common:displayName&gt;Current Memory Usage&lt;/common:displayName&gt;
 							&lt;common:unitName&gt;bytes&lt;/common:unitName&gt;
 						&lt;/common:attributeDef&gt;
@@ -446,7 +446,7 @@ execute /services/webservices/system/admin/server/operations/getServerAttributeD
 							&lt;common:name&gt;/server/memory/heap/javaHeapMax&lt;/common:name&gt;
 							&lt;common:type&gt;INTEGER&lt;/common:type&gt;
 							&lt;common:updateRule&gt;READ_ONLY&lt;/common:updateRule&gt;
-							&lt;common:annotation&gt;The total amount of Java heap (memory) available for the server&apos;s use.  The minimum value is 50 MB.     &lt;p&gt;&lt;b&gt;This value is locally defined.  It will not be altered when restoring a backup and will not be replicated in a cluster.&lt;/b&gt;&lt;/common:annotation&gt;
+							&lt;common:annotation&gt;The total amount of Java heap (memory) available for the server&apos;s use.  The minimum value is 50 MB. &lt;/common:annotation&gt;
 							&lt;common:minValue&gt;50&lt;/common:minValue&gt;
 							&lt;common:displayName&gt;Total Available Memory (Current)&lt;/common:displayName&gt;
 							&lt;common:unitName&gt;Mbytes&lt;/common:unitName&gt;
@@ -455,7 +455,7 @@ execute /services/webservices/system/admin/server/operations/getServerAttributeD
 							&lt;common:name&gt;/server/memory/heap/javaHeapMaxLimit&lt;/common:name&gt;
 							&lt;common:type&gt;INTEGER&lt;/common:type&gt;
 							&lt;common:updateRule&gt;READ_ONLY&lt;/common:updateRule&gt;
-							&lt;common:annotation&gt;The upper limit for the total amount of Java heap (memory) available for the server&apos;s use. The default value is the total physical memory calculated on the target installation machine.     &lt;p&gt;&lt;b&gt;This value is locally defined.  It will not be altered when restoring a backup and will not be replicated in a cluster.&lt;/b&gt;&lt;/common:annotation&gt;
+							&lt;common:annotation&gt;The upper limit for the total amount of Java heap (memory) available for the server&apos;s use. The default value is the total physical memory calculated on the target installation machine.     This value is locally defined.  It will not be altered when restoring a backup and will not be replicated in a cluster.&lt;/common:annotation&gt;
 							&lt;common:displayName&gt;Upper Limit of Total Available Memory&lt;/common:displayName&gt;
 							&lt;common:unitName&gt;Mbytes&lt;/common:unitName&gt;
 						&lt;/common:attributeDef&gt;
@@ -463,7 +463,7 @@ execute /services/webservices/system/admin/server/operations/getServerAttributeD
 							&lt;common:name&gt;/server/memory/heap/javaHeapMaxOnServerRestart&lt;/common:name&gt;
 							&lt;common:type&gt;INTEGER&lt;/common:type&gt;
 							&lt;common:updateRule&gt;READ_WRITE&lt;/common:updateRule&gt;
-							&lt;common:annotation&gt;The total amount of Java heap (memory) available for the server&apos;s use.  The minimum value is 50 MB. &lt;p&gt;&lt;b&gt;Changing this value will have no effect until the next server restart.&lt;/b&gt;     &lt;p&gt;&lt;b&gt;This value is locally defined.  It will not be altered when restoring a backup and will not be replicated in a cluster.&lt;/b&gt;&lt;/common:annotation&gt;
+							&lt;common:annotation&gt;The total amount of Java heap (memory) available for the server&apos;s use.  The minimum value is 50 MB. Changing this value will have no effect until the next server restart. This value is locally defined.  It will not be altered when restoring a backup and will not be replicated in a cluster.&lt;/common:annotation&gt;
 							&lt;common:minValue&gt;50&lt;/common:minValue&gt;
 							&lt;common:displayName&gt;Total Available Memory (On Server Restart)&lt;/common:displayName&gt;
 							&lt;common:unitName&gt;Mbytes&lt;/common:unitName&gt;
@@ -653,7 +653,7 @@ execute /services/webservices/system/admin/server/operations/getServerAttributes
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416360078676</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
