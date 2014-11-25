@@ -113,7 +113,21 @@
 	09/05/2014		Mike Tinius			6.2.6			Fixed issue for configuring multi-table caching when inStorageMode=&apos;DATA_SOURCE_OTPS&apos;.  Added debug statements.
 	10/20/2014		Mike Tinius			6.2.6			Fixed issue with mode.  When mode=INTERVAL use &lt;interval&gt;.  When mode=CALENDAR use &lt;period&gt; and &lt;count&gt;
 
-    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+</annotation>
   <parameters>
     <parameter name="inResourcePath" direction="IN" nullable="true">
       <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
@@ -149,7 +163,7 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="inRefreshMode" direction="IN" nullable="true">
       <datatype name="VARCHAR" type="STRING" maxLength="255"/>
@@ -206,20 +220,20 @@
       <attribute name="Customized" type="STRING">datatype.changed</attribute>
     </parameter>
     <parameter name="updateResponse" direction="OUT" nullable="true">
-      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="faultResponse" direction="OUT" nullable="true">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
       <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-    </parameter>
-    <parameter name="faultResponse" direction="OUT" nullable="true">
-      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
-        <schemaDatatype>
-          <datatype name="XML" type="TREE" refId="1"></datatype>
-        </schemaDatatype>
-      </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -438,6 +452,9 @@
   <dependency target="/shared/ASAssets/Utilities/repository" type="CONTAINER">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="result" direction="OUT">
@@ -598,6 +615,20 @@ updateResourceCacheConfiguration:
 	10/20/2014		Mike Tinius			6.2.6			Fixed issue with mode.  When mode=INTERVAL use &lt;interval&gt;.  When mode=CALENDAR use &lt;period&gt; and &lt;count&gt;
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
 */
 PROCEDURE updateResourceCacheConfiguration(
     IN inResourcePath            /lib/resource/ResourceDefs.ResourcePath, 
@@ -631,7 +662,7 @@ BEGIN
     PATH /shared/ASAssets/Utilities/log;
     PATH /shared/ASAssets/Utilities/repository;
     PATH /lib/resource;
-	DECLARE debug  CHAR(1) DEFAULT &apos;Y&apos;;--/shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	DECLARE debug  CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
     DECLARE PUBLIC TYPE StorageTargetType ROW (
         stName ResourceDefs.ResourceName, 
         stPath ResourceDefs.ResourcePath, 
@@ -891,7 +922,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1414099496396</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416836017262</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -899,9 +930,9 @@ END</attribute>
   <attribute name="p:16:Customized" type="STRING">datatype.changed</attribute>
   <attribute name="p:17:Customized" type="STRING">datatype.changed</attribute>
   <attribute name="p:23:Customized" type="STRING">datatype.changed</attribute>
-  <attribute name="p:24:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:25:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:24:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:25:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="public_types" type="MAP">
     <item>
       <key type="STRING">StorageTargetType</key>
@@ -924,7 +955,7 @@ ZQMSAAAABAQEAAAAAAAAACgBEwH///////8=</value>
   </attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">16/151</key>
+      <key type="STRING">16/165</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -932,15 +963,7 @@ ZQMSAAAABAQEAAAAAAAAACgBEwH///////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">16/152</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">24/159</key>
+      <key type="STRING">24/173</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -948,7 +971,15 @@ ZQMSAAAABAQEAAAAAAAAACgBEwH///////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">16/153</key>
+      <key type="STRING">16/166</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">16/167</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>

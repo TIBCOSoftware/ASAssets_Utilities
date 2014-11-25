@@ -65,7 +65,21 @@
     Modified Date:  Modified By:        CSW Version:    Reason:
     07/01/2014      Tony Young          6.2.6.0.48      Created new
 
-    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+</annotation>
   <parameters>
     <parameter name="dsPath" direction="IN" nullable="true">
       <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
@@ -260,6 +274,20 @@
     07/01/2014      Tony Young          6.2.6.0.48      Created new
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
 */
 PROCEDURE getDataSourceStatsConfig(
 	IN dsPath /lib/resource/ResourceDefs.ResourcePath,
@@ -300,43 +328,41 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406754007630</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="public_types" type="MAP">
     <item>
-      <key type="STRING">getDataSourceStatsConfigResult</key>
-      <value type="BYTE_ARRAY">EB4GAgAeAGcAZQB0AEQAYQB0AGEAUwBvAHUAcgBjAGUAUwB0AGEAdABzAEMAbwBuAGYAaQBnAFIA
-ZQBzAHUAbAB0BikAbwAvAHUAcwBlAHIAcwAvAGMAbwBtAHAAbwBzAGkAdABlAC8AYQBkAG0AaQBu
-AC8AVQB0AGkAbABpAHQAaQBlAHMAXwBuAGUAdwBpAHQAZQBtAHMALwBSAGUAcwBvAHUAcgBjAGUA
-RQB4AHAAbwByAHQALwBQAFMAQQBzAHMAZQB0AHMALwBVAHQAaQBsAGkAdABpAGUAcwAvAHIAZQBw
-AG8AcwBpAHQAbwByAHkALwBnAGUAdABEAGEAdABhAFMAbwB1AHIAYwBlAFMAdABhAHQAcwBDAG8A
-bgBmAGkAZwYqAB4AZwBlAHQARABhAHQAYQBTAG8AdQByAGMAZQBTAHQAYQB0AHMAQwBvAG4AZgBp
-AGcAUgBlAHMAdQBsAHQDEgAAAAEDEgAAAAEBEwEJFAAAAA8QIQYVAAoAYwBvAG4AZgBpAGcAdQBy
-AGUAZAMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBkGAgADAEIASQBUAxIA
-AAACBAcAAAAAAAAAAAQGAAAAAAAAAAH/////ECEGFQAKAHUAcwBlAEUAbgBhAGIAbABlAGQDLwAA
-AAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAL//xAhBhUAEgB0AGEAYgBsAGUA
-RwBhAHQAaABlAHIARABlAGYAYQB1AGwAdAMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMi
-AAAAAAgZEBsGAgAHAFYAQQBSAEMASABBAFIDEgAAAAMEBAAAAAAAAAD/ARMB/////xAhBhUACgBu
-AHUAbQBUAGgAcgBlAGEAZABzAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQ
-GQYCAAcASQBOAFQARQBHAEUAUgMSAAAABAQH/////4AAAAAEBgAAAAB//////////xAhBhUABwBt
-AGEAeABUAGkAbQBlAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8Q
-IQYVAAsAcgBlAGYAcgBlAHMAaABNAG8AZABlAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////
-AyIAAAAAAxIAAAAD//8QIQYVAAwAcwBjAGgAZQBkAHUAbABlAE0AbwBkAGUDLwAAAAEDFgAAAAAD
-GgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAP//xAhBhUACQBzAHQAYQByAHQAVABpAG0AZQMv
-AAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBYGAgAJAFQASQBNAEUAUwBUAEEA
-TQBQAxIAAAAF/////xAhBhUADgBmAHIAbwBtAFQAaQBtAGUASQBuAEEARABhAHkDLwAAAAEDFgAA
-AAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAZBgIABgBCAEkARwBJAE4AVAMSAAAABgQHgAAA
-AAAAAAD/////ECEGFQANAGUAbgBkAFQAaQBtAGUASQBuAEEARABhAHkDLwAAAAEDFgAAAAADGgAA
-AAEDGwAAAAEDIP////8DIgAAAAADEgAAAAb//xAhBhUADAByAGUAYwB1AHIAcgBpAG4AZwBEAGEA
-eQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABP//ECEGFQAIAGkAbgB0
-AGUAcgB2AGEAbAMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAABP//ECEG
-FQAGAHAAZQByAGkAbwBkAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAD
-//8QIQYVAAUAYwBvAHUAbgB0Ay8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIA
-AAAE//8QIQYVAAkAaQBzAEMAbAB1AHMAdABlAHIDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP//
-//8DIgAAAAADEgAAAAL/////</value>
+      <key type="STRING">GetDataSourceStatsConfigRow</key>
+      <value type="BYTE_ARRAY">EB8GAgAbAEcAZQB0AEQAYQB0AGEAUwBvAHUAcgBjAGUAUwB0AGEAdABzAEMAbwBuAGYAaQBnAFIA
+bwB3BikAPgAvAHMAaABhAHIAZQBkAC8AQQBTAEEAcwBzAGUAdABzAC8AVQB0AGkAbABpAHQAaQBl
+AHMALwByAGUAcABvAHMAaQB0AG8AcgB5AC8AZwBlAHQARABhAHQAYQBTAG8AdQByAGMAZQBTAHQA
+YQB0AHMAQwBvAG4AZgBpAGcGKgAbAEcAZQB0AEQAYQB0AGEAUwBvAHUAcgBjAGUAUwB0AGEAdABz
+AEMAbwBuAGYAaQBnAFIAbwB3AxIAAAABAxIAAAABARMBCRQAAAAPECEGFQAKAGMAbwBuAGYAaQBn
+AHUAcgBlAGQDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAZBgIAAwBCAEkA
+VAMSAAAAAgQHAAAAAAAAAAAEBgAAAAAAAAAB/////xAhBhUACgB1AHMAZQBFAG4AYQBiAGwAZQBk
+Ay8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVABIAdABhAGIA
+bABlAEcAYQB0AGgAZQByAEQAZQBmAGEAdQBsAHQDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP//
+//8DIgAAAAAIGRAbBgIABwBWAEEAUgBDAEgAQQBSAxIAAAADBAQAAAAAAAAA/wETAf////8QIQYV
+AAoAbgB1AG0AVABoAHIAZQBhAGQAcwMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAA
+AAgZEBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAQEB/////+AAAAABAYAAAAAf/////////8QIQYV
+AAcAbQBhAHgAVABpAG0AZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAA
+BP//ECEGFQALAHIAZQBmAHIAZQBzAGgATQBvAGQAZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg
+/////wMiAAAAAAMSAAAAA///ECEGFQAMAHMAYwBoAGUAZAB1AGwAZQBNAG8AZABlAy8AAAABAxYA
+AAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAD//8QIQYVAAkAcwB0AGEAcgB0AFQAaQBt
+AGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAWBgIACQBUAEkATQBFAFMA
+VABBAE0AUAMSAAAABf////8QIQYVAA4AZgByAG8AbQBUAGkAbQBlAEkAbgBBAEQAYQB5Ay8AAAAB
+AxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGQYCAAYAQgBJAEcASQBOAFQDEgAAAAYE
+B4AAAAAAAAAA/////xAhBhUADQBlAG4AZABUAGkAbQBlAEkAbgBBAEQAYQB5Ay8AAAABAxYAAAAA
+AxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAG//8QIQYVAAwAcgBlAGMAdQByAHIAaQBuAGcA
+RABhAHkDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT//xAhBhUACABp
+AG4AdABlAHIAdgBhAGwDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAT/
+/xAhBhUABgBwAGUAcgBpAG8AZAMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMS
+AAAAA///ECEGFQAFAGMAbwB1AG4AdAMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAA
+AAMSAAAABP//ECEGFQAJAGkAcwBDAGwAdQBzAHQAZQByAy8AAAABAxYAAAAAAxoAAAABAxsAAAAB
+AyD/////AyIAAAAAAxIAAAAC/////w==</value>
     </item>
   </attribute>
   <attribute name="references" type="NULL"/>

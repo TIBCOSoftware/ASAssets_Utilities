@@ -47,7 +47,21 @@
     Date:        9/17/2012
     CSW Version: 6.0.0
 
-    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+</annotation>
   <parameters>
     <parameter name="UnionViewPath" direction="IN" nullable="true">
       <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
@@ -246,7 +260,21 @@
     Date:        9/17/2012
     CSW Version: 6.0.0
 
-    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
 */
 PROCEDURE createUnionView(
     IN UnionViewPath              /lib/resource/ResourceDefs.ResourcePath, -- folder that will contain the union view
@@ -435,7 +463,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1399486499965</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -462,7 +490,7 @@ IP////8DIgAAAAADEgAAAAP/////</value>
   </attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">13/205</key>
+      <key type="STRING">13/218</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -470,7 +498,23 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">15/213</key>
+      <key type="STRING">13/219</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/128</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/243</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -478,7 +522,7 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">13/204</key>
+      <key type="STRING">9/118</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -486,7 +530,7 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">10/132</key>
+      <key type="STRING">10/146</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -494,7 +538,15 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">10/122</key>
+      <key type="STRING">99/173</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/116</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -502,7 +554,23 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">10/102</key>
+      <key type="STRING">9/138</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/227</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/136</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -510,15 +578,7 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">15/229</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/112</key>
+      <key type="STRING">10/126</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -526,7 +586,7 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">103/160</key>
+      <key type="STRING">103/174</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -534,63 +594,7 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">15/99</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">15/129</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">15/96</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">15/87</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">15/139</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">15/119</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">15/109</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">99/159</key>
+      <key type="STRING">9/148</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -598,15 +602,7 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">9/114</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">15/90</key>
+      <key type="STRING">15/113</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -614,23 +610,7 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">9/104</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">9/124</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">15/93</key>
+      <key type="STRING">15/104</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -638,11 +618,59 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">9/134</key>
+      <key type="STRING">15/107</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/133</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/153</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/123</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/143</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/110</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/101</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
       </value>
     </item>
   </attribute>

@@ -21,7 +21,7 @@
 					(&apos;loggingType&apos;, 		loggingType),					-- The type of logging to perform.  One or more of this list: [LOG, EMAIL, DB, PRINT]
 																			--		LOG - write to the Composite log.
 																			--		EMAIL - send an email.  (not yet implemented)
-																			--		DB - insert the message into the AUDI_LOG table. (created and introspected by developer during initialization)
+																			--		DB - insert the message into the AUDIT_LOG table. (created and introspected by developer during initialization)
 																			--		PRINT - print to the Studio command line.
 					(&apos;notificationType&apos;, 	notificationType),				-- The type of notification that is being logged.  One and only one of [ERROR|INFO|DEBUG|AUDIT]
     																		--		ERROR - Output error message with severity level ERROR.
@@ -63,7 +63,21 @@
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	10/20/2014		Mike Tinius			6.2.6			Created new
 
-    © 2014 Cisco and/or its affiliates. All rights reserved.
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
 
 	*********************************************************************
 	* Sample DDL syntax for the AUDIT_LOG table.
@@ -136,7 +150,7 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -367,7 +381,7 @@
 					(&apos;loggingType&apos;, 		loggingType),					-- The type of logging to perform.  One or more of this list: [LOG, EMAIL, DB, PRINT]
 																			--		LOG - write to the Composite log.
 																			--		EMAIL - send an email.  (not yet implemented)
-																			--		DB - insert the message into the AUDI_LOG table. (created and introspected by developer during initialization)
+																			--		DB - insert the message into the AUDIT_LOG table. (created and introspected by developer during initialization)
 																			--		PRINT - print to the Studio command line.
 					(&apos;notificationType&apos;, 	notificationType),				-- The type of notification that is being logged.  One and only one of [ERROR|INFO|DEBUG|AUDIT]
     																		--		ERROR - Output error message with severity level ERROR.
@@ -409,7 +423,21 @@
 	Modified Date:	Modified By:		CSW Version:	Reason:
 	10/20/2014		Mike Tinius			6.2.6			Created new
 
-    © 2014 Cisco and/or its affiliates. All rights reserved.
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
 
 	*********************************************************************
 	* Sample DDL syntax for the AUDIT_LOG table.
@@ -702,13 +730,13 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1414096810829</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="p:0:Customized" type="STRING">datatype.changed</attribute>
-  <attribute name="p:1:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:1:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="public_types" type="MAP">
     <item>
       <key type="STRING">AttributeType</key>
@@ -723,7 +751,15 @@ AEwATwBOAEcAVgBBAFIAQwBIAEEAUgMSAAAAAwQEAAAAAH////8BEwH///////8=</value>
   </attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">8/347</key>
+      <key type="STRING">9/251</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">8/265</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -731,7 +767,7 @@ AEwATwBOAEcAVgBBAFIAQwBIAEEAUgMSAAAAAwQEAAAAAH////8BEwH///////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">9/234</key>
+      <key type="STRING">9/248</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -739,19 +775,11 @@ AEwATwBOAEcAVgBBAFIAQwBIAEEAUgMSAAAAAwQEAAAAAH////8BEwH///////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">8/251</key>
+      <key type="STRING">8/361</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
         <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">9/237</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
       </value>
     </item>
   </attribute>

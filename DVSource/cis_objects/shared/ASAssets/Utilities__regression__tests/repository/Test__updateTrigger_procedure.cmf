@@ -43,36 +43,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/updateTrigger" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="fullResourcePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
-      </element>
-      <element name="procedurePath" direction="IN">
-        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
-      </element>
-      <element name="procedureParam" direction="IN">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-      <element name="success" direction="OUT">
-        <datatype type="INTEGER" minValue="0" maxValue="1"/>
-      </element>
-      <element name="createResponse" direction="OUT">
-        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
-          <schemaDatatype>
-            <datatype name="XML" type="TREE" refId="2"></datatype>
-          </schemaDatatype>
-        </datatype>
-      </element>
-      <element name="faultResponse" direction="OUT">
-        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
-          <schemaDatatype>
-            <reference refId="2"/>
-          </schemaDatatype>
-        </datatype>
-      </element>
-    </datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests" type="CONTAINER">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
@@ -128,7 +98,7 @@ BEGIN
             SET numSkipped = numSkipped + 1;
             LEAVE test_block_1;
         END IF;
-
+/*
         CALL /shared/ASAssets/Utilities/repository/updateTrigger(
             resourcePath,
             procedurePath,
@@ -137,7 +107,7 @@ BEGIN
             responseXML,
             faultXML
         );
-
+*/
         IF (success = 1) THEN
             CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: OK&apos;);
         ELSE
@@ -160,7 +130,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406909144529</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1414099813128</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

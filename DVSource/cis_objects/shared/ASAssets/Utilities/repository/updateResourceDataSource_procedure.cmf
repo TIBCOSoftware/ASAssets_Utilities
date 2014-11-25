@@ -39,6 +39,20 @@
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
+
 	TYPES / SUBTYPES:
 	=================
 	The following resource types/subtypes are supported by this operation.  Resources
@@ -128,7 +142,7 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="success" direction="OUT" nullable="true">
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
@@ -139,7 +153,7 @@
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultResponse" direction="OUT" nullable="true">
       <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
@@ -147,7 +161,7 @@
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -299,48 +313,13 @@
                                 <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
                               </element>
                               <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                <datatype name="attributeTypeValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="15">
-                                  <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                                    <datatype name="attributeTypeValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="16">
-                                      <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
-                                        <datatype name="attributeType" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                                      </element>
-                                      <element name="value" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                        <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                                      </element>
-                                      <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                        <reference refId="15"/>
-                                      </element>
-                                      <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                        <datatype name="attributeTypeValueMap" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="17">
-                                          <element name="entry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                                            <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="18">
-                                              <element name="key" namespace="http://www.compositesw.com/services/system/util/common">
-                                                <reference refId="16"/>
-                                              </element>
-                                              <element name="value" namespace="http://www.compositesw.com/services/system/util/common">
-                                                <reference refId="16"/>
-                                              </element>
-                                            </datatype>
-                                          </element>
-                                        </datatype>
-                                      </element>
-                                      <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                        <datatype name="attributeSimpleValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="19">
-                                          <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                                            <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                                          </element>
-                                        </datatype>
-                                      </element>
-                                    </datatype>
-                                  </element>
-                                </datatype>
+                                <reference refId="8"/>
                               </element>
                               <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                <reference refId="17"/>
+                                <reference refId="10"/>
                               </element>
                               <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                <reference refId="19"/>
+                                <reference refId="12"/>
                               </element>
                               <element name="unset" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
                                 <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
@@ -363,7 +342,7 @@
       <element name="updateResourcesResponse" direction="OUT">
         <datatype name="updateResourcesResponse" extendedName="{http://www.compositesw.com/services/system/admin/resource}updateResourcesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}updateResourcesResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}updateResourcesResponse">
           <schemaDatatype>
-            <datatype name="updateResourcesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="updateResourcesResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="20">
+            <datatype name="updateResourcesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="updateResourcesResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="ELEMENT_DECL" type="TREE" refId="15">
               <element name="resources" namespace="http://www.compositesw.com/services/system/admin/resource">
                 <reference refId="3"/>
               </element>
@@ -374,9 +353,9 @@
       <element name="fault" direction="OUT">
         <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
           <schemaDatatype>
-            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="21">
+            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="16">
               <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="22">
+                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="17">
                   <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
                     <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
                   </element>
@@ -498,6 +477,20 @@
 	CSW Version: 5.1.0
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
 
 	TYPES / SUBTYPES:
 	=================
@@ -675,7 +668,7 @@ Enable Data Source: 		checked
 &lt;common:attribute xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
 &lt;common:name&gt;charset&lt;/common:name&gt;
 &lt;common:type&gt;STRING&lt;/common:type&gt;
-&lt;common:value&gt;&amp;lt;auto detect&amp;gt;&lt;/common:value&gt;
+&lt;common:value&gt;&lt;auto detec&gt;&lt;/common:value&gt;
 &lt;/common:attribute&gt;
 &lt;common:attribute xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
 &lt;common:name&gt;filters&lt;/common:name&gt;
@@ -737,9 +730,9 @@ Enable Data Source: 		checked
 &lt;common:type&gt;STRING&lt;/common:type&gt;
 &lt;common:updateRule&gt;READ_WRITE&lt;/common:updateRule&gt;
 &lt;common:required&gt;true&lt;/common:required&gt;
-&lt;common:defaultValue&gt;&amp;lt;auto detect&amp;gt;&lt;/common:defaultValue&gt;
+&lt;common:defaultValue&gt;&lt;auto detec&gt;&lt;/common:defaultValue&gt;
 &lt;common:suggestedValues&gt;
-&lt;common:item&gt;&amp;lt;auto detect&amp;gt;&lt;/common:item&gt;
+&lt;common:item&gt;&lt;auto detec&gt;&lt;/common:item&gt;
 &lt;common:item&gt;Cp1250&lt;/common:item&gt;
 &lt;common:item&gt;Cp1251&lt;/common:item&gt;
 &lt;common:item&gt;Cp1252&lt;/common:item&gt;
@@ -858,7 +851,7 @@ Enable Data Source: 		checked
 &lt;common:attribute xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
 &lt;common:name&gt;charset&lt;/common:name&gt;
 &lt;common:type&gt;STRING&lt;/common:type&gt;
-&lt;common:value&gt;&amp;lt;auto detect&amp;gt;&lt;/common:value&gt;
+&lt;common:value&gt;&lt;auto detec&gt;&lt;/common:value&gt;
 &lt;/common:attribute&gt;
 &lt;common:attribute xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot;&gt;
 &lt;common:name&gt;filters&lt;/common:name&gt;
@@ -953,9 +946,9 @@ Enable Data Source: 		checked
 &lt;common:type&gt;STRING&lt;/common:type&gt;
 &lt;common:updateRule&gt;READ_WRITE&lt;/common:updateRule&gt;
 &lt;common:required&gt;true&lt;/common:required&gt;
-&lt;common:defaultValue&gt;&amp;lt;auto detect&amp;gt;&lt;/common:defaultValue&gt;
+&lt;common:defaultValue&gt;&lt;auto detec&gt;&lt;/common:defaultValue&gt;
 &lt;common:suggestedValues&gt;
-&lt;common:item&gt;&amp;lt;auto detect&amp;gt;&lt;/common:item&gt;
+&lt;common:item&gt;&lt;auto detect&gt;&lt;/common:item&gt;
 &lt;common:item&gt;Cp1250&lt;/common:item&gt;
 &lt;common:item&gt;Cp1251&lt;/common:item&gt;
 &lt;common:item&gt;Cp1252&lt;/common:item&gt;
@@ -1055,13 +1048,13 @@ Enable Data Source: 		checked
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406829809179</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416836024395</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:6:Customized" type="STRING">datatype.changed</attribute>
-  <attribute name="p:7:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
+  <attribute name="p:7:Customized" type="STRING">datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="NULL"/>
 </metadata>

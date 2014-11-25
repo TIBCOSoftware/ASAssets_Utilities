@@ -28,7 +28,21 @@
     Date:        9/10/2010
     CSW Version: 5.1.0
 
-    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.</annotation>
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+</annotation>
   <parameters>
     <parameter name="getResource" direction="IN" nullable="true">
       <datatype name="getResource" extendedName="{http://www.compositesw.com/services/system/admin/resource}getResource" namespace="http://www.compositesw.com/services/system/admin/resource" referenceDefinitionSet="/services/webservices/system/admin/resource/operations/ResourceSchema" referenceType="{http://www.compositesw.com/services/system/admin/resource}getResource" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getResource">
@@ -289,7 +303,7 @@
   <attribute name="explicitly.designed" type="BOOLEAN">true</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1392832201970</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="sourcePath" type="STRING">/services/webservices/system/admin/resource/operations/getResource</attribute>
@@ -335,7 +349,7 @@ dAmAPc+5ODVDRooQu2kuywU1mViwxZwwAjnDS1KIS2n5PEhR6Z7HVAoY4chIIC/KvHtOY0VIPNEK
 SpX9xcIqpJ7SkCz5YH0mRb9QlUqmnsIypzuv9ClVZHMLX1MzhEcvjtwnfha/FBpPlowWuMyIlYIB
 4+EKOE6Js4BCataBeAtYThHKhzaks5pnyvGqVkkbZlQZ5lc2WdGg9OeSH5OfeGCS75mDDVhOvk5C
 H/2hF4jg4k1P42+Gv/gPUEsHCB784SvYCAAAK14AAFBLAQIUABQACAgIAIBzZjoe/OEr2AgAACte
-AAABAAAAAAAAAAAAAAAAAAAAAABzUEsFBgAAAAABAAEALwAAAAcJAAAAAA==</attribute>
+AAABAAAAAAAAAAAAAAAAAAAAAABzUEsFBgAAAAABAAEALwAAAAcJAAAAIQ==</attribute>
   <attribute name="xqueryModel" type="NULL"/>
   <attribute name="xslt" type="STRING">&lt;xslt:stylesheet xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:ns2=&quot;http://www.compositesw.com/services/system/util/common&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;1.0&quot;&gt;
   &lt;xslt:template match=&quot;/&quot;&gt;

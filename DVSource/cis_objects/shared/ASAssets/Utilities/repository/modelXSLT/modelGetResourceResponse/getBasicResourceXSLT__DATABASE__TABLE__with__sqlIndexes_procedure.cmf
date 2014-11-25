@@ -1,5 +1,22 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <metadata name="getBasicResourceXSLT_DATABASE_TABLE_with_sqlIndexes" path="/shared/ASAssets/Utilities/repository/modelXSLT/modelGetResourceResponse/getBasicResourceXSLT_DATABASE_TABLE_with_sqlIndexes" type="PROCEDURE" subtype="XSLT_TRANSFORM_PROCEDURE" changeToken="0">
+  <annotation>
+    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
+</annotation>
   <parameters>
     <parameter name="outputs" direction="OUT" nullable="false">
       <datatype name="outputs" type="TABLE" refId="1">
@@ -161,7 +178,7 @@
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="sourcePath" type="STRING">/shared/ASAssets/Utilities/repository/modelXSLT/modelGetResourceResponse/getResourceResponse_DATABASE_TABLE_w_Indexes/getBasicResourceXML_DATABASE_TABLE.xml</attribute>
@@ -208,7 +225,7 @@ qqwoCXdFoCftLk8aY5YlkidhJBdi6gExmSrJE1qbkFxO6erLLlPbhPRKrKgvvkJuQ/JL4aGRBkj0
 3yNs5EyPxRf34viTIcbKcMcvmz6CuynYEeToadCZA1gmMQOgB8SjRbv4KapHxipWk5sVKYw2MFRK
 wT3+eYTQBIKG+ucRIKUYn59SrcQENMO88HmEImyHT6UQtBvhAvSNyHL7hnq39of/AFBLBwgXZnBq
 +ggAAG1bAABQSwECFAAUAAgACACAc2Y6F2ZwavoIAABtWwAAAQAAAAAAAAAAAAAAAAAAAAAAc1BL
-BQYAAAAAAQABAC8AAAApCQAAAAA=</attribute>
+BQYAAAAAAQABAC8AAAApCQAAACE=</attribute>
   <attribute name="xqueryModel" type="NULL"/>
   <attribute name="xslt" type="STRING">
 &lt;xslt:stylesheet version=&quot;2.0&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;
