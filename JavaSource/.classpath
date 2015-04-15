@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="DateUtils/src"/>
+	<classpathentry kind="src" path="LogUtils/src"/>
 	<classpathentry kind="src" path="XMLUtils/src"/>
 	<classpathentry kind="src" path="RepoUtils/src"/>
 	<classpathentry kind="src" path="TextUtils/src"/>
@@ -22,5 +23,6 @@
 	<classpathentry kind="lib" path="lib/joda-time-1.6.2.jar"/>
 	<classpathentry kind="lib" path="lib/jtidy-r938.jar"/>
 	<classpathentry kind="lib" path="lib/xerces.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-1.4.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
