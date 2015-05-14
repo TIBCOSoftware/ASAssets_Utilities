@@ -50,7 +50,7 @@
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
     </parameter>
     <parameter name="responseXML" direction="OUT" nullable="true">
-      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
@@ -58,7 +58,7 @@
       <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultXML" direction="OUT" nullable="true">
-      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>

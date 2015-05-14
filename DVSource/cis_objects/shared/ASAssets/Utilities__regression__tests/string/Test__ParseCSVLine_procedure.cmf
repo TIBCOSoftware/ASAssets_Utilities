@@ -223,19 +223,19 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">31/9</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">10/107</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
         <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">31/9</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
       </value>
     </item>
     <item>

@@ -19,7 +19,7 @@
 </annotation>
   <parameters>
     <parameter name="iXml" direction="IN" nullable="true">
-      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
@@ -63,8 +63,6 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
-    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/xml/castXMLTextNodeAsVarchar" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -82,6 +80,9 @@
   </dependency>
   <dependency target="/system/customfunctions/castXMLTextNodeAsVarchar" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/castXMLTextNodeAsVarchar" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/*
 	Procedure to transform XML string to CURSOR result set

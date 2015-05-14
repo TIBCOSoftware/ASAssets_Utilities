@@ -99,6 +99,13 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/updateSqlTable" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
@@ -132,6 +139,9 @@
   <dependency target="/shared/ASAssets/Utilities_regression_tests/Constants" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
   <attribute name="Script" type="STRING">PROCEDURE Test_updateSqlTable(
     OUT numTests INTEGER,
     OUT numErrors INTEGER,
@@ -159,7 +169,10 @@ BEGIN
     test_block_1: 
     BEGIN INDEPENDENT TRANSACTION
         SET resourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;;
-        SET sqlText = 
+
+		CASE (SUBSTRING(getCisVersion(), 1, 3))
+		    WHEN &apos;6.2&apos; THEN
+                SET sqlText = 
 &apos;SELECT 
     OrderID, 
     CustomerID, 
@@ -168,6 +181,17 @@ BEGIN
     PurchaseOrderNumber 
 FROM 
     /shared/examples/ds_orders/orders&apos;;
+            ELSE
+                SET sqlText = 
+&apos;SELECT 
+    OrderID, 
+    CustomerID, 
+    EmployeeID, 
+    OrderDate, 
+    PurchaseOrderNumber 
+FROM 
+    /shared/examples/ds_orders/tutorial/orders&apos;;
+        END CASE;
 
         SET args = &apos;&apos;&apos;&apos; || resourcePath || &apos;&apos;&apos;, &apos; ||
                    &apos;&apos;&apos;&apos; || sqlText || &apos;&apos;&apos;&apos;;
@@ -235,18 +259,26 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406909144529</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424306046045</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">14/45</key>
+      <key type="STRING">18/79</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/99</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
       </value>
     </item>
     <item>
@@ -258,7 +290,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">17/77</key>
+      <key type="STRING">14/59</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -266,15 +298,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/91</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/51</key>
+      <key type="STRING">18/105</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -290,15 +314,15 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/83</key>
+      <key type="STRING">17/91</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
       </value>
     </item>
     <item>
-      <key type="STRING">18/85</key>
+      <key type="STRING">18/97</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

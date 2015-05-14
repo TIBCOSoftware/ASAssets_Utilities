@@ -64,7 +64,8 @@ BEGIN
     --
     SET args = &apos;&apos;&apos;&apos; || /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_trigger&apos;&apos;, &apos;&apos;TRIGGER&apos;&apos;&apos;;
     SET expectedResultCSV = 
-&apos;PROCEDURE,PARAMETERS,STRING,&quot;/shared/examples/ds_orders/orders, TABLE&quot;
+&apos;PROCEDURE,EXHAUST_CURSORS,BOOLEAN,false
+PROCEDURE,PARAMETERS,STRING,
 PROCEDURE,PATH,STRING,/lib/resource/RefreshResourceCache
 PROCEDURE,,,&apos;;
 
@@ -95,7 +96,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397498896719</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424304230360</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -118,7 +119,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/38</key>
+      <key type="STRING">10/39</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

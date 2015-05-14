@@ -293,8 +293,6 @@ BEGIN
     DECLARE args System.Text;
     DECLARE result System.Text;
     DECLARE resourceExists BOOLEAN;
-
--- Added by Niraj for regression test - 8/22/2013
 	DECLARE incremental BIT;
 	DECLARE storageBucketMode VARCHAR(255);
 	DECLARE storageBucketCatalog    VARCHAR(255);
@@ -329,18 +327,16 @@ BEGIN
         SET intervalCount = NULL;
         SET expirationPeriod = 0;
         SET clearRule = &apos;NONE&apos;;
-
--- Added by Niraj 8/22/2013
-	SET incremental = NULL;
-	SET storageBucketMode = NULL;
-	SET storageBucketCatalog = NULL;
-    SET storageBucketSchema  = NULL; 
-    SET storageBucketPrefix  = NULL; 
-    SET storageBucketNumBuckets = 0; 
-    SET storageDropCreateIdx = 0;
-    SET firstRefreshCallBack  = NULL; 
-    SET secondRefreshCallBack  = NULL;
-
+		SET incremental = 0;
+		SET storageBucketMode = NULL;
+		SET storageBucketCatalog = NULL;
+	    SET storageBucketSchema  = NULL; 
+	    SET storageBucketPrefix  = NULL; 
+	    SET storageBucketNumBuckets = 0; 
+	    SET storageDropCreateIdx = 0;
+	    SET firstRefreshCallBack  = NULL; 
+	    SET secondRefreshCallBack  = NULL;
+	
         SET args = &apos;&apos;&apos;&apos; || resourcePath || &apos;&apos;&apos;, &apos; ||
                    &apos;&apos;&apos;&apos; || resourceType || &apos;&apos;&apos;, &apos; ||
                    &apos;&apos; || COALESCE(configured, &apos;NULL&apos;) || &apos;, &apos; ||
@@ -356,7 +352,7 @@ BEGIN
                    &apos;&apos; || COALESCE(CAST(intervalPeriod AS VARCHAR), &apos;NULL&apos;) || &apos;, &apos; ||
                    &apos;&apos; || COALESCE(CAST(intervalCount AS VARCHAR), &apos;NULL&apos;) || &apos;, &apos; ||
                    &apos;&apos; || expirationPeriod || &apos;, &apos; ||
-                   &apos;&apos;&apos;&apos; || clearRule || &apos;&apos;&apos;, &apos;  ||  -- Added by Niraj 08/22/2013
+                   &apos;&apos;&apos;&apos; || clearRule || &apos;&apos;&apos;, &apos;  ||
 				   &apos;&apos;&apos;&apos; || incremental || &apos;&apos;&apos;, &apos; ||
 				   &apos;&apos; || COALESCE(storageBucketMode, &apos;NULL&apos;) || &apos;, &apos; ||
 	 			   &apos;&apos; || COALESCE(storageBucketCatalog, &apos;NULL&apos;) || &apos;, &apos; ||
@@ -401,7 +397,7 @@ BEGIN
 			intervalCount,
             expirationPeriod,
             clearRule,
-			incremental, -- Added by Niraj on 8/22/2013
+			incremental,
 			storageBucketMode,
 			storageBucketCatalog, 
     		storageBucketSchema, 
@@ -409,7 +405,7 @@ BEGIN
     		storageBucketNumBuckets, 
     		storageDropCreateIdx, 
     		firstRefreshCallBack, 
-    		secondRefreshCallBack, -- Add ended - 8/22/2013
+    		secondRefreshCallBack,
             success,
             responseXML,
             faultXML
@@ -457,7 +453,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406909144529</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424305755089</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -473,6 +469,14 @@ END</attribute>
     </item>
     <item>
       <key type="STRING">26/13</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">28/53</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -496,15 +500,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">28/55</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/187</key>
+      <key type="STRING">10/183</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

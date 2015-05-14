@@ -2,8 +2,6 @@
 <metadata name="Procedures" path="/shared/ASAssets/Utilities/examples/repository/source/Rebind/RebindFolder/Procedures" type="CONTAINER" subtype="FOLDER" changeToken="0">
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
-    <privilege group="all" domain="dynamic" privileges="READ EXECUTE SELECT"/>
   </security>
   <attribute name="creationDate" type="LONG">1382029188095</attribute>
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>

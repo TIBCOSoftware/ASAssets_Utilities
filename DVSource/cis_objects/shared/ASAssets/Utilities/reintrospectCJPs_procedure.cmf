@@ -219,19 +219,19 @@ END</attribute>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">28/50</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">29/51</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
         <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">28/50</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
       </value>
     </item>
     <item>
@@ -251,7 +251,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/67</key>
+      <key type="STRING">14/85</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -259,7 +259,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/85</key>
+      <key type="STRING">14/67</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -275,19 +275,19 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">32/52</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">14/78</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
         <item>GetDataSourceReintrospectReport</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">32/52</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
       </value>
     </item>
   </attribute>

@@ -67,7 +67,6 @@ BEGIN
     EXCEPTION
         ELSE
             SET result = &apos;EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE;
-call print (CURRENT_EXCEPTION.TRACE);
     END;
 
     CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: &apos; || result);
@@ -93,7 +92,6 @@ call print (CURRENT_EXCEPTION.TRACE);
     EXCEPTION
         ELSE
             SET result = &apos;EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE;
-call print (CURRENT_EXCEPTION.TRACE);
     END;
 
     CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: &apos; || result);
@@ -111,22 +109,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424303810956</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">6/31</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">6/57</key>
+      <key type="STRING">10/58</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -150,7 +140,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/34</key>
+      <key type="STRING">10/33</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -163,14 +153,6 @@ END</attribute>
         <item>lib</item>
         <item>util</item>
         <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/60</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
       </value>
     </item>
   </attribute>

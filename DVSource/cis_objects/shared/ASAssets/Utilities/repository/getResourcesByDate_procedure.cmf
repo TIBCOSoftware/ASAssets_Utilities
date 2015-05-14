@@ -146,11 +146,23 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitionsRecursive" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -212,6 +224,9 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_ResourceAttributes" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_ResourceAttributes" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
@@ -239,6 +254,9 @@
         </datatype>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -297,6 +315,9 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListRecursive" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="inputString" direction="IN">
@@ -317,6 +338,9 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/time/DateUtils/BigintToTimestamp" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/time/DateUtils/TimestampToBigint" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="inTimestamp" direction="IN">
@@ -327,8 +351,14 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/time/DateUtils/TimestampToBigint" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* getResourcesByDate
 	-- CIS Repository Helper Procedure --
@@ -777,12 +807,12 @@ END</attribute>
       <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAAAADBAYAAAAAAAAAA///</value>
     </item>
     <item>
-      <key type="STRING">OPTION_MODIFIED_BEFORE</key>
-      <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAAAAEBAYAAAAAAAAABP//</value>
-    </item>
-    <item>
       <key type="STRING">OPTION_N_LEAST_RECENT</key>
       <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAAAACBAYAAAAAAAAAAv//</value>
+    </item>
+    <item>
+      <key type="STRING">OPTION_MODIFIED_BEFORE</key>
+      <value type="BYTE_ARRAY">EBkGAgAHAEkATgBUAEUARwBFAFIDEgAAAAEEBwAAAAAAAAAEBAYAAAAAAAAABP//</value>
     </item>
     <item>
       <key type="STRING">OPTION_N_MOST_RECENT</key>

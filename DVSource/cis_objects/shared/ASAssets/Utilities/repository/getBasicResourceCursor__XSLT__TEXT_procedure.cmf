@@ -27,15 +27,10 @@
         			xsltText VARCHAR(2147483647), 
         			proprietaryModel VARCHAR(2147483647)
 				)
-	Exceptions:  none
-	Author:      Mike Tinius
-	Date:        8/2/2010
-	CSW Version: 5.1.0
-
-	Updated By:  Calvin Goodrich
-	Date:        8/28/2012
-	CSW Version: 5.2.0
-    Reason:      Added proprietary model to output
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			created new
+    08/28/2012		Calvin Goodrich		5.2.0			Added proprietary model to output
+	03/23/2015		Calvin Goodrich		7.0.1			Moved defintion of output cursor to public custom type
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -158,14 +153,23 @@
   <security>
     <owner user="admin" domain="composite"/>
   </security>
-  <dependency target="/lib/debug/Print" type="PROCEDURE">
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
-      <element name="textToPrint" direction="IN">
-        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      <element name="moduleName" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="moduleNameType" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" maxLength="1"/>
+      </element>
+      <element name="messageText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML" type="PROCEDURE">
@@ -241,8 +245,11 @@
 	Input:
 		fullResourcePath - Full resource path which includes the path and the resource name  
 			Values: e.g. /shared/Utilities/repository/lowerLevelProcedures/resourceExistsXSLT
+
 		resourceType - Type of CIS resource to be created
 			Values: see &quot;TYPES / SUBTYPES&quot; listing below.  e.g. PROCEDURE
+
+
 	Output:
 		resourceCursor - XML response containing the resource metadata
 			CURSOR (
@@ -257,15 +264,15 @@
         			xsltText VARCHAR(2147483647), 
         			proprietaryModel VARCHAR(2147483647)
 				)
-	Exceptions:  none
-	Author:      Mike Tinius
-	Date:        8/2/2010
-	CSW Version: 5.1.0
 
-	Updated By:  Calvin Goodrich
-	Date:        8/28/2012
-	CSW Version: 5.2.0
-    Reason:      Added proprietary model to output
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			created new
+    08/28/2012		Calvin Goodrich		5.2.0			Added proprietary model to output
+	03/23/2015		Calvin Goodrich		7.0.1			Moved defintion of output cursor to public custom type
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -347,7 +354,10 @@
 PROCEDURE getBasicResourceCursor_XSLT_TEXT(
     IN fullResourcePath 	/shared/ASAssets/Utilities/TypeDefinitions.pathType,  
     IN resourceType 		VARCHAR, 
-    OUT resourceCursor CURSOR (
+    OUT resourceCursor      CURSOR ResultRowType
+)
+BEGIN
+    DECLARE PUBLIC TYPE ResultRowType ROW (
         name VARCHAR(255), 
         &quot;path&quot; VARCHAR(32768), 
         &quot;type&quot; VARCHAR(255), 
@@ -358,34 +368,53 @@ PROCEDURE getBasicResourceCursor_XSLT_TEXT(
         transformSourceType VARCHAR(255), 
         xsltText VARCHAR(2147483647), 
         proprietaryModel VARCHAR(2147483647)
-        )
-    )
-    BEGIN
-	DECLARE resourceResponse XML;
+    );
+	DECLARE moduleName		VARCHAR DEFAULT &apos;getBasicResourceCursor_XSLT_TEXT&apos;;
+	DECLARE debug			CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+
+    DECLARE resourceResponse XML;
 	call /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML(fullResourcePath, resourceType, resourceResponse);
-call print (CAST(resourceResponse AS LONGVARCHAR));
-        OPEN resourceCursor FOR 
-            SELECT * FROM /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_XSLT_TEXT(resourceResponse);
-    END</attribute>
+
+	call /shared/ASAssets/Utilities/log/logDebugMessage(moduleName, debug, CAST(resourceResponse AS LONGVARCHAR));
+
+    OPEN resourceCursor FOR 
+        SELECT * FROM /shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_XSLT_TEXT(resourceResponse);
+END</attribute>
   <attribute name="creationDate" type="LONG">1369417729293</attribute>
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1430320471989</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="references" type="MAP">
+  <attribute name="public_types" type="MAP">
     <item>
-      <key type="STRING">6/134</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
+      <key type="STRING">ResultRowType</key>
+      <value type="BYTE_ARRAY">EB8GAgANAFIAZQBzAHUAbAB0AFIAbwB3AFQAeQBwAGUGKQBGAC8AcwBoAGEAcgBlAGQALwBBAFMA
+QQBzAHMAZQB0AHMALwBVAHQAaQBsAGkAdABpAGUAcwAvAHIAZQBwAG8AcwBpAHQAbwByAHkALwBn
+AGUAdABCAGEAcwBpAGMAUgBlAHMAbwB1AHIAYwBlAEMAdQByAHMAbwByAF8AWABTAEwAVABfAFQA
+RQBYAFQGKgANAFIAZQBzAHUAbAB0AFIAbwB3AFQAeQBwAGUDEgAAAAEDEgAAAAEBEwEJFAAAAAoQ
+IQYVAAQAbgBhAG0AZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBsGAgAH
+AFYAQQBSAEMASABBAFIDEgAAAAIEBAAAAAAAAAD/ARMB/////xAhBhUABABwAGEAdABoAy8AAAAB
+AxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAcAVgBBAFIAQwBIAEEAUgMSAAAA
+AwQEAAAAAAAAgAABEwH/////ECEGFQAEAHQAeQBwAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAED
+IP////8DIgAAAAADEgAAAAL//xAhBhUABwBzAHUAYgB0AHkAcABlAy8AAAABAxYAAAAAAxoAAAAB
+AxsAAAABAyD/////AyIAAAAAAxIAAAAC//8QIQYVAAcAZQBuAGEAYgBsAGUAZAMvAAAAAQMWAAAA
+AAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBkGAgADAEIASQBUAxIAAAAEBAcAAAAAAAAAAAQG
+AAAAAAAAAAH/////ECEGFQASAGUAeABwAGwAaQBjAGkAdABsAHkARABlAHMAaQBnAG4AZQBkAy8A
+AAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE//8QIQYVABMAdAByAGEAbgBz
+AGYAbwByAG0AUwBvAHUAcgBjAGUAUABhAHQAaAMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg////
+/wMiAAAAAAMSAAAAA///ECEGFQATAHQAcgBhAG4AcwBmAG8AcgBtAFMAbwB1AHIAYwBlAFQAeQBw
+AGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAL//xAhBhUACAB4AHMA
+bAB0AFQAZQB4AHQDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAAIGRAbBgIABwBW
+AEEAUgBDAEgAQQBSAxIAAAAFBAQAAAAAf////wETAf////8QIQYVABAAcAByAG8AcAByAGkAZQB0
+AGEAcgB5AE0AbwBkAGUAbAMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAMSAAAA
+Bf////8=</value>
     </item>
   </attribute>
+  <attribute name="references" type="NULL"/>
 </metadata>

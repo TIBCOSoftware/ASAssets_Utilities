@@ -267,14 +267,6 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">11/87</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">9/102</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
@@ -283,11 +275,11 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">11/86</key>
+      <key type="STRING">11/87</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
-        <item>Log</item>
+        <item>Print</item>
       </value>
     </item>
     <item>
@@ -296,6 +288,14 @@ END</attribute>
         <item>lib</item>
         <item>debug</item>
         <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/86</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Log</item>
       </value>
     </item>
   </attribute>

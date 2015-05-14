@@ -58,6 +58,13 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="query" direction="IN">
@@ -72,6 +79,9 @@
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/getCisHome" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/getFileContentsAscii" type="PROCEDURE">
@@ -101,7 +111,13 @@ BEGIN
 
     -- start test
     --
-    SET args = &apos;&apos;&apos;select * from /shared/examples/ds_inventory/products&apos;&apos;, &apos;&apos;2,40,40,1,20,6,2,7&apos;&apos;, &apos;&apos;false&apos;&apos;, 8, &apos;&apos;&apos; || testFile || &apos;&apos;&apos;, 0, 10&apos;;
+	CASE (SUBSTRING(getCisVersion(), 1, 3))
+	    WHEN &apos;6.2&apos; THEN
+            SET args = &apos;&apos;&apos;select * from /shared/examples/ds_inventory/products&apos;&apos;, &apos;&apos;2,40,40,1,20,6,2,7&apos;&apos;, &apos;&apos;false&apos;&apos;, 8, &apos;&apos;&apos; || testFile || &apos;&apos;&apos;, 0, 10&apos;;
+	    ELSE
+            SET args = &apos;&apos;&apos;select * from /shared/examples/ds_inventory/tutorial/products&apos;&apos;, &apos;&apos;2,40,40,1,20,6,2,7&apos;&apos;, &apos;&apos;false&apos;&apos;, 8, &apos;&apos;&apos; || testFile || &apos;&apos;&apos;, 0, 10&apos;;
+    END CASE;
+
     SET expectedResultCSV = &apos;1&apos;;
     SET expectedFileContent = 
 &apos;1 Maxtific 40GB ATA133 7200               Maxtific Storage  40 GB                 1221-887-3458        89.99 2014 Days
@@ -166,7 +182,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406910207305</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424306625544</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -181,11 +197,11 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">20/12</key>
+      <key type="STRING">10/78</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>util</item>
-        <item>System</item>
+        <item>debug</item>
+        <item>Print</item>
       </value>
     </item>
     <item>
@@ -197,11 +213,11 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/72</key>
+      <key type="STRING">20/12</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
+        <item>util</item>
+        <item>System</item>
       </value>
     </item>
     <item>

@@ -58,9 +58,6 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege user="anonymous" domain="composite" privileges="READ"/>
-    <privilege group="all" domain="composite" privileges="READ WRITE"/>
-    <privilege group="all" domain="dynamic" privileges="READ"/>
   </security>
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>

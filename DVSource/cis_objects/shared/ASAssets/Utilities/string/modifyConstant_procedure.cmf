@@ -68,6 +68,9 @@
     <owner user="admin" domain="composite"/>
   </security>
   <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="path" direction="IN">
         <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
@@ -84,6 +87,9 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getScriptText" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getScriptText" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
@@ -98,6 +104,9 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateSqlScript" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/updateSqlScript" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -127,6 +136,9 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexPosition" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexPosition" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="Input Text" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
@@ -153,6 +165,9 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/xml/unescapeXML" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/unescapeXML" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="inStr" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
@@ -161,6 +176,9 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>

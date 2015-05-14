@@ -51,7 +51,7 @@
     </parameter>
   </parameters>
   <security>
-    <owner user="nobody" domain="composite"/>
+    <owner user="admin" domain="composite"/>
   </security>
   <dependency target="/lib/debug/Print" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">

@@ -79,6 +79,9 @@
   <security>
     <owner user="admin" domain="composite"/>
   </security>
+  <dependency target="/lib/util/System" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
@@ -110,6 +113,9 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/services/databases/system/ALL_RESOURCES" type="LINK">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="filePath" direction="IN">
@@ -122,6 +128,9 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/existsDir" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -156,8 +165,17 @@
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/existsDir" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/system/customfunctions/existsDir" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/makeDirs" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/makeDirs" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>

@@ -114,7 +114,7 @@
     </parameter>
   </parameters>
   <security>
-    <owner user="nobody" domain="composite"/>
+    <owner user="admin" domain="composite"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>

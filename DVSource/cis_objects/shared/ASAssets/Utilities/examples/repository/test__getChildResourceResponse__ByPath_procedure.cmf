@@ -64,8 +64,6 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
-    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/lib/debug/Print" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -320,7 +318,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1430938705091</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -343,7 +341,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">6/86</key>
+      <key type="STRING">6/98</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -351,7 +349,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">6/98</key>
+      <key type="STRING">6/86</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

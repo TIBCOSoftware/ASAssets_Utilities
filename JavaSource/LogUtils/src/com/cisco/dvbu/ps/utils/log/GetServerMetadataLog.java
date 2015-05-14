@@ -209,7 +209,22 @@ public class GetServerMetadataLog implements CustomProcedure {
     // thread as a ResultSet object.
     //
     private class ResultCursor implements CustomCursor {
-    	private final String HEADER_RE = "^\\s*(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}) (?:([^/]+)/([^\\s]+) \\((\\-+\\d+)\\)(?: at ([^\\s]+))? saved following changes:|(IMPORTING))\\s*$";
+    	private final String HEADER_RE = "^\\s*(\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}) " + // timestamp
+                                         "(?:" +
+    			                             "([^/]+)/([^\\s]+) " + // domain / username
+                                             "(?:" +
+                                                 "\\((\\-?\\d+)\\) " +  // userid
+    			                                 "(?:at ([^\\s]+))? " + // sometimes the hostname is listed
+                                                 "saved following changes:" +
+    			                             "|" +
+				                                 "((?:UN)?LOCKED) " + // importing or unlocked operation
+	                                             "(\\w+) " + // resource type
+				                                 "'?(.*)'?" + // resource path
+	                                             "(?: Comment:(.*))?" + // message
+                                             ")" +
+                                         "|" + 
+                                             "(IMPORTING)" +
+                                         ")\\s*$";
     	private final String CID_RE = "^\\s*\\d+ (\\d+)\\s*$";
     	private final String OPERATION_RE = "^\\s*(\\w+) (\\w+) (.*) \\((\\d+)\\)\\s*$";
     	private final String ALL_RE = "(?:" + HEADER_RE + ")|(?:" + CID_RE + ")|(?:" + OPERATION_RE + ")";
@@ -286,10 +301,10 @@ public class GetServerMetadataLog implements CustomProcedure {
             //
             while (line.matches("^\\s*$")) {
     	        if ((line = readLineFromLog()) == null)
-    	        	return null;
+    	        	break;
             }
-            
-            // attempt to match the timestamp, and either the user and hostname or the keyword IMPORTING (imports don't identify user/host for some reason.)
+
+            // attempt to match the timestamp, and either the user and hostname or the keywords UNLOCKED or IMPORTING (imports don't identify user/host for some reason.)
             //
             hm = headerPattern.matcher (line);
             if (hm.find()) {
@@ -298,59 +313,62 @@ public class GetServerMetadataLog implements CustomProcedure {
             	user = hm.group (3);
             	userid = (hm.group (4) != null) ? Integer.valueOf (hm.group (4)).intValue() : -1;
             	hostname = hm.group (5);
-            	operation = hm.group (6);
-            	
-                if ((line = readLineFromLog()) == null)
-                	return null;
+            	operation = (hm.group (6) != null) ? hm.group (6) : hm.group (10);
+            	resource_type = hm.group (7);
+            	resource_path = hm.group (8);
+            	message = hm.group (9);
+
+                line = readLineFromLog();
             }
             
             // the line after the header contains the previous and current change id.
             //
-            cm = cidPattern.matcher (line);
-            if (cm.find()) {
-            	cid = (cm.group (1) != null) ? Integer.valueOf (cm.group (1)).intValue() : -1;
-            	
-                if ((line = readLineFromLog()) == null)
-                	return null;
+            if (line != null) {
+	            cm = cidPattern.matcher (line);
+	            if (cm.find()) {
+	            	cid = (cm.group (1) != null) ? Integer.valueOf (cm.group (1)).intValue() : -1;
+	            	
+	                line = readLineFromLog();
+	            }
             }
 
             // the lines following the change id list what resources changed.
             //
-            om = operationPattern.matcher (line);
-            if (om.find()) {
-            	operation = om.group (1);
-            	resource_type = om.group (2);
-            	resource_path = om.group (3).replaceAll("'", ""); // the DELETE operation puts single quotes around the resource path for some reason.
-            	resource_id = (om.group (4) != null) ? Integer.valueOf (om.group (4)).intValue() : -1;
-            	
-                if ((line = readLineFromLog()) == null)
-                	return null;
+            if (line != null) {
+	            om = operationPattern.matcher (line);
+	            if (om.find()) {
+	            	operation = om.group (1);
+	            	resource_type = om.group (2);
+	            	resource_path = om.group (3).replaceAll("'", ""); // the DELETE operation puts single quotes around the resource path for some reason.
+	            	resource_id = (om.group (4) != null) ? Integer.valueOf (om.group (4)).intValue() : -1;
+	            	
+	                line = readLineFromLog();
+	            }
             }
             
             // there are also lines that list out import details or privilege settings. these are put into the "message" column.
             //
-            am = allPattern.matcher(line);
-            if (! am.find()) {
-            	message = line;
-
-            	while ((line = readLineFromLog()) != null) {
-            		
-            		// skip extra lines
-            		//
-            		if (line.matches("^\\s*$"))
-            			continue;
-
-            		am = allPattern.matcher(line);
-
-            	    if (! am.find()) {
-            			message += line + "\n";
-            		} else {
-            			break;
-            		}
-            	}
-            	
-            	if (line == null)
-            	    return null;
+            if (line != null) {
+	            am = allPattern.matcher(line);
+	            if (! am.find()) {
+	            	message = line;
+	
+	            	while ((line = readLineFromLog()) != null) {
+	            		
+	            		// skip extra lines
+	            		//
+	            		if (line.matches("^\\s*$"))
+	            			continue;
+	
+	            		am = allPattern.matcher(line);
+	
+	            	    if (! am.find()) {
+	            			message += line + "\n";
+	            		} else {
+	            			break;
+	            		}
+	            	}
+	            }
             }
 
             outputRow.add (change_time);
@@ -369,6 +387,11 @@ public class GetServerMetadataLog implements CustomProcedure {
         }
     
         public void close() throws SQLException {
+        	try {
+	        	if (br != null) br.close();
+        	} catch (IOException ioe) {
+        		throw new SQLException (ioe);
+        	}
         }
         
         private String readLineFromLog() throws CustomProcedureException {

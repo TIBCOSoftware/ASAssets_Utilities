@@ -34,45 +34,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities_regression_tests/string/TextUtils/Test_CSVFromCISQuery" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="numTests" direction="OUT">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-      <element name="numErrors" direction="OUT">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-      <element name="numSkipped" direction="OUT">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-    </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities_regression_tests/string/TextUtils/Test_CSVFromCISQueryToFile" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="numTests" direction="OUT">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-      <element name="numErrors" direction="OUT">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-      <element name="numSkipped" direction="OUT">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-    </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities_regression_tests/string/TextUtils/Test_FixedFromCISQueryToFile" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="numTests" direction="OUT">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-      <element name="numErrors" direction="OUT">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-      <element name="numSkipped" direction="OUT">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-    </datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/string/TextUtils/Test_LocalCurrencyFormatter" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="numTests" direction="OUT">
@@ -316,6 +277,9 @@ BEGIN
     SET totalNumErrors = totalNumErrors + numErrors;
     SET totalNumSkipped = totalNumSkipped + numSkipped;
 
+    -- something about these tests causes CIS to spin the CPU and requires a CIS restart to recover. Weird.
+    --
+/*
     CALL /shared/ASAssets/Utilities_regression_tests/string/TextUtils/Test_CSVFromCISQuery (numTests, numErrors, numSkipped);
     SET totalNumTests = totalNumTests + numTests;
     SET totalNumErrors = totalNumErrors + numErrors;
@@ -326,18 +290,16 @@ BEGIN
     SET totalNumErrors = totalNumErrors + numErrors;
     SET totalNumSkipped = totalNumSkipped + numSkipped;
 
-    -- something about this test causes CIS to spin the CPU and requires a CIS restart to recover. Weird.
-    --
-    --CALL /shared/Utilities_regression_tests/string/TextUtils/Test_FixedFromCISQuery (numTests, numErrors, numSkipped);
-    --SET totalNumTests = totalNumTests + numTests;
-    --SET totalNumErrors = totalNumErrors + numErrors;
-    --SET totalNumSkipped = totalNumSkipped + numSkipped;
+    CALL /shared/ASAssets/Utilities_regression_tests/string/TextUtils/Test_FixedFromCISQuery (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
 
     CALL /shared/ASAssets/Utilities_regression_tests/string/TextUtils/Test_FixedFromCISQueryToFile (numTests, numErrors, numSkipped);
     SET totalNumTests = totalNumTests + numTests;
     SET totalNumErrors = totalNumErrors + numErrors;
     SET totalNumSkipped = totalNumSkipped + numSkipped;
-
+*/
     CALL /shared/ASAssets/Utilities_regression_tests/string/TextUtils/Test_LocalCurrencyFormatter (numTests, numErrors, numSkipped);
     SET totalNumTests = totalNumTests + numTests;
     SET totalNumErrors = totalNumErrors + numErrors;
@@ -439,14 +401,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424306513419</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">14/133</key>
+      <key type="STRING">14/134</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -454,7 +416,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/130</key>
+      <key type="STRING">10/131</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -470,7 +432,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/137</key>
+      <key type="STRING">14/138</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

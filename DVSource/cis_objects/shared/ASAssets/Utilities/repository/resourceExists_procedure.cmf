@@ -107,7 +107,6 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">

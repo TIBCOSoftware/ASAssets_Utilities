@@ -152,7 +152,7 @@ END</attribute>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">14/46</key>
+      <key type="STRING">14/50</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -160,7 +160,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/50</key>
+      <key type="STRING">14/46</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

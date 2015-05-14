@@ -166,19 +166,19 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/9</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">10/84</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
         <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/9</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
       </value>
     </item>
     <item>

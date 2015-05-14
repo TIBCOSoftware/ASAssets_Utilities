@@ -113,8 +113,6 @@
   <foreignKeys></foreignKeys>
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege group="all" domain="composite" privileges="READ SELECT"/>
-    <privilege group="all" domain="dynamic" privileges="READ SELECT"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/examples/repository/source/ds_orders/customers" type="TABLE">
     <datatype type="TABLE" refId="1">

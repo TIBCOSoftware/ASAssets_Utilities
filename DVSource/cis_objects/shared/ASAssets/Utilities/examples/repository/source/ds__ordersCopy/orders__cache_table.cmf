@@ -119,8 +119,6 @@
   <foreignKeys></foreignKeys>
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege group="all" domain="composite" privileges="READ SELECT"/>
-    <privilege group="all" domain="dynamic" privileges="READ SELECT"/>
   </security>
   <attribute name="cacheLastTracking" type="STRING">/lib/sources/cacheDataSource/cstracking</attribute>
   <attribute name="creationDate" type="LONG">1382029188084</attribute>

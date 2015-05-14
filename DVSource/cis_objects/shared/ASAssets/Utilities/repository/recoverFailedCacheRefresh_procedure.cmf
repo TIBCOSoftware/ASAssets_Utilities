@@ -486,14 +486,6 @@ END</attribute>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">15/99</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">10/194</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
@@ -502,11 +494,11 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/92</key>
+      <key type="STRING">15/99</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>resource</item>
-        <item>ResourceExists</item>
+        <item>util</item>
+        <item>System</item>
       </value>
     </item>
     <item>
@@ -515,6 +507,14 @@ END</attribute>
         <item>lib</item>
         <item>util</item>
         <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/92</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceExists</item>
       </value>
     </item>
     <item>
@@ -550,11 +550,11 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">23/71</key>
+      <key type="STRING">10/198</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
-        <item>ResourceDefs</item>
+        <item>UpdateResourceCacheKeyStatus</item>
       </value>
     </item>
     <item>
@@ -566,11 +566,11 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/198</key>
+      <key type="STRING">23/71</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
-        <item>UpdateResourceCacheKeyStatus</item>
+        <item>ResourceDefs</item>
       </value>
     </item>
   </attribute>

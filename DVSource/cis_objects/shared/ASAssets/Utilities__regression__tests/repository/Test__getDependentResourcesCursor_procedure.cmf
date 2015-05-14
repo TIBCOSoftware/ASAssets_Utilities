@@ -24,6 +24,13 @@
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="query" direction="IN">
@@ -36,6 +43,9 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">PROCEDURE Test_getDependentResourcesCursor(
     OUT numTests INTEGER,
@@ -55,16 +65,23 @@ BEGIN
 
     -- start test
     --
-    SET args = &apos;&apos;&apos;/shared/examples/ds_inventory/purchaseorders&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
-    SET expectedResultCSV = 
+	CASE (SUBSTRING(getCisVersion(), 1, 3))
+	    WHEN &apos;6.2&apos; THEN
+            SET args = &apos;&apos;&apos;/shared/examples/ds_inventory/purchaseorders&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
+            SET expectedResultCSV = 
 &apos;ViewSupplier,/shared/examples/ViewSupplier,TABLE,SQL_TABLE,composite,admin,NONE,,1
 getInventoryTransactions,/shared/examples/getInventoryTransactions,PROCEDURE,XQUERY_TRANSFORM_PROCEDURE,composite,admin,NONE,,1&apos;;
+        ELSE
+            SET args = &apos;&apos;&apos;/shared/examples/ds_inventory/tutorial/purchaseorders&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
+            SET expectedResultCSV = 
+&apos;Examples Data Model,/shared/examples/Examples Data Model,MODEL,NONE,composite,admin,NONE,,1
+ViewSupplier,/shared/examples/ViewSupplier,TABLE,SQL_TABLE,composite,admin,NONE,,1
+getInventoryTransactions,/shared/examples/getInventoryTransactions,PROCEDURE,XQUERY_TRANSFORM_PROCEDURE,composite,admin,NONE,,1&apos;;
+    END CASE;
 
     BEGIN
         SET numTests = numTests + 1;
         CALL /shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest(
---           &apos;SELECT * FROM /shared/Utilities/repository/getDependentResourcesCursor(&apos; || args || &apos;)&apos;,
---    Modified by Niraj 08/22/2013 - Replaced * with actual column name for Select.
 			&apos;SELECT resourceName,resourcePath,resourceType,subtype,ownerDomain,ownerName,impactLevel,impactMessage,enabled  FROM /shared/ASAssets/Utilities/repository/getDependentResourcesCursor(&apos; || args || &apos;)&apos;,
             expectedResultCSV,
             result
@@ -89,7 +106,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397497524161</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424304804962</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -101,6 +118,14 @@ END</attribute>
         <item>lib</item>
         <item>util</item>
         <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/45</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
       </value>
     </item>
     <item>
@@ -117,14 +142,6 @@ END</attribute>
         <item>lib</item>
         <item>util</item>
         <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/38</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
       </value>
     </item>
   </attribute>
