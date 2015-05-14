@@ -53,6 +53,9 @@
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <attribute name="Script" type="STRING">/* last4ofSSN:
 	Return ‘x0000’ format for a 9 digit string assumed to be an SSN.
  

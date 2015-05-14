@@ -47,6 +47,45 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/encoding/EncodingCJP/Test_DecryptFrom3DES" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/encoding/EncodingCJP/Test_DecryptWithCISPrivKey" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/encoding/EncodingCJP/Test_EncryptWith3DES" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/encoding/EncodingCJP/Test_MD5Hash" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="numTests" direction="OUT">
@@ -100,6 +139,28 @@ BEGIN
     SET totalNumErrors = totalNumErrors + numErrors;
     SET totalNumSkipped = totalNumSkipped + numSkipped;
 
+    CALL /shared/ASAssets/Utilities_regression_tests/encoding/EncodingCJP/Test_DecryptFrom3DES (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/encoding/EncodingCJP/Test_DecryptWithCISPrivKey (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+    CALL /shared/ASAssets/Utilities_regression_tests/encoding/EncodingCJP/Test_EncryptWith3DES (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
+/* this doesn&apos;t work. even using the same arguments, the result of EncryptWithCISPubKey changes every time it&apos;s run.
+    CALL /shared/ASAssets/Utilities_regression_tests/encoding/EncodingCJP/Test_EncryptWithCISPubKey (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+*/
+
     CALL /shared/ASAssets/Utilities_regression_tests/encoding/EncodingCJP/Test_MD5Hash (numTests, numErrors, numSkipped);
     SET totalNumTests = totalNumTests + numTests;
     SET totalNumErrors = totalNumErrors + numErrors;
@@ -126,28 +187,12 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1431368763135</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">14/45</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">14/41</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
     <item>
       <key type="STRING">10/16</key>
       <value type="STRING_ARRAY">
@@ -157,7 +202,23 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/38</key>
+      <key type="STRING">14/67</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/63</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/60</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

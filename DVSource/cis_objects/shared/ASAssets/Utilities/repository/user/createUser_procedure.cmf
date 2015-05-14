@@ -536,19 +536,19 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">11/137</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>Pause</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">10/204</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
         <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/137</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>Pause</item>
       </value>
     </item>
     <item>

@@ -101,6 +101,12 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/examples/xml/ProductCatalogTransform" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/examples/xml/ProductCatalogTransform" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <attribute name="Script" type="STRING">/* -- example of calling the resulting transform
 
 	procedure (double check the resulting timestamps of 

@@ -39,9 +39,10 @@
 
 	Exceptions:  none
 
-	Author:      Mike Tinius
-	Date:        8/2/2010
-	CSW Version: 5.1.0
+	Modified Date:	Updated By:			CSW Version:	Reason:
+	08/02/2010		Mike Tinius			5.1.0			Created new
+	03/15/2013		Mike Tinius			5.2.0			modified to provide &quot;annotation&quot; on input and added CAST(XMLTEXT() As LONGVARCHAR) around variables.
+	04/08/2015		Mike Tinius			6.2.0			Updated to update index and foreign key information.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -56,8 +57,7 @@
     through a valid license for that product.
 
     This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
-    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
-</annotation>
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
   <parameters>
     <parameter name="fullResourcePath" direction="IN" nullable="true">
       <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
@@ -94,7 +94,7 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="sqlIndexList" direction="IN" nullable="true">
       <datatype name="sqlIndexList" type="ARRAY" maxLength="0">
@@ -118,26 +118,51 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="foreignKeyList" direction="IN" nullable="true">
+      <datatype name="foreignKeyList" type="ARRAY" maxLength="0">
+        <itemDatatype>
+          <datatype name="foreignKeyType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="foreignKeyType" type="TREE" refId="1">
+            <element name="fkName">
+              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+            </element>
+            <element name="fkPrimaryKeyName">
+              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+            </element>
+            <element name="fkPrimaryKeyTable">
+              <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+            </element>
+            <element name="fkForeignKeyColumnName">
+              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+            </element>
+            <element name="fkPrimaryKeyColumnName">
+              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+            </element>
+          </datatype>
+        </itemDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="success" direction="OUT" nullable="true">
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="createResponse" direction="OUT" nullable="true">
-      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultResponse" direction="OUT" nullable="true">
-      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -390,8 +415,20 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/services/webservices/system/admin/resource/operations/updateResources" type="LINK">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/log/logDebugMessage" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -428,6 +465,9 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="inputString" direction="IN">
@@ -458,11 +498,20 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/unescapeXML" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* updateResourcesSqlTable:
 	-- CIS Repository Helper Procedure --
@@ -508,6 +557,7 @@
 	Modified Date:	Updated By:			CSW Version:	Reason:
 	08/02/2010		Mike Tinius			5.1.0			Created new
 	03/15/2013		Mike Tinius			5.2.0			modified to provide &quot;annotation&quot; on input and added CAST(XMLTEXT() As LONGVARCHAR) around variables.
+	04/08/2015		Mike Tinius			6.2.0			Updated to update index and foreign key information.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -531,6 +581,7 @@ PROCEDURE updateResourcesSqlTable(
 	IN annotation			LONGVARCHAR, -- view annotation
 	IN columnList			VECTOR(/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.childResourceType),
 	IN sqlIndexList			VECTOR(/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.sqlIndexType),
+	IN foreignKeyList		VECTOR(/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.foreignKeyType),
 	OUT success				BIT,
 	OUT createResponse 		XML,
 	OUT faultResponse		XML
@@ -546,6 +597,7 @@ PROCEDURE updateResourcesSqlTable(
 	DECLARE resourceSubType	VARCHAR DEFAULT &apos;SQL_TABLE&apos;;
 	DECLARE tableType		VARCHAR DEFAULT &apos;VIEW&apos;;
 	DECLARE lastIndexName	VARCHAR DEFAULT &apos;&apos;;
+	DECLARE lastFKName		VARCHAR DEFAULT &apos;&apos;;
 	DECLARE beginIndex		BOOLEAN DEFAULT false;
 	DECLARE uniqueIndex		VARCHAR;
 	DECLARE createInput 	LONGVARCHAR;
@@ -663,6 +715,63 @@ PROCEDURE updateResourcesSqlTable(
 			END IF;
 			set createInput = createInput ||
 &apos;			&lt;/resource:sqlIndexes&gt;
+			&lt;resource:sqlForeignKeys&gt;&apos;||CHR(13);
+
+
+
+			set i = 1;
+			WHILE (i &lt;= CARDINALITY(foreignKeyList)) DO
+/*	DECLARE PUBLIC TYPE foreignKeyType ROW (
+		fkName 					VARCHAR(255), --name of the foreign key
+		fkPrimaryKeyName 		VARCHAR(255), --name of the primary key index
+		fkPrimaryKeyTable 		/shared/ASAssets/Utilities/TypeDefinitions.pathType, --fully qualified path to the primary table
+		fkForeignKeyColumnName 	VARCHAR(255), --column name in the foreign table
+		fkPrimaryKeyColumnName 	VARCHAR(255)  --matching column name in the primary table
+	);
+*/
+				IF (foreignKeyList[i].fkName &lt;&gt; lastFKName) THEN
+					-- If not the first time through the loop and the foreign key is different than the last one
+					--		then put a closing tag on the columns and FK XML
+					IF (i &gt; 1) THEN
+						set createInput = createInput ||
+&apos;					&lt;/resource:columns&gt;
+				&lt;/resource:foreignKey&gt;&apos;||CHR(13);
+					END IF;
+
+					-- Start the foreign key text
+					set createInput = createInput ||
+&apos;				&lt;resource:foreignKey&gt;
+					&lt;resource:name&gt;&apos;||CAST(XMLTEXT(foreignKeyList[i].fkName) AS LONGVARCHAR)||&apos;&lt;/resource:name&gt;
+					&lt;resource:primaryKeyName&gt;&apos;||CAST(XMLTEXT(foreignKeyList[i].fkPrimaryKeyName) AS LONGVARCHAR)||&apos;&lt;/resource:primaryKeyName&gt;
+					&lt;resource:primaryKeyTable&gt;&apos;||CAST(XMLTEXT(foreignKeyList[i].fkPrimaryKeyTable) AS LONGVARCHAR)||&apos;&lt;/resource:primaryKeyTable&gt;
+					&lt;resource:columns&gt;
+						&lt;column&gt;
+							&lt;resource:foreignKeyColumnName&gt;&apos;||CAST(XMLTEXT(foreignKeyList[i].fkForeignKeyColumnName) AS LONGVARCHAR)||&apos;&lt;/resource:foreignKeyColumnName&gt;
+							&lt;resource:primaryKeyColumnName&gt;&apos;||CAST(XMLTEXT(foreignKeyList[i].fkPrimaryKeyColumnName) AS LONGVARCHAR)||&apos;&lt;/resource:primaryKeyColumnName&gt;
+						&lt;/column&gt;&apos;||CHR(13);
+				ELSE
+					set createInput = createInput ||
+&apos;						&lt;column&gt;
+							&lt;resource:foreignKeyColumnName&gt;&apos;||CAST(XMLTEXT(foreignKeyList[i].fkForeignKeyColumnName) AS LONGVARCHAR)||&apos;&lt;/resource:foreignKeyColumnName&gt;
+							&lt;resource:primaryKeyColumnName&gt;&apos;||CAST(XMLTEXT(foreignKeyList[i].fkPrimaryKeyColumnName) AS LONGVARCHAR)||&apos;&lt;/resource:primaryKeyColumnName&gt;
+						&lt;/column&gt;&apos;||CHR(13);
+				END IF;
+				set lastFKName = foreignKeyList[i].fkName;
+				set i = i + 1;
+			END WHILE;
+			-- If there are indexes, be sure and put a closing tag on the last XML tag for columns and index.
+			IF (CARDINALITY(foreignKeyList) &gt; 0) THEN
+				set createInput = createInput ||
+&apos;					&lt;/resource:columns&gt;
+				&lt;/resource:foreignKey&gt;&apos;||CHR(13);
+			END IF;
+
+
+
+
+
+			set createInput = createInput ||
+&apos;			&lt;/resource:sqlForeignKeys&gt;
 		&lt;/resource:resource&gt;
 	&lt;/resource:resources&gt;
 	&lt;resource:detail&gt;FULL&lt;/resource:detail&gt;
@@ -682,15 +791,17 @@ PROCEDURE updateResourcesSqlTable(
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1430944281688</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="p:2:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:3:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:7:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:3:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:5:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:7:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:8:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="NULL"/>
 </metadata>

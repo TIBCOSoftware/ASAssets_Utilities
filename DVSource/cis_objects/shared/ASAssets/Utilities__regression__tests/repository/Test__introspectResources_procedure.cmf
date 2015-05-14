@@ -49,6 +49,13 @@
   <dependency target="/shared/ASAssets/Utilities/TypeDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/introspectResourcesTask" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="dsPath" direction="IN">
@@ -110,19 +117,9 @@
         </datatype>
       </element>
       <element name="dsAttributes" direction="IN">
-        <datatype type="ARRAY" maxLength="0">
+        <datatype name="AttributesVectorType" type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="Attribute" type="TREE" refId="4">
-              <element name="name">
-                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
-              </element>
-              <element name="type">
-                <datatype name="VARCHAR" type="STRING" maxLength="40"/>
-              </element>
-              <element name="value">
-                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
-              </element>
-            </datatype>
+            <reference refId="3"/>
           </itemDatatype>
         </datatype>
       </element>
@@ -156,12 +153,21 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
   <attribute name="Script" type="STRING">
 -- resources introspected:
 --
+-- 6.2:
 -- TABLE              Constants.TMP_FOLDER/test_ds_mysql/purchaseorders
 -- TABLE              Constants.TMP_FOLDER/test_ds_mysql/products
 -- TABLE              Constants.TMP_FOLDER/test_ds_mysql/suppliers
+--
+-- 7.0:
+-- TABLE              Constants.TMP_FOLDER/test_ds_postgresql/tutorial/purchaseorders
+-- TABLE              Constants.TMP_FOLDER/test_ds_postgresql/tutorial/products
+-- TABLE              Constants.TMP_FOLDER/test_ds_postgresql/tutorial/suppliers
 --
 PROCEDURE Test_introspectResources(
     OUT numTests INTEGER,
@@ -180,22 +186,21 @@ BEGIN
     DECLARE faultXML XML;
     DECLARE resourceExists BOOLEAN;
 
-	DECLARE	 taskId             VARCHAR(32768); 
-    DECLARE  totalResults       INTEGER;
-	DECLARE  block 				BIT;
-	DECLARE  pageSize			INTEGER;
-	DECLARE	 pageStart			INTEGER;
-	DECLARE	 result				System.Text;	
---	DECLARE result_out 			CURSOR;
+	DECLARE taskId              VARCHAR(32768); 
+    DECLARE totalResults        INTEGER;
+	DECLARE block 				BIT;
+	DECLARE pageSize			INTEGER;
+	DECLARE pageStart			INTEGER;
+	DECLARE result				System.Text;	
 
-	DECLARE  updateAllIntrospectResources   BIT;
-	DECLARE  failFast			            BIT;
-	DECLARE  commitOnFailure	            BIT;
-	DECLARE  autoRollback		            BIT;
-	DECLARE  scanForNewResourcesToAutoAdd   BIT;
-	DECLARE  runsInBackgroundTransaction    BIT;					
-	DECLARE	 completed						INTEGER;
-	DECLARE expectedResultCSV System.Text;
+	DECLARE updateAllIntrospectResources    BIT;
+	DECLARE failFast			            BIT;
+	DECLARE commitOnFailure	            	BIT;
+	DECLARE autoRollback		            BIT;
+	DECLARE scanForNewResourcesToAutoAdd    BIT;
+	DECLARE runsInBackgroundTransaction     BIT;					
+	DECLARE completed						INTEGER;
+	DECLARE expectedResultCSV 				System.Text;
 	
     SET numTests = 0;
     SET numErrors = 0;
@@ -205,18 +210,30 @@ BEGIN
     --
     test_block_1: 
     BEGIN INDEPENDENT TRANSACTION
-        SET dataSourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_ds_mysql&apos;;
-        SET childList = VECTOR[
-			(&apos;/products&apos;, &apos;TABLE&apos;, &apos;DATABASE_TABLE&apos;, &apos;ADD_OR_UPDATE&apos;, NULL),
-            (&apos;/purchaseorders&apos;, &apos;TABLE&apos;, &apos;DATABASE_TABLE&apos;, &apos;ADD_OR_UPDATE&apos;, NULL),
-            (&apos;/suppliers&apos;, &apos;TABLE&apos;, &apos;DATABASE_TABLE&apos;, &apos;ADD_OR_UPDATE&apos;, NULL)
-        ];
+		CASE (SUBSTRING(getCisVersion(), 1, 3))
+		    WHEN &apos;6.2&apos; THEN
+		        SET dataSourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_ds_mysql&apos;;
+		        SET childList = VECTOR[
+					(&apos;/products&apos;, &apos;TABLE&apos;, &apos;DATABASE_TABLE&apos;, &apos;ADD_OR_UPDATE&apos;, NULL),
+		            (&apos;/purchaseorders&apos;, &apos;TABLE&apos;, &apos;DATABASE_TABLE&apos;, &apos;ADD_OR_UPDATE&apos;, NULL),
+		            (&apos;/suppliers&apos;, &apos;TABLE&apos;, &apos;DATABASE_TABLE&apos;, &apos;ADD_OR_UPDATE&apos;, NULL)
+		        ];
+            ELSE
+		        SET dataSourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_ds_postgresql&apos;;
+		        SET childList = VECTOR[
+					(&apos;/tutorial&apos;, &apos;CONTAINER&apos;, &apos;SCHEMA_CONTAINER&apos;, &apos;ADD_OR_UPDATE&apos;, NULL),
+					(&apos;/tutorial/products&apos;, &apos;TABLE&apos;, &apos;DATABASE_TABLE&apos;, &apos;ADD_OR_UPDATE&apos;, NULL),
+		            (&apos;/tutorial/purchaseorders&apos;, &apos;TABLE&apos;, &apos;DATABASE_TABLE&apos;, &apos;ADD_OR_UPDATE&apos;, NULL),
+		            (&apos;/tutorial/suppliers&apos;, &apos;TABLE&apos;, &apos;DATABASE_TABLE&apos;, &apos;ADD_OR_UPDATE&apos;, NULL)
+		        ];
+        END CASE;
+
 		SET updateAllIntrospectResources = 0;
-		SET  failFast = 1;
-		SET  commitOnFailure = 0;
-		SET  autoRollback = 1;
-		SET  scanForNewResourcesToAutoAdd = 0;
-		SET  runsInBackgroundTransaction = 0;
+		SET failFast = 1;
+		SET commitOnFailure = 0;
+		SET autoRollback = 1;
+		SET scanForNewResourcesToAutoAdd = 0;
+		SET runsInBackgroundTransaction = 0;
 
 		SET block = 0;
 		SET pageSize = NULL;
@@ -235,7 +252,7 @@ BEGIN
         );
 
         IF (NOT resourceExists) THEN
-            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos; (remove children): SKIPPING, resource does not exist&apos;);
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: SKIPPING, resource does not exist&apos;);
             SET numSkipped = numSkipped + 1;
             LEAVE test_block_1;
         END IF;
@@ -256,12 +273,14 @@ BEGIN
         );
 
         IF (totalResults &lt;&gt; NULL) THEN
-            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos; (Add children): FAILED&apos;);
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: FAILED&apos;);
             SET numErrors = numErrors + 1;
             LEAVE test_block_1;
         END IF;
 
-	SET expectedResultCSV =
+		CASE (SUBSTRING(getCisVersion(), 1, 3))
+		    WHEN &apos;6.2&apos; THEN
+		        SET expectedResultCSV =
 &apos;3,0,SUCCESS,2,3,0,0,0,3,3,0,0,3,0,0,/products,TABLE,DATABASE_TABLE,ADD,INFO,,,&quot;Created resource.&quot;,,INFO
 3,0,SUCCESS,2,3,0,0,0,3,3,0,0,3,0,0,/products,TABLE,DATABASE_TABLE,ADD,INFO,,,&quot;Updated table type from &apos;&apos;UNKNOWN to TABLE&quot;,,INFO
 3,0,SUCCESS,2,3,0,0,0,3,3,0,0,3,0,0,/products,TABLE,DATABASE_TABLE,ADD,INFO,,,&quot;Added column #0 &apos;&apos;ProductID&apos;&apos; Type=INTEGER NOT NULL&quot;,,INFO
@@ -306,52 +325,98 @@ BEGIN
 3,0,SUCCESS,2,3,0,0,0,3,3,0,0,3,0,0,/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,,,
 3,0,SUCCESS,2,3,0,0,0,3,3,0,0,3,0,0,,,,,,,,,,,&apos;;
 
-	SET args = &apos;&apos;&apos;&apos; || taskId || &apos;&apos;&apos;&apos;||&apos;, 1, NULL, NULL&apos;;
-BEGIN
-        SET numTests = numTests + 1;
-        CALL /shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest(
-           &apos;SELECT totalResults,
-        completed,
-        status,
-        introspectorVersion,
-        addedCount,
-        removedCount,
-        updatedCount,
-        skippedCount,
-        totalCompletedCount,
-        toBeAddedCount,
-        toBeRemovedCount,
-        toBeUpdatedCount,
-        totalToBeCompletedCount,
-        warningCount,
-        errorCount,
-        &quot;path&quot;,
-        &quot;type&quot;,
-        subtype,
-        &quot;action&quot;,
-        entryStatus,
-        code,
-        name,
-        message,
-        detail,
-        severity   FROM /shared/ASAssets/Utilities/repository/introspectResourcesResult(&apos; || args || &apos;)&apos;,
-		    expectedResultCSV,
-            result
-        );
-    EXCEPTION
-        ELSE
-            SET result = &apos;EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE;
-    END;
+            ELSE
+		        SET expectedResultCSV =
+&apos;4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial,CONTAINER,SCHEMA_CONTAINER,ADD,INFO,,,Created resource.,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial,CONTAINER,SCHEMA_CONTAINER,ADD,INFO,,,,,
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,Created resource.,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #0 &apos;&apos;productid&apos;&apos; Type=INTEGER NOT NULL,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #1 &apos;&apos;productname&apos;&apos; Type=VARCHAR(50) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #2 &apos;&apos;productdescription&apos;&apos; Type=VARCHAR(255) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #3 &apos;&apos;categoryid&apos;&apos; Type=INTEGER NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #4 &apos;&apos;serialnumber&apos;&apos; Type=VARCHAR(50) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,&quot;Added column #5 &apos;&apos;unitprice&apos;&apos; Type=DECIMAL(12,2) NULLABLE&quot;,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #6 &apos;&apos;reorderlevel&apos;&apos; Type=INTEGER NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #7 &apos;&apos;leadtime&apos;&apos; Type=VARCHAR(30) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,Added index &apos;&apos;products_pkey Unique=true Type=PRIMARY_KEY Column=productid at position 1 Sort=ASCENDING,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/products,TABLE,DATABASE_TABLE,ADD,INFO,,,,,
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Created resource.,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #0 &apos;&apos;purchaseorderid&apos;&apos; Type=INTEGER NOT NULL,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #1 &apos;&apos;ponumber&apos;&apos; Type=VARCHAR(30) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #2 &apos;&apos;purchaseorderdescription&apos;&apos; Type=VARCHAR(255) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #3 &apos;&apos;supplierid&apos;&apos; Type=INTEGER NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #4 &apos;&apos;employeeid&apos;&apos; Type=INTEGER NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #5 &apos;&apos;orderdate&apos;&apos; Type=DATE NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #6 &apos;&apos;daterequired&apos;&apos; Type=DATE NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #7 &apos;&apos;datepromised&apos;&apos; Type=DATE NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #8 &apos;&apos;shipdate&apos;&apos; Type=DATE NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #9 &apos;&apos;shippingmethodid&apos;&apos; Type=INTEGER NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,&quot;Added column #10 &apos;&apos;freightcharge&apos;&apos; Type=DECIMAL(12,2) NULLABLE&quot;,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,Added index &apos;&apos;purchaseorders_pkey Unique=true Type=PRIMARY_KEY Column=purchaseorderid at position 1 Sort=ASCENDING,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/purchaseorders,TABLE,DATABASE_TABLE,ADD,INFO,,,,,
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Created resource.,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #0 &apos;&apos;supplierid&apos;&apos; Type=INTEGER NOT NULL,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #1 &apos;&apos;suppliername&apos;&apos; Type=VARCHAR(50) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #2 &apos;&apos;contactname&apos;&apos; Type=VARCHAR(50) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #3 &apos;&apos;contacttitle&apos;&apos; Type=VARCHAR(50) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #4 &apos;&apos;address&apos;&apos; Type=VARCHAR(255) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #5 &apos;&apos;city&apos;&apos; Type=VARCHAR(50) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #6 &apos;&apos;postalcode&apos;&apos; Type=VARCHAR(20) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #7 &apos;&apos;stateorprovince&apos;&apos; Type=VARCHAR(20) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #8 &apos;&apos;countryregion&apos;&apos; Type=VARCHAR(50) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #9 &apos;&apos;phonenumber&apos;&apos; Type=VARCHAR(30) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added column #10 &apos;&apos;faxnumber&apos;&apos; Type=VARCHAR(30) NULLABLE,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,Added index &apos;&apos;suppliers_pkey Unique=true Type=PRIMARY_KEY Column=supplierid at position 1 Sort=ASCENDING,,INFO
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,/tutorial/suppliers,TABLE,DATABASE_TABLE,ADD,INFO,,,,,
+4,0,SUCCESS,2,4,0,0,0,4,4,0,0,4,0,0,,,,,,,,,,&apos;;
+        END CASE;
 
-    CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: &apos; || result);
+		SET args = &apos;&apos;&apos;&apos; || taskId || &apos;&apos;&apos;&apos;||&apos;, 1, NULL, NULL&apos;;
 
-    IF (result &lt;&gt; &apos;OK&apos;) THEN
-        SET numErrors = numErrors + 1;
-    END IF;
-    --
-    -- end test
+	    BEGIN
+	        SET numTests = numTests + 1;
+	        CALL /shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest(
+	           &apos;SELECT totalResults,
+			        completed,
+			        status,
+			        introspectorVersion,
+			        addedCount,
+			        removedCount,
+			        updatedCount,
+			        skippedCount,
+			        totalCompletedCount,
+			        toBeAddedCount,
+			        toBeRemovedCount,
+			        toBeUpdatedCount,
+			        totalToBeCompletedCount,
+			        warningCount,
+			        errorCount,
+			        &quot;path&quot;,
+			        &quot;type&quot;,
+			        subtype,
+			        &quot;action&quot;,
+			        entryStatus,
+			        code,
+			        name,
+			        message,
+			        detail,
+			        severity
+	            FROM /shared/ASAssets/Utilities/repository/introspectResourcesResult(&apos; || args || &apos;)&apos;,
+			    expectedResultCSV,
+	            result
+	        );
+	    EXCEPTION
+	        ELSE
+	            SET result = &apos;EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE;
+	    END;
+	
+	    CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: &apos; || result);
+	
+	    IF (result &lt;&gt; &apos;OK&apos;) THEN
+	        SET numErrors = numErrors + 1;
+	    END IF;
 
-END;
+	END;
     -- end test
 END</attribute>
   <attribute name="creationDate" type="LONG">1377799659354</attribute>
@@ -360,14 +425,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406909144529</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424305515257</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">18/80</key>
+      <key type="STRING">18/118</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -375,15 +440,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/74</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">21/30</key>
+      <key type="STRING">20/36</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -391,7 +448,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">28/40</key>
+      <key type="STRING">32/45</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -399,27 +456,35 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/101</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/188</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">28/18</key>
+      <key type="STRING">28/24</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
         <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/255</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/91</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/97</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
       </value>
     </item>
   </attribute>

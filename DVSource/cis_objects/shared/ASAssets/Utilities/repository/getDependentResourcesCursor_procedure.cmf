@@ -90,7 +90,6 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>

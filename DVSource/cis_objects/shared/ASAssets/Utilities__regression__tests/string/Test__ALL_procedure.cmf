@@ -34,6 +34,19 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/string/Test_addQuotesInList" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/string/Test_basename" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="numTests" direction="OUT">
@@ -207,6 +220,11 @@ BEGIN
 
     CALL PRINT (test_name || &apos;: Beginning tests.&apos;);
 
+    CALL /shared/ASAssets/Utilities_regression_tests/string/Test_addQuotesInList (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
     CALL /shared/ASAssets/Utilities_regression_tests/string/Test_basename (numTests, numErrors, numSkipped);
     SET totalNumTests = totalNumTests + numTests;
     SET totalNumErrors = totalNumErrors + numErrors;
@@ -288,14 +306,30 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1431369996756</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">14/86</key>
+      <key type="STRING">10/88</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/95</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/91</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -304,22 +338,6 @@ END</attribute>
     </item>
     <item>
       <key type="STRING">10/16</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/83</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">14/90</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

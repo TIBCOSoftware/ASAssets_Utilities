@@ -20,6 +20,7 @@
 
 	Modified Date:	Updated By:			CSW Version:	Reason:
 	04/27/2013		Mike Tinius			5.2.0			created new for assigning parameters to an XML parameter node.
+	04/02/2015		Calvin Goodrich		7.0.1			updated to COALESCE input values to prevent NULL request envelopes.
 
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
@@ -35,11 +36,10 @@
     through a valid license for that product.
 
     This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
-    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
-</annotation>
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
   <parameters>
     <parameter name="parameterVector" direction="IN" nullable="true">
-      <datatype name="ParameterVectorType" type="ARRAY" maxLength="0">
+      <datatype name="ParameterVectorType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="ParameterVectorType" type="ARRAY" maxLength="0">
         <itemDatatype>
           <datatype name="ParameterType" type="TREE" refId="1">
             <element name="name">
@@ -151,21 +151,14 @@
                             <element name="key">
                               <datatype name="key" type="ARRAY" maxLength="0">
                                 <itemDatatype>
-                                  <datatype name="itemType" type="TREE" refId="8">
-                                    <element name="type">
-                                      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
-                                    </element>
-                                    <element name="value">
-                                      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
-                                    </element>
-                                  </datatype>
+                                  <reference refId="6"/>
                                 </itemDatatype>
                               </datatype>
                             </element>
                             <element name="value">
                               <datatype name="value" type="ARRAY" maxLength="0">
                                 <itemDatatype>
-                                  <reference refId="8"/>
+                                  <reference refId="6"/>
                                 </itemDatatype>
                               </datatype>
                             </element>
@@ -193,7 +186,7 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="parameterInput" direction="OUT" nullable="true">
       <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
@@ -214,6 +207,12 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/rebind/assignAnnotation" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/rebind/assignAttributes" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/rebind/assignAttributes" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -296,6 +295,9 @@
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* 
@@ -319,6 +321,7 @@
 
 	Modified Date:	Updated By:			CSW Version:	Reason:
 	04/27/2013		Mike Tinius			5.2.0			created new for assigning parameters to an XML parameter node.
+	04/02/2015		Calvin Goodrich		7.0.1			updated to COALESCE input values to prevent NULL request envelopes.
 
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
@@ -378,27 +381,27 @@ BEGIN
 
 					if (parameterVector[i].sqlType[1].nativeType IS NOT NULL) then
 						set parameterInput = parameterInput || &apos;
-					  &lt;common:nativeType&gt;&apos;||CAST(XMLTEXT(parameterVector[i].sqlType[1].nativeType) AS LONGVARCHAR)||&apos;&lt;/common:nativeType&gt;&apos;;
+					  &lt;common:nativeType&gt;&apos;||COALESCE(CAST(XMLTEXT(parameterVector[i].sqlType[1].nativeType) AS LONGVARCHAR), &apos;&apos;)||&apos;&lt;/common:nativeType&gt;&apos;;
 					end if;
 					if (parameterVector[i].sqlType[1].referencePath IS NOT NULL) then
 						set parameterInput = parameterInput || &apos;
-					  &lt;common:referencePath&gt;&apos;||CAST(XMLTEXT(parameterVector[i].sqlType[1].referencePath) AS LONGVARCHAR)||&apos;&lt;/common:referencePath&gt;&apos;;
+					  &lt;common:referencePath&gt;&apos;||COALESCE(CAST(XMLTEXT(parameterVector[i].sqlType[1].referencePath) AS LONGVARCHAR), &apos;&apos;)||&apos;&lt;/common:referencePath&gt;&apos;;
 					end if;
 					if (parameterVector[i].sqlType[1].referenceTypeName IS NOT NULL) then
 						set parameterInput = parameterInput || &apos;
-					  &lt;common:referenceTypeName&gt;&apos;||CAST(XMLTEXT(parameterVector[i].sqlType[1].referenceTypeName) AS LONGVARCHAR)||&apos;&lt;/common:referenceTypeName&gt;&apos;;
+					  &lt;common:referenceTypeName&gt;&apos;||COALESCE(CAST(XMLTEXT(parameterVector[i].sqlType[1].referenceTypeName) AS LONGVARCHAR), &apos;&apos;)||&apos;&lt;/common:referenceTypeName&gt;&apos;;
 					end if;
 					if (parameterVector[i].sqlType[1].proprietaryModel IS NOT NULL) then
 						set parameterInput = parameterInput || &apos;
-					  &lt;common:proprietaryModel&gt;&apos;||CAST(parameterVector[i].sqlType[1].proprietaryModel AS LONGVARCHAR)||&apos;&lt;/common:proprietaryModel&gt;&apos;;
+					  &lt;common:proprietaryModel&gt;&apos;||COALESCE(CAST(parameterVector[i].sqlType[1].proprietaryModel AS LONGVARCHAR), &apos;&apos;)||&apos;&lt;/common:proprietaryModel&gt;&apos;;
 					end if;
 					if (parameterVector[i].sqlType[1].name IS NOT NULL) then
 						set parameterInput = parameterInput || &apos;
-					  &lt;common:name&gt;&apos;||CAST(XMLTEXT(parameterVector[i].sqlType[1].name) AS LONGVARCHAR)||&apos;&lt;/common:name&gt;&apos;;
+					  &lt;common:name&gt;&apos;||COALESCE(CAST(XMLTEXT(parameterVector[i].sqlType[1].name) AS LONGVARCHAR), &apos;&apos;)||&apos;&lt;/common:name&gt;&apos;;
 					end if;
 					if (parameterVector[i].sqlType[1].trailingSpaces IS NOT NULL) then
 						set parameterInput = parameterInput || &apos;
-					  &lt;common:trailingSpaces&gt;&apos;||CAST(XMLTEXT(parameterVector[i].sqlType[1].trailingSpaces) AS LONGVARCHAR)||&apos;&lt;/common:trailingSpaces&gt;&apos;;
+					  &lt;common:trailingSpaces&gt;&apos;||COALESCE(CAST(XMLTEXT(parameterVector[i].sqlType[1].trailingSpaces) AS LONGVARCHAR), &apos;&apos;)||&apos;&lt;/common:trailingSpaces&gt;&apos;;
 					end if;
 					set parameterInput = parameterInput || &apos;
 					&lt;/common:sqlType&gt;&apos;;
@@ -418,15 +421,15 @@ BEGIN
 					  &lt;common:namespace&gt;&apos;||CAST(XMLTEXT(parameterVector[i].xmlType[1].namespace) AS LONGVARCHAR)||&apos;&lt;/common:namespace&gt;&apos;;
 					if (parameterVector[i].xmlType[1].&quot;schema&quot; IS NOT NULL) then
 						set parameterInput = parameterInput || &apos;
-					  &lt;common:schema&gt;&apos;||CAST(XMLTEXT(parameterVector[i].xmlType[1].&quot;schema&quot;) AS LONGVARCHAR)||&apos;&lt;/common:schema&gt;&apos;;
+					  &lt;common:schema&gt;&apos;||COALESCE(CAST(XMLTEXT(parameterVector[i].xmlType[1].&quot;schema&quot;) AS LONGVARCHAR), &apos;&apos;)||&apos;&lt;/common:schema&gt;&apos;;
 					end if;
 					if (parameterVector[i].xmlType[1].referencePath IS NOT NULL) then
 						set parameterInput = parameterInput || &apos;
-					  &lt;common:referencePath&gt;&apos;||CAST(XMLTEXT(parameterVector[i].xmlType[1].referencePath) AS LONGVARCHAR)||&apos;&lt;/common:referencePath&gt;&apos;;
+					  &lt;common:referencePath&gt;&apos;||COALESCE(CAST(XMLTEXT(parameterVector[i].xmlType[1].referencePath) AS LONGVARCHAR), &apos;&apos;)||&apos;&lt;/common:referencePath&gt;&apos;;
 					end if;
 					if (parameterVector[i].xmlType[1].proprietaryModel IS NOT NULL) then
 						set parameterInput = parameterInput || &apos;
-					  &lt;common:proprietaryModel&gt;&apos;||CAST(parameterVector[i].xmlType[1].proprietaryModel AS LONGVARCHAR)||&apos;&lt;/common:proprietaryModel&gt;&apos;;
+					  &lt;common:proprietaryModel&gt;&apos;||COALESCE(CAST(parameterVector[i].xmlType[1].proprietaryModel AS LONGVARCHAR), &apos;&apos;)||&apos;&lt;/common:proprietaryModel&gt;&apos;;
 					end if;
 						set parameterInput = parameterInput || &apos;
 					&lt;/common:xmlType&gt;&apos;;
@@ -481,11 +484,11 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1430938705091</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="p:0:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:0:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="NULL"/>
 </metadata>

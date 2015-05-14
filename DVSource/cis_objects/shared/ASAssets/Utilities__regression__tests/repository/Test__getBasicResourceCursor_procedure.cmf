@@ -24,6 +24,13 @@
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="query" direction="IN">
@@ -36,6 +43,9 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">PROCEDURE Test_getBasicResourceCursor(
     OUT numTests INTEGER,
@@ -55,7 +65,7 @@ BEGIN
     -- NOTE: not selecting resource id or cid because each CIS version has different numbers for them.
     --       seems silly to keep track of each set of numbers for each CIS version for each test.
 
-    -- start test
+    -- start test 1
     --
     SET args = &apos;&apos;&apos;/shared/examples&apos;&apos;, &apos;&apos;CONTAINER&apos;&apos;&apos;;
     SET expectedResultCSV = 
@@ -79,9 +89,9 @@ BEGIN
         SET numErrors = numErrors + 1;
     END IF;
     --
-    -- end test
+    -- end test 1
 
-    -- start test
+    -- start test 2
     --
     SET args = &apos;&apos;&apos;/shared/examples/CompositeView&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
     SET expectedResultCSV = 
@@ -121,12 +131,15 @@ FROM
         SET numErrors = numErrors + 1;
     END IF;
     --
-    -- end test
+    -- end test 2
 
-    -- start test
+    -- start test 3
     --
     SET args = &apos;&apos;&apos;/shared/examples/LookupProduct&apos;&apos;, &apos;&apos;PROCEDURE&apos;&apos;&apos;;
-    SET expectedResultCSV = 
+
+	CASE (SUBSTRING(getCisVersion(), 1, 3))
+	    WHEN &apos;6.2&apos; THEN
+            SET expectedResultCSV = 
 &apos;LookupProduct,/shared/examples/LookupProduct,PROCEDURE,SQL_SCRIPT_PROCEDURE,1,composite,admin,NONE,,0,,,&quot;PROCEDURE LookupProduct(
     IN desiredProduct INTEGER,
     OUT result CURSOR (
@@ -147,6 +160,29 @@ BEGIN
         WHERE
             products.ProductID = desiredProduct;
 END&quot;&apos;;
+        ELSE
+            SET expectedResultCSV = 
+&apos;LookupProduct,/shared/examples/LookupProduct,PROCEDURE,SQL_SCRIPT_PROCEDURE,1,composite,admin,NONE,,0,,,&quot;PROCEDURE LookupProduct(
+    IN desiredProduct INTEGER,
+    OUT result CURSOR (
+    	ProductName VARCHAR(50),
+    	ProductID INTEGER,
+    	ProductDescription VARCHAR(255)
+    )
+)
+
+BEGIN
+    OPEN result FOR
+        SELECT
+            products.ProductName,
+            products.ProductID,
+            products.ProductDescription
+        FROM     
+            /shared/examples/ds_inventory/tutorial/products products
+        WHERE
+            products.ProductID = desiredProduct;
+END&quot;&apos;;
+    END CASE;
 
     BEGIN
         SET numTests = numTests + 1;
@@ -166,9 +202,9 @@ END&quot;&apos;;
         SET numErrors = numErrors + 1;
     END IF;
     --
-    -- end test
+    -- end test 3
 
-    -- start test
+    -- start test 4
     --
     SET args = &apos;&apos;&apos;/shared/examples/ds_orders&apos;&apos;, &apos;&apos;DATA_SOURCE&apos;&apos;&apos;;
     SET expectedResultCSV = 
@@ -192,9 +228,9 @@ END&quot;&apos;;
         SET numErrors = numErrors + 1;
     END IF;
     --
-    -- end test
+    -- end test 4
 
-    -- start test
+    -- start test 5
     --
     SET args = &apos;&apos;&apos;/shared/examples/ds_orders&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
     SET expectedResultCSV = 
@@ -218,7 +254,7 @@ END&quot;&apos;;
         SET numErrors = numErrors + 1;
     END IF;
     --
-    -- end test
+    -- end test 5
 
 END</attribute>
   <attribute name="creationDate" type="LONG">0</attribute>
@@ -227,14 +263,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397497300402</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424304197234</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">10/79</key>
+      <key type="STRING">10/176</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -242,7 +278,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/176</key>
+      <key type="STRING">10/79</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -266,7 +302,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/124</key>
+      <key type="STRING">10/202</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

@@ -194,15 +194,21 @@ BEGIN
     --
     test_block_1: 
     BEGIN INDEPENDENT TRANSACTION
+	    CASE (SUBSTRING(getCisVersion(), 1, 3))
+	        WHEN &apos;6.2&apos; THEN
+                SET resourceName = &apos;test_ds_mysql&apos;; -- created in Test_createResource
+                SET dataSourceType = &apos;MySQL 5.0&apos;;
+            ELSE
+                SET resourceName = &apos;test_ds_postgresql&apos;; -- created in Test_createResource
+                SET dataSourceType = &apos;PostgreSQL 9.1&apos;;
+        END CASE;
+
         SET parentFolder = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER;
-        SET resourceName = &apos;test_ds_mysql&apos;; -- created in Test_createResource
         SET resourceType = /lib/resource/ResourceDefs.RESOURCE_TYPE_DATA_SOURCE;
         SET resourceSubtype = /lib/resource/ResourceDefs.RESOURCE_SUBTYPE_RELATIONAL_DATA_SOURCE;
-        SET dataSourceType = &apos;MySQL 5.0&apos;;
         SET attrList = VECTOR[
             (&apos;login&apos;, &apos;STRING&apos;, &apos;tutorial&apos;),
             (&apos;password&apos;, &apos;PASSWORD_STRING&apos;, &apos;tutorial&apos;),
---            (&apos;url&apos;, &apos;STRING&apos;, &apos;jdbc:mysql://localhost:9408/inventory&apos;), -- this quietly fails (reports as success but none of the other attributes get set.)
             (&apos;urlDatabaseName&apos;, &apos;STRING&apos;, &apos;inventory&apos;),
             (&apos;urlIP&apos;, &apos;STRING&apos;, &apos;localhost&apos;),
             (&apos;urlPort&apos;, &apos;INTEGER&apos;, repositoryPort)
@@ -274,14 +280,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406909413041</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1430938705091</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">26/14</key>
+      <key type="STRING">28/16</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -289,7 +295,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">28/16</key>
+      <key type="STRING">26/14</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -305,14 +311,6 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">26/12</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">29/15</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
@@ -321,23 +319,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/129</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/131</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">14/94</key>
+      <key type="STRING">26/12</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -345,7 +327,39 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/117</key>
+      <key type="STRING">18/143</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/100</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/123</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/106</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/135</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -354,14 +368,6 @@ END</attribute>
     </item>
     <item>
       <key type="STRING">18/137</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/100</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

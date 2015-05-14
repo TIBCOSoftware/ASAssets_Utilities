@@ -49,6 +49,13 @@
   <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/updateResourcesSqlTable" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
@@ -63,7 +70,7 @@
       <element name="columnList" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="childResourceType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="childResourceType" type="TREE" refId="2">
+            <datatype name="childResourceType" referenceDefinitionSet="/users/composite/admin/Utilities_newitems/tyoung/RepositoryDefinitions" referenceType="childResourceType" type="TREE" refId="2">
               <element name="resourceName">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
               </element>
@@ -89,7 +96,7 @@
       <element name="sqlIndexList" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="sqlIndexType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="sqlIndexType" type="TREE" refId="3">
+            <datatype name="sqlIndexType" referenceDefinitionSet="/users/composite/admin/Utilities_newitems/tyoung/RepositoryDefinitions" referenceType="sqlIndexType" type="TREE" refId="3">
               <element name="sqlIndexName">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
               </element>
@@ -109,20 +116,43 @@
           </itemDatatype>
         </datatype>
       </element>
+      <element name="foreignKeyList" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="foreignKeyType" referenceDefinitionSet="/users/composite/admin/Utilities_newitems/tyoung/RepositoryDefinitions" referenceType="foreignKeyType" type="TREE" refId="4">
+              <element name="fkName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="fkPrimaryKeyName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="fkPrimaryKeyTable">
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+              </element>
+              <element name="fkForeignKeyColumnName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="fkPrimaryKeyColumnName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
       <element name="success" direction="OUT">
         <datatype type="INTEGER" minValue="0" maxValue="1"/>
       </element>
       <element name="createResponse" direction="OUT">
         <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
           <schemaDatatype>
-            <datatype name="XML" type="TREE" refId="4"></datatype>
+            <datatype name="XML" type="TREE" refId="5"></datatype>
           </schemaDatatype>
         </datatype>
       </element>
       <element name="faultResponse" direction="OUT">
         <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
           <schemaDatatype>
-            <reference refId="4"/>
+            <reference refId="5"/>
           </schemaDatatype>
         </datatype>
       </element>
@@ -147,6 +177,9 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
   <attribute name="Script" type="STRING">PROCEDURE Test_updateResourcesSqlTable(
     OUT numTests INTEGER,
     OUT numErrors INTEGER,
@@ -160,8 +193,8 @@ BEGIN
     DECLARE test_name VARCHAR DEFAULT &apos;repository/Test_updateResourcesSqlTable&apos;;
     DECLARE resourcePath ResourceDefs.ResourcePath;
     DECLARE sqlText LONGVARCHAR;
-    DECLARE columnList VECTOR(/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.childResourceType);
-    DECLARE sqlIndexList VECTOR(/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.sqlIndexType);
+    DECLARE columnList VECTOR(RepositoryDefinitions.childResourceType);
+    DECLARE sqlIndexList VECTOR(RepositoryDefinitions.sqlIndexType);
     DECLARE args LONGVARCHAR;
     DECLARE success BIT;
     DECLARE responseXML XML;
@@ -179,21 +212,41 @@ BEGIN
     test_block_1: 
     BEGIN INDEPENDENT TRANSACTION
         SET resourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;; -- created in Test_createResource
-        SET sqlText = &apos;SELECT * FROM /shared/examples/ds_inventory/products products&apos;;
-        SET columnList = VECTOR [
-            (&apos;products&apos;,/shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;ProductID&apos;,&apos;INTEGER&apos;, &apos;&apos;),
-            (&apos;products&apos;,/shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;ProductName&apos;,&apos;VARCHAR(50)&apos;, &apos;&apos;),
-            (&apos;products&apos;,/shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;ProductDescription&apos;,&apos;VARCHAR(255))&apos;, &apos;&apos;),
-            (&apos;products&apos;,/shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;CategoryID&apos;,&apos;INTEGER&apos;, &apos;&apos;),
-            (&apos;products&apos;,/shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;SerialNumber&apos;,&apos;VARCHAR(50)&apos;, &apos;&apos;),
-            (&apos;products&apos;,/shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;UnitPrice&apos;,&apos;DECIMAL(12,2)&apos;, &apos;&apos;),
-            (&apos;products&apos;,/shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;ReorderLevel&apos;,&apos;INTEGER&apos;, &apos;&apos;),
-            (&apos;products&apos;,/shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;LeadTime&apos;,&apos;VARCHAR(30)&apos;, &apos;&apos;)
-        ];
-        SET sqlIndexList = VECTOR [
-            (&apos;productsPK&apos;,&apos;PRIMARY_KEY&apos;,1,&apos;ProductID&apos;,&apos;ASCENDING&apos;)
-        ];
-        SET expectedResultCSV = &apos;productsPK,PRIMARY_KEY,1,ProductID,ASCENDING&apos;;
+
+		CASE (SUBSTRING(getCisVersion(), 1, 3))
+		    WHEN &apos;6.2&apos; THEN
+                SET sqlText = &apos;SELECT * FROM /shared/examples/ds_inventory/products products&apos;;
+		        SET columnList = VECTOR [
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;ProductID&apos;,&apos;INTEGER&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;ProductName&apos;,&apos;VARCHAR(50)&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;ProductDescription&apos;,&apos;VARCHAR(255))&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;CategoryID&apos;,&apos;INTEGER&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;SerialNumber&apos;,&apos;VARCHAR(50)&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;UnitPrice&apos;,&apos;DECIMAL(12,2)&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;ReorderLevel&apos;,&apos;INTEGER&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;LeadTime&apos;,&apos;VARCHAR(30)&apos;, &apos;&apos;)
+		        ];
+		        SET sqlIndexList = VECTOR [
+		            (&apos;productsPK&apos;,&apos;PRIMARY_KEY&apos;,1,&apos;ProductID&apos;,&apos;ASCENDING&apos;)
+		        ];
+                SET expectedResultCSV = &apos;productsPK,PRIMARY_KEY,1,ProductID,ASCENDING&apos;;
+            ELSE
+                SET sqlText = &apos;SELECT * FROM /shared/examples/ds_inventory/tutorial/products products&apos;;
+		        SET columnList = VECTOR [
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;productid&apos;,&apos;INTEGER&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;productname&apos;,&apos;VARCHAR(50)&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;productdescription&apos;,&apos;VARCHAR(255))&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;categoryid&apos;,&apos;INTEGER&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;serialnumber&apos;,&apos;VARCHAR(50)&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;unitprice&apos;,&apos;DECIMAL(12,2)&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;reorderlevel&apos;,&apos;INTEGER&apos;, &apos;&apos;),
+		            (&apos;products&apos;,Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;,&apos;TABLE&apos;,&apos;leadtime&apos;,&apos;VARCHAR(30)&apos;, &apos;&apos;)
+		        ];
+		        SET sqlIndexList = VECTOR [
+		            (&apos;productsPK&apos;,&apos;PRIMARY_KEY&apos;,1,&apos;productid&apos;,&apos;ASCENDING&apos;)
+		        ];
+                SET expectedResultCSV = &apos;productsPK,PRIMARY_KEY,1,productid,ASCENDING&apos;;
+        END CASE;
 
         SET args = &apos;&apos;&apos;&apos; || resourcePath || &apos;&apos;&apos;, &apos; ||
                    &apos;&apos;&apos;&apos; || sqlText || &apos;&apos;&apos;, &apos; ||
@@ -221,6 +274,7 @@ BEGIN
             &apos;annotation&apos;,
             columnList,
             sqlIndexList,
+            NULL,
             success,
             responseXML,
             faultXML
@@ -260,12 +314,63 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406909144529</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1430938705091</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">27/39</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/114</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/116</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/78</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/58</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/57</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
     <item>
       <key type="STRING">26/12</key>
       <value type="STRING_ARRAY">
@@ -275,7 +380,74 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">145/87</key>
+      <key type="STRING">27/59</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/54</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/56</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/55</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">31/14</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities</item>
+        <item>repository</item>
+        <item>definitions</item>
+        <item>RepositoryDefinitions</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/38</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">33/15</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities</item>
+        <item>repository</item>
+        <item>definitions</item>
+        <item>RepositoryDefinitions</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">145/108</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -283,7 +455,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/81</key>
+      <key type="STRING">18/122</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -291,7 +463,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/64</key>
+      <key type="STRING">18/102</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -299,15 +471,61 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/58</key>
+      <key type="STRING">27/45</key>
       <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
       </value>
     </item>
     <item>
-      <key type="STRING">18/93</key>
+      <key type="STRING">27/44</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/43</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/42</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/41</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/40</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/84</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -315,19 +533,21 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/101</key>
+      <key type="STRING">27/61</key>
       <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
       </value>
     </item>
     <item>
-      <key type="STRING">18/95</key>
+      <key type="STRING">27/60</key>
       <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
       </value>
     </item>
   </attribute>

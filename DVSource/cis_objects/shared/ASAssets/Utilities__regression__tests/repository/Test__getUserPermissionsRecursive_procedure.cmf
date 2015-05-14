@@ -24,6 +24,13 @@
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="query" direction="IN">
@@ -36,6 +43,9 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">PROCEDURE Test_getUserPermissionsRecursive(
     OUT numTests INTEGER,
@@ -56,7 +66,10 @@ BEGIN
     -- start test
     --
     SET args = &apos;&apos;&apos;admin&apos;&apos;, &apos;&apos;composite&apos;&apos;, &apos;&apos;/shared/examples&apos;&apos;&apos;;
-    SET expectedResultCSV = 
+
+	CASE (SUBSTRING(getCisVersion(), 1, 3))
+	    WHEN &apos;6.2&apos; THEN
+            SET expectedResultCSV = 
 &apos;/shared/examples/CompositeView,Y,Y,Y,Y,Y,Y,Y,Y
 /shared/examples/InventoryTransactions,Y,Y,Y,Y,Y,Y,Y,Y
 /shared/examples/LookupProduct,Y,Y,Y,Y,Y,Y,Y,Y
@@ -80,6 +93,42 @@ BEGIN
 /shared/examples/ds_orders/shippingmethods,Y,Y,Y,Y,Y,Y,Y,Y
 /shared/examples/getInventoryTransactions,Y,Y,Y,Y,Y,Y,Y,Y
 /shared/examples/productCatalog_Transformation,Y,Y,Y,Y,Y,Y,Y,Y&apos;;
+
+        ELSE
+            SET expectedResultCSV = 
+&apos;/shared/examples/CompositeView,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/Examples Data Model,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/InventoryTransactions,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/LookupProduct,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ViewOrder,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ViewSales,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ViewSupplier,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_XML,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_XML/productCatalog.xml,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_XML/productCatalogDefinitions,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_inventory,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_inventory/tutorial,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_inventory/tutorial/categories,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_inventory/tutorial/employees,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_inventory/tutorial/inventorytransactions,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_inventory/tutorial/products,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_inventory/tutorial/purchaseorders,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_inventory/tutorial/suppliers,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_orders,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_orders/tutorial,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_orders/tutorial/cache_status,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_orders/tutorial/cache_tracking,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_orders/tutorial/customers,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_orders/tutorial/employees,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_orders/tutorial/orderdetails,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_orders/tutorial/orders,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_orders/tutorial/orders_cache,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/ds_orders/tutorial/shippingmethods,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/getInventoryTransactions,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/productCatalog_Transformation,Y,Y,Y,Y,Y,Y,Y,Y
+/shared/examples/productCatalog_xform,Y,Y,Y,Y,Y,Y,Y,Y&apos;;
+
+    END CASE;
 
     BEGIN
         SET numTests = numTests + 1;
@@ -108,26 +157,26 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397497698458</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424305475294</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
+      <key type="STRING">10/96</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
       <key type="STRING">20/11</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
         <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/57</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
       </value>
     </item>
     <item>

@@ -117,7 +117,8 @@ public void invoke(Object[] inputValues) throws CustomProcedureException, SQLExc
 	
 	filePath = inputValues[0].toString();
 	append = Integer.valueOf(inputValues[1].toString());
-	fileContent = inputValues[2].toString().getBytes();
+	//fileContent = inputValues[2].toString().getBytes();
+	fileContent = (byte[]) inputValues[2];
 	invoked = true;
 	
 	createFileBinary(filePath, (append==1)?true:false, fileContent);

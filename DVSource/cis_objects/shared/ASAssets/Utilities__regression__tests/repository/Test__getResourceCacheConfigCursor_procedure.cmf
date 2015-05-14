@@ -65,21 +65,14 @@ BEGIN
 
     -- start test
     --
-    SET args = &apos;&apos;&apos;/shared/examples/ds_orders/orders&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
 	CASE (SUBSTRING(getCisVersion(), 1, 3))
-/* Commented out by Niraj on 8/22/2013 as older version no longer supported. 
-		WHEN &apos;5.2&apos; THEN
-		    SET expectedResultCSV = &apos;1,1,DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,NONE&apos;;
-	    WHEN &apos;6.0&apos; THEN
-		    SET expectedResultCSV = &apos;1,1,DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,NONE&apos;;
-*/ 
-	    WHEN &apos;6.1&apos; THEN
--- Modified by Niraj, Added additional fields		    SET expectedResultCSV = &apos;1,1,DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL]&apos;;
-	   		SET expectedResultCSV = &apos;1,1,[NULL],DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL],,0,,,,,,,,&apos;;
-		WHEN &apos;6.2&apos; THEN
--- Modified by Niraj, Added additional fields		    SET expectedResultCSV = &apos;1,1,DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL]&apos;;
+	    WHEN &apos;6.2&apos; THEN
+            SET args = &apos;&apos;&apos;/shared/examples/ds_orders/orders&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
     		SET expectedResultCSV = &apos;1,1,[NULL],DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL],1,0,,,,,,,,&apos;;
-		END CASE;
+	    ELSE
+            SET args = &apos;&apos;&apos;/shared/examples/ds_orders/tutorial/orders&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
+    		SET expectedResultCSV = &apos;1,1,[NULL],DATA_SOURCE,/shared/examples/ds_orders,result,/shared/examples/ds_orders/tutorial/orders_cache,TABLE,MANUAL,,,,,,,,,,0,[NULL],1,0,,,,,,,,&apos;;
+    END CASE;
 
     BEGIN
         SET numTests = numTests + 1;
@@ -109,26 +102,26 @@ END
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406909586633</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424305161731</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
+      <key type="STRING">10/40</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
       <key type="STRING">20/11</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
         <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/47</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
       </value>
     </item>
     <item>

@@ -60,6 +60,19 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities_regression_tests/conversions/Test_convertTemperatureUnit" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="numTests" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numErrors" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="numSkipped" direction="OUT">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/conversions/Test_convertYN" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="numTests" direction="OUT">
@@ -105,6 +118,11 @@ BEGIN
     SET totalNumErrors = totalNumErrors + numErrors;
     SET totalNumSkipped = totalNumSkipped + numSkipped;
 
+    CALL /shared/ASAssets/Utilities_regression_tests/conversions/Test_convertTemperatureUnit (numTests, numErrors, numSkipped);
+    SET totalNumTests = totalNumTests + numTests;
+    SET totalNumErrors = totalNumErrors + numErrors;
+    SET totalNumSkipped = totalNumSkipped + numSkipped;
+
     CALL /shared/ASAssets/Utilities_regression_tests/conversions/Test_convertYN (numTests, numErrors, numSkipped);
     SET totalNumTests = totalNumTests + numTests;
     SET totalNumErrors = totalNumErrors + numErrors;
@@ -126,14 +144,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1431366926665</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">14/45</key>
+      <key type="STRING">14/50</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -141,7 +159,15 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/41</key>
+      <key type="STRING">14/46</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/43</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -150,14 +176,6 @@ END</attribute>
     </item>
     <item>
       <key type="STRING">10/16</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/38</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

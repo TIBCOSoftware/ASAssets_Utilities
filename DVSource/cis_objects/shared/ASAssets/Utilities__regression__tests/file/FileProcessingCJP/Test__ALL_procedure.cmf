@@ -262,7 +262,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/16</key>
+      <key type="STRING">14/84</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -270,7 +270,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/84</key>
+      <key type="STRING">10/16</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

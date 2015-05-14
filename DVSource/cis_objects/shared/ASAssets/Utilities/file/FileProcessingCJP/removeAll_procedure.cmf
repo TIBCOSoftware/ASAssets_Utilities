@@ -54,7 +54,6 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege user="system" domain="composite" privileges="READ WRITE EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.file.RemoveAll</attribute>
   <attribute name="creationDate" type="LONG">0</attribute>

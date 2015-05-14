@@ -21,7 +21,7 @@
 
 		isExplicitDesign - 1 or 0 - defines whether the it was designed in the GUI or not
 
-		parameterVector - an array/vector of parameters
+		parameterVector - an array/vector of parameters (CIS 7.0: should be NULL if isExplicitDesign is set to 0 or a System.IllegalArgumentException is thrown)
 
 		attributeVector - an array/vector of attributes
 
@@ -53,8 +53,7 @@
     through a valid license for that product.
 
     This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
-    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
-</annotation>
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
   <parameters>
     <parameter name="resourcePath" direction="IN" nullable="true">
       <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
@@ -70,7 +69,7 @@
       <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="xsltModel" direction="IN" nullable="true">
-      <datatype name="XsltModelVectorType" type="ARRAY" maxLength="0">
+      <datatype name="XsltModelVectorType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="XsltModelVectorType" type="ARRAY" maxLength="0">
         <itemDatatype>
           <datatype name="xsltModelType" type="TREE" refId="1">
             <element name="version">
@@ -85,7 +84,7 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="annotation" direction="IN" nullable="true">
       <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
@@ -95,7 +94,7 @@
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
     </parameter>
     <parameter name="parameterVector" direction="IN" nullable="true">
-      <datatype name="ParameterVectorType" type="ARRAY" maxLength="0">
+      <datatype name="ParameterVectorType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="ParameterVectorType" type="ARRAY" maxLength="0">
         <itemDatatype>
           <datatype name="ParameterType" type="TREE" refId="1">
             <element name="name">
@@ -207,21 +206,14 @@
                             <element name="key">
                               <datatype name="key" type="ARRAY" maxLength="0">
                                 <itemDatatype>
-                                  <datatype name="itemType" type="TREE" refId="8">
-                                    <element name="type">
-                                      <datatype name="VARCHAR" type="STRING" maxLength="255"/>
-                                    </element>
-                                    <element name="value">
-                                      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
-                                    </element>
-                                  </datatype>
+                                  <reference refId="6"/>
                                 </itemDatatype>
                               </datatype>
                             </element>
                             <element name="value">
                               <datatype name="value" type="ARRAY" maxLength="0">
                                 <itemDatatype>
-                                  <reference refId="8"/>
+                                  <reference refId="6"/>
                                 </itemDatatype>
                               </datatype>
                             </element>
@@ -249,10 +241,10 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="attributeVector" direction="IN" nullable="true">
-      <datatype name="AttributeCompleteVectorType" type="ARRAY" maxLength="0">
+      <datatype name="AttributeCompleteVectorType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="AttributeCompleteVectorType" type="ARRAY" maxLength="0">
         <itemDatatype>
           <datatype name="AttributeCompleteType" type="TREE" refId="1">
             <element name="attrName">
@@ -285,21 +277,14 @@
                     <element name="key">
                       <datatype name="key" type="ARRAY" maxLength="0">
                         <itemDatatype>
-                          <datatype name="itemType" type="TREE" refId="4">
-                            <element name="type">
-                              <datatype name="VARCHAR" type="STRING" maxLength="255"/>
-                            </element>
-                            <element name="value">
-                              <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
-                            </element>
-                          </datatype>
+                          <reference refId="2"/>
                         </itemDatatype>
                       </datatype>
                     </element>
                     <element name="value">
                       <datatype name="value" type="ARRAY" maxLength="0">
                         <itemDatatype>
-                          <reference refId="4"/>
+                          <reference refId="2"/>
                         </itemDatatype>
                       </datatype>
                     </element>
@@ -320,7 +305,7 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="success" direction="OUT" nullable="true">
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
@@ -848,21 +833,14 @@
                               <element name="key">
                                 <datatype name="key" type="ARRAY" maxLength="0">
                                   <itemDatatype>
-                                    <datatype name="itemType" type="TREE" refId="9">
-                                      <element name="type">
-                                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
-                                      </element>
-                                      <element name="value">
-                                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
-                                      </element>
-                                    </datatype>
+                                    <reference refId="7"/>
                                   </itemDatatype>
                                 </datatype>
                               </element>
                               <element name="value">
                                 <datatype name="value" type="ARRAY" maxLength="0">
                                   <itemDatatype>
-                                    <reference refId="9"/>
+                                    <reference refId="7"/>
                                   </itemDatatype>
                                 </datatype>
                               </element>
@@ -931,7 +909,7 @@
 
 		isExplicitDesign - 1 or 0 - defines whether the it was designed in the GUI or not
 
-		parameterVector - an array/vector of parameters
+		parameterVector - an array/vector of parameters (CIS 7.0: should be NULL if isExplicitDesign is set to 0 or a System.IllegalArgumentException is thrown)
 
 		attributeVector - an array/vector of attributes
 
@@ -1082,16 +1060,16 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1430938705091</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="p:3:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="p:5:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:7:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:8:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:7:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:8:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="MAP">
     <item>
       <key type="STRING">11/130</key>

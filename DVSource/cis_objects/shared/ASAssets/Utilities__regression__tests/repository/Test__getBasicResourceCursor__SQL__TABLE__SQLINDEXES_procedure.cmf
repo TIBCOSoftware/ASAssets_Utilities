@@ -24,6 +24,13 @@
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="query" direction="IN">
@@ -36,6 +43,9 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">PROCEDURE Test_getBasicResourceCursor_SQL_TABLE_SQLINDEXES(
     OUT numTests INTEGER,
@@ -54,9 +64,16 @@ BEGIN
 
     -- start test
     --
-    SET args = &apos;&apos;&apos;/shared/examples/ds_orders/orders&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
-    SET expectedResultCSV = 
+	CASE (SUBSTRING(getCisVersion(), 1, 3))
+	    WHEN &apos;6.2&apos; THEN
+            SET args = &apos;&apos;&apos;/shared/examples/ds_orders/orders&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
+            SET expectedResultCSV = 
 &apos;PRIMARY,PRIMARY_KEY,1,OrderID,ASCENDING&apos;;
+        ELSE
+            SET args = &apos;&apos;&apos;/shared/examples/ds_orders/tutorial/orders&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
+            SET expectedResultCSV = 
+&apos;orders_pkey,PRIMARY_KEY,1,orderid,ASCENDING&apos;;
+    END CASE;
 
     BEGIN
         SET numTests = numTests + 1;
@@ -85,12 +102,20 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397497409848</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424304464747</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">10/41</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
     <item>
       <key type="STRING">20/10</key>
       <value type="STRING_ARRAY">
@@ -105,14 +130,6 @@ END</attribute>
         <item>lib</item>
         <item>util</item>
         <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/34</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
       </value>
     </item>
     <item>

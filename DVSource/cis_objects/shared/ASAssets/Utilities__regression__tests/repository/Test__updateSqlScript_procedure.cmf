@@ -43,6 +43,13 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getScriptText" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
@@ -92,6 +99,9 @@
   <dependency target="/shared/ASAssets/Utilities_regression_tests/Constants" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
   <attribute name="Script" type="STRING">PROCEDURE Test_updateSqlScript(
     OUT numTests INTEGER,
     OUT numErrors INTEGER,
@@ -119,7 +129,10 @@ BEGIN
     test_block_1: 
     BEGIN INDEPENDENT TRANSACTION
         SET resourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_proc&apos;; -- created in Test_createResource
-        SET sqlText = 
+
+		CASE (SUBSTRING(getCisVersion(), 1, 3))
+		    WHEN &apos;6.2&apos; THEN
+                SET sqlText = 
 &apos;PROCEDURE test_proc(
     IN desiredProduct INTEGER,
     OUT result CURSOR (
@@ -140,6 +153,29 @@ BEGIN
         WHERE
             products.ProductID = desiredProduct;
 END&apos;;
+            ELSE
+                SET sqlText = 
+&apos;PROCEDURE test_proc(
+    IN desiredProduct INTEGER,
+    OUT result CURSOR (
+    	ProductName VARCHAR(50),
+    	ProductID INTEGER,
+    	ProductDescription VARCHAR(255)
+    )
+)
+
+BEGIN
+    OPEN result FOR
+        SELECT
+            products.ProductName,
+            products.ProductID,
+            products.ProductDescription
+        FROM     
+            /shared/examples/ds_inventory/tutorial/products products
+        WHERE
+            products.ProductID = desiredProduct;
+END&apos;;
+        END CASE;
 
         SET args = &apos;&apos;&apos;&apos; || resourcePath || &apos;&apos;&apos;, &apos; ||
                    &apos;&apos;&apos;&apos; || sqlText || &apos;&apos;&apos;&apos;;
@@ -208,14 +244,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406909144529</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424306019873</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">18/77</key>
+      <key type="STRING">18/89</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -231,7 +267,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">17/89</key>
+      <key type="STRING">14/83</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -239,7 +275,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/63</key>
+      <key type="STRING">18/130</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -247,7 +283,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/57</key>
+      <key type="STRING">17/115</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -255,7 +291,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/104</key>
+      <key type="STRING">18/124</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -263,15 +299,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/96</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">17/90</key>
+      <key type="STRING">17/116</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -279,7 +307,15 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/98</key>
+      <key type="STRING">18/103</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/122</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

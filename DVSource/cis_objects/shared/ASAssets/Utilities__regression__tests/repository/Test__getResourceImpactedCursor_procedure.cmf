@@ -46,6 +46,13 @@
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests" type="CONTAINER">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
@@ -64,6 +71,9 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">PROCEDURE Test_getResourceImpactedCursor(
     OUT numTests INTEGER,
@@ -87,8 +97,14 @@ BEGIN
 
     -- start test
     --
-    SET args = &apos;&apos;&apos;&apos; || /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
-    SET expectedResultCSV = &apos;UNKNOWN,View is newly created and has not been saved.&apos;;
+    SET args = &apos;&apos;&apos;&apos; || Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
+
+	CASE (SUBSTRING(getCisVersion(), 1, 3))
+	    WHEN &apos;6.2&apos; THEN
+            SET expectedResultCSV = &apos;UNKNOWN,View is newly created and has not been saved.&apos;;
+        ELSE
+            SET expectedResultCSV = &apos;UNKNOWN,View is newly created and requires definition.&apos;;
+    END CASE;
 
     test_block_1:
     BEGIN INDEPENDENT TRANSACTION
@@ -132,7 +148,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397499287335</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424305212346</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -147,19 +163,20 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/32</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/53</key>
+      <key type="STRING">10/59</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
         <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">24/23</key>
+      <value type="STRING_ARRAY">
+        <item>shared</item>
+        <item>ASAssets</item>
+        <item>Utilities_regression_tests</item>
+        <item>Constants</item>
       </value>
     </item>
     <item>
@@ -176,6 +193,14 @@ END</attribute>
         <item>lib</item>
         <item>util</item>
         <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/38</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
       </value>
     </item>
   </attribute>

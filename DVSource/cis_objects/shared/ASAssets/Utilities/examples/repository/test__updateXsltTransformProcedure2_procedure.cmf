@@ -1,0 +1,500 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="test_updateXsltTransformProcedure2" path="/shared/ASAssets/Utilities/examples/repository/test_updateXsltTransformProcedure2" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>© 2015 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
+  <parameters></parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="version" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceVersion" type="STRING" maxLength="255"/>
+      </element>
+      <element name="exists" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createResource" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceSubType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/destroyResource" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_XSLT_TEXT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="path">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="type">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="transformSourcePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="transformSourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="xsltText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="proprietaryModel">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateXsltTransformProcedure" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="transformSourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="transformSourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="xsltText" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="xsltModel" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="xsltModelType" type="TREE" refId="2">
+              <element name="version">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="type">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="proprietaryModel">
+                <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="annotation" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="isExplicitDesign" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="parameterVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="ParameterType" type="TREE" refId="3">
+              <element name="name">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="sqlType">
+                <datatype name="sqlType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="sqlType" type="TREE" refId="4">
+                      <element name="definition">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="nativeType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="referencePath">
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                      </element>
+                      <element name="referenceTypeName">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="proprietaryModel">
+                        <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+                      </element>
+                      <element name="name">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="trailingSpaces">
+                        <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="xmlType">
+                <datatype name="xmlType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="xmlType" type="TREE" refId="5">
+                      <element name="name">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="namespace">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="nativeType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="schema">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="referencePath">
+                        <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+                      </element>
+                      <element name="proprietaryModel">
+                        <datatype name="VARBINARY" type="BINARY" maxLength="1024"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="pseudoType">
+                <datatype name="pseudoType" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="pseudoType" type="TREE" refId="6">
+                      <element name="definition">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="direction">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="isNullable">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attributes">
+                <datatype name="attributes" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="AttributeCompleteType" type="TREE" refId="7">
+                      <element name="attrName">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="attrType">
+                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                      </element>
+                      <element name="attrValue">
+                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="valueList">
+                        <datatype name="valueList" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="itemType" type="TREE" refId="8">
+                              <element name="type">
+                                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                              </element>
+                              <element name="value">
+                                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                              </element>
+                            </datatype>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="valueMap">
+                        <datatype name="valueMap" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="entryType" type="TREE" refId="9">
+                              <element name="key">
+                                <datatype name="key" type="ARRAY" maxLength="0">
+                                  <itemDatatype>
+                                    <datatype name="itemType" type="TREE" refId="10">
+                                      <element name="type">
+                                        <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+                                      </element>
+                                      <element name="value">
+                                        <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                                      </element>
+                                    </datatype>
+                                  </itemDatatype>
+                                </datatype>
+                              </element>
+                              <element name="value">
+                                <datatype name="value" type="ARRAY" maxLength="0">
+                                  <itemDatatype>
+                                    <reference refId="10"/>
+                                  </itemDatatype>
+                                </datatype>
+                              </element>
+                            </datatype>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="valueArray">
+                        <datatype name="valueArray" type="ARRAY" maxLength="0">
+                          <itemDatatype>
+                            <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                          </itemDatatype>
+                        </datatype>
+                      </element>
+                      <element name="unset">
+                        <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+                      </element>
+                    </datatype>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="annotation">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="attributeVector" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="AttributeCompleteType" type="TREE" refId="11">
+              <element name="attrName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attrType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="attrValue">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="valueList">
+                <datatype name="valueList" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <reference refId="8"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="valueMap">
+                <datatype name="valueMap" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <reference refId="9"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="valueArray">
+                <datatype name="valueArray" type="ARRAY" maxLength="0">
+                  <itemDatatype>
+                    <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+                  </itemDatatype>
+                </datatype>
+              </element>
+              <element name="unset">
+                <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/*
+    © 2015 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+*/
+
+-- creates an XSLT transform procedure from scratch and populates it from metadata 
+-- read from /shared/examples/productCatalog_Transformation
+--
+PROCEDURE test_updateXsltTransformProcedure2()
+BEGIN
+    DECLARE resourceExists        BOOLEAN DEFAULT FALSE;
+    DECLARE xsltCurs              CURSOR /shared/ASAssets/Utilities/repository/getBasicResourceCursor_XSLT_TEXT.ResultRowType;
+    DECLARE xsltRow               /shared/ASAssets/Utilities/repository/getBasicResourceCursor_XSLT_TEXT.ResultRowType;
+    DECLARE success               BIT;
+    DECLARE responseXML, faultXML XML;
+
+    BEGIN INDEPENDENT TRANSACTION
+        CALL /lib/resource/ResourceExists (
+            &apos;/shared/ASAssets/Utilities/examples/repository/target/testXSLT&apos;,
+            &apos;PROCEDURE&apos;,
+            NULL,
+            resourceExists
+        );
+
+        IF (resourceExists) THEN
+            CALL /shared/ASAssets/Utilities/repository/destroyResource(
+                &apos;/shared/ASAssets/Utilities/examples/repository/target&apos;,
+                &apos;testXSLT&apos;,
+                &apos;PROCEDURE&apos;,
+                success,
+                responseXML,
+                faultXML
+            );
+        END IF;
+    END;
+
+    OPEN xsltCurs FOR
+        SELECT
+            *
+        FROM 
+            /shared/ASAssets/Utilities/repository/getBasicResourceCursor_XSLT_TEXT(
+                &apos;/shared/examples/productCatalog_Transformation&apos;,
+                &apos;PROCEDURE&apos;
+            );
+    FETCH xsltCurs INTO xsltRow;
+    CLOSE xsltCurs;
+
+    BEGIN INDEPENDENT TRANSACTION
+        CALL /shared/ASAssets/Utilities/repository/createResource(
+            &apos;/shared/ASAssets/Utilities/examples/repository/target&apos;,
+            &apos;testXSLT&apos;,
+            &apos;PROCEDURE&apos;,
+            &apos;XSLT_TRANSFORM_PROCEDURE&apos;,
+            success,
+            responseXML,
+            faultXML
+        );
+    END;
+
+    BEGIN INDEPENDENT TRANSACTION
+        CALL /shared/ASAssets/Utilities/repository/updateXsltTransformProcedure(
+            &apos;/shared/ASAssets/Utilities/examples/repository/target/testXSLT&apos;,
+            xsltRow.transformSourcePath,
+            xsltRow.transformSourceType,
+            xsltRow.xsltText,
+            NULL, --VECTOR [(&apos;1&apos;, &apos;PROPRIETARY_MODEL&apos;, xsltRow.proprietaryModel)], -- not sure why this throws a System.IllegalArgumentException
+            &apos;xslt transform annotation updated by /shared/ASAssets/Utilities/repository/updateXsltTransformProcedure()&apos;,
+            1,
+            VECTOR [
+                (
+                    &apos;outputs&apos;,
+                    VECTOR [(
+                        &apos;CURSOR (ProductID NUMERIC(32,0), ProductName VARCHAR(32768), CategoryID NUMERIC(32,0), CategoryName VARCHAR(32768), ProductDescription VARCHAR(32768), SerialNumber VARCHAR(32768), UnitPrice DECIMAL(32,6), ReorderLevel NUMERIC(32,0), LeadTime VARCHAR(32768))&apos;,
+                        NULL,
+                        NULL,
+                        NULL,
+                        NULL,
+                        &apos;outputs&apos;,
+                        NULL
+                    )],
+                    NULL,
+                    NULL,
+                    &apos;OUT&apos;,
+                    &apos;IS_NOT_NULLABLE&apos;,
+                    NULL,
+                    NULL
+                )
+            ],
+            NULL,
+            success
+        );
+    END;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1382029188068</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1430333487476</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

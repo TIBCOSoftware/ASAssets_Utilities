@@ -72,6 +72,9 @@
   <dependency target="/system/customfunctions/RegexFind" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
+  <dependency target="/system/customfunctions/RegexFind" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <attribute name="Script" type="STRING">/* 
   basename:
 

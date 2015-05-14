@@ -30,8 +30,6 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
-    <privilege group="all" domain="dynamic" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/lib/debug/Print" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -58,7 +56,7 @@
         <datatype type="INTEGER" minValue="0" maxValue="1"/>
       </element>
       <element name="faultResponse" direction="OUT">
-        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
           <schemaDatatype>
             <datatype name="XML" type="TREE" refId="2"></datatype>
           </schemaDatatype>

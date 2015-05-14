@@ -1,0 +1,657 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="backup_export" path="/shared/ASAssets/Utilities/archive/backup_export" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>backup_export:
+
+    This procedure performs a full server backup of the CIS instance and saves to
+    a specified path on the filesystem of the local CIS host. It is the equivalent
+    of running the backup_export script in &lt;CIS_HOME&gt;/bin against the local server.
+
+
+    Input:
+        archiveFilePath - The path to the location on the CIS host filesystem to store the backup archive.  
+            Values: A valid path to a file on the CIS host.
+
+
+    Output:
+        success - Indicates if the backup export operation succeeded or not
+            Values: 1 = success, 0 = failure
+
+        responseXML - The response component of the create export Admin API call.
+            Values: XML
+
+        faultXML - The fault component of the create export Admin API call.
+            Values: NULL if the operation was a success, otherwise the fault XML.
+
+
+    Exceptions:
+        System.IllegalArgumentException - Thrown when the input file path is NULL or the parent folder does not exist.
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    04/27/2015      Calvin Goodrich     7.0.1           Created new.
+
+
+    © 2015 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
+  <parameters>
+    <parameter name="archiveFilePath" direction="IN" nullable="true">
+      <datatype name="VARCHAR" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="responseXML" direction="OUT" nullable="true">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+    <parameter name="faultXML" direction="OUT" nullable="true">
+      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/GetProperty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="property" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="PropertyName" type="STRING" maxLength="255"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="PropertyValue" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/services/webservices/system/admin/archive/operations/createExportArchive" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="createExportArchive" direction="IN">
+        <datatype name="createExportArchive" extendedName="{http://www.compositesw.com/services/system/admin/archive}createExportArchive" namespace="http://www.compositesw.com/services/system/admin/archive" referenceDefinitionSet="/services/webservices/system/admin/archive/operations/ArchiveSchema" referenceType="{http://www.compositesw.com/services/system/admin/archive}createExportArchive" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/archive}createExportArchive">
+          <schemaDatatype>
+            <datatype name="createExportArchive" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="createExportArchiveRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/archive" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="settings" namespace="http://www.compositesw.com/services/system/admin/archive">
+                <datatype name="exportSettings" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="3">
+                  <element name="name" namespace="http://www.compositesw.com/services/system/admin/archive">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="description" namespace="http://www.compositesw.com/services/system/admin/archive">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="type" namespace="http://www.compositesw.com/services/system/admin/archive">
+                    <datatype name="archiveTypes" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="resources" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                    <datatype name="archiveResources" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
+                      <element name="all" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <datatype name="marker" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5"></datatype>
+                      </element>
+                      <element name="resources" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <datatype name="exportResourceList" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="6">
+                          <element name="resource" namespace="http://www.compositesw.com/services/system/admin/archive" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="exportResource" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="pathTypePair" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="COMPLEX_TYPE" type="TREE" refId="7">
+                              <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="resourceType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="includeChildren" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                                <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                  <element name="users" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                    <datatype name="archiveUsers" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="8">
+                      <element name="all" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <reference refId="5"/>
+                      </element>
+                      <element name="domains" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <datatype name="archiveDomainList" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="9">
+                          <element name="all" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                            <reference refId="5"/>
+                          </element>
+                          <element name="domains" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                            <datatype name="nameList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="10">
+                              <element name="name" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                      <element name="users" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <datatype name="archiveDomainUserList" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="11">
+                          <element name="domain" namespace="http://www.compositesw.com/services/system/admin/archive" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="archiveNamedUserList" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="12">
+                              <element name="name" namespace="http://www.compositesw.com/services/system/admin/archive">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="all" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                                <reference refId="5"/>
+                              </element>
+                              <element name="userNames" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                                <reference refId="10"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                      <element name="groups" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <datatype name="archiveDomainGroupList" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="13">
+                          <element name="domain" namespace="http://www.compositesw.com/services/system/admin/archive" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="archiveNamedGroupList" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="14">
+                              <element name="name" namespace="http://www.compositesw.com/services/system/admin/archive">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="all" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                                <reference refId="5"/>
+                              </element>
+                              <element name="group" namespace="http://www.compositesw.com/services/system/admin/archive" maxOccurs="2147483647" minOccurs="0">
+                                <reference refId="12"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                  <element name="serverAttributes" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                    <datatype name="exportServerAttributes" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="15">
+                      <element name="all" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <reference refId="5"/>
+                      </element>
+                      <element name="attributes" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <reference refId="10"/>
+                      </element>
+                    </datatype>
+                  </element>
+                  <element name="exportOptions" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                    <reference refId="10"/>
+                  </element>
+                  <element name="importHints" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                    <datatype name="importHints" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="16">
+                      <element name="rebindResources" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <datatype name="pathTypePairList" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="17">
+                          <element name="entry" namespace="http://www.compositesw.com/services/system/admin/resource" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="pathTypePair" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="18">
+                              <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="resourceType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                      <element name="rebindUsers" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <reference refId="11"/>
+                      </element>
+                      <element name="remapAttributes" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                        <datatype name="resourceAttributeNamesList" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="19">
+                          <element name="resource" namespace="http://www.compositesw.com/services/system/admin/archive" maxOccurs="2147483647" minOccurs="0">
+                            <datatype name="resourceAttributeNames" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="pathTypePair" superTypeNamespace="http://www.compositesw.com/services/system/admin/resource" subType="COMPLEX_TYPE" type="TREE" refId="20">
+                              <element name="path" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource">
+                                <datatype name="resourceType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                              </element>
+                              <element name="attributeNames" namespace="http://www.compositesw.com/services/system/admin/archive">
+                                <reference refId="10"/>
+                              </element>
+                            </datatype>
+                          </element>
+                        </datatype>
+                      </element>
+                    </datatype>
+                  </element>
+                  <element name="createInfo" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                    <datatype name="exportCreateInfo" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="21">
+                      <element name="exportDomain" namespace="http://www.compositesw.com/services/system/admin/archive">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="exportUser" namespace="http://www.compositesw.com/services/system/admin/archive">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="exportVersion" namespace="http://www.compositesw.com/services/system/admin/archive">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="exportDate" namespace="http://www.compositesw.com/services/system/admin/archive">
+                        <datatype name="dateTime" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="DATETIME"/>
+                      </element>
+                      <element name="exportServer" namespace="http://www.compositesw.com/services/system/admin/archive">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="exportJvm" namespace="http://www.compositesw.com/services/system/admin/archive">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                      <element name="exportOperatingSystem" namespace="http://www.compositesw.com/services/system/admin/archive">
+                        <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                      </element>
+                    </datatype>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="createExportArchiveResponse" direction="OUT">
+        <datatype name="createExportArchiveResponse" extendedName="{http://www.compositesw.com/services/system/admin/archive}createExportArchiveResponse" namespace="http://www.compositesw.com/services/system/admin/archive" referenceDefinitionSet="/services/webservices/system/admin/archive/operations/ArchiveSchema" referenceType="{http://www.compositesw.com/services/system/admin/archive}createExportArchiveResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/archive}createExportArchiveResponse">
+          <schemaDatatype>
+            <datatype name="createExportArchiveResponse" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="createExportArchiveResponse" superTypeNamespace="http://www.compositesw.com/services/system/admin/archive" subType="ELEMENT_DECL" type="TREE" refId="22">
+              <element name="archiveId" namespace="http://www.compositesw.com/services/system/admin/archive">
+                <datatype name="exportArchiveId" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="fault" direction="OUT">
+        <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
+          <schemaDatatype>
+            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="23">
+              <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
+                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="24">
+                  <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="message" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="detail" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+                  </element>
+                  <element name="severity" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
+                    <datatype name="messageSeverity" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+                  </element>
+                </datatype>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/archive/lowerLevelProcedures/getArchiveExportDataXSLT" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="getArchiveExportData" direction="IN">
+        <datatype name="getArchiveExportData" extendedName="{http://www.compositesw.com/services/system/admin/archive}getArchiveExportData" namespace="http://www.compositesw.com/services/system/admin/archive" referenceDefinitionSet="/services/webservices/system/admin/archive/operations/ArchiveSchema" referenceType="{http://www.compositesw.com/services/system/admin/archive}getArchiveExportData" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/archive}getArchiveExportData">
+          <schemaDatatype>
+            <datatype name="getArchiveExportData" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="getArchiveExportDataRequest" superTypeNamespace="http://www.compositesw.com/services/system/admin/archive" subType="ELEMENT_DECL" type="TREE" refId="2">
+              <element name="archiveId" namespace="http://www.compositesw.com/services/system/admin/archive">
+                <datatype name="exportArchiveId" namespace="http://www.compositesw.com/services/system/admin/archive" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
+              </element>
+              <element name="maxBytes" namespace="http://www.compositesw.com/services/system/admin/archive" minOccurs="0">
+                <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+              </element>
+            </datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outputs" direction="OUT" nullable="false">
+        <datatype type="TABLE" refId="3">
+          <element name="status">
+            <datatype namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="32768"/>
+          </element>
+          <element name="data">
+            <datatype namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="BINARY" maxLength="1048576"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileBinary" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="filePath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="append" direction="IN">
+        <datatype type="INTEGER" minValue="-32768" maxValue="32767"/>
+      </element>
+      <element name="fileContent" direction="IN">
+        <datatype type="BINARY" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/existsDir" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="dirPath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/dirname" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/xml/getValueFromXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="namespaces" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inXpath" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="inXml" direction="IN">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="outValue" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/dirname" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/existsDir" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getValueFromXML" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+    backup_export:
+
+    This procedure performs a full server backup of the CIS instance and saves to
+    a specified path on the filesystem of the local CIS host. It is the equivalent
+    of running the backup_export script in &lt;CIS_HOME&gt;/bin against the local server.
+
+
+    Input:
+        archiveFilePath - The path to the location on the CIS host filesystem to store the backup archive.  
+            Values: A valid path to a file on the CIS host.
+
+
+    Output:
+        success - Indicates if the backup export operation succeeded or not
+            Values: 1 = success, 0 = failure
+
+        responseXML - The response component of the create export Admin API call.
+            Values: XML
+
+        faultXML - The fault component of the create export Admin API call.
+            Values: NULL if the operation was a success, otherwise the fault XML.
+
+
+    Exceptions:
+        System.IllegalArgumentException - Thrown when the input file path is NULL or the parent folder does not exist.
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    04/27/2015      Calvin Goodrich     7.0.1           Created new.
+
+
+    © 2015 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
+*/
+PROCEDURE backup_export(
+    IN archiveFilePath VARCHAR(4096),
+    OUT success BIT,
+    OUT responseXML XML,
+    OUT faultXML XML
+)
+proc:
+BEGIN
+    DECLARE server System.PropertyValue;
+    DECLARE requestXML XML;
+    DECLARE archiveID LONGVARCHAR;
+    DECLARE getStatus VARCHAR DEFAULT &apos;INCOMPLETE&apos;;
+    DECLARE getData VARBINARY(1048576);
+    DECLARE append BIT;
+
+    SET success = 0;
+
+    -- collect info for error messaging
+    --
+    CALL GetProperty (&apos;SERVER_HOSTNAME&apos;, server);
+
+    -- Sanity check the input file path
+    --
+    IF (archiveFilePath IS NULL) THEN
+        RAISE System.IllegalArgumentException VALUE &apos;The input path may not be NULL.&apos;;
+    END IF;
+
+    IF (NOT existsDir (dirname (archiveFilePath))) THEN
+        RAISE System.IllegalArgumentException VALUE &apos;The folder &quot;&apos; || dirname (archiveFilePath) || &apos;&quot; does not exist on the host &apos; || server || &apos;.&apos;;
+    END IF;
+
+    /*
+     * Performing a backup/package export is a several step process:
+     *   1. Create the export archive (creates an archive on CIS.)
+     *   2. (optional) update the archive (this is for the Studio UI.)
+     *   3. Repeatedly call the service to get chunks of the archive and write to a file until out of archive data.
+     */
+
+    -- set up and create the export archive. the create operation will return an archive ID that will be
+    -- used to call the data service and write the data out.
+    --
+    SET requestXML = 
+&apos;&lt;archive:createExportArchive xmlns:archive=&quot;http://www.compositesw.com/services/system/admin/archive&quot; xmlns:common=&quot;http://www.compositesw.com/services/system/util/common&quot; xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
+    &lt;archive:settings&gt;
+       &lt;archive:name&gt;Full Server Backup&lt;/archive:name&gt;
+       &lt;archive:description&gt;Full Server Backup&lt;/archive:description&gt;
+       &lt;archive:type&gt;BACKUP&lt;/archive:type&gt;
+       &lt;archive:resources&gt;
+           &lt;archive:resources&gt;
+               &lt;archive:resource&gt;
+                   &lt;resource:path&gt;/&lt;/resource:path&gt;
+                   &lt;resource:type&gt;CONTAINER&lt;/resource:type&gt;
+                   &lt;resource:includeChildren&gt;1&lt;/resource:includeChildren&gt;
+               &lt;/archive:resource&gt;
+           &lt;/archive:resources&gt;
+       &lt;/archive:resources&gt;
+       &lt;archive:users&gt;
+           &lt;archive:all/&gt;
+       &lt;/archive:users&gt;
+       &lt;archive:serverAttributes&gt;
+           &lt;archive:all/&gt;
+       &lt;/archive:serverAttributes&gt;
+       &lt;archive:exportOptions&gt;
+           &lt;common:name&gt;INCLUDE_CACHING&lt;/common:name&gt;
+           &lt;common:name&gt;INCLUDE_CUSTOM_JAVA_JARS&lt;/common:name&gt;
+           &lt;common:name&gt;INCLUDE_DEPENDENCY&lt;/common:name&gt;
+           &lt;common:name&gt;INCLUDE_PHYSICAL_SOURCE_INFO&lt;/common:name&gt;
+           &lt;common:name&gt;INCLUDE_REQUIRED_USERS&lt;/common:name&gt;
+           &lt;common:name&gt;INCLUDE_SECURITY&lt;/common:name&gt;
+       &lt;/archive:exportOptions&gt;
+    &lt;/archive:settings&gt;
+&lt;/archive:createExportArchive&gt;&apos;;
+
+    CALL PRINT (&apos;Starting export ...&apos;);
+
+    CALL /services/webservices/system/admin/archive/operations/createExportArchive(
+        requestXML,
+        responseXML,
+        faultXML
+    );
+
+    IF (faultXML IS NOT NULL) THEN
+        LEAVE proc;
+    END IF;
+
+    -- extract the archive ID from the response XML. this ID will be used to retrieve the archive data.
+    --
+    SET archiveID = getValueFromXML (
+                        &apos;N&apos;,
+                        &apos;xmlns:archive=&quot;http://www.compositesw.com/services/system/admin/archive&quot;&apos;,
+                        &apos;/archive:createExportArchiveResponse/archive:archiveId&apos;,
+                        responseXML
+                    );
+
+    --CALL PRINT (&apos;archive id = |&apos; || archiveID || &apos;|&apos;);
+
+    -- iterate over calls to getArchiveExportData() and write data out to CAR file in 1Mb chunks. archive
+    -- is complete when status is &apos;SUCCESS&apos;.
+    --
+    SET append = 0;
+    WHILE (getStatus = &apos;INCOMPLETE&apos;) DO
+
+        SET requestXML = 
+&apos;&lt;archive:getArchiveExportData xmlns:archive=&quot;http://www.compositesw.com/services/system/admin/archive&quot;&gt;
+    &lt;archive:archiveId&gt;&apos; || archiveID || &apos;&lt;/archive:archiveId&gt;
+    &lt;archive:maxBytes&gt;1048576&lt;/archive:maxBytes&gt;
+&lt;/archive:getArchiveExportData&gt;&apos;;
+
+        -- get the next chunk of archive data
+        --
+        SELECT
+            status,
+            data
+        INTO
+            getStatus,
+            getData
+        FROM
+            /shared/ASAssets/Utilities/archive/lowerLevelProcedures/getArchiveExportDataXSLT (requestXML);
+
+        --CALL PRINT (&apos;status = |&apos; || getStatus || &apos;|&apos;);
+        --CALL PRINT (&apos;data = |&apos; || CAST(getData AS LONGVARCHAR)|| &apos;|&apos;);
+
+        -- write data to specified file path. the &quot;append&quot; variable is initially set to 0 to overwrite an
+        -- existing archive file. subsequent passes through the loop set &quot;append&quot; to 1 so that additional
+        -- data is appended to the archive file.
+        --
+        CALL /shared/ASAssets/Utilities/file/FileProcessingCJP/createFileBinary(
+            archiveFilePath,
+            append,
+            getData
+        );
+
+        SET append = 1;
+
+    END WHILE;
+
+    CALL PRINT (&apos;Export complete.&apos;);
+
+    SET success = 1;
+END</attribute>
+  <attribute name="creationDate" type="LONG">1430334417139</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1430335661487</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="p:2:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:3:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">20/57</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/77</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/68</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>GetProperty</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/73</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/122</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/185</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

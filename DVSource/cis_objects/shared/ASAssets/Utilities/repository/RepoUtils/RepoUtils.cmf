@@ -19,7 +19,6 @@
 </annotation>
   <security>
     <owner user="admin" domain="composite"/>
-    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
   <attribute name="autoAddChildren" type="BOOLEAN">true</attribute>
   <attribute name="classpath" type="STRING"/>

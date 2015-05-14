@@ -73,10 +73,20 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="15"/>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests" type="CONTAINER">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities_regression_tests/Constants" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/getCisVersion" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">-- resources created:
@@ -111,8 +121,15 @@ BEGIN
     test_block_1: 
     BEGIN INDEPENDENT TRANSACTION
         SET parentFolder = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER;
-        SET dataSourceName = &apos;test_ds_mysql&apos;;
-        SET dataSourceType = &apos;MySQL 5.0&apos;;
+
+        CASE (SUBSTRING(getCisVersion(), 1, 3))
+            WHEN &apos;6.2&apos; THEN
+                SET dataSourceName = &apos;test_ds_mysql&apos;;
+                SET dataSourceType = &apos;MySQL 5.0&apos;;
+            ELSE
+                SET dataSourceName = &apos;test_ds_postgresql&apos;;
+                SET dataSourceType = &apos;PostgreSQL 9.1&apos;;
+        END CASE;
 
         SET args = &apos;&apos;&apos;&apos; || parentFolder || &apos;&apos;&apos;, &apos; ||
                    &apos;&apos;&apos;&apos; || dataSourceName || &apos;&apos;&apos;, &apos; ||
@@ -177,14 +194,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1406909144529</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1424304015021</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">26/15</key>
+      <key type="STRING">28/17</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -192,7 +209,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">28/17</key>
+      <key type="STRING">26/15</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -208,7 +225,31 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/44</key>
+      <key type="STRING">18/57</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/72</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/93</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/51</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -216,7 +257,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/78</key>
+      <key type="STRING">18/85</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -224,7 +265,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/72</key>
+      <key type="STRING">14/79</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>resource</item>
@@ -232,31 +273,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/80</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/65</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/50</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/86</key>
+      <key type="STRING">18/87</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
