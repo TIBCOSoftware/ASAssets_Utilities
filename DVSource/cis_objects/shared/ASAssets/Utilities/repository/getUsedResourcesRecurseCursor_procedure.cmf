@@ -66,6 +66,7 @@
 
 	Modified Date:	Updated By:			CSW Version:	Reason:
 	07/03/2014		Mike Tinius			6.2.0			Created new
+	06/10/2015		Calvin Goodrich		7.0.1			Updated to fix issue with BOOLEAN data type handling in 7.0.1.00.16
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -80,8 +81,7 @@
     through a valid license for that product.
 
     This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
-    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
-</annotation>
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
   <parameters>
     <parameter name="resourcePath" direction="IN" nullable="true">
       <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
@@ -274,7 +274,7 @@
         <datatype type="STRING" maxLength="255"/>
       </element>
       <element name="usedResourcesResponse" direction="OUT">
-        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
           <schemaDatatype>
             <datatype name="XML" type="TREE" refId="2"></datatype>
           </schemaDatatype>
@@ -419,6 +419,7 @@
 
 	Modified Date:	Updated By:			CSW Version:	Reason:
 	07/03/2014		Mike Tinius			6.2.0			Created new
+	06/10/2015		Calvin Goodrich		7.0.1			Updated to fix issue with BOOLEAN data type handling in 7.0.1.00.16
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -486,7 +487,7 @@ BEGIN
 				END IF;
 
 				IF (debug = &apos;Y&apos;) THEN 
-					set message = moduleName||&apos; : &apos;||&apos;resourceID=&apos;||resource.id||&apos;  parentID=&apos;||emptyStr(parentID) ||&apos; name=&apos;||resource.name || &apos; circularReferenceFound=&apos;||circularReferenceFound||&apos; lineageResourceIdList=&apos;||lineageResourceIdList;
+					set message = moduleName||&apos; : &apos;||&apos;resourceID=&apos;||resource.id||&apos;  parentID=&apos;||emptyStr(parentID) ||&apos; name=&apos;||resource.name || &apos; circularReferenceFound=&apos;||CAST(circularReferenceFound AS VARCHAR)||&apos; lineageResourceIdList=&apos;||lineageResourceIdList;
 					call log  (message);
 					call print(message);
 				END IF;
@@ -513,7 +514,7 @@ BEGIN
 */
 			DO
 				IF (debug = &apos;Y&apos;) THEN 
-					set message = moduleName||&apos; : &apos;||&apos;resourceID=&apos;||r.id||&apos;  parentID=&apos;||emptyStr(parentID) ||&apos; name=&apos;||r.resourceName || &apos; circularReferenceFound=&apos;||circularReferenceFound;
+					set message = moduleName||&apos; : &apos;||&apos;resourceID=&apos;||r.id||&apos;  parentID=&apos;||emptyStr(parentID) ||&apos; name=&apos;||r.resourceName || &apos; circularReferenceFound=&apos;||CAST(circularReferenceFound AS VARCHAR);
 					call log  (message);
 					call print(message);
 				END IF;
@@ -544,22 +545,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1430938705091</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1433964805392</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">10/177</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/178</key>
+      <key type="STRING">11/164</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -567,7 +560,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">11/162</key>
+      <key type="STRING">10/178</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -575,7 +568,15 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">11/135</key>
+      <key type="STRING">10/179</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/136</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -587,11 +588,11 @@ END</attribute>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
-        <item>Print</item>
+        <item>Log</item>
       </value>
     </item>
     <item>
-      <key type="STRING">11/136</key>
+      <key type="STRING">11/137</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
