@@ -1,0 +1,941 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="createConsumingViews" path="/shared/ASAssets/Utilities/repository/createConsumingViews" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>createConsumingViews:
+
+    This procedure creates views that consume any views found in the input starting container. Creating
+    views that consume procedures is not supported at this time (though very probably will in a future
+    Utilities release.)
+
+    This is used for quickly creating 1-to-1 views up the best practices layers.
+
+
+    Input:
+        sourceContainer - The absolute path to a container to examine for views to build consuming views from.  
+            Values: Any container path
+
+        destinationContainer - The absolute path to the container to put the consuming views into.  
+            Values: Any container path
+
+        recurse - A flag indicating whether the script should recurse into any child containers.
+            Values: 1 = yes, 0 = no
+
+        overwrite - A flag indicating whether the script should replace any existing views it encounters.
+            Values: 1 = yes, 0 = no
+
+
+    Output:
+        success - Indicates whether the operation was a success or not.
+            Values: 1 = yes, 0 = no
+
+
+    Exceptions:
+		System.NotFoundException - Thrown if either the starting or destination containers do not exist.
+        System.IllegalStateException - Thrown if there is an issue creating/updating/destroying a resource.
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    08/14/2015      Calvin Goodrich     7.0.1           Created new
+
+
+    © 2015 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
+  <parameters>
+    <parameter name="sourceContainer" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="destinationContainer" direction="IN" nullable="true">
+      <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+    </parameter>
+    <parameter name="recurse" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="overwrite" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="success" direction="OUT" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/resource" type="CONTAINER">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/ResourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="path" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="type" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="version" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceVersion" type="STRING" maxLength="255"/>
+      </element>
+      <element name="exists" direction="OUT">
+        <datatype type="BOOLEAN"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/applyReservedListToPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="fixedResourcePath" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/applyReservedListToWord" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="word" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="debug" direction="IN">
+        <datatype type="STRING" minLength="1" maxLength="1"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createConsumingViews" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="sourceContainer" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="destinationContainer" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="recurse" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="overwrite" direction="IN">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createFolder" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="sourceFolderPath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createResource" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceSubType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/destroyResource" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceCursor" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="resourceName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resourcePath">
+            <datatype type="STRING" maxLength="1024"/>
+          </element>
+          <element name="resourceType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subtype">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="annotation">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="explicitlyDesigned">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="tableType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="sqlText">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="proprietaryModel">
+            <datatype type="STRING" maxLength="2147483647"/>
+          </element>
+          <element name="columnName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="columnType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeBaseType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="nativeType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceListChildren" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="resourceTreeList" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="name">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="resPath">
+            <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+          </element>
+          <element name="resType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="subType">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creationDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="creationDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="creatorUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="creatorUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedDate">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="lastModifiedDateBigint">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="lastModifiedUserDomain">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="lastModifiedUserName">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateSqlTable" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="inScripttext" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/applyReservedListToPath" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/system/customfunctions/applyReservedListToWord" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+    createConsumingViews:
+
+    This procedure creates views that consume any views found in the input starting container. Creating
+    views that consume procedures is not supported at this time (though very probably will in a future
+    Utilities release.)
+
+    This is used for quickly creating 1-to-1 views up the best practices layers.
+
+
+    Input:
+        sourceContainer - The absolute path to a container to examine for views to build consuming views from.  
+            Values: Any container path
+
+        destinationContainer - The absolute path to the container to put the consuming views into.  
+            Values: Any container path
+
+        recurse - A flag indicating whether the script should recurse into any child containers.
+            Values: 1 = yes, 0 = no
+
+        overwrite - A flag indicating whether the script should replace any existing views it encounters.
+            Values: 1 = yes, 0 = no
+
+
+    Output:
+        success - Indicates whether the operation was a success or not.
+            Values: 1 = yes, 0 = no
+
+
+    Exceptions:
+		System.NotFoundException - Thrown if either the starting or destination containers do not exist.
+        System.IllegalStateException - Thrown if there is an issue creating/updating/destroying a resource.
+
+
+    Modified Date:  Modified By:        CSW Version:    Reason:
+    08/14/2015      Calvin Goodrich     7.0.1           Created new
+
+
+    © 2015 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
+*/
+PROCEDURE createConsumingViews(
+    IN sourceContainer /lib/resource/ResourceDefs.ResourcePath,
+    IN destinationContainer /lib/resource/ResourceDefs.ResourcePath,
+    IN recurse BIT,
+    IN overwrite BIT,
+    OUT success BIT
+)
+BEGIN
+    PATH /lib/resource;
+
+    DECLARE NL CONSTANT CHAR(1) DEFAULT &apos;
+&apos;;
+
+    DECLARE myRecurse BOOLEAN DEFAULT CASE WHEN (recurse = 1) THEN TRUE ELSE FALSE END;
+    DECLARE myOverwrite BOOLEAN DEFAULT CASE WHEN (overwrite = 1) THEN TRUE ELSE FALSE END;
+    DECLARE resourceExists BOOLEAN;
+    DECLARE responseXML, faultXML XML;
+    DECLARE sqlText LONGVARCHAR;
+    DECLARE i INTEGER;
+
+    /* 
+     * Sanity Checking 
+     */
+
+    -- check sourceContainer
+    --
+    IF (sourceContainer IS NULL) THEN
+        RAISE System.IllegalArgumentException VALUE &apos;The input value for sourceContainer may not be NULL.&apos;;
+    END IF;
+
+    CALL ResourceExists (
+        sourceContainer,
+        ResourceDefs.RESOURCE_TYPE_CONTAINER,
+        NULL,
+        resourceExists
+    );
+    IF (NOT resourceExists) THEN
+        RAISE System.NotFoundException VALUE &apos;The starting container &apos; || sourceContainer || &apos; does not exist.&apos;;
+    END IF;
+
+    -- check destinationContainer
+    --
+    IF (destinationContainer IS NULL) THEN
+        RAISE System.IllegalArgumentException VALUE &apos;The input value for destinationContainer may not be NULL.&apos;;
+    END IF;
+
+    CALL ResourceExists (
+        destinationContainer,
+        ResourceDefs.RESOURCE_TYPE_CONTAINER,
+        NULL,
+        resourceExists
+    );
+    IF (NOT resourceExists) THEN
+        RAISE System.NotFoundException VALUE &apos;The destination container &apos; || destinationContainer || &apos; does not exist.&apos;;
+    END IF;
+
+
+    /*
+     * Construct the views.
+     */
+
+    -- iterate over sourceContainer&apos;s views/tables, containers, and data sources
+    --
+    resourceLoop:
+    FOR r AS
+        SELECT
+            name,
+            resPath,
+            resType
+        FROM
+            /shared/ASAssets/Utilities/repository/getResourceListChildren (sourceContainer, ResourceDefs.RESOURCE_TYPE_CONTAINER)
+        WHERE
+            resType IN (ResourceDefs.RESOURCE_TYPE_TABLE, ResourceDefs.RESOURCE_TYPE_CONTAINER, ResourceDefs.RESOURCE_TYPE_DATA_SOURCE)
+    DO
+        -- if the resource is a view/table ...
+        --
+        IF (r.resType = ResourceDefs.RESOURCE_TYPE_TABLE) THEN
+
+            -- see if the resource exists in the destination folder
+            --
+            CALL ResourceExists (
+                destinationContainer || &apos;/&apos; || r.name,
+                ResourceDefs.RESOURCE_TYPE_TABLE,
+                NULL,
+                resourceExists
+            );
+
+            -- if it exists and overwrite is set, then destroy it
+            --
+            IF (resourceExists AND myOverwrite) THEN
+				CALL PRINT (&apos;Destroying existing resource &apos; || destinationContainer || &apos;/&apos; || r.name);
+
+                BEGIN INDEPENDENT TRANSACTION
+                    CALL /shared/ASAssets/Utilities/repository/destroyResource(
+                        destinationContainer,
+                        r.name,
+                        ResourceDefs.RESOURCE_TYPE_TABLE,
+                        success,
+                        responseXML,
+                        faultXML
+                    );
+                END;
+
+                IF (faultXML IS NOT NULL) THEN
+                    RAISE System.IllegalStateException VALUE faultXML;
+                END IF;
+
+                SET resourceExists = FALSE;
+            END IF;
+
+            IF (NOT resourceExists) THEN
+				CALL PRINT (&apos;Creating resource &apos; || destinationContainer || &apos;/&apos; || r.name);
+
+                -- construct the view&apos;s SQL statement
+                --
+                SET sqlText = &apos;SELECT &apos; || NL || &apos;    &apos;;
+                SET i = 0;
+
+                -- iterate over the view/table columns
+                --
+                FOR c AS
+                    SELECT
+                        columnName
+                    FROM
+                        /shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE(
+                            r.resPath,
+                            ResourceDefs.RESOURCE_TYPE_TABLE
+                        )
+                    WHERE
+                        columnName IS NOT NULL
+                DO
+                    IF (i &gt; 0) THEN
+                        SET sqlText = sqlText || &apos;,&apos; || NL || &apos;    &apos;;
+                    END IF;
+
+                    SET sqlText = sqlText || applyReservedListToWord (c.columnName, &apos;N&apos;);
+                    SET i = i + 1;
+                END FOR;
+
+                SET sqlText = sqlText || NL || 
+                              &apos;FROM&apos; || NL ||
+                              &apos;    &apos; || applyReservedListToPath (r.resPath, &apos;N&apos;);
+
+                -- create the view resource
+                --
+                BEGIN INDEPENDENT TRANSACTION
+                    CALL /shared/ASAssets/Utilities/repository/createResource(
+                        destinationContainer,
+                        r.name,
+                        ResourceDefs.RESOURCE_TYPE_TABLE,
+                        ResourceDefs.RESOURCE_SUBTYPE_SQL_TABLE,
+                        success,
+                        responseXML,
+                        faultXML
+                    );
+                END;
+
+                IF (faultXML IS NOT NULL) THEN
+                    RAISE System.IllegalStateException VALUE faultXML;
+                END IF;
+
+                BEGIN INDEPENDENT TRANSACTION
+                    CALL /shared/ASAssets/Utilities/repository/updateSqlTable(
+                        destinationContainer || &apos;/&apos; || r.name,
+                        sqlText,
+                        success,
+                        responseXML,
+                        faultXML
+                    );
+                END;
+
+                IF (faultXML IS NOT NULL) THEN
+                    RAISE System.IllegalStateException VALUE faultXML;
+                END IF;
+
+            ELSE
+
+    			CALL PRINT (&apos;Skipping existing resource &apos; || destinationContainer || &apos;/&apos; || r.name);
+
+            END IF; -- (NOT resourceExists)
+
+        -- if the resource is either a container or data source ...
+        --
+        ELSE
+
+            -- if we&apos;re recursing then do some checks and perform the recursion
+            --
+            IF (myRecurse) THEN
+
+                -- see if the resource exists in the destination folder
+                --
+                CALL ResourceExists (
+                    destinationContainer || &apos;/&apos; || r.name,
+                    ResourceDefs.RESOURCE_TYPE_CONTAINER,
+                    NULL,
+                    resourceExists
+                );
+
+                -- if it exists and overwrite is set, then destroy it
+                --
+                IF (resourceExists AND myOverwrite) THEN
+    				CALL PRINT (&apos;Destroying existing container &apos; || destinationContainer || &apos;/&apos; || r.name);
+
+                    CALL /shared/ASAssets/Utilities/repository/destroyResource(
+                        destinationContainer,
+                        r.name,
+                        ResourceDefs.RESOURCE_TYPE_CONTAINER,
+                        success,
+                        responseXML,
+                        faultXML
+                    );
+
+                    IF (faultXML IS NOT NULL) THEN
+                        RAISE System.IllegalStateException VALUE faultXML;
+                    END IF;
+
+                    SET resourceExists = FALSE;
+                END IF;
+
+                -- create the container if it doesn&apos;t exist
+                IF (NOT resourceExists) THEN
+    				CALL PRINT (&apos;Creating container &apos; || destinationContainer || &apos;/&apos; || r.name);
+
+                    BEGIN INDEPENDENT TRANSACTION
+                        CALL /shared/ASAssets/Utilities/repository/createFolder (destinationContainer || &apos;/&apos; || r.name, success, faultXML);
+
+                        IF (faultXML IS NOT NULL) THEN
+                            RAISE System.IllegalStateException VALUE faultXML;
+                        END IF;
+                    END;
+                END IF;
+
+                BEGIN INDEPENDENT TRANSACTION
+                    CALL /shared/ASAssets/Utilities/repository/createConsumingViews(
+                        sourceContainer || &apos;/&apos; || r.name,
+                        destinationContainer || &apos;/&apos; || r.name,
+                        1, -- recurse
+                        overwrite,
+                        success
+                    );
+                END;
+
+            END IF; -- if (myRecurse)
+
+        END IF; -- if (r.resType = ResourceDefs.RESOURCE_TYPE_TABLE)
+
+    END FOR; -- resourceLoop
+END</attribute>
+  <attribute name="creationDate" type="LONG">1446754791569</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="impactLevel" type="INTEGER">0</attribute>
+  <attribute name="impactMessage" type="NULL"/>
+  <attribute name="lastModifiedDate" type="LONG">1446754827136</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">10/166</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/145</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">25/127</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">25/261</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/135</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceExists</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">17/137</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/213</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/101</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceExists</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/98</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">35/282</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/159</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/85</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceExists</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">22/246</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceExists</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">59/127</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/92</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">25/131</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/276</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">29/181</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">13/232</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">25/151</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">27/227</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">14/256</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">97/127</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/87</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/108</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">25/204</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">21/248</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">93/125</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">25/205</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/103</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">15/82</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">31/268</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+  </attribute>
+</metadata>

@@ -150,10 +150,10 @@
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1"></datatype>
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/getConstant" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
+    <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* getDocPreambleImpl1:
 

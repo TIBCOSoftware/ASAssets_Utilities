@@ -1,0 +1,350 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="findCaches" path="/shared/ASAssets/Utilities/upgrade/helpers/findCaches" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>findCaches:
+
+	This procedure finds cached resources configured in CIS managed cache_status tables
+
+
+	Input:
+		NONE
+
+
+	Output:
+		result - PIPE
+			RESOURCE_PATH: The path to the cached resource
+			DATASOURCE_PATH: The path to the target cache data source holding this resource
+			STATUS_PATH: The path to the cache_status table holding this resource
+			TRACKING_PATH: The path to the cache_tracking table holding this resource
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	11/02/2015		Tony Young			7.0.2			Created new
+
+    © 2015 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="result" direction="OUT" nullable="true">
+      <datatype name="result" type="TABLE" refId="1">
+        <element name="RESOURCE_PATH">
+          <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+        </element>
+        <element name="DATASOURCE_PATH">
+          <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+        </element>
+        <element name="STATUS_PATH">
+          <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+        </element>
+        <element name="TRACKING_PATH">
+          <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+        </element>
+      </datatype>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/resource/ResourceDefs" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/services/databases/system/SYS_CACHES" type="TABLE">
+    <datatype type="TABLE" refId="1">
+      <element name="RESOURCE_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="RESOURCE_NAME">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="RESOURCE_TYPE">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="OWNER_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="OWNER">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="PARENT_PATH">
+        <datatype type="STRING" maxLength="65535"/>
+      </element>
+      <element name="STATUS">
+        <datatype type="STRING" maxLength="20"/>
+      </element>
+      <element name="VARIANT">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="LAST_REFRESH_END">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="LAST_SUCCESS_END">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="LAST_FAIL_END">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="LAST_ACCESS">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="LAST_SUCCESS_DURATION">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="LAST_FAIL_DURATION">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="NUM_SUCCESS">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="NUM_FAIL">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="NUM_ACCESS">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="STORAGE_USED">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="MESSAGE">
+        <datatype type="STRING" maxLength="65535"/>
+      </element>
+      <element name="INITIAL_TIME">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="NEXT_TIME">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="FREQUENCY">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="CURRENT_REFRESH_START">
+        <datatype type="DATETIME"/>
+      </element>
+      <element name="CURRENT_DURATION">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="CURRENT_STORAGE">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="CURRENT_CAUSE">
+        <datatype type="STRING" maxLength="20"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getDataSourceCacheConfig" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inDataSourcePath" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="StatusTablePath" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="TrackingTablePath" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/getResourceCacheConfigCursor" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="inResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="inType" direction="IN">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourceType" type="STRING" maxLength="40"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype type="TABLE" refId="2">
+          <element name="configured">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="enabled">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="cachePolicy">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageDataSourcePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageTargetName">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storagePath">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="storageType">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="refreshMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="scheduleMode">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="startTime">
+            <datatype type="DATETIME"/>
+          </element>
+          <element name="fromTimeInADay">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="endTimeInADay">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="recurringDay">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="interval">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="period">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="count">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="isCluster">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="expirationPeriod">
+            <datatype type="INTEGER"/>
+          </element>
+          <element name="clearRule">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="allOrNothing">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="incremental">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="storageBucketMode">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketCatalog">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketSchema">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketPrefix">
+            <datatype type="STRING" maxLength="255"/>
+          </element>
+          <element name="storageBucketNumBuckets">
+            <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          </element>
+          <element name="storageDropCreateIdx">
+            <datatype type="INTEGER" minValue="0" maxValue="1"/>
+          </element>
+          <element name="firstRefreshCallback">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+          <element name="secondRefreshCallback">
+            <datatype type="STRING" maxLength="32768"/>
+          </element>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/resourceExists" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceExists" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+  findCaches:
+
+	This procedure finds cached resources configured in CIS managed cache_status tables
+
+
+	Input:
+		NONE
+
+
+	Output:
+		result - PIPE
+			RESOURCE_PATH: The path to the cached resource
+			DATASOURCE_PATH: The path to the target cache data source holding this resource
+			STATUS_PATH: The path to the cache_status table holding this resource
+			TRACKING_PATH: The path to the cache_tracking table holding this resource
+
+
+	Exceptions:  none
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	11/02/2015		Tony Young			7.0.2			Created new
+
+    © 2015 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE findCaches(
+    OUT result PIPE (
+        RESOURCE_PATH /lib/resource/ResourceDefs.ResourcePath,
+        DATASOURCE_PATH /lib/resource/ResourceDefs.ResourcePath,
+        STATUS_PATH /lib/resource/ResourceDefs.ResourcePath,
+        TRACKING_PATH /lib/resource/ResourceDefs.ResourcePath
+    )
+)
+BEGIN
+    DECLARE dsPath /lib/resource/ResourceDefs.ResourcePath;
+	DECLARE statusPath /lib/resource/ResourceDefs.ResourcePath;
+	DECLARE trackingPath /lib/resource/ResourceDefs.ResourcePath;
+
+	DECLARE resourceExists	BIT		DEFAULT 0;
+ 
+    FOR r AS
+        SELECT
+            RESOURCE_NAME,
+            RESOURCE_TYPE,
+            PARENT_PATH
+        FROM
+            /services/databases/system/SYS_CACHES
+    DO
+        SELECT
+            storageDataSourcePath
+        INTO
+            dsPath
+        FROM
+            /shared/ASAssets/Utilities/repository/getResourceCacheConfigCursor(
+                r.PARENT_PATH || &apos;/&apos; || r.RESOURCE_NAME,
+                r.RESOURCE_TYPE
+            );
+
+		CALL /shared/ASAssets/Utilities/repository/resourceExists(dsPath, &apos;DATA_SOURCE&apos;, resourceExists);
+
+		IF resourceExists=1 THEN
+	
+			SELECT
+				StatusTablePath,
+				TrackingTablePath
+	 		INTO
+				statusPath,
+				trackingPath
+			FROM
+				/shared/ASAssets/Utilities/repository/getDataSourceCacheConfig(dsPath);
+	
+	        INSERT INTO result VALUES (r.PARENT_PATH || &apos;/&apos; || r.RESOURCE_NAME, dsPath, statusPath, trackingPath);
+		END IF;
+    END FOR;
+END
+</attribute>
+  <attribute name="creationDate" type="LONG">1443442952873</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">v598790</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1446756425232</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

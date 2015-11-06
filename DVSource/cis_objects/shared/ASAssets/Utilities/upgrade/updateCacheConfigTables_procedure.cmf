@@ -1,0 +1,439 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="updateCacheConfigTables" path="/shared/ASAssets/Utilities/upgrade/updateCacheConfigTables" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>updateCacheConfigTables:
+
+	This procedure will update the cache config tables - cache_status and cache_tracking - to allow a new server
+	to use existing cache data as part of a CIS server version upgrade. This can be done as part of a migration from
+	CIS 6.2 to CIS 7.0, and allow cache data to be preserved after the upgrade
+
+	NOTE: BEFORE RUNNING THIS PROCEDURE, ENSURE THAT CACHING IS DISABLED ON THE OLD SERVER AND NEW SERVER
+
+	NOTE: THIS PROCEDURE IS TO BE RUN ON THE TARGET SITE FOR UPGRADE - I.E. IF YOU ARE UPGRADING FROM CIS 6.2 TO
+	7.0, EXECUTE THE PROCEDURE ON THE CIS 7.0 SERVER, PROVIDING THE CIS 6.2 SERVER&apos;S SERVER_ID AS INPUT
+
+	NOTE: AFTER RUNNING THIS PROCEDURE, RE-ENABLE CACHING ON THE TARGET SITE FOR UPGRADE ONLY
+
+	NOTE: ALSO RECOMMEND SETTING CACHE STATUS SYNC INTERVAL TO 60 SECONDS ON SOURCE AND TARGET SERVER BEFORE RUNNING
+
+
+	Input:
+		performDelete - BIT
+			0, do not delete; 1, delete existing entries for the target upgrade server
+
+		performInsert - BIT
+			0, do not insert new entries; 1, insert new entries for the target upgrade server
+
+		previousServerID - LONGVARCHAR
+			Server ID of the previous CIS server we are upgrading
+
+
+	Output:
+		NONE
+
+
+	Exceptions:
+		System.IllegalArgumentException - Thrown when input parameters cannot be validated.
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	11/02/2015		Tony Young			7.0.2			Created new
+
+    © 2015 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <parameters>
+    <parameter name="performDelete" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="performInsert" direction="IN" nullable="true">
+      <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+    </parameter>
+    <parameter name="previousServerID" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/GetProperty" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="property" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="PropertyName" type="STRING" maxLength="255"/>
+      </element>
+      <element name="result" direction="OUT">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="PropertyValue" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/lib/util/System" type="DEFINITION_SET">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/upgrade/helpers/configuredCaches" type="TABLE">
+    <datatype type="TABLE" refId="1">
+      <element name="DATASOURCE_PATH">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="STATUS_PATH">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+      <element name="TRACKING_PATH">
+        <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+  updateCacheConfigTables:
+
+	This procedure will update the cache config tables - cache_status and cache_tracking - to allow a new server
+	to use existing cache data as part of a CIS server version upgrade. This can be done as part of a migration from
+	CIS 6.2 to CIS 7.0, and allow cache data to be preserved after the upgrade
+
+	NOTE: BEFORE RUNNING THIS PROCEDURE, ENSURE THAT CACHING IS DISABLED ON THE OLD SERVER AND NEW SERVER
+
+	NOTE: THIS PROCEDURE IS TO BE RUN ON THE TARGET SITE FOR UPGRADE - I.E. IF YOU ARE UPGRADING FROM CIS 6.2 TO
+	7.0, EXECUTE THE PROCEDURE ON THE CIS 7.0 SERVER, PROVIDING THE CIS 6.2 SERVER&apos;S SERVER_ID AS INPUT
+
+	NOTE: AFTER RUNNING THIS PROCEDURE, RE-ENABLE CACHING ON THE TARGET SITE FOR UPGRADE ONLY
+
+	NOTE: ALSO RECOMMEND SETTING CACHE STATUS SYNC INTERVAL TO 60 SECONDS ON SOURCE AND TARGET SERVER BEFORE RUNNING
+
+
+	Input:
+		performDelete - BIT
+			0, do not delete; 1, delete existing entries for the target upgrade server
+
+		performInsert - BIT
+			0, do not insert new entries; 1, insert new entries for the target upgrade server
+
+		previousServerID - LONGVARCHAR
+			Server ID of the previous CIS server we are upgrading
+
+
+	Output:
+		NONE
+
+
+	Exceptions:
+		System.IllegalArgumentException - Thrown when input parameters cannot be validated.
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	11/02/2015		Tony Young			7.0.2			Created new
+
+    © 2015 Cisco and/or its affiliates. All rights reserved.
+*/
+PROCEDURE updateCacheConfigTables(
+	IN performDelete 	BIT,			--0, do not delete; 1, delete existing entries for this server
+	IN performInsert 	BIT,			--0, do not insert new entries; 1, insert new entries for this server
+	IN previousServerID LONGVARCHAR		--Server ID of the previous CIS server we are upgrading
+)
+BEGIN
+	DECLARE myServerID	VARCHAR		DEFAULT	&apos;&apos;;
+	DECLARE cacheCursor	CURSOR(DATASOURCE_PATH LONGVARCHAR, STATUS_PATH LONGVARCHAR, TRACKING_PATH LONGVARCHAR);
+	DECLARE sqlStmt		LONGVARCHAR	DEFAULT &apos;&apos;;
+
+	--Check that we have no NULL parameter values
+	CASE
+	WHEN performDelete IS NULL THEN
+		RAISE System.IllegalArgumentException VALUE &apos;performDelete may not be NULL&apos;;
+	WHEN performInsert IS NULL THEN
+		RAISE System.IllegalArgumentException VALUE &apos;performInsert may not be NULL&apos;;
+	WHEN previousServerID IS NULL THEN
+		RAISE System.IllegalArgumentException VALUE &apos;previousServerID may not be NULL&apos;;
+	END CASE;
+
+	--Get the server ID for this server
+	CALL /lib/util/GetProperty(&apos;SERVER_ID&apos;,myServerID);
+
+	CALL PRINT(&apos;Beginning execution with parameter values:
+	performDelete=&apos; || performDelete || &apos;;
+	performInsert=&apos; || performInsert || &apos;;
+	previousServerID=&apos; || previousServerID || &apos;;
+	myServerID=&apos; || myServerID || &apos;;&apos;);
+
+	--Get the set of cache status and tracking tables
+	OPEN cacheCursor FOR SELECT * FROM /shared/ASAssets/Utilities/upgrade/helpers/configuredCaches;
+
+	--For each set of cache status and tracking tables
+	cacheCursor:FOR r AS cacheCursor DO
+		CALL PRINT(&apos;FOR DATASOURCE_PATH=&apos; || r.DATASOURCE_PATH);
+
+		IF r.STATUS_PATH IS NULL OR r.TRACKING_PATH IS NULL THEN
+			CALL PRINT(&apos;	Cache status or tracking table is NULL. Check data source configuration! Skipping...&apos;);
+			ITERATE cacheCursor;
+		END IF;
+
+		IF performDelete = 1 THEN
+			--STEP 0: Cleanup existing entries from the status and tracking tables
+			BEGIN INDEPENDENT TRANSACTION
+				CALL PRINT(&apos;Begin: STEP 0: Cleanup existing entries from the status and tracking tables...&apos;);
+
+				CALL PRINT(sqlStmt);
+				SET sqlStmt = &apos;DELETE FROM &apos; || r.STATUS_PATH || &apos; WHERE SERVERID = &apos;&apos;&apos; || myServerID || &apos;&apos;&apos;&apos;;
+	
+				EXECUTE IMMEDIATE sqlStmt;
+	
+				CALL PRINT(sqlStmt);
+				SET sqlStmt = &apos;DELETE FROM &apos; || r.TRACKING_PATH || &apos; WHERE SERVERID = &apos;&apos;&apos; || myServerID || &apos;&apos;&apos;&apos;;
+	
+				EXECUTE IMMEDIATE sqlStmt;
+	
+				CALL PRINT(&apos;End: STEP 0&apos;);
+			END;
+		END IF;
+	
+		IF performInsert = 1 THEN
+			--STEP 1: Copy over the current CACHE_STATUS entries from source to target site
+			BEGIN INDEPENDENT TRANSACTION
+				CALL PRINT(&apos;Begin: STEP 1: Copy over the current CACHE_STATUS entries from source to target site...&apos;);
+	
+				SET sqlStmt = &apos;INSERT INTO &apos; || r.STATUS_PATH || &apos; 
+				SELECT
+					CLUSTERID,
+					&apos;&apos;&apos; || myServerID || &apos;&apos;&apos; SERVERID,
+					RESOURCEID,
+					PARAMETERS,
+					STATUS,
+					CACHEKEY,
+					STARTTIME,
+					FINISHTIME,
+					CLEARTIME,
+					BYTES,
+					MESSAGE,
+					BUCKET,
+					INCREMENTALSTATUS,
+					INCREMENTALMAINTENANCELEVEL
+				FROM
+					&apos; || r.STATUS_PATH || &apos;
+				WHERE
+					SERVERID = &apos;&apos;&apos; || previousServerID || &apos;&apos;&apos;&apos;;
+				CALL PRINT(sqlStmt);
+	
+				EXECUTE IMMEDIATE sqlStmt;
+	
+				CALL PRINT(&apos;End: STEP 1&apos;);
+			END;
+		
+			--STEP 2: Update the CACHEKEY for the target to be greater than source, so there is no overlap in keys
+			BEGIN INDEPENDENT TRANSACTION
+				CALL PRINT(&apos;Begin: STEP 2: Update the CACHEKEY for the target to be greater than source, so there is no overlap in keys...&apos;);
+				IF r.STATUS_PATH != &apos;/lib/sources/cacheDataSource/csstatus&apos; THEN
+				SET sqlStmt = &apos;UPDATE &apos; || r.STATUS_PATH || &apos;
+				SET CACHEKEY = CACHEKEY*100
+				WHERE SERVERID = &apos;&apos;&apos; || myServerID || &apos;&apos;&apos;
+					AND STATUS = &apos;&apos;K&apos;&apos;&apos;;
+				CALL PRINT(sqlStmt);
+	
+				EXECUTE IMMEDIATE sqlStmt;
+	END IF;
+				CALL PRINT(&apos;End: STEP 2&apos;);
+			END;
+		
+			--STEP 3: Copy over the current CACHE_TRACKING entries from source to target site
+			BEGIN INDEPENDENT TRANSACTION
+				CALL PRINT(&apos;Begin: STEP 3: Copy over the current CACHE_TRACKING entries from source to target site...&apos;);
+	
+				SET sqlStmt = &apos;INSERT INTO &apos; || r.TRACKING_PATH || &apos;
+				SELECT
+					CLUSTERID,
+					&apos;&apos;&apos; || myServerID || &apos;&apos;&apos; SERVERID,
+					RESOURCEID,
+					&quot;CATALOG&quot;,
+					&quot;SCHEMA&quot;,
+					&quot;table&quot;,
+					CREATETIME
+				FROM
+					&apos; || r.TRACKING_PATH || &apos;
+				WHERE
+					SERVERID = &apos;&apos;&apos; || previousServerID || &apos;&apos;&apos;&apos;;
+				CALL PRINT(sqlStmt);
+	
+				EXECUTE IMMEDIATE sqlStmt;
+	
+				CALL PRINT(&apos;End: STEP 3&apos;);
+			END;
+		END IF;
+	END FOR;
+
+	CALL PRINT(&apos;End Execution&apos;);
+END</attribute>
+  <attribute name="creationDate" type="LONG">1443100035188</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserId" type="INTEGER">424</attribute>
+  <attribute name="creatorUserName" type="STRING">v598790</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1446756527655</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserId" type="INTEGER">424</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">10/88</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">7/65</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/166</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/98</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/146</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/93</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/55</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/57</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/105</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/59</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/136</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">9/79</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/127</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">8/76</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/131</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">7/175</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/142</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/170</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/151</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/86</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+  </attribute>
+  <attribute name="resourceModifiedDateOnSourceCISSite" type="LONG">1443100035188</attribute>
+</metadata>

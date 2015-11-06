@@ -833,14 +833,6 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">11/181</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">11/250</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
@@ -849,11 +841,11 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">11/182</key>
+      <key type="STRING">11/181</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
-        <item>Print</item>
+        <item>Log</item>
       </value>
     </item>
     <item>
@@ -862,6 +854,14 @@ END</attribute>
         <item>lib</item>
         <item>debug</item>
         <item>Log</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">11/182</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
       </value>
     </item>
   </attribute>

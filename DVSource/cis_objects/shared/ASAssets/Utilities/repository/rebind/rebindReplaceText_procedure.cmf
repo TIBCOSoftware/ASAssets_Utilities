@@ -178,7 +178,7 @@
         <datatype type="STRING" maxLength="255"/>
       </element>
       <element name="resourceResponse" direction="OUT">
-        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
           <schemaDatatype>
             <datatype name="XML" type="TREE" refId="2"></datatype>
           </schemaDatatype>

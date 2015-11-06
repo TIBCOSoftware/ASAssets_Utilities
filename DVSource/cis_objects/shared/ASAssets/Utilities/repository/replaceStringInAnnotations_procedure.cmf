@@ -106,6 +106,9 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/updateResourceAnnotations" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateResourceAnnotations" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="resourcePath" direction="IN">
         <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
@@ -151,9 +154,6 @@
         </datatype>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/updateResourceAnnotations" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
@@ -265,7 +265,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1430333609018</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1446756505551</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

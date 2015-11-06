@@ -89,7 +89,7 @@ cache_tracking,/shared/examples/ds_orders/cache_tracking,TABLE,DATABASE_TABLE,,
 customers,/shared/examples/ds_orders/customers,TABLE,DATABASE_TABLE,,
 orderdetails,/shared/examples/ds_orders/orderdetails,TABLE,DATABASE_TABLE,,
 orders,/shared/examples/ds_orders/orders,TABLE,DATABASE_TABLE,,
-orders_cache,/shared/examples/ds_orders/orders_cache,TABLE,DATABASE_TABLE,admin,composite
+orders_cache,/shared/examples/ds_orders/orders_cache,TABLE,DATABASE_TABLE,,
 shippingmethods,/shared/examples/ds_orders/shippingmethods,TABLE,DATABASE_TABLE,,
 getInventoryTransactions,/shared/examples/getInventoryTransactions,PROCEDURE,XQUERY_TRANSFORM_PROCEDURE,,
 productCatalog_Transformation,/shared/examples/productCatalog_Transformation,PROCEDURE,XSLT_TRANSFORM_PROCEDURE,,&apos;;
@@ -157,7 +157,7 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1424305291272</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1446764030707</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

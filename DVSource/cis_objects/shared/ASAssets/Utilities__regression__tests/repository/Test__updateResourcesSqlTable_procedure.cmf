@@ -70,7 +70,7 @@
       <element name="columnList" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="childResourceType" referenceDefinitionSet="/users/composite/admin/Utilities_newitems/tyoung/RepositoryDefinitions" referenceType="childResourceType" type="TREE" refId="2">
+            <datatype name="childResourceType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="childResourceType" type="TREE" refId="2">
               <element name="resourceName">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
               </element>
@@ -96,7 +96,7 @@
       <element name="sqlIndexList" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="sqlIndexType" referenceDefinitionSet="/users/composite/admin/Utilities_newitems/tyoung/RepositoryDefinitions" referenceType="sqlIndexType" type="TREE" refId="3">
+            <datatype name="sqlIndexType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="sqlIndexType" type="TREE" refId="3">
               <element name="sqlIndexName">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
               </element>
@@ -119,7 +119,7 @@
       <element name="foreignKeyList" direction="IN">
         <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <datatype name="foreignKeyType" referenceDefinitionSet="/users/composite/admin/Utilities_newitems/tyoung/RepositoryDefinitions" referenceType="foreignKeyType" type="TREE" refId="4">
+            <datatype name="foreignKeyType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="foreignKeyType" type="TREE" refId="4">
               <element name="fkName">
                 <datatype name="VARCHAR" type="STRING" maxLength="255"/>
               </element>
