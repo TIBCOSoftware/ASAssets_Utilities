@@ -637,7 +637,7 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
       <element name="inXml" direction="IN">
-        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
           <schemaDatatype>
             <datatype name="XML" type="TREE" refId="2"></datatype>
           </schemaDatatype>

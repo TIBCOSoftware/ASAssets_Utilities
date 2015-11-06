@@ -52,6 +52,9 @@
     <owner user="admin" domain="composite"/>
   </security>
   <dependency target="/lib/resource/CopyResource" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/lib/resource/CopyResource" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="path" direction="IN">
         <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
@@ -69,9 +72,6 @@
         <datatype referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="CopyMode" type="STRING" maxLength="255"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/lib/resource/CopyResource" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/lib/resource/RenameResource" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -134,9 +134,6 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="fullResourcePath" direction="IN">
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
@@ -151,6 +148,9 @@
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/returnFolderNameAndFolderPath" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/emptyStr" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -169,10 +169,10 @@
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1"></datatype>
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
+    <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* createResourceCopy:
 	-- CIS Repository Helper Procedure --

@@ -95,6 +95,7 @@
 
     Modified Date:  Modified By:        CSW Version:    Reason:
     04/24/2015      Calvin Goodrich     7.0.1           Created new
+	06/10/2015		Calvin Goodrich		7.0.1			Updated to fix issue with BOOLEAN data type handling in 7.0.1.00.16
 
     © 2015 Cisco and/or its affiliates. All rights reserved.
 
@@ -156,7 +157,7 @@
           </datatype>
         </itemDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="success" direction="OUT" nullable="true">
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
@@ -167,7 +168,7 @@
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultXML" direction="OUT" nullable="true">
       <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
@@ -175,7 +176,7 @@
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -400,6 +401,7 @@
 
     Modified Date:  Modified By:        CSW Version:    Reason:
     04/24/2015      Calvin Goodrich     7.0.1           Created new
+	06/10/2015		Calvin Goodrich		7.0.1			Updated to fix issue with BOOLEAN data type handling in 7.0.1.00.16
 
     © 2015 Cisco and/or its affiliates. All rights reserved.
 
@@ -463,9 +465,9 @@ BEGIN
     --
     SET requestXML =
 &apos;&lt;resource:updateResourcePrivileges xmlns:resource=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
-    &lt;resource:updateRecursively&gt;&apos; || myRecurseChildResources || &apos;&lt;/resource:updateRecursively&gt;
-    &lt;resource:updateDependenciesRecursively&gt;&apos; || myRecurseDependencies || &apos;&lt;/resource:updateDependenciesRecursively&gt;
-    &lt;resource:updateDependentsRecursively&gt;&apos; || myRecurseDependents || &apos;&lt;/resource:updateDependentsRecursively&gt;
+    &lt;resource:updateRecursively&gt;&apos; || CAST(myRecurseChildResources AS VARCHAR) || &apos;&lt;/resource:updateRecursively&gt;
+    &lt;resource:updateDependenciesRecursively&gt;&apos; || CAST(myRecurseDependencies AS VARCHAR) || &apos;&lt;/resource:updateDependenciesRecursively&gt;
+    &lt;resource:updateDependentsRecursively&gt;&apos; || CAST(myRecurseDependents AS VARCHAR) || &apos;&lt;/resource:updateDependentsRecursively&gt;
     &lt;resource:privilegeEntries&gt;
 &apos;;
 
@@ -559,14 +561,14 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1430341400571</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1433964910527</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
-  <attribute name="p:7:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:4:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:7:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="public_types" type="MAP">
     <item>
       <key type="STRING">ResourcePrivsListType</key>
@@ -595,7 +597,7 @@ LwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAf///////////////8=</value>
   </attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">27/197</key>
+      <key type="STRING">27/202</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -603,7 +605,7 @@ LwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAf///////////////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">27/201</key>
+      <key type="STRING">19/177</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -611,7 +613,7 @@ LwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAf///////////////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">19/176</key>
+      <key type="STRING">27/198</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -619,7 +621,7 @@ LwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAf///////////////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">31/204</key>
+      <key type="STRING">27/194</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -627,7 +629,7 @@ LwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAf///////////////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">27/193</key>
+      <key type="STRING">31/205</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -635,7 +637,7 @@ LwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAf///////////////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">15/153</key>
+      <key type="STRING">15/154</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>
@@ -643,7 +645,7 @@ LwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP////8DIgAAAAADEgAAAAf///////////////8=</value>
       </value>
     </item>
     <item>
-      <key type="STRING">19/172</key>
+      <key type="STRING">19/173</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>

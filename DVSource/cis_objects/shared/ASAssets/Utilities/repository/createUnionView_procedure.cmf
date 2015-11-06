@@ -43,11 +43,11 @@
         /lib/util/System.IllegalStateException    - Thrown when resources exist when they shouldn&apos;t or vice versa.
 
 
-    Author:      Calvin Goodrich
-    Date:        9/17/2012
-    CSW Version: 6.0.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	09/17/2012		Calvin Goodrich		6.0.0			Created new
+	09/15/2015		Matt Lee    		7.0.1			Fixed issue where hard coded paths still pointed to /shared/Utilities.
 
-    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
 
     This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
     Any dependent libraries supplied by third parties are provided under their own open source licenses as 
@@ -60,8 +60,7 @@
     through a valid license for that product.
 
     This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
-    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
-</annotation>
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
   <parameters>
     <parameter name="UnionViewPath" direction="IN" nullable="true">
       <datatype name="ResourcePath" referenceDefinitionSet="/lib/resource/ResourceDefs" referenceType="ResourcePath" type="STRING" maxLength="4096"/>
@@ -87,7 +86,7 @@
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultXML" direction="OUT" nullable="true">
       <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
@@ -95,7 +94,7 @@
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
@@ -256,11 +255,11 @@
         /lib/util/System.IllegalStateException    - Thrown when resources exist when they shouldn&apos;t or vice versa.
 
 
-    Author:      Calvin Goodrich
-    Date:        9/17/2012
-    CSW Version: 6.0.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	09/17/2012		Calvin Goodrich		6.0.0			Created new
+	09/15/2015		Matt Lee    		7.0.1			Fixed issue where hard coded paths still pointed to /shared/Utilities.
 
-    © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
+    © 2012, 2014 Cisco and/or its affiliates. All rights reserved.
 
     This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
     Any dependent libraries supplied by third parties are provided under their own open source licenses as 
@@ -384,8 +383,8 @@ BEGIN
         ELSE COALESCE (v1.ColumnType, v2.ColumnType) 
     END ColumnType
 FROM
-    /shared/Utilities/repository/getBasicResourceCursor_SQL_TABLE(&apos;&apos;&apos; || View1Path || &apos;&apos;&apos;, &apos;&apos;&apos; || ResourceDefs.RESOURCE_TYPE_TABLE || &apos;&apos;&apos;) v1 FULL OUTER JOIN 
-        /shared/Utilities/repository/getBasicResourceCursor_SQL_TABLE(&apos;&apos;&apos; || View2Path || &apos;&apos;&apos;, &apos;&apos;&apos; || ResourceDefs.RESOURCE_TYPE_TABLE || &apos;&apos;&apos;) v2 
+    /shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE(&apos;&apos;&apos; || View1Path || &apos;&apos;&apos;, &apos;&apos;&apos; || ResourceDefs.RESOURCE_TYPE_TABLE || &apos;&apos;&apos;) v1 FULL OUTER JOIN 
+        /shared/ASAssets/Utilities/repository/getBasicResourceCursor_SQL_TABLE(&apos;&apos;&apos; || View2Path || &apos;&apos;&apos;, &apos;&apos;&apos; || ResourceDefs.RESOURCE_TYPE_TABLE || &apos;&apos;&apos;) v2 
     ON v1.ColumnName = v2.ColumnName
 WHERE
        v1.ColumnName IS NOT NULL OR
@@ -463,13 +462,13 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1446755487694</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="p:6:Customized" type="STRING">datatype.changed</attribute>
-  <attribute name="p:7:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:6:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:7:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="public_types" type="MAP">
     <item>
       <key type="STRING">ColumnDefsRow</key>
@@ -538,14 +537,6 @@ IP////8DIgAAAAADEgAAAAP/////</value>
       </value>
     </item>
     <item>
-      <key type="STRING">99/173</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">10/116</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
@@ -575,14 +566,6 @@ IP////8DIgAAAAADEgAAAAP/////</value>
         <item>lib</item>
         <item>resource</item>
         <item>ResourceExists</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">103/174</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
       </value>
     </item>
     <item>
@@ -655,6 +638,22 @@ IP////8DIgAAAAADEgAAAAP/////</value>
         <item>lib</item>
         <item>util</item>
         <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">112/174</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">108/173</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
       </value>
     </item>
     <item>

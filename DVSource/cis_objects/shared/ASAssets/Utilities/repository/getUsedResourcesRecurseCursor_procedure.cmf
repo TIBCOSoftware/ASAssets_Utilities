@@ -274,7 +274,7 @@
         <datatype type="STRING" maxLength="255"/>
       </element>
       <element name="usedResourcesResponse" direction="OUT">
-        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
           <schemaDatatype>
             <datatype name="XML" type="TREE" refId="2"></datatype>
           </schemaDatatype>
@@ -576,7 +576,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">11/136</key>
+      <key type="STRING">11/163</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -584,7 +584,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">11/163</key>
+      <key type="STRING">11/136</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

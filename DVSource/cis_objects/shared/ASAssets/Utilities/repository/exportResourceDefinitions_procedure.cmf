@@ -117,6 +117,9 @@
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="filePath" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
@@ -128,9 +131,6 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/createFileAscii" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/file/FileProcessingCJP/existsDir" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -163,10 +163,10 @@
     </datatype>
   </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1"></datatype>
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/emptyStr" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
+    <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/existsDir" type="PROCEDURE">
     <datatype name="Tree" type="TREE" refId="1"></datatype>

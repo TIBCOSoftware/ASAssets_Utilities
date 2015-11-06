@@ -1,0 +1,112 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="getServiceTests" path="/shared/ASAssets/Utilities/upgrade/getServiceTests" type="TABLE" subtype="SQL_TABLE" changeToken="0" tableType="VIEW">
+  <annotation>getServiceTests:
+
+	This view returns default regression testing entries that can be used with JMeter regression suite for upgrade
+	testing. It returns queries for all published operations for all virtual web services, except the &apos;admin&apos; or
+	&apos;util&apos; services
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	11/02/2015		Tony Young			7.0.2			Created new
+
+    © 2015 Cisco and/or its affiliates. All rights reserved.</annotation>
+  <columns>
+    <column name="Skip Execution" nullable="true">
+      <datatype type="STRING" minLength="2" maxLength="2" trailingSpaces="false"/>
+      <security>
+        <owner user="admin" domain="composite"/>
+      </security>
+    </column>
+    <column name="Test Name" nullable="true">
+      <datatype type="STRING" minLength="2" maxLength="21" trailingSpaces="false"/>
+      <security>
+        <owner user="admin" domain="composite"/>
+      </security>
+    </column>
+    <column name="Operation Path" nullable="true">
+      <datatype type="STRING" minLength="7" maxLength="65797"/>
+      <security>
+        <owner user="admin" domain="composite"/>
+      </security>
+    </column>
+    <column name="Test Plan" nullable="true">
+      <datatype type="STRING" minLength="5" maxLength="260"/>
+      <security>
+        <owner user="admin" domain="composite"/>
+      </security>
+    </column>
+    <column name="Service Name" nullable="true">
+      <datatype type="STRING" maxLength="255"/>
+      <security>
+        <owner user="admin" domain="composite"/>
+      </security>
+    </column>
+  </columns>
+  <indexes></indexes>
+  <foreignKeys></foreignKeys>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <dependency target="/services/databases/system/ALL_WSDL_OPERATIONS" type="TABLE">
+    <datatype type="TABLE" refId="1">
+      <element name="OPERATION_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="OPERATION_NAME">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="DATASOURCE_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="DATASOURCE_NAME">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="ANNOTATION">
+        <datatype type="STRING" maxLength="65535"/>
+      </element>
+      <element name="OWNER_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="OWNER">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="PARENT_PATH">
+        <datatype type="STRING" maxLength="65535"/>
+      </element>
+    </datatype>
+  </dependency>
+  <attribute name="SQL" type="STRING">/* 
+  getServiceTests:
+
+	This view returns default regression testing entries that can be used with JMeter regression suite for upgrade
+	testing. It returns queries for all published operations for all virtual web services, except the &apos;admin&apos; or
+	&apos;util&apos; services
+
+
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	11/02/2015		Tony Young			7.0.2			Created new
+
+    © 2015 Cisco and/or its affiliates. All rights reserved.
+*/
+SELECT 
+	&apos;//&apos; &quot;Skip Execution&quot;,
+    &apos;W&apos; || OPERATION_ID &quot;Test Name&quot;,
+	&apos;/json/&apos; || REPLACE(PARENT_PATH, &apos;/services/webservices/&apos;, &apos;&apos;) || &apos;/&apos; || OPERATION_NAME &quot;Operation Path&quot;,
+	&apos;PLAN_&apos; || DATASOURCE_NAME &quot;Test Plan&quot;,
+	DATASOURCE_NAME &quot;Service Name&quot;
+FROM      
+    /services/databases/system/ALL_WSDL_OPERATIONS ALL_WSDL_OPERATIONS
+WHERE
+	DATASOURCE_NAME NOT IN (&apos;admin&apos;,&apos;util&apos;)
+ORDER BY
+	DATASOURCE_NAME, OPERATION_NAME</attribute>
+  <attribute name="creationDate" type="LONG">1442425708916</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">v598790</attribute>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1446756370647</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+</metadata>

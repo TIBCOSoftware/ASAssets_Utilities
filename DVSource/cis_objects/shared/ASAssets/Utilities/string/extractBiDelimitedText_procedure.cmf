@@ -95,9 +95,6 @@
     </datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="Input Text" direction="IN">
         <datatype type="STRING" maxLength="2147483647"/>
@@ -117,6 +114,9 @@
       </element>
     </datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="request" direction="IN">
@@ -134,10 +134,10 @@
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1"></datatype>
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
+    <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* extractBiDelimitedText:
 	Extract bi-delimited text refers to the ability to locate text based on a search term where the search term

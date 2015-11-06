@@ -117,9 +117,19 @@
         </datatype>
       </element>
       <element name="dsAttributes" direction="IN">
-        <datatype name="AttributesVectorType" type="ARRAY" maxLength="0">
+        <datatype type="ARRAY" maxLength="0">
           <itemDatatype>
-            <reference refId="3"/>
+            <datatype name="Attribute" type="TREE" refId="4">
+              <element name="name">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="type">
+                <datatype name="VARCHAR" type="STRING" maxLength="40"/>
+              </element>
+              <element name="value">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
           </itemDatatype>
         </datatype>
       </element>

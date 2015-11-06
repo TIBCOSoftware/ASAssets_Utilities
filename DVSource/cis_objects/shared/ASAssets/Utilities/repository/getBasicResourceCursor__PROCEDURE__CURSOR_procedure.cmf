@@ -199,9 +199,6 @@
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_PROCEDURE" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_PROCEDURE" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="inXML" direction="IN">
         <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
@@ -254,6 +251,9 @@
         </datatype>
       </element>
     </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXSLT_PROCEDURE" type="PROCEDURE">
+    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexReplace" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
