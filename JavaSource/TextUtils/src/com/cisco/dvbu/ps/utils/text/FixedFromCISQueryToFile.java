@@ -85,7 +85,8 @@ public class FixedFromCISQueryToFile extends TextUtilTemplate implements CustomP
   String loginfo = "Done.";
   int error = 1;
   ResultSet rs = null;
-  
+  final String NL = System.getProperty("line.separator");
+
   static {
     className = "FixedFromCISQueryToFile";
     logger = Logger.getLogger(FixedFromCISQueryToFile.class.getName());
@@ -230,7 +231,7 @@ public class FixedFromCISQueryToFile extends TextUtilTemplate implements CustomP
           }
         }
         // Write the column header line to the file
-        createFileAscii(filePath, append, sb.toString());
+        createFileAscii(filePath, append, sb.toString() + NL);
         //Now that the file has been written to make sure that additional writes are appended within the context of this procedure.
         append = true;
 
@@ -275,7 +276,7 @@ public class FixedFromCISQueryToFile extends TextUtilTemplate implements CustomP
 	          }
           }
         }
-        sb.append("\n");
+        sb.append(NL);
 
         resultSize++;
 
