@@ -102,6 +102,7 @@ public class CSVFromCISQueryToFile extends TextUtilTemplate implements CustomPro
   String loginfo = "Done.";
   int error = 1;
   ResultSet rs = null;
+  final String NL = System.getProperty("line.separator");
 
   static {
 	className = "CSVFromCISQueryToFile";
@@ -244,7 +245,7 @@ public class CSVFromCISQueryToFile extends TextUtilTemplate implements CustomPro
           sb.append (rsmd.getColumnLabel (x + 1));
         }
         // Write the column header line to the file
-        createFileAscii (filePath, append, sb.toString() + "\n");
+        createFileAscii (filePath, append, sb.toString() + NL);
 
         //Now that the file has been written to make sure that additional writes are appended within the context of this procedure.
         append = true;
@@ -306,7 +307,7 @@ public class CSVFromCISQueryToFile extends TextUtilTemplate implements CustomPro
             sb.append (resultTmp);
           }
         }
-        sb.append ("\n");
+        sb.append (NL);
         // Comment this line out after debugging is completed
         //logger.info ("Row::"+sb.toString());
         
