@@ -24,6 +24,7 @@ DecryptFrom3DES()
 
     Modified Date:  Modified By:        CSW Version:    Reason:
     10/27/2014      Alex Dedov          6.2.6           Created new
+    01/20/2016		Alex Dedov			7.0.1			Updated to use different hex binary parser
 
     © 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -43,6 +44,8 @@ DecryptFrom3DES()
  */
 import java.sql.SQLException;
 import java.sql.Types;
+
+import javax.xml.bind.DatatypeConverter;
 
 import com.compositesw.extension.CustomProcedureException;
 import com.compositesw.extension.ParameterInfo;
@@ -78,7 +81,7 @@ public class DecryptFrom3DES extends EncodingUtilTemplate {
 	public int execute(Object[] args) throws Exception {
 		String encText = args.length > 0 ? (String)args[0] : null ;
 		String mdInput = (args.length > 1 && args[1] != null) ? (String)args[1] : "ZKZH1W7" ;
-		byte[] bytes = EncryptDecryptX509.bytes(encText) ;
+		byte[] bytes = DatatypeConverter.parseHexBinary(encText) ;
 		decMessage = new String(new EncryptDecrypt3DES().decrypt(bytes,mdInput.getBytes())) ;
 		return 0 ;
 	}
