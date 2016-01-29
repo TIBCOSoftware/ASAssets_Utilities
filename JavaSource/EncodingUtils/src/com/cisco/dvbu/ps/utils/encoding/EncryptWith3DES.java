@@ -27,6 +27,7 @@ EncryptWith3DES()
 
     Modified Date:  Modified By:        CSW Version:    Reason:
     10/27/2014      Alex Dedov          6.2.6           Created new
+    01/20/2016		Alex Dedov			7.0.1			Updated to use different hex binary converter
 
     © 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -47,6 +48,8 @@ EncryptWith3DES()
 
 import java.sql.SQLException;
 import java.sql.Types;
+
+import javax.xml.bind.DatatypeConverter;
 
 import com.compositesw.extension.CustomProcedureException;
 import com.compositesw.extension.ParameterInfo;
@@ -85,7 +88,7 @@ public class EncryptWith3DES extends EncodingUtilTemplate {
 		String plainText = args.length > 0 ? (String)args[0] : null ;
 		String mdInput = (args.length > 1 && args[1] != null) ? (String)args[1] : "ZKZH1W7" ;
 		encMessage = new EncryptDecrypt3DES().encrypt(plainText,mdInput.getBytes()) ;
-		hexString = EncryptDecryptX509.hex(encMessage) ;
+		hexString = DatatypeConverter.printHexBinary(encMessage) ;
 		return 0 ;
 	}
 	

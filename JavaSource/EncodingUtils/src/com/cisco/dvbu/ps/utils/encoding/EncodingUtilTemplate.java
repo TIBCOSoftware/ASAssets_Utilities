@@ -109,16 +109,16 @@ public abstract class EncodingUtilTemplate implements CustomProcedure {
 	 */
 	public void invoke(Object[] inputValues) throws CustomProcedureException, SQLException {
 		try {
-			log(LOG_DEBUG, "(p)PearsonBaseCJP.invoke started with parameters " + Arrays.asList(inputValues).toString() + "") ;
+			log(LOG_DEBUG, "(p)CISBaseCJP.invoke started with parameters " + Arrays.asList(inputValues).toString() + "") ;
 			int rc = execute( inputValues ) ;
-			log(LOG_DEBUG, "(p)PearsonBaseCJP.invoke execution completed with ret. code=" + rc ) ;
+			log(LOG_DEBUG, "(p)CISBaseCJP.invoke execution completed with ret. code=" + rc ) ;
 		} 
 		catch (Throwable t) {
-			log(LOG_ERROR, "(p)PearsonBaseCJP.invoke failed " + t);
+			log(LOG_ERROR, "(p)CISnBaseCJP.invoke failed " + t);
 			if ( t instanceof CustomProcedureException )
 				throw (CustomProcedureException)t ;
 			else
-				throw new CustomProcedureException("PearsonBaseCJP.invoke", t);
+				throw new CustomProcedureException("CISBaseCJP.invoke", t);
 		}
 	}
 
