@@ -149,6 +149,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/services/webservices/system/admin/resource/operations/ResourceSchema" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
@@ -185,10 +186,10 @@
                     <datatype name="statsDataSourceDefault" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
                   </element>
                   <element name="numThreads" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                   </element>
                   <element name="maxTime" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                   </element>
                   <element name="refresh" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
                     <datatype name="refresh" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
@@ -210,16 +211,16 @@
                             <datatype name="long" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="integer" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER"/>
                           </element>
                           <element name="recurringDay" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                            <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                            <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                           </element>
                           <element name="interval" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                            <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                            <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                           </element>
                           <element name="period" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
                             <datatype name="calendarPeriod" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
                           </element>
                           <element name="count" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                            <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                            <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                           </element>
                           <element name="isCluster" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
                             <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
@@ -267,60 +268,58 @@
   <attribute name="creatorUserDomain" type="STRING">vodacom</attribute>
   <attribute name="creatorUserName" type="STRING">youngw</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="sourcePath" type="STRING">/services/webservices/system/admin/resource/operations/getDataSourceStatisticsConfig</attribute>
   <attribute name="sourceType" type="SHORT">3</attribute>
-  <attribute name="transformModel" type="BYTE_ARRAY">UEsDBBQACAAIAIBzZjoAAAAAAAAAAAAAAAABAAAAc+1dW2/bNhR+768wjKFvqXJbk6ZOgTQxugBJ
-msVe0T4ViswkwmTJE+VcNuy/71CUKF51YUQnWJKHzrZ4Pn46JM/5eJH2ZpSlfoyvknR+msxQNAiW
-OEvm4d9otj+88iOMhp/eDAYjHF7HfrZMEfkG32d+5mcPCzQg/+wPpxfj8XCQoqtjMNvITfJiKEJz
-FGeD2J9DqTBeLDPMrvIwQgEd6CZnBoYi8DXKjoDQJFmmAZoAsxBnYYAPk/gqvL5AeJHEcCM5C7zw
-A6Byk2WLPc+7u7t7FyTzRYLDDOH8s4dRehsGCHv4AWdo7vmzeRh7KcI5OqAso8i/jACk8g+5WfpX
-eYbeUktq6D5D8QzNznJH/WNN79+W9RFyj3cFNDhKURygI3QVxmEWJvEEZfvDyod36LLen16yQCk0
-GLSQBy1FWzC4QXM/708Ufpp3MvdewctLWtX4ZHw6Ppv+PBofngyL7vj9FD4GSQwNlUHPwjBwwhhu
-djL+/Y/x2SH0f5zz5q8dnP0gNtDBYrASsLnfV9TodOiWHZUM6pwvGTlkFMuX1eG50r6Fl9AxiMeo
-d1rWLVg9voPXdggh6G0J8al0shSnSNTUB6megpPahoSJHJOc0xgIzbA/9OMH0pIwQvhGVZvnbutd
-kl57m+vrGx4Mt0kRB1grHH49PT8Zf/85/XEOw410Win1bGtbIfeBmDFgHENqgHw268nzA0gSX4Ng
-meL94bqRhdoWl0kSIT82sTB6RBgc4N9JOF9E6DFepu48PpuOv4wvhuR+vvnREjy8Dl/8++LLxtDT
-dzK4Na/wsbGA2AZLjMYxyaSvbVD29JW3QUb8/8XPblAKOdxfRpmpJ3aVSZbjAUMywpWY65mUEH/2
-h5DDw/j60WFpckzCkhCVJtOL47Mv+cA5QfF1drM/3NzY3tne3Xq/vdPfEIqX8+lNivwZfuJmAyVk
-YtAuhEWJfUMYR83a5ub6Dh+9XLQBxMZpOO9temE5bl5wA8AsBGZnN6b+t6LA1TMLKVKtTEH9WqNd
-IMWLGXwOSwY9ud2kGaiSlhVs4WyyZNFT/aI0fYapIRexTQpLo3TJJG+2jHrzU8v4lDMhEw0SnIv1
-n76pPNUYeV87RjRt0OM4aTvPICzInzxyyjZ4aUMn90Wb4ZMXFMMcaNI0e4IcT6iQP7kNYVihOjrt
-FFePk8ajg+l4enw6NgtbeiMt5oisoNgEV2kyJ7d8HB8c+Q99xfwOsUzXDlSz6pdS27UBqDZ0jVLb
-GYgofI0Tc+ZTy/4PK9OvvpcXpVbk+xTBmhKZpT6fbv8/mmo8dmSQ8Zve+tEzCUivLcP2GmF9NExW
-vbDIupMkfAM/ghjqp+e9kpLk77NbzGLesEw7QbI0ryo5mtUzzlILvo4sNrJCfBjBIQGiWvTSZ8VN
-8z/aQWG9r92IGXllL61bPWncliGqvAmoAaQeoMbYbDjyyFR17h9pt6f1dpqK1IJKIWlRK1lmDcdU
-yhK6HcgdYW2gEZq0uDy9k+EPPp+M2eGaXQE/NxdnStzOptor5Ko+H0/LfVSLjT/Fk6z/ipS4jb7n
-Qkmz79VM7dvBxeFvB7A32k/c6zV/0+mIZttpa3Pn/a46MW/bdtwOU7ODWB8SJ0fcXvIa24HZbbsv
-05ZpuQ/zzGnyS9fNVF9ilxOWKF9dlAdVKZFUK5LN/iELc5Ppwel5GenNq3Vth5q0GtfM4fPxF4gN
-JYEyTCgLVm3rFxekVl69sCbTXHt5u4VcYF9h9bE4VOMwKrIVimfOs5ivN7N8iRGRzoSbfcO61lPk
-32pe2EzUie5UpX4uj9W5lFpQCjxiAZiJ8KffR/c4yj69eRtlH8mnPZw9RHD8AKFscItSDCeZ99/+
-tUyyj5vv1umHwf08ivFegO/W7slJ++J6zSFvWGze8vKyAkKMN5pt689bC3j3WIXTblxIVlFmtNv4
-8OGD931y4k3L5wqo7dvr7CM8OsC8BifrFxHsY8HRwiy4KeA8oSxX+tZPQ3JSjW4k01I/q5kO/cEr
-6miyq6Yj3ezUOUM3+0pKd7MrhG03I05mdjPk1VdHy3KbtJuZKCa62QpCoJspn8S7WZYptZsVTXDd
-bPK4382ERWGjmTA3p6Xg+BSc/MT0CxtF3DiCqLWG/OBmgME6KEc/hKO9VufyFeBW0GRNSn9aXoPH
-IbYKFuqdmMMJXdZgoUuLLwcVFV8uUYWrNvim4KPWYyrZrT45WKn1yCW64QtBTQUXLhuRzd2yCH/a
-jtLUVZTQqaEHB88otsyNAzezK2OsgR6Hoe1rpTk5w0MhujFsxBcDuQrOpp8mHzTVoIv5ajW6Uqq/
-m+rS5Ai1Kk2h7jWpKUWtSC3TvR4xAal1iNe74/OpSkXnr3bH5lKaCs1d7I4sZT4VXSpQW4MxSRqH
-LNcNNcZycuGSLI3+Sg6AR2/WkivxLn6p0bwyjJdPTgoq2upYQtPwlZOVFoC7ZTgDoeUr4+icTmEe
-x9eU9Gx5m/Bc8ZeTqS1vGccVXyE/25IVQFwxVbK5LVsFyBVjNb3bUlaRnHEWJYM1YRHGFVudsLCl
-rMNyxVujUmxpa6BcsVYljy1pFckVZ1FC2fIVUVxx5QWZLVMewxVPTt3Z0uQgXLGUVKItUwnGni1R
-afXaqCpRzjgV0nVSjy7+GHVtnWkrVcsATBpRRtH5qrpHs6JlFdnqWQZgYtpGzT6WqUl5Km1KBH8j
-YxOaCx/L2tOOsYzigqkgPO1oChAuOCpy046nAuOCq6oz7ciqOE7YiiLTkqoI4oKnTlnakdUhuWCs
-EZV2hDVALviqetKOrorjgq2oJu2YihguWPJK0o4jj+CCISci7QhyAC74SdLRjqMEYsezSctU1w3K
-k+kTjSSr1Z11hrJe1DiImZuUnIyh+qe6N5PiZJVobk5WijYcZYy+OZq0oQ1XE1bfnGV1aMNVxuib
-oyANbQgKAH2zUwShDUMFpG+WqhK0oami9M5TlIFWJEWIvhnqtJ8NTR1O31w1ss+Gqgamb6aq4rMh
-qqL0zVPUezYcRYS++fFaz4Ydb983N07m2VDjzPtmJok7G3YSRHeG9fqouqpRhjUXq0ui6qp+Lw+O
-5jdd/VydwiUXRvmKKTmHPIrC+E9MTyTnnwf0HcPwkmL6Omqv1Qm2/AFJ/WE0eDV0/v6x/HlF8qYl
-T4g/8NCDn0IdUGHxYB/7r1iueBpiVSTLcV3DjxVZMTX6uiSj2/isXj7YtiqvsZNPNW6ryrj1WzWH
-qSHDFXLLplLVNWy4Qm7ZKGOSxbsadlUZt+TUyVINKU1ht+wU19EcW0OxKLBiWnl+rWFFr6+YlKiS
-a9hJBVdMkxeeNSSFYm4pVosdNXy4Qm7ZlGOgIRMVxfJ36bklVCwJ1PimLJHzGHmF7Bl54v/f49N/
-UEsHCPIIiwLmCQAA8WMAAFBLAQIUABQACAAIAIBzZjryCIsC5gkAAPFjAAABAAAAAAAAAAAAAAAA
-AAAAAABzUEsFBgAAAAABAAEALwAAABUKAAAAIQ==</attribute>
+  <attribute name="transformModel" type="BYTE_ARRAY">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
+AAAAc1BLBQYAAAAAAQABAC8AAAATCgAAAAA=</attribute>
   <attribute name="xqueryModel" type="NULL"/>
   <attribute name="xslt" type="STRING">
 &lt;xslt:stylesheet version=&quot;2.0&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;

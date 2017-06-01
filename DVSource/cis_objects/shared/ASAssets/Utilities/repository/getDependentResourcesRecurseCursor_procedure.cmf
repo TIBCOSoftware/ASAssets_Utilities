@@ -98,6 +98,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/lib/debug/Log" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -441,27 +442,10 @@ END
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1492901175993</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">10/159</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/160</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-  </attribute>
+  <attribute name="references" type="NULL"/>
 </metadata>

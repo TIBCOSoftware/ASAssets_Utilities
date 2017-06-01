@@ -54,6 +54,7 @@ CSW Version: 5.1.0
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.LocalDateParser</attribute>
   <attribute name="creationDate" type="LONG">1383622340769</attribute>

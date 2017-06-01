@@ -2,11 +2,15 @@
 <metadata name="documentation" path="/shared/ASAssets/Utilities/documentation" type="CONTAINER" subtype="FOLDER" changeToken="0">
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
-  <attribute name="creationDate" type="LONG">1364917378598</attribute>
+  <attribute name="creationDate" type="LONG">1492900644066</attribute>
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserId" type="INTEGER">-1973</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1364917379116</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1492900644066</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserId" type="INTEGER">-1973</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="resourceModifiedDateOnSourceCISSite" type="LONG">1492900644066</attribute>
 </metadata>

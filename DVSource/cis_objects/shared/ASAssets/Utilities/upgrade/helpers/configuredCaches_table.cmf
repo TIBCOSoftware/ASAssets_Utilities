@@ -33,6 +33,7 @@
   <foreignKeys></foreignKeys>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ SELECT"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/upgrade/helpers/findCaches" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">

@@ -258,6 +258,7 @@ BEGIN
     DECLARE res1Path, res2Path ResourceDefs.ResourcePath;
     DECLARE res1Type, res2Type ResourceDefs.ResourceType;
     DECLARE sqlText LONGVARCHAR;
+	DECLARE annotation VARCHAR;
     DECLARE childAnnotations VECTOR(/shared/ASAssets/Utilities/TypeDefinitions.ColumnAnnotationRow);
     DECLARE expectedResultCSV LONGVARCHAR;
     DECLARE success BIT;
@@ -283,25 +284,31 @@ BEGIN
 		CASE (SUBSTRING(getCisVersion(), 1, 3))
 		    WHEN &apos;6.2&apos; THEN
 		        SET sqlText = &apos;SELECT ProductID, ProductName, ProductDescription FROM /shared/examples/ds_inventory/products products&apos;;
+				SET annotation = &apos;view annotation test&apos;;
+				SET childAnnotations = VECTOR [
+                   (&apos;ProductID&apos;, &apos;INTEGER&apos;, &apos;ProductID annotation2&apos;),
+                   (&apos;ProductName&apos;, &apos;VARCHAR(50)&apos;, &apos;ProductName annotation2&apos;),
+                   (&apos;ProductDescription&apos;, &apos;VARCHAR(255)&apos;, &apos;ProductDescription annotation2&apos;)
+                ];
 				SET expectedResultCSV =
 &apos;,,view annotation test
-ProductID,INTEGER,ProductID annotation
-ProductName,VARCHAR(50),ProductName annotation
+ProductID,INTEGER,ProductID annotation2
+ProductName,VARCHAR(50),ProductName annotation2
 ProductDescription,VARCHAR(255),ProductDescription annotation2&apos;;
             ELSE
 		        SET sqlText = &apos;SELECT productid, productname, productdescription FROM /shared/examples/ds_inventory/tutorial/products products&apos;;
+				SET annotation = &apos;view annotation test&apos;;
+ 				SET childAnnotations = VECTOR [
+                   (&apos;productid&apos;, &apos;INTEGER&apos;, &apos;ProductID annotation2&apos;),
+                   (&apos;productname&apos;, &apos;VARCHAR(50)&apos;, &apos;ProductName annotation2&apos;),
+                   (&apos;productdescription&apos;, &apos;VARCHAR(255)&apos;, &apos;ProductDescription annotation2&apos;)
+                ];
 				SET expectedResultCSV =
 &apos;,,view annotation test
-productid,INTEGER,ProductID annotation
-productname,VARCHAR(50),ProductName annotation
+productid,INTEGER,ProductID annotation2
+productname,VARCHAR(50),ProductName annotation2
 productdescription,VARCHAR(255),ProductDescription annotation2&apos;;
         END CASE;
-
-
-        SET childAnnotations = VECTOR [
-                                   (&apos;ProductID&apos;, &apos;INTEGER&apos;, &apos;ProductID annotation2&apos;),
-                                   (&apos;ProductDescription&apos;, &apos;VARCHAR(255)&apos;, &apos;ProductDescription annotation2&apos;)
-                               ];
 
         SET args = &apos;&apos;&apos;&apos; || res1Path || &apos;&apos;&apos;, &apos; ||
                    &apos;&apos;&apos;&apos; || res1Type || &apos;&apos;&apos;, &apos; ||
@@ -372,9 +379,9 @@ productdescription,VARCHAR(255),ProductDescription annotation2&apos;;
 
         BEGIN INDEPENDENT TRANSACTION
             CALL /shared/ASAssets/Utilities/repository/updateResourceAnnotations(
-                res2Path,
-                res2Type,
-                NULL,
+                res1Path,
+                res1Type,
+                annotation,
                 childAnnotations,
                 success,
                 responseXML,
@@ -426,77 +433,10 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1446764222738</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1495754490726</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">32/12</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">17/98</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/19</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">32/13</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">24/33</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/170</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">20/20</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">24/35</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-  </attribute>
+  <attribute name="references" type="NULL"/>
 </metadata>

@@ -54,7 +54,7 @@ BEGIN
 
     -- start test
     --
-    SET args = &apos;&apos;&apos;5330CCFE5DBD706500D60C18ACB1139F4CEB5A5F4FD483ECDD67DE32E0229A9795CB7D083F2060914155726222EF39A34CA6212A19B3E15A216B3CBCD1F13D3673C999BBDD1D6111938AF427410B83882AD10E0A7C87EA30491954C8B414410B66AB57BEB98E983649E482AD0A050BEF15D21FAF3C655EF87C451F83974009CB&apos;&apos;, &apos;&apos;changeit&apos;&apos;&apos;;
+    SET args = &apos;&apos;&apos;5F585862B4EF420858972E7DBD4585E3BAE4E1B0A5C6D67BA07AC4C9930B2BAED508920B4BC83CACC82AD9723987CF25812B9A8D1C6548237E840DAEA25D73A2311A68EA69CB82C85AE717A8953F72FEC0463613B779547138CF94EA3B5C746A021B18415DD198FBE17423CED3CD45F03DBB9A856DEAF0227AD954C9BACBE163&apos;&apos;, &apos;&apos;changeit&apos;&apos;&apos;;
     SET expectedResultCSV = &apos;This is a plain text string&apos;;
 
     BEGIN
@@ -82,30 +82,12 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1431368298695</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1496279834057</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">20/10</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">31/9</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
     <item>
       <key type="STRING">10/33</key>
       <value type="STRING_ARRAY">
@@ -116,6 +98,22 @@ END</attribute>
     </item>
     <item>
       <key type="STRING">18/8</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">20/10</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">31/9</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>

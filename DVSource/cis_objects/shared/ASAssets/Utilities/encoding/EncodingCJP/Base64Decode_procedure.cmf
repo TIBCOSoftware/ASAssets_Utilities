@@ -46,6 +46,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.encoding.Base64Decode</attribute>
   <attribute name="creationDate" type="LONG">1383622340459</attribute>

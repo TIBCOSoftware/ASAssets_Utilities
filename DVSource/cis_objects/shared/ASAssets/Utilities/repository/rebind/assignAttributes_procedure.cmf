@@ -39,7 +39,7 @@
     Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
   <parameters>
     <parameter name="attributeVector" direction="IN" nullable="true">
-      <datatype name="AttributeCompleteVectorType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="AttributeCompleteVectorType" type="ARRAY" maxLength="0">
+      <datatype name="AttributeCompleteVectorType" type="ARRAY" maxLength="0">
         <itemDatatype>
           <datatype name="AttributeCompleteType" type="TREE" refId="1">
             <element name="attrName">
@@ -108,6 +108,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
@@ -124,9 +125,6 @@
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <attribute name="Script" type="STRING">/* 
     assignAttributes:
@@ -352,9 +350,7 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1446756505551</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1496279981398</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

@@ -185,8 +185,6 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="lastModifiedDate" type="LONG">1431368763135</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
@@ -210,7 +208,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">14/63</key>
+      <key type="STRING">10/60</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -218,7 +216,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/60</key>
+      <key type="STRING">14/63</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

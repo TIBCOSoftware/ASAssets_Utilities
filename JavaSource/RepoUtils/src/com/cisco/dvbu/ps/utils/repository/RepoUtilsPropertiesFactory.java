@@ -69,31 +69,39 @@ public class RepoUtilsPropertiesFactory {
         "#\n" + 
         "# The value of \"prop02\" resolves to  the value \"this is a single property\"\n" + 
         "#\n" + 
-        "cis.reserved_words_re=absolute|action|add|all|allocate|alter|and|any|are|as|asc|assertion|at|authorization|avg|begin|\\\n" + 
-        "                      between|binary|bit|bit_length|boolean|both|breadth|by|\\\n" + 
-        "                      call|cascade|cascaded|case|case|cast|catalog|char|char_length|character|character_length|check|close|coalesce|collate|collation|column|commit|connect|connection|constant|constraint|constraints|continue|convert|corresponding|count|create|cross|current|current_date|current_time|current_timestamp|current_user|cursor|cycle|\\\n" + 
-        "                      date|day|deallocate|dec|decimal|declare|default|deferrable|deferred|delete|depth|desc|describe|descriptor|diagnostics|disconnect|distinct|do|domain|double|drop|\\\n" + 
-        "                      else|elseif|end|escape|except|exception|exec|execute|exists|external|extract|\\\n" + 
-        "                      false|fetch|first|float|for|foreign|from|full|\\\n" + 
-        "                      get|global|go|goto|grant|group|\\\n" +
-        "                      having|hour|\\\n" + 
-        "                      identity|if|immediate|in|independent|index|indicator|initially|inner|inout|input|insensitive|insert|int|integer|intersect|interval|into|is|isolation|iterate|\\\n" + 
-        "                      join|\\\n" + 
-        "                      key|\\\n" + 
-        "                      language|last|leading|leave|left|level|like|local|longvarchar|loop|lower|\\\n" + 
-        "                      match|max|min|minute|module|month|\\\n" + 
-        "                      names|national|natural|nchar|next|no|not|null|numeric|\\\n" + 
-        "                      octet_length|of|offset|on|only|open|option|or|order|out|outer|output|overlaps|\\\n" + 
-        "                      pad|partial|path|pipe|position|precision|prepare|primary|prior|privileges|procedure|public|\\\n" + 
-        "                      raise|read|real|recursive|references|relative|repeat|restrict|revoke|right|rollback|row|\\\n" + 
-        "                      schema|scroll|search|search-condition|second|section|select|session|session_user|set|size|smallint|some|space|sql|sqlcode|sqlerror|sqlstate|substring|sum|system_user|\\\n" + 
-        "                      table|temporary|then|time|timestamp|timezone_hour|timezone_minute|to|trailing|transaction|trim|true|type|\\\n" + 
-        "                      union|unique|unknown|until|update|upper|usage|user|\\\n" + 
-        "                      value|values|varbinary|varchar|varying|vector|view|\\\n" + 
-        "                      when|whenever|where|while|with|work|write|\\\n" + 
-        "                      XML|\\\n" + 
-        "                      year|\\\n" + 
-        "                      zone\n" + 
+		"cis.reserved_words_re=absent|absolute|according|action|add|all|allocate|alter|and|any|are|as|asc|assertion|at|authorization|avg|\\\n" + 
+		"                      base64|begin|between|binary|bit|bit_length|boolean|both|breadth|by|\\\n" + 
+		"                      call|cascade|cascaded|case|cast|catalog|char|char_length|character|character_length|check|close|coalesce|\\\n" + 
+		"                      collate|collation|collection|column|columns|commit|connect|connection|constant|constraint|constraints|content|\\\n" + 
+		"                      continue|convert|corresponding|count|create|cross|current|current_date|current_time|current_timestamp|current_user|cursor|cycle|\\\n" + 
+		"                      date|day|days|deallocate|dec|decimal|declare|default|deferrable|deferred|\\\n" + 
+		"                      delete|dense_rank|depth|desc|describe|descriptor|diagnostics|disconnect|distinct|do|document|domain|double|dow|doy|drop|\\\n" + 
+		"                      element|else|elseif|empty|end|end-exec|epoch|escape|except|exception|exclude|exec|execute|exists|explain|external|extract|\\\n" + 
+		"                      false|fetch|first|float|fn|following|for|foreign|from|full|\\\n" + 
+		"                      get|global|go|goto|grant|group|having|hex|hour|hours|\\\n" + 
+		"                      id|identity|if|ignore|immediate|in|independent|index|indicator|initially|inner|inout|input|insensitive|insert|int|integer|intersect|interval|into|is|isolation|iterate|\\\n" + 
+		"                      join|keep|key|language|last|latest|leading|leave|left|level|like|local|location|longvarchar|loop|lower|\\\n" + 
+		"                      match|max|microsecond|microseconds|millisecond|milliseconds|min|minute|minutes|module|month|months|\\\n" + 
+		"                      name|names|namespace|national|natural|nchar|next|nil|no|not|null|nullif|nulls|numeric|\\\n" + 
+		"                      octet_length|of|offset|oj|on|only|open|option|or|order|others|out|outer|output|over|overlaps|\\\n" + 
+		"                      pad|partial|partition|passing|path|pipe|position|preceding|precision|prepare|preserve|primary|prior|privileges|procedure|public|quarter|\\\n" + 
+		"                      raise|range|read|real|recursive|ref|references|relative|repeat|replace|restrict|returning|revoke|right|rollback|row|rows|\\\n" + 
+		"                      schema|scroll|search|second|seconds|section|select|sequence|session|session_user|set|size|smallint|some|source|space|\\\n" + 
+		"                      sql|sql_bigint|sql_binary|sql_bit|sql_char|sql_date|sql_decimal|sql_double|sql_float|sql_guid|sql_integer|sql_interval_day|\\\n" + 
+		"                      sql_interval_day_to_hour|sql_interval_day_to_minute|sql_interval_day_to_second|sql_interval_hour|\\\n" + 
+		"                      sql_interval_hour_to_minute|sql_interval_hour_to_second|sql_interval_minute|sql_interval_minute_to_second|\\\n" + 
+		"                      sql_interval_month|sql_interval_second|sql_interval_year|sql_interval_year_to_month|\\\n" + 
+		"                      sql_longvarbinary|sql_longvarchar|sql_numeric|sql_real|sql_smallint|sql_time|sql_timestamp|sql_tinyint|\\\n" + 
+		"                      sql_tsi_day|sql_tsi_frac_second|sql_tsi_hour|sql_tsi_minute|sql_tsi_month|sql_tsi_quarter|sql_tsi_second|sql_tsi_week|\\\n" + 
+		"                      sql_tsi_year|sql_varbinary|sql_varchar|sql_wchar|sql_wlongvarchar|sql_wvarchar|sqlcode|sqlerror|sqlstate|strip|substring|sum|system_user|\\\n" + 
+		"                      table|temporary|then|ties|time|timeseries|timestamp|timestampadd|timestampdiff|timezone_hour|\\\n" + 
+		"                      timezone_minute|to|top|trailing|transaction|translate|translation|trim|true|ts|type|\\\n" + 
+		"                      unbounded|union|unique|unknown|until|untyped|update|upper|uri|usage|use|user|using|\\\n" + 
+		"                      value|values|varbinary|varchar|varying|vector|view|\\\n" + 
+		"                      week|when|whenever|where|while|whitespace|with|within|work|write|\\\n" + 
+		"                      xml|xmlagg|xmlattributes|xmlbinary|xmlcast|xmlcomment|xmlconcat|xmldocument|xmlelement|xmlexists|xmlforest|\\\n" + 
+		"                      xmliterate|xmlnamespaces|xmlparse|xmlpi|xmlquery|xmlschema|xmlserialize|xmltable|xmltext|xmlvalidate|\\\n" + 
+		"                      year|years|zone\n" + 
         "\n" + 
         "cis.path_quoting_rules=^[_0-9],\\\n" + 
         "                       [^A-Za-z0-9_],\\\n" + 
@@ -113,6 +121,16 @@ public class RepoUtilsPropertiesFactory {
 
     static {
         propSubRE = Pattern.compile ("\\$\\{([^}]+)\\}"); // a regular expression that matches "${any_valid_properties_key}"
+    }
+
+    // Write out the RepoUtils properties.
+    //
+    public static void writeProperties() throws Exception {
+        findPropertiesFile();
+        
+        // Force the write out an example properties file
+        //
+        writeSampleProperties();
     }
     
     // returns the RepoUtils properties.

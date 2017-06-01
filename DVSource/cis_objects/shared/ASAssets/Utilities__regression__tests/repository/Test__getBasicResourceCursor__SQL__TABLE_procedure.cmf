@@ -738,22 +738,22 @@ orders,/shared/examples/ds_orders/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,Freigh
 
         ELSE
             SET expectedResultCSV = 
-&apos;orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,0,UNKNOWN,,,,,,
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,orderid,INTEGER,int4,int4
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,customerid,INTEGER,int4,int4
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,employeeid,INTEGER,int4,int4
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,orderdate,DATE,date,date
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,purchaseordernumber,VARCHAR(30),varchar,varchar(30)
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,shipname,VARCHAR(50),varchar,varchar(50)
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,shipaddress,VARCHAR(255),varchar,varchar(255)
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,shipcity,VARCHAR(50),varchar,varchar(50)
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,shipstateorprovince,VARCHAR(50),varchar,varchar(50)
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,shippostalcode,VARCHAR(20),varchar,varchar(20)
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,shipcountry,VARCHAR(50),varchar,varchar(50)
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,shipphonenumber,VARCHAR(30),varchar,varchar(30)
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,shipdate,DATE,date,date
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,shippingmethodid,INTEGER,int4,int4
-orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,UNKNOWN,,,freightcharge,&quot;NUMERIC(12,2)&quot;,numeric,&quot;numeric(12,2)&quot;&apos;;
+&apos;orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,0,TABLE,,,,,,
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,orderid,INTEGER,int4,int4
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,customerid,INTEGER,int4,int4
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,employeeid,INTEGER,int4,int4
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,orderdate,DATE,date,date
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,purchaseordernumber,VARCHAR(30),varchar,varchar(30)
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,shipname,VARCHAR(50),varchar,varchar(50)
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,shipaddress,VARCHAR(255),varchar,varchar(255)
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,shipcity,VARCHAR(50),varchar,varchar(50)
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,shipstateorprovince,VARCHAR(50),varchar,varchar(50)
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,shippostalcode,VARCHAR(20),varchar,varchar(20)
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,shipcountry,VARCHAR(50),varchar,varchar(50)
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,shipphonenumber,VARCHAR(30),varchar,varchar(30)
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,shipdate,DATE,date,date
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,shippingmethodid,INTEGER,int4,int4
+orders,/shared/examples/ds_orders/tutorial/orders,TABLE,DATABASE_TABLE,1,,,TABLE,,,freightcharge,&quot;NUMERIC(12,2)&quot;,numeric,&quot;numeric(12,2)&quot;&apos;;
 
     END CASE;
 
@@ -783,53 +783,10 @@ END
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1424304399313</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1495744490375</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">10/653</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">20/10</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">31/9</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/8</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/723</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-  </attribute>
+  <attribute name="references" type="NULL"/>
 </metadata>

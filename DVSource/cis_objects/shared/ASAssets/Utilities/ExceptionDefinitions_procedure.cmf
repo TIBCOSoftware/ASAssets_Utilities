@@ -25,6 +25,7 @@
   <parameters></parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="Script" type="STRING">/* ExceptionDefinitions:
 	This procedure defines global exceptions use by this entire library of procedures.
@@ -61,18 +62,17 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="public_exceptions" type="STRING_ARRAY">
-    <item>IllegalDelimiterException</item>
     <item>InvalidDateException</item>
     <item>InvalidParameterException</item>
-    <item>InvalidTimeException</item>
+    <item>IllegalDelimiterException</item>
     <item>InvalidTimestampException</item>
+    <item>InvalidTimeException</item>
   </attribute>
   <attribute name="references" type="NULL"/>
 </metadata>

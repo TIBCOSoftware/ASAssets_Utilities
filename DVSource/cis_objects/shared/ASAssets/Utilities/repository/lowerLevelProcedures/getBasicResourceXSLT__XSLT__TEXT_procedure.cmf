@@ -49,7 +49,15 @@
     Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
 </annotation>
   <parameters>
-    <parameter name="outputs" direction="OUT" nullable="false">
+    <parameter name="inXML" direction="IN" nullable="false">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <schemaDatatype>
+          <datatype name="XML" type="TREE" refId="1"></datatype>
+        </schemaDatatype>
+      </datatype>
+      <attribute name="Customized" type="STRING">name.changed;datatype.changed;direction.changed</attribute>
+    </parameter>
+    <parameter name="outputs" direction="OUT" nullable="true">
       <datatype name="outputs" type="TABLE" refId="1">
         <element name="name">
           <datatype name="VARCHAR" type="STRING" maxLength="255"/>
@@ -82,19 +90,12 @@
           <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
         </element>
       </datatype>
-      <attribute name="Customized" type="STRING">name.changed;datatype.changed;direction.changed</attribute>
-    </parameter>
-    <parameter name="inXML" direction="IN" nullable="true">
-      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
-        <schemaDatatype>
-          <datatype name="XML" type="TREE" refId="1"></datatype>
-        </schemaDatatype>
-      </datatype>
       <attribute name="Customized" type="STRING">datatype.changed;name.changed;direction.changed</attribute>
     </parameter>
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/xml/reverseXML" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -118,8 +119,6 @@
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">true</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>

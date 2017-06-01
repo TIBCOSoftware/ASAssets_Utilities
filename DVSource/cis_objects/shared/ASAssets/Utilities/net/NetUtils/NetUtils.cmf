@@ -19,8 +19,9 @@
 </annotation>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
-  <attribute name="classpath" type="STRING">conf/customjars/commons-net-3.3.jar;</attribute>
+  <attribute name="classpath" type="STRING">C:\CiscoSystems\CIS7.0.5\conf/customjars/commons-net-3.3.jar;</attribute>
   <attribute name="creationDate" type="LONG">1399489884671</attribute>
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
@@ -31,5 +32,5 @@
   <attribute name="name" type="STRING">NetUtils</attribute>
   <attribute name="selectionState" type="INTEGER">1</attribute>
   <attribute name="type" type="STRING">CustomProc</attribute>
-  <attribute name="url" type="STRING">file:///usr/local/Composite_Software/CIS_6.2.0/conf/customjars/NetUtils.jar</attribute>
+  <attribute name="url" type="STRING">file:///C:/CiscoSystems/CIS7.0.5/conf/customjars/NetUtils.jar</attribute>
 </metadata>

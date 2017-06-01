@@ -58,6 +58,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/services/webservices/system/admin/user/operations/UserSchema" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
@@ -93,7 +94,7 @@
                         <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
                       </element>
                       <element name="id" namespace="http://www.compositesw.com/services/system/admin/user">
-                        <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                        <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                       </element>
                       <element name="explicitRights" namespace="http://www.compositesw.com/services/system/admin/user">
                         <datatype name="userRightsList" namespace="http://www.compositesw.com/services/system/admin/user" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
@@ -162,8 +163,6 @@
   <attribute name="creatorUserDomain" type="STRING">conoco</attribute>
   <attribute name="creatorUserName" type="STRING">neusts</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
@@ -190,7 +189,7 @@
                             &lt;datatype name=&quot;string&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
                           &lt;/element&gt;
                           &lt;element name=&quot;id&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/user&quot;&gt;
-                            &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2207&quot; maxValue=&quot;2147483647&quot;/&gt;
+                            &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
                           &lt;/element&gt;
                           &lt;element name=&quot;explicitRights&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/user&quot;&gt;
                             &lt;datatype name=&quot;userRightsList&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/user&quot; superTypeName=&quot;string&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;SIMPLE_TYPE&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;

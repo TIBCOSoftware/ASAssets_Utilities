@@ -56,6 +56,7 @@ UpdateDsColumnAnnotation:
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.repository.UpdateDsColumnAnnotation</attribute>
   <attribute name="creationDate" type="LONG">1383622341816</attribute>

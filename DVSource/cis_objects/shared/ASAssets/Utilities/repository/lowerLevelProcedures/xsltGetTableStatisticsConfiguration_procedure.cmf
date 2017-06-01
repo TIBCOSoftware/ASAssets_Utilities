@@ -88,6 +88,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/services/webservices/system/admin/resource/operations/ResourceSchema" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
@@ -115,19 +116,19 @@
               <element name="statisticsConfig" namespace="http://www.compositesw.com/services/system/admin/resource">
                 <datatype name="resourceStatisticsConfig" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="4">
                   <element name="cardinalityMin" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                   </element>
                   <element name="cardinalityMax" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                   </element>
                   <element name="cardinalityExpected" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                   </element>
                   <element name="gatherEnabled" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
                     <datatype name="statsGatherType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
                   </element>
                   <element name="maxTime" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                    <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                   </element>
                   <element name="columns" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
                     <datatype name="statsColumnList" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="5">
@@ -140,16 +141,22 @@
                             <datatype name="statsColumnConfigType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
                           </element>
                           <element name="columnMin" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                            <datatype name="double" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="FLOAT"/>
+                            <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
                           </element>
                           <element name="columnMax" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                            <datatype name="double" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="FLOAT"/>
+                            <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
                           </element>
                           <element name="columnDistinct" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                            <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                            <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+                          </element>
+                          <element name="numBuckets" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                            <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                           </element>
                           <element name="enableColumnOverride" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
                             <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
+                          </element>
+                          <element name="columnDataType" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
+                            <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
                           </element>
                         </datatype>
                       </element>
@@ -194,8 +201,6 @@
   <attribute name="creatorUserDomain" type="STRING">vodacom</attribute>
   <attribute name="creatorUserName" type="STRING">youngw</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
@@ -214,19 +219,19 @@
                   &lt;element name=&quot;statisticsConfig&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot;&gt;
                     &lt;datatype name=&quot;resourceStatisticsConfig&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;4&quot;&gt;
                       &lt;element name=&quot;cardinalityMin&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
-                        &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2207&quot; maxValue=&quot;2147483647&quot;/&gt;
+                        &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
                       &lt;/element&gt;
                       &lt;element name=&quot;cardinalityMax&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
-                        &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2207&quot; maxValue=&quot;2147483647&quot;/&gt;
+                        &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
                       &lt;/element&gt;
                       &lt;element name=&quot;cardinalityExpected&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
-                        &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2207&quot; maxValue=&quot;2147483647&quot;/&gt;
+                        &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
                       &lt;/element&gt;
                       &lt;element name=&quot;gatherEnabled&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
                         &lt;datatype name=&quot;statsGatherType&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;string&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;SIMPLE_TYPE&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
                       &lt;/element&gt;
                       &lt;element name=&quot;maxTime&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
-                        &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2207&quot; maxValue=&quot;2147483647&quot;/&gt;
+                        &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
                       &lt;/element&gt;
                       &lt;element name=&quot;columns&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
                         &lt;datatype name=&quot;statsColumnList&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;anyType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;COMPLEX_TYPE&quot; type=&quot;TREE&quot; refId=&quot;5&quot;&gt;
@@ -239,16 +244,22 @@
                                 &lt;datatype name=&quot;statsColumnConfigType&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; superTypeName=&quot;string&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; subType=&quot;SIMPLE_TYPE&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
                               &lt;/element&gt;
                               &lt;element name=&quot;columnMin&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
-                                &lt;datatype name=&quot;double&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;FLOAT&quot;/&gt;
+                                &lt;datatype name=&quot;string&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
                               &lt;/element&gt;
                               &lt;element name=&quot;columnMax&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
-                                &lt;datatype name=&quot;double&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;FLOAT&quot;/&gt;
+                                &lt;datatype name=&quot;string&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
                               &lt;/element&gt;
                               &lt;element name=&quot;columnDistinct&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
-                                &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2207&quot; maxValue=&quot;2147483647&quot;/&gt;
+                                &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
+                              &lt;/element&gt;
+                              &lt;element name=&quot;numBuckets&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
+                                &lt;datatype name=&quot;int&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;long&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;-2147483648&quot; maxValue=&quot;2147483647&quot;/&gt;
                               &lt;/element&gt;
                               &lt;element name=&quot;enableColumnOverride&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
                                 &lt;datatype name=&quot;boolean&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;INTEGER&quot; minValue=&quot;0&quot; maxValue=&quot;1&quot;/&gt;
+                              &lt;/element&gt;
+                              &lt;element name=&quot;columnDataType&quot; namespace=&quot;http://www.compositesw.com/services/system/admin/resource&quot; minOccurs=&quot;0&quot;&gt;
+                                &lt;datatype name=&quot;string&quot; namespace=&quot;http://www.w3.org/2001/XMLSchema&quot; superTypeName=&quot;anySimpleType&quot; superTypeNamespace=&quot;http://www.w3.org/2001/XMLSchema&quot; type=&quot;STRING&quot; maxLength=&quot;2147483647&quot;/&gt;
                               &lt;/element&gt;
                             &lt;/datatype&gt;
                           &lt;/element&gt;

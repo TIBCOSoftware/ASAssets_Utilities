@@ -96,6 +96,7 @@
   </dataType>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ SELECT"/>
   </security>
   <attribute name="charset" type="STRING">&lt;auto detect&gt;</attribute>
   <attribute name="creationDate" type="LONG">1383622342148</attribute>

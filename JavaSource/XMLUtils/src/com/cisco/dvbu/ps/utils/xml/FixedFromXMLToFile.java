@@ -577,7 +577,7 @@ public class FixedFromXMLToFile extends XMLUtilTemplate implements CustomProcedu
 		String format_string = "9|50|20|30|50|50|2|20|5|20|14|14";
 		String create_column_headers = "true";
 		int total_columns = 12;
-		String file_Path = "D:/tmp/FixedFromXML.txt";
+		String file_Path = "C:/temp/FixedFromXML.txt";
 		int append = 0;
 
         try {

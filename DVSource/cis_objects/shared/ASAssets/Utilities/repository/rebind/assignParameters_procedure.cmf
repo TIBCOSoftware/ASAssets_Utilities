@@ -39,7 +39,7 @@
     Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
   <parameters>
     <parameter name="parameterVector" direction="IN" nullable="true">
-      <datatype name="ParameterVectorType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="ParameterVectorType" type="ARRAY" maxLength="0">
+      <datatype name="ParameterVectorType" type="ARRAY" maxLength="0">
         <itemDatatype>
           <datatype name="ParameterType" type="TREE" refId="1">
             <element name="name">
@@ -194,6 +194,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
@@ -207,12 +208,6 @@
         <datatype type="STRING" maxLength="2147483647"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/rebind/assignAnnotation" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/rebind/assignAttributes" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/rebind/assignAttributes" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -293,9 +288,6 @@
         <datatype type="INTEGER" minValue="0" maxValue="1"/>
       </element>
     </datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
@@ -482,9 +474,7 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1446756505551</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1496279981398</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

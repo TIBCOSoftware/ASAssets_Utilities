@@ -48,23 +48,24 @@ CSW Version: 5.1.0
 </annotation>
   <parameters>
     <parameter name="Input Text" direction="IN" nullable="true">
-      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+      <datatype name="LONGVARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
     </parameter>
     <parameter name="Regular Expression" direction="IN" nullable="true">
-      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+      <datatype name="LONGVARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
     </parameter>
     <parameter name="Replacement Text" direction="IN" nullable="true">
-      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+      <datatype name="LONGVARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
     </parameter>
     <parameter name="Occurrence" direction="IN" nullable="true">
       <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
     </parameter>
     <parameter name="result" direction="OUT" nullable="true">
-      <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
+      <datatype name="LONGVARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
     </parameter>
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.RegexReplace</attribute>
   <attribute name="creationDate" type="LONG">1383622340770</attribute>

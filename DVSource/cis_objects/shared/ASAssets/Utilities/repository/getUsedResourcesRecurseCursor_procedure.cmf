@@ -132,6 +132,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/lib/debug/Log" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -274,7 +275,7 @@
         <datatype type="STRING" maxLength="255"/>
       </element>
       <element name="usedResourcesResponse" direction="OUT">
-        <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
           <schemaDatatype>
             <datatype name="XML" type="TREE" refId="2"></datatype>
           </schemaDatatype>
@@ -550,54 +551,5 @@ END</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">11/164</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/178</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/179</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/163</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/136</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/137</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-  </attribute>
+  <attribute name="references" type="NULL"/>
 </metadata>

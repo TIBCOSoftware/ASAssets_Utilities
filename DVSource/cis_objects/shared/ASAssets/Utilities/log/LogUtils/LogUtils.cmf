@@ -3,6 +3,7 @@
   <annotation/>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
   <attribute name="classpath" type="STRING"/>
   <attribute name="creationDate" type="LONG">1430332736292</attribute>
@@ -15,5 +16,5 @@
   <attribute name="name" type="STRING">LogUtils</attribute>
   <attribute name="selectionState" type="INTEGER">1</attribute>
   <attribute name="type" type="STRING">CustomProc</attribute>
-  <attribute name="url" type="STRING">file:///usr/local/Composite_Software/CIS_6.2.0/conf/customjars/LogUtils.jar</attribute>
+  <attribute name="url" type="STRING">file:///C:/CiscoSystems/CIS7.0.5/conf/customjars/LogUtils.jar</attribute>
 </metadata>

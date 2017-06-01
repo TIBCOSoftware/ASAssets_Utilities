@@ -1,6 +1,7 @@
 package com.cisco.dvbu.ps.utils.encoding;
 
 import java.io.ByteArrayInputStream;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import com.compositesw.extension.CustomProcedureException;
 import com.compositesw.extension.ExecutionEnvironment;
 import com.compositesw.extension.ProcedureConstants;
 import com.compositesw.extension.ProcedureReference;
+import com.compositesw.server.customproc.cvt.CustomCursor2ResultSet;
 
 /*
     © 2011, 2014 Cisco and/or its affiliates. All rights reserved.
@@ -40,43 +42,117 @@ import com.compositesw.extension.ProcedureReference;
 
 public class ServerUtil {
 
+	// When debugging change to LOG_INFO to put more info in the log during execution
+	//		otherwise keep it at LOG_DEBUG level for normal operation.
+	public static final int LOG_TYPE = ProcedureConstants.LOG_DEBUG;
 	public static final String GET_SERVER_ATTRIBUTES_PROCEDURE = "/services/webservices/system/admin/server/operations/getServerAttributes";
+	public static final String GET_SERVER_ATTRIBUTES_AS_PROCEDURE = "/shared/ASAssets/Utilities/repository/server/getServerAttribute";
+	                                                              
 	public static final String SERVER_ATTRIBUTE_TAG = "$SERVER_ATTRIBUTE$";
 
 	public static final String GET_SERVER_ATTRIBUTES_REQUEST = "<server:getServerAttributes xmlns:server=\"http://www.compositesw.com/services/system/admin/server\">"
 			+ "	<server:paths>"
-			+ "		<server:path>"
-			+ SERVER_ATTRIBUTE_TAG
-			+ "</server:path>"
+			+ "		<server:path>"+ SERVER_ATTRIBUTE_TAG + "</server:path>"
 			+ "	</server:paths>"
 			+ "</server:getServerAttributes>";
 	public static final String KEYSTORE_LOCATION_ATTR = "/server/communications/strongKeystoreLocation";
 	public static final String KEYSTORE_PASSWORD_ATTR = "/server/communications/strongKeystorePassword";
 	public static final String KEYSTORE_KEY_ALIAS_ATTR = "/server/communications/strongKeystoreKeyAlias";
 	
+	// Get the server attribute using the ASAssets getServerAttribute which returns a string value instead of XML.
+	public static String getServerAttributeAS(ExecutionEnvironment ee, String request) throws CustomProcedureException, SQLException {
 
-	public static String getServerAttribute(ExecutionEnvironment ee, String a) throws CustomProcedureException, SQLException {
-		ProcedureReference webapi = ee.lookupProcedure(GET_SERVER_ATTRIBUTES_PROCEDURE);
-		String request = GET_SERVER_ATTRIBUTES_REQUEST.replace(
-				SERVER_ATTRIBUTE_TAG, a);
+		String procName = "getServerAttributeAS";
+		ProcedureReference webapi = ee.lookupProcedure(ServerUtil.GET_SERVER_ATTRIBUTES_AS_PROCEDURE);
+		ee.log(LOG_TYPE, "(a)ASAssets."+procName+" invoke="+ServerUtil.GET_SERVER_ATTRIBUTES_AS_PROCEDURE);
 		Object[] args = { request };
 		String result = null;
 		try {
-			ee.log(ProcedureConstants.LOG_INFO,
-					"(a)ServerUtil.getServerAttribute retrieves value for ["
-							+ a + "]");
 			webapi.invoke(args);
 			final Object[] response = webapi.getOutputValues();
 			if (response != null && response.length > 0) {
-				result = parseGetServerAttributesResponse(response[0].toString());
+				ee.log(LOG_TYPE, "(p)ASAssets."+procName+" response=["+response[0].toString()+"]");
+				result = response[0].toString();
 			}
-			ee.log(ProcedureConstants.LOG_DEBUG,"(p)ServerUtil.getServerAttribute ["+a+"="+result+ "]");
+			ee.log(LOG_TYPE,"(p)ASAssets."+procName+" result=["+result+"]");
 		} finally {
 			webapi.close();
 		}
-
 		return result;
 	}
+
+	// This code is not currently working
+	// It does not return the response from a procedure with an XML output.
+	public static String getServerAttribute(ExecutionEnvironment ee, String a) throws CustomProcedureException, SQLException {
+
+		String procName = "getServerAttribute";
+		ProcedureReference webapi = ee.lookupProcedure(GET_SERVER_ATTRIBUTES_PROCEDURE);
+		String request = GET_SERVER_ATTRIBUTES_REQUEST.replace(SERVER_ATTRIBUTE_TAG, a);
+		ee.log(LOG_TYPE, "(a)ServerUtil."+procName+" request="+request);
+		Object[] args = { request };
+		String result = null;
+		try {
+			ee.log(LOG_TYPE, "(a)ServerUtil."+procName+" retrieves value for [" + a + "]");
+			webapi.invoke(args);
+			final Object[] response = webapi.getOutputValues();
+			if (response != null && response.length > 0) {
+				ee.log(LOG_TYPE,"(p)ServerUtil."+procName+" response size=["+response.length+ "]");
+				for (int i=0; i < response.length; i++) {
+					if (response[i] != null) {
+						ee.log(LOG_TYPE,"(p)ServerUtil."+procName+" response["+i+"]=["+response[i].toString()+ "]");
+						result = parseGetServerAttributesResponse(response[i].toString());
+					} else {
+						ee.log(LOG_TYPE,"(p)ServerUtil."+procName+" response["+i+"] is null");						
+					}
+				}
+			} else {
+				ee.log(LOG_TYPE,"(p)ServerUtil."+procName+" no response.");
+			}
+			ee.log(LOG_TYPE,"(p)ServerUtil."+procName+" ["+a+"="+result+ "]");
+		} finally {
+			webapi.close();
+		}
+		return result;
+	}
+
+	// This is generic code for executing a procedure call.
+	// It does not return the response from a procedure with an XML output.
+	public static String executeQuery(ExecutionEnvironment ee, String procName, String procPath, String p1, String p2, String p3, String p4) 
+			throws CustomProcedureException, SQLException {
+
+		String request = null;
+		if (p1 == null & p2 == null & p3 == null & p4 == null)
+			request = "{call "+procPath+"()}";
+		if (p1 != null & p2 == null & p3 == null & p4 == null)
+			request = "{call "+procPath+"('"+p1+"')}";
+		if (p1 != null & p2 != null & p3 == null & p4 == null)
+			request = "{call "+procPath+"('"+p1+"','"+p2+"')}";
+		if (p1 != null & p2 != null & p3 != null & p4 == null)
+			request = "{call "+procPath+"('"+p1+"','"+p2+"','"+p3+"')}";
+		if (p1 != null & p2 != null & p3 != null & p4 != null)
+			request = "{call "+procPath+"('"+p1+"','"+p2+"','"+p3+"','"+p4+"')}";
+		
+		ee.log(LOG_TYPE,"(a)"+procName+" request="+request);
+		ResultSet rs = null;
+		String result = null;
+		try {
+			rs = ee.executeQuery(request, null);
+			int i = 1;
+			while (rs.next()) {
+				if (rs.getObject(i) != null) {
+					String response = rs.getObject(i).toString();
+					ee.log(LOG_TYPE,"(p)"+procName+" response=["+response+ "]");
+					result = response;
+				}
+				i++;
+			}
+			ee.log(LOG_TYPE,"(p)"+procName+" result=["+result+"]");
+		} finally {
+			if (rs != null)		{	rs.close();   }	
+		}
+		return result;
+	}
+	
 
 	public static class ResourceNamespaceContext implements NamespaceContext {
 		public String getNamespaceURI(String prefix) {

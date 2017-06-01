@@ -46,6 +46,39 @@
   <dependency target="/lib/util/System" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/createResource" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="resourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="resourceName" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="resourceSubType" direction="IN">
+        <datatype type="STRING" maxLength="255"/>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="2"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="2"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
+  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/getCisVersion" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
       <element name="result" direction="OUT">
@@ -90,6 +123,13 @@ BEGIN
     DECLARE expectedResultCSV System.Text;
     DECLARE result System.Text;
     DECLARE resourceExists BOOLEAN;
+    DECLARE parentFolder ResourceDefs.ResourcePath;
+    DECLARE resourceName ResourceDefs.ResourceName;
+    DECLARE resourceType ResourceDefs.ResourceType;
+    DECLARE resourceSubtype ResourceDefs.ResourceType;
+    DECLARE success BIT;
+    DECLARE responseXML XML;
+    DECLARE faultXML XML;
 
     SET numTests = 0;
     SET numErrors = 0;
@@ -97,7 +137,53 @@ BEGIN
 
     -- start test
     --
-    SET args = &apos;&apos;&apos;&apos; || Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
+    test_block_1: 
+    BEGIN INDEPENDENT TRANSACTION
+        SET parentFolder = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder&apos;;
+        SET resourceName = &apos;test_view3&apos;;
+        SET resourceType = ResourceDefs.RESOURCE_TYPE_TABLE;
+        SET resourceSubtype = ResourceDefs.RESOURCE_SUBTYPE_SQL_TABLE;
+
+        SET args = &apos;&apos;&apos;&apos; || parentFolder || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || resourceName || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || resourceType || &apos;&apos;&apos;, &apos; ||
+                   &apos;&apos;&apos;&apos; || resourceSubtype || &apos;&apos;&apos;&apos;;
+
+        CALL /lib/resource/ResourceExists(parentFolder || &apos;/&apos; || resourceName, resourceType, NULL, resourceExists);
+        IF (resourceExists) THEN
+            LEAVE test_block_1;
+        END IF;
+
+        CALL /shared/ASAssets/Utilities/repository/createResource(
+            parentFolder,
+            resourceName,
+            resourceType,
+            resourceSubtype,
+            success,
+            responseXML,
+            faultXML
+        );
+
+        IF (success &lt;&gt; 1) THEN
+            LEAVE test_block_1;
+        END IF;
+
+        CALL /lib/resource/ResourceExists(
+             parentFolder || &apos;/&apos; || resourceName,
+             resourceType,
+             NULL,
+             resourceExists
+        );
+    EXCEPTION
+        ELSE
+            CALL PRINT (test_name || &apos;: args = &apos; || args || &apos;: EXCEPTION: &apos; || CURRENT_EXCEPTION.MESSAGE);
+    END; -- test_block_1
+    --
+    -- end test
+
+    -- start test
+    --
+    SET args = &apos;&apos;&apos;&apos; || Constants.TMP_FOLDER || &apos;/test_folder/&apos;||resourceName||&apos;&apos;&apos;, &apos;&apos;TABLE&apos;&apos;&apos;;
 
 	CASE (SUBSTRING(getCisVersion(), 1, 3))
 	    WHEN &apos;6.2&apos; THEN
@@ -106,7 +192,7 @@ BEGIN
             SET expectedResultCSV = &apos;UNKNOWN,View is newly created and requires definition.&apos;;
     END CASE;
 
-    test_block_1:
+    test_block_2:
     BEGIN INDEPENDENT TRANSACTION
         SET numTests = numTests + 1;
 
@@ -120,7 +206,7 @@ BEGIN
         IF (NOT resourceExists) THEN
             SET result = &apos;SKIPPING, resource does not exist&apos;;
             SET numSkipped = numSkipped + 1;
-            LEAVE test_block_1;
+            LEAVE test_block_2;
         END IF;
 
         CALL /shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest(
@@ -148,12 +234,20 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1424305212346</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1495755014977</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">28/34</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
     <item>
       <key type="STRING">20/14</key>
       <value type="STRING_ARRAY">
@@ -163,7 +257,47 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">10/59</key>
+      <key type="STRING">14/91</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">26/18</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">29/19</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">26/16</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">26/17</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">10/112</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -171,12 +305,28 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">24/23</key>
+      <key type="STRING">24/76</key>
       <value type="STRING_ARRAY">
         <item>shared</item>
         <item>ASAssets</item>
         <item>Utilities_regression_tests</item>
         <item>Constants</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">31/35</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>resource</item>
+        <item>ResourceDefs</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/69</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
       </value>
     </item>
     <item>
@@ -193,14 +343,6 @@ END</attribute>
         <item>lib</item>
         <item>util</item>
         <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">14/38</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
       </value>
     </item>
   </attribute>

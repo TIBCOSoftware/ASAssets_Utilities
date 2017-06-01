@@ -48,6 +48,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.file.CreateFileAscii</attribute>
   <attribute name="creationDate" type="LONG">1366122592839</attribute>

@@ -19,19 +19,22 @@
 </annotation>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
+  <attribute name="OAuthConfig" type="NULL"/>
   <attribute name="autoAddChildren" type="BOOLEAN">true</attribute>
-  <attribute name="classpath" type="STRING">conf/customjars/jtidy-r938.jar;</attribute>
+  <attribute name="cacheStatusAndTrackingDS" type="STRING"/>
+  <attribute name="classpath" type="STRING">C:\CiscoSystems\CIS7.0.5\conf/customjars/jtidy-r938.jar;C:/CiscoSystems/CIS7.0.5/conf/customjars/jdom-1.1.3.jar;</attribute>
   <attribute name="creationDate" type="LONG">0</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="driverName" type="STRING">Custom Java Procedure</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1496166237858</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="name" type="STRING">XMLUtils</attribute>
   <attribute name="selectionState" type="INTEGER">1</attribute>
   <attribute name="type" type="STRING">CustomProc</attribute>
-  <attribute name="url" type="STRING">file:///usr/local/Composite_Software/CIS_6.2.0/conf/customjars/XMLUtils.jar</attribute>
+  <attribute name="url" type="STRING">file:///C:/CiscoSystems/CIS7.0.5/conf/customjars/XMLUtils.jar</attribute>
   <attribute name="userDeletedSet" type="SET"></attribute>
 </metadata>

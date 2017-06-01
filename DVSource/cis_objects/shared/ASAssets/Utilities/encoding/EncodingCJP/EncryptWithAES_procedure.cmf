@@ -62,6 +62,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.encoding.EncryptWithAES</attribute>
   <attribute name="creationDate" type="LONG">1453932348855</attribute>

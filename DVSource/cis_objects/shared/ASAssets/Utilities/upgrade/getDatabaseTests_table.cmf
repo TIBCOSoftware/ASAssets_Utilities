@@ -47,6 +47,7 @@
   <foreignKeys></foreignKeys>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ SELECT"/>
   </security>
   <dependency target="/services/databases/system/ALL_COLUMNS" type="TABLE">
     <datatype type="TABLE" refId="1">
@@ -108,7 +109,7 @@
         <datatype type="STRING" maxLength="255"/>
       </element>
       <element name="ANNOTATION">
-        <datatype type="STRING" maxLength="65535"/>
+        <datatype type="STRING" maxLength="2147483647"/>
       </element>
       <element name="OWNER_ID">
         <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
@@ -150,8 +151,11 @@
       <element name="DATASOURCE_NAME">
         <datatype type="STRING" maxLength="255"/>
       </element>
+      <element name="GUID">
+        <datatype type="STRING" maxLength="36"/>
+      </element>
       <element name="ANNOTATION">
-        <datatype type="STRING" maxLength="65535"/>
+        <datatype type="STRING" maxLength="2147483647"/>
       </element>
       <element name="OWNER_ID">
         <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
@@ -160,7 +164,19 @@
         <datatype type="STRING" maxLength="255"/>
       </element>
       <element name="PARENT_PATH">
-        <datatype type="STRING" minLength="20" maxLength="787"/>
+        <datatype type="STRING" minLength="20" maxLength="789" trailingSpaces="false"/>
+      </element>
+      <element name="TABLE_CREATOR_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="TABLE_CREATION_TIMESTAMP">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="TABLE_MODIFIER_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="TABLE_MODIFICATION_TIMESTAMP">
+        <datatype type="INTEGER"/>
       </element>
     </datatype>
   </dependency>
@@ -176,9 +192,6 @@
   </dependency>
   <dependency target="/system/customfunctions/returnColumnOrderingString" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/returnColumnOrderingString" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
   </dependency>
   <attribute name="SQL" type="STRING">/* 
   getDatabaseTests:
@@ -236,8 +249,6 @@ ORDER BY
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
   <attribute name="creatorUserName" type="STRING">v598790</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="lastModifiedDate" type="LONG">1446756527655</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>

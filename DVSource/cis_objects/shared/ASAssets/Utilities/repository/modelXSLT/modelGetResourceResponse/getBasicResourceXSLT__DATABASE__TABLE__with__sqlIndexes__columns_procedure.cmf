@@ -32,6 +32,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/repository/modelXSLT/modelGetResourceResponse/getResourceResponse_DATABASE_TABLE_w_Indexes/getBasicResourceXML_DATABASE_TABLE.xml" type="TREE">
     <datatype name="getResourceResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceType="{http://www.compositesw.com/services/system/admin/resource}getResourceResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getResourceResponse">

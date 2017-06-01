@@ -46,7 +46,7 @@ CSW Version: 5.1.0
       <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
     </parameter>
     <parameter name="result" direction="OUT" nullable="true">
-      <datatype subType="DATASOURCE_TYPE" type="TABLE" caseSensitive="false" refId="1">
+      <datatype type="TABLE" caseSensitive="false" refId="1">
         <element name="DomainName">
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
         </element>
@@ -58,6 +58,7 @@ CSW Version: 5.1.0
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.repository.GetUserGroups</attribute>
   <attribute name="creationDate" type="LONG">1383622341816</attribute>

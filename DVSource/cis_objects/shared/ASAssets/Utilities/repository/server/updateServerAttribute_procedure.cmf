@@ -81,11 +81,13 @@
       <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
     </parameter>
     <parameter name="NEWVAL" direction="IN" nullable="true">
-      <datatype name="VARCHAR" type="STRING" maxLength="1024"/>
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
     </parameter>
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+    <privilege group="all" domain="dynamic" privileges="NONE"/>
   </security>
   <dependency target="/services/webservices/system/admin/server/operations/updateServerAttributes" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -261,9 +263,10 @@
 
 	Exceptions:  Exception may be thrown.
 
-	Author:      Mike Tinius
-	Date:        2/10/2012
-	CSW Version: 5.2.0
+	Modified Date:	Modified By:		CSW Version:	Reason:
+	2/10/2012		Mike Tinius			5.2.0			Created new
+	2/10/2016		Mike Tinius			7.0.2			modified input variable NEWVAL to LONGVARCHAR
+	3/17/2016		Mike Tinius			7.0.2			modified request variable to LONGVARCHAR
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -285,11 +288,11 @@ PROCEDURE updateServerAttribute(
 	IN debug 				CHAR(1),-- e.g. Y or N
 	IN ATTR 				VARCHAR(1024), -- e.g. /server/sql/language/caseSensitive
 	IN ATTR_TYPE 			VARCHAR(1024), -- e.g. STRING, MAP, LIST
-	IN NEWVAL 				VARCHAR(1024)
+	IN NEWVAL 				LONGVARCHAR
 )
 BEGIN
 	DECLARE moduleName		VARCHAR(255) DEFAULT &apos;updateServerAttribute&apos;;
-	DECLARE request 		VARCHAR(4096);
+	DECLARE request 		LONGVARCHAR;
 	DECLARE response 		XML;
 	DECLARE fault 			XML;
     DECLARE ex 				EXCEPTION;
@@ -651,9 +654,7 @@ execute /services/webservices/system/admin/server/operations/getServerAttributes
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1492905031918</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

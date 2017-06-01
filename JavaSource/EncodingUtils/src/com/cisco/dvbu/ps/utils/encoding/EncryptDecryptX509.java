@@ -28,6 +28,7 @@ import java.security.cert.Certificate;
 import javax.crypto.Cipher;
 
 import com.compositesw.extension.ExecutionEnvironment;
+import com.compositesw.extension.ProcedureConstants;
 
 public class EncryptDecryptX509 {
     
@@ -36,7 +37,7 @@ public class EncryptDecryptX509 {
 	public EncryptDecryptX509() {
 	}
 	public EncryptDecryptX509(ExecutionEnvironment ee) {
-		env = ee ;
+		env = ee;
 	}
 	
     /* 
@@ -71,38 +72,75 @@ public class EncryptDecryptX509 {
         return data;
     }
 
-    public static final String DEFAULT_CIS_KEYSTORE = "C:/CIS624/conf/server/security/cis_server_keystore_strong.jks" ;
+    public static final String DEFAULT_CIS_KEYSTORE = "C:/CiscoSystems/CIS7.0.5/conf/server/security/cis_server_keystore_strong.jks" ;
     public static final String DEFAULT_CIS_KEY_ALIAS = "cis_server_strong" ;
     public static final String DEFAULT_CIS_PASSWORD = "changeit" ;
     
 	public byte[] encrypt(String message, String password) throws Exception {
-        String certFile = (env == null ? DEFAULT_CIS_KEYSTORE : ServerUtil.getServerAttribute(env, ServerUtil.KEYSTORE_LOCATION_ATTR));
+/* This code is for testing various scenarios where the output is XML and non-XML.  The XML output is not working.
+		// original call using lookup procedure
+        String result1 = ServerUtil.getServerAttribute(env, ServerUtil.KEYSTORE_LOCATION_ATTR);
+        // alternative call using query
+        
+		String request = ServerUtil.GET_SERVER_ATTRIBUTES_REQUEST.replace(ServerUtil.SERVER_ATTRIBUTE_TAG, ServerUtil.KEYSTORE_LOCATION_ATTR);
+        String result2 = ServerUtil.executeQuery(env, "getServerAttributes", 
+        		"/services/webservices/system/admin/server/operations/getServerAttributes", request,null,null,null);
+		// alternative call to a custom procedure with XML output
+        String result3 = ServerUtil.executeQuery(env, "getBasicResourceXML", 
+        		"/shared/ASAssets/Utilities/repository/lowerLevelProcedures/getBasicResourceXML", "/services/databases/NEWDB","DATA_SOURCE",null,null);
+        // alternative call to a custom procedure with XML output
+        String result4 = ServerUtil.executeQuery(env, "reverseXML", 
+        		"/shared/ASAssets/Utilities/\"xml\"/reverseXML", request,null,null,null);
+       // alternative call to a custom procedure with string output
+        String result5 = ServerUtil.executeQuery(env, "getUtilitiesVersion", 
+        		"/shared/ASAssets/Utilities/getUtilitiesVersion", null,null,null,null);
+        // alternative call to a custom procedure with string output
+        String result6 = ServerUtil.executeQuery(env, "getValueFromXML", 
+        		"/shared/ASAssets/Utilities/\"xml\"/getValueFromXML", "N","xmlns:server=\"http://www.compositesw.com/services/system/admin/server\"","/server:getServerAttributes/server:paths/server:path",request);
+*/
+        
+      	String certFile = (env == null ? DEFAULT_CIS_KEYSTORE : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_LOCATION_ATTR));
+      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] certFile=" + certFile);
+        
+      //System.out.println( "EncryptDecryptX509: certFile=" + certFile );
+      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] certFile=" + certFile);
         InputStream inStream = new FileInputStream(certFile);
         KeyStore keystore = KeyStore.getInstance( KeyStore.getDefaultType() );
         keystore.load(inStream, password.toCharArray());
-        String alias = (env == null ? DEFAULT_CIS_KEY_ALIAS : ServerUtil.getServerAttribute(env, ServerUtil.KEYSTORE_KEY_ALIAS_ATTR));
+        String alias = (env == null ? DEFAULT_CIS_KEY_ALIAS : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_KEY_ALIAS_ATTR));
+      //System.out.println( "EncryptDecryptX509: alias=" + alias );
+      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] alias=" + alias);
         Certificate cert = keystore.getCertificate(alias);
         PublicKey pubKey = cert.getPublicKey();
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-//          System.out.println( "Start encryption using " + cipher.getProvider().getInfo() );
+      //System.out.println( "EncryptDecryptX509: Start encryption using " + cipher.getProvider().getInfo() );
+      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] Start encryption using " + cipher.getProvider().getInfo());
         byte[] cipherText = cipher.doFinal(message.getBytes());
-//          System.out.println( "Finish encryption: [" + hex(cipherText) + "]");
+      //System.out.println( "EncryptDecryptX509: Finish encryption: [" + hex(cipherText) + "]");
+      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] Finish encryption: [" + hex(cipherText) + "]");
         return cipherText ;
 	}
 
 	public String decrypt(byte[] message, String password) throws Exception {
-        String certFile = (env == null ? DEFAULT_CIS_KEYSTORE : ServerUtil.getServerAttribute(env, ServerUtil.KEYSTORE_LOCATION_ATTR));
+
+        String certFile = (env == null ? DEFAULT_CIS_KEYSTORE : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_LOCATION_ATTR));
+      //System.out.println( "EncryptDecryptX509: certFile=" + certFile );
+      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [decrypt] certFile=" + certFile);
         InputStream inStream = new FileInputStream(certFile);
         KeyStore keystore = KeyStore.getInstance( KeyStore.getDefaultType() );
         keystore.load(inStream, password.toCharArray());
-        String alias = (env == null ? DEFAULT_CIS_KEY_ALIAS : ServerUtil.getServerAttribute(env, ServerUtil.KEYSTORE_KEY_ALIAS_ATTR));
-        PrivateKey privKey = (PrivateKey)keystore.getKey(alias, password.toCharArray());
+        String alias = (env == null ? DEFAULT_CIS_KEY_ALIAS : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_KEY_ALIAS_ATTR));
+      //System.out.println( "EncryptDecryptX509: alias=" + alias );
+      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [decrypt] alias=" + alias);
+       PrivateKey privKey = (PrivateKey)keystore.getKey(alias, password.toCharArray());
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         cipher.init(Cipher.DECRYPT_MODE, privKey);
-//      System.out.println( "Start decryption using " + cipher.getProvider() + " algorithm " + cipher.getAlgorithm() );
-        byte[] plainText = cipher.doFinal(message);
-//      System.out.println( "Finish decryption: [" + new String(plainText, "UTF8") + "]");
+      //System.out.println( "EncryptDecryptX509: Start decryption using " + cipher.getProvider() + " algorithm " + cipher.getAlgorithm() );
+      if (env != null) env.log (ProcedureConstants.LOG_DEBUG, "EncryptDecryptX509: [decrypt] Start decryption using " + cipher.getProvider().getInfo());
+       byte[] plainText = cipher.doFinal(message);
+      //System.out.println( "EncryptDecryptX509: Finish decryption: [" + new String(plainText, "UTF8") + "]");
+      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [decrypt] Finish decryption: [" + new String(plainText, "UTF8") + "]");
         return new String(plainText,"UTF8") ;
 	}
 	

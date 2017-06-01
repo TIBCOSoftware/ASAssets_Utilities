@@ -55,6 +55,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/repository/modelXSLT/modelChildResponse/getChidResourcesResponsesXML/getChildResourcesResponse.xml" type="TREE">
     <datatype name="getChildResourcesResponse" namespace="http://www.compositesw.com/services/system/admin/resource" referenceType="{http://www.compositesw.com/services/system/admin/resource}getChildResourcesResponse" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/admin/resource}getChildResourcesResponse">

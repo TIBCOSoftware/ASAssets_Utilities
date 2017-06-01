@@ -16,6 +16,7 @@
     Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
   <attribute name="autoAddChildren" type="BOOLEAN">true</attribute>
   <attribute name="classpath" type="STRING"/>
@@ -29,6 +30,6 @@
   <attribute name="name" type="STRING">DateUtils</attribute>
   <attribute name="selectionState" type="INTEGER">1</attribute>
   <attribute name="type" type="STRING">CustomProc</attribute>
-  <attribute name="url" type="STRING">file:///usr/local/Composite_Software/CIS_6.2.0/conf/customjars/DateUtils.jar</attribute>
+  <attribute name="url" type="STRING">file:///C:/CiscoSystems/CIS7.0.5/conf/customjars/DateUtils.jar</attribute>
   <attribute name="userDeletedSet" type="SET"></attribute>
 </metadata>

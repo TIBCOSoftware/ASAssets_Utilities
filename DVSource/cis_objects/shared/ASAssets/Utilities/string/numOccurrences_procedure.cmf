@@ -1,0 +1,166 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="numOccurrences" path="/shared/ASAssets/Utilities/string/numOccurrences" type="PROCEDURE" subtype="SQL_SCRIPT_PROCEDURE" changeToken="0">
+  <annotation>numOccurrences:
+	Given two input strings, this function returns an integer value representing the number of occurrences of &quot;searchString&quot; within &quot;stringToSearch&quot;. 
+ 
+	Input:
+		searchString - The search string is what you are looking for.  If this value is null, then the output is null
+						A blank (&apos;&apos;) non-null string for the search string always produces 0 for an output.
+			Values: Any text value
+		stringToSearch - The string to search within for the search string. If this value is null, then the output is null
+			Values: Any text value
+	Output:
+		num - an integer value representing the number of occurrences of the string
+			Values: 0, or any positive integer
+
+		Examples: 
+				&apos;it&apos; IN &apos;case-sensitivity&apos;  
+					Output=2
+				&apos;&apos; IN &apos;mistake&apos; -- a blank non-null string for the search string always produces 0 for an output.
+					Output=0
+				&apos;no&apos; IN &apos;yes&apos;
+					Output=0
+				&apos; &apos; IN &apos; A B C D &apos;
+					Output=5
+	Exceptions:  none
+
+	Author:      Mike Tinius
+	Date:        4/25/2017
+	CSW Version: 7.0.5
+
+    © 2010, 2017 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
+  <parameters>
+    <parameter name="searchString" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="stringToSearch" direction="IN" nullable="true">
+      <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+    </parameter>
+    <parameter name="num" direction="OUT" nullable="true">
+      <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+    </parameter>
+  </parameters>
+  <security>
+    <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
+  </security>
+  <dependency target="/lib/debug/Print" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="textToPrint" direction="IN">
+        <datatype referenceDefinitionSet="/lib/util/System" referenceType="MessageValue" type="STRING" maxLength="64000"/>
+      </element>
+    </datatype>
+  </dependency>
+  <dependency target="/shared/ASAssets/Utilities/repository/_debug" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1"></datatype>
+  </dependency>
+  <attribute name="Script" type="STRING">/* 
+	numOccurrences:
+	Given two input strings, this function returns an integer value representing the number of occurrences of &quot;searchString&quot; within &quot;stringToSearch&quot;. 
+ 
+	Input:
+		searchString - The search string is what you are looking for.  If this value is null, then the output is null
+						A blank (&apos;&apos;) non-null string for the search string always produces 0 for an output.
+			Values: Any text value
+		stringToSearch - The string to search within for the search string. If this value is null, then the output is null
+			Values: Any text value
+	Output:
+		num - an integer value representing the number of occurrences of the string
+			Values: 0, or any positive integer
+
+		Examples: 
+				&apos;it&apos; IN &apos;case-sensitivity&apos;  
+					Output=2
+				&apos;&apos; IN &apos;mistake&apos; -- a blank non-null string for the search string always produces 0 for an output.
+					Output=0
+				&apos;no&apos; IN &apos;yes&apos;
+					Output=0
+				&apos; &apos; IN &apos; A B C D &apos;
+					Output=5
+
+	Exceptions:  none
+
+	Modified Date:	Modified By:		CIS Version:	Reason:
+	04/22/2017		Mike Tinius			7.0.5			Created new
+
+	© 2017 Cisco and/or its affiliates. All rights reserved.
+
+    This software is released under the Eclipse Public License. The details can be found in the file LICENSE. 
+    Any dependent libraries supplied by third parties are provided under their own open source licenses as 
+    described in their own LICENSE files, generally named .LICENSE.txt. The libraries supplied by Cisco as 
+    part of the Composite Information Server/Cisco Data Virtualization Server, particularly csadmin-XXXX.jar, 
+    csarchive-XXXX.jar, csbase-XXXX.jar, csclient-XXXX.jar, cscommon-XXXX.jar, csext-XXXX.jar, csjdbc-XXXX.jar, 
+    csserverutil-XXXX.jar, csserver-XXXX.jar, cswebapi-XXXX.jar, and customproc-XXXX.jar (where -XXXX is an 
+    optional version number) are provided as a convenience, but are covered under the licensing for the 
+    Composite Information Server/Cisco Data Virtualization Server. They cannot be used in any way except 
+    through a valid license for that product.
+
+    This software is released AS-IS!. Support for this software is not covered by standard maintenance agreements with Cisco. 
+    Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.
+
+*/
+PROCEDURE numOccurrences(
+	IN searchString		LONGVARCHAR,
+	IN stringToSearch	LONGVARCHAR,
+	OUT num				INTEGER	
+)
+BEGIN
+	DECLARE debug			CHAR(1) DEFAULT /shared/ASAssets/Utilities/repository/&quot;_debug&quot;.debug;
+	DECLARE nextpos			INTEGER DEFAULT 1;
+	DECLARE s				TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+	DECLARE e				TIMESTAMP;
+	DECLARE d				INTERVAL DAY TO SECOND;
+
+	if (debug = &apos;Y&apos;) then
+		if (searchString is not null) then
+			call print(&apos;searchString=[&apos;||searchString||&apos;]&apos;);
+		else
+			call print(&apos;searchString=[]&apos;);
+		end if;
+		if (stringToSearch is not null) then
+			call print(&apos;stringToSearch=[&apos;||stringToSearch||&apos;]&apos;);
+		else
+			call print(&apos;stringToSearch=[]&apos;);
+		end if;
+	end if;
+	set num = 0;
+	IF (searchString is not null and stringToSearch is not null) THEN
+		WHILE (nextpos is not null and nextpos &gt; 0) DO
+			set nextpos = INSTR(stringToSearch, searchString, nextpos);
+--			call print(&apos;num=&apos;||num||&apos;  nextPos=&apos;||TRIM(NVL(CAST(nextpos AS VARCHAR),&apos;  &apos;)));
+			IF (nextpos is not null and nextpos &gt; 0) THEN
+				set num = num + 1;
+				set nextpos = nextpos + 1;
+			END IF;
+		END WHILE;
+	END IF;
+	if (debug = &apos;Y&apos;) then
+		set e = CURRENT_TIMESTAMP;
+		set d = e - s;
+		call print(&apos;num=&apos;||num||&apos;  duration=&apos;||CAST(d as varchar));
+	end if;
+END</attribute>
+  <attribute name="creationDate" type="LONG">0</attribute>
+  <attribute name="creatorUserDomain" type="STRING"/>
+  <attribute name="creatorUserName" type="STRING"/>
+  <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1493255922085</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="model" type="NULL"/>
+  <attribute name="native_only" type="STRING">false</attribute>
+  <attribute name="references" type="NULL"/>
+</metadata>

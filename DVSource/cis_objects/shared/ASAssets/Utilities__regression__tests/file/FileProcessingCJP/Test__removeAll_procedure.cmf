@@ -178,8 +178,6 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="lastModifiedDate" type="LONG">1424295451157</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
@@ -195,14 +193,6 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/43</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
       <key type="STRING">18/30</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
@@ -211,7 +201,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/80</key>
+      <key type="STRING">18/43</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -227,7 +217,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/65</key>
+      <key type="STRING">18/80</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -235,7 +225,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/85</key>
+      <key type="STRING">18/65</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -251,7 +241,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/73</key>
+      <key type="STRING">18/85</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -260,6 +250,14 @@ END</attribute>
     </item>
     <item>
       <key type="STRING">18/38</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/73</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

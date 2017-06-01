@@ -68,7 +68,7 @@
     <parameter name="inTrimText" direction="IN" nullable="true">
       <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
     </parameter>
-    <parameter name="caseSensitive" direction="IN" nullable="true">
+    <parameter name="inCaseSensitive" direction="IN" nullable="true">
       <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
     </parameter>
     <parameter name="result" direction="OUT" nullable="true">
@@ -77,68 +77,8 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
-  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexPosition" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="Input Text" direction="IN">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-      <element name="Regular Expression" direction="IN">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-      <element name="Occurrence" direction="IN">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-      <element name="result" direction="OUT">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-    </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="Input Text" direction="IN">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-      <element name="Regular Expression" direction="IN">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-      <element name="Limit" direction="IN">
-        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
-      </element>
-      <element name="result" direction="OUT">
-        <datatype type="TABLE" refId="2">
-          <element name="splitElement">
-            <datatype type="STRING" maxLength="2147483647"/>
-          </element>
-        </datatype>
-      </element>
-    </datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/TextUtils/RegexSplit" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/string/isEmpty" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1">
-      <element name="request" direction="IN">
-        <datatype type="STRING" maxLength="2147483647"/>
-      </element>
-      <element name="response" direction="OUT">
-        <datatype type="INTEGER" minValue="0" maxValue="1"/>
-      </element>
-    </datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/RegexPosition" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/system/customfunctions/isEmpty" type="PROCEDURE">
-    <datatype type="PROCEDURE" refId="1"></datatype>
-  </dependency>
   <attribute name="Script" type="STRING">/* extractBiDelimitedText:
 	Extract bi-delimited text refers to the ability to locate text based on a search term where the search term
 	encloses the sought after text in a beginning and ending delimiter thus bi-delimited.  Where this can be useful
@@ -163,15 +103,16 @@
 				  occurrence to return (numbered starting at 1 from left to right. Use negative values to 
 				  number occurrences from right to left.) If a NULL value or zero is passed in for occurrence,
 				  a default of 1 is used.  
-		trimText - 0=do not trim result, 1=do trim result text (default=0)
-		caseSensitive - 0=no search term case sensitivity, 1=case sensitive search term
+		inTrimText - 0=do not trim result, 1=do trim result text (default=0)
+		inCaseSensitive - 0=no search term case sensitivity, 1=case sensitive search term
 	Output:
-		result - the result
+		result - the result.  Null if nothing found.
 
 	Exceptions:  INVALID_DELIMITER
 
 	Modified Date:	Updated By:			CSW Version:	Reason:
 	03/01/2013		Mike Tinius			5.2.0			created new for Best Practices 7.0.
+	02/15/2017		Mike Tinius			7.0.4			Modified to remove all external functions including: isEmpty, RegexSplit and RegexPosition.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -194,63 +135,86 @@ PROCEDURE extractBiDelimitedText(
 	IN searchTerm			VARCHAR, -- word to search for
 	IN openingDelim			VARCHAR, --Allowed: Single: &apos;[&apos;, &apos;(&apos;, &apos;{&apos;,  &apos;&lt;&apos;     Doubles: &apos;[[&apos;, &apos;((&apos;, &apos;{{&apos;, &apos;&lt;&lt;&apos;
 	IN closingDelim			VARCHAR, --Allowed: Single: &apos;]&apos;, &apos;)&apos;, &apos;}&apos;, &apos;&gt;&apos;      Doubles: &apos;]]&apos;, &apos;))&apos;, &apos;}}&apos;, &apos;&gt;&gt;&apos;
-	IN inOccurrence			INTEGER,
+	IN inOccurrence			INTEGER, --The occurrence of the search term
 	IN inTrimText			INTEGER, --0 do not trim, 1=do trim
-	IN caseSensitive		INTEGER, --0=no, 1=yes case sensitive search term
+	IN inCaseSensitive		INTEGER, --0=no, 1=yes case sensitive search term
 	OUT result  			LONGVARCHAR
 )
 BEGIN
+	DECLARE i						INTEGER;
+	DECLARE len						INTEGER;
+	DECLARE ch						VARCHAR;
 	DECLARE startPos 				INTEGER;
 	DECLARE endPos					INTEGER;
 	DECLARE tempText				LONGVARCHAR;
-	DECLARE closingDelimEscaped		VARCHAR;
 	DECLARE delim					VARCHAR;
 	DECLARE occurrence				INTEGER DEFAULT inOccurrence;
 	DECLARE trimText				INTEGER DEFAULT inTrimText;
-	DECLARE validClosingDelimdList	VARCHAR DEFAULT &apos;),},],&gt;,/,\,~,#,$,%,^,&amp;,*,+,=&apos;;
+	DECLARE caseSensitive			INTEGER DEFAULT inCaseSensitive;
+	DECLARE validOpeningDelimdList	VARCHAR DEFAULT &apos;(,{,[,&lt;,/,\,~,!,|,@,#,$,%,^,&amp;,*,_,.,?,+,=,;,:,`,&quot;,&apos;&apos;&apos;;
+	DECLARE validClosingDelimdList	VARCHAR DEFAULT &apos;),},],&gt;,/,\,~,!,|,@,#,$,%,^,&amp;,*,_,.,?,+,=,;,:,`,&quot;,&apos;&apos;&apos;;
 	DECLARE INVALID_DELIMITER		EXCEPTION;
 
-	if (isEmpty(openingDelim) = 1 or isEmpty(closingDelim) = 1) then
+	if (openingDelim is null or length(trim(openingDelim)) = 0 or closingDelim is null or length(trim(closingDelim)) = 0) then
 		raise INVALID_DELIMITER value &apos;The opening and/or closing delimiter may not be null or empty.&apos;;
 	end if;
 	if (openingDelim = closingDelim) then
 		raise INVALID_DELIMITER value &apos;The opening and closing delimiter may not be the same: &quot;&apos;||openingDelim||&apos;&quot;&apos;;
 	end if;
-
-	for r as select * from /shared/ASAssets/Utilities/string/TextUtils/RegexSplit(validClosingDelimdList,&apos;\,&apos;,0) do
-		set delim = TRIM(r.splitElement);
-		if (SUBSTRING(closingDelim,1,1) = delim) then
-			set closingDelimEscaped = REPLACE(closingDelim, delim, &apos;\&apos;||delim);
---			call print(&apos;delim=&apos;||delim||&apos;  closingDelimEscaped=&apos;||closingDelimEscaped);
+	-- Determine if the opening delimiter is valid
+	set i = 1;
+	set len = LENGTH(openingDelim);
+	while (i &lt;= len) do
+		set ch = SUBSTRING(openingDelim,i,1);
+		if (INSTR(validOpeningDelimdList, ch) = 0) then
+			raise INVALID_DELIMITER value &apos;The opening delimiter=&quot;&apos;||openingDelim||&apos;&quot; contains 1 or more characters that are not members of the valid opening list: &quot;&apos;||validOpeningDelimdList||&apos;&quot;&apos;;
 		end if;
-	end for;
+		set i = i + 1;
+	end while;
+	-- Determine if the closing delimiter is valid
+	set i = 1;
+	set len = LENGTH(closingDelim);
+	while (i &lt;= len) do
+		set ch = SUBSTRING(closingDelim,i,1);
+		if (INSTR(validClosingDelimdList, ch) = 0) then
+			raise INVALID_DELIMITER value &apos;The closing delimiter=&quot;&apos;||closingDelim||&apos;&quot; contains 1 or more characters that are not members of the valid closing list: &quot;&apos;||validClosingDelimdList||&apos;&quot;&apos;;
+		end if;
+		set i = i + 1;
+	end while;
+	-- Validate occurrence
 	if (occurrence is null or occurrence = 0) then
 		set occurrence = 1;
 	end if;
+	-- Validate trimText
 	if (trimText is null) then
 		set trimText = 0;
 	end if;
+	-- Validate caseSensitive
+	if (caseSensitive is null) then
+		set caseSensitive = 0;
+	end if;
+	-- Intialize result
+	set result = null;
 
 	if (caseSensitive = 0) then
-		set startPos = RegexPosition(UPPER(inText), UPPER(searchTerm), occurrence);
+		set startPos = INSTR(UPPER(inText), UPPER(searchTerm), 1, occurrence);
 	else
-		set startPos = RegexPosition(inText, searchTerm, occurrence);
+		set startPos = INSTR(inText, searchTerm, 1, occurrence);
 	end if;
 	if (startPos &gt; 0) then
 		set tempText = SUBSTRING(inText, startPos+LENGTH(searchTerm));
---		call print(&apos;startPos=&apos;||startPos||&apos;  tempText=&apos;||emptyStr(tempText));
-		set endPos = RegexPosition(tempText, closingDelimEscaped, 1);
-		if (endPos &gt; 0) then
+		--call print(&apos;startPos=&apos;||startPos||&apos;  tempText=&apos;||emptyStr(tempText));
+		set startPos = INSTR(tempText, openingDelim);
+		set endPos = INSTR(tempText, closingDelim);
+		if (startPos &gt; 0 and endPos &gt; 0) then
 			set tempText = SUBSTRING(tempText, 1, endPos-1);
-		end if;
---		call print(&apos;endPos=&apos;||endPos||&apos;  tempText=&apos;||emptyStr(tempText));
-		if ( LENGTH(openingDelim)+1 &lt;= LENGTH(tempText)) then
-			set result = SUBSTRING(tempText, LENGTH(openingDelim)+1);
-			if (trimText = 1) then
-				set result = TRIM(result);
+			--call print(&apos;startPos=&apos;||startPos||&apos;  endPos=&apos;||endPos||&apos;  tempText=&apos;||emptyStr(tempText));
+			if ( LENGTH(openingDelim)+1 &lt;= LENGTH(tempText)) then
+				set result = SUBSTRING(tempText, LENGTH(openingDelim)+1);
+				if (trimText = 1) then
+					set result = TRIM(result);
+				end if;
 			end if;
-		else
-			set result = &apos;&apos;;
 		end if;
 	end if;
 END</attribute>
@@ -258,9 +222,7 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1493055208775</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>

@@ -62,6 +62,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/examples/repository/source/ds_orders" type="DATA_SOURCE">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
@@ -70,8 +71,6 @@
   <attribute name="creationDate" type="LONG">1382029188092</attribute>
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="isSingleSelect" type="STRING">false</attribute>
   <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>

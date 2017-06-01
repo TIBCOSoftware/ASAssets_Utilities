@@ -22,31 +22,29 @@
       <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
     </parameter>
     <parameter name="createResponse" direction="OUT" nullable="true">
-      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
     <parameter name="faultResponse" direction="OUT" nullable="true">
-      <datatype name="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+      <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
         <schemaDatatype>
           <datatype name="XML" type="TREE" refId="1"></datatype>
         </schemaDatatype>
       </datatype>
-      <attribute name="Customized" type="STRING">datatype.changed</attribute>
+      <attribute name="Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
     </parameter>
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/shared/ASAssets/Utilities/repository/createAllFolders" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/createAllFolders" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
-      <element name="sourceFolderPath" direction="IN">
+      <element name="inSourceFolderPath" direction="IN">
         <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
       </element>
       <element name="success" direction="OUT">
@@ -94,9 +92,6 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/shared/ASAssets/Utilities/repository/createResource" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
-  </dependency>
   <dependency target="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
   </dependency>
@@ -113,8 +108,107 @@
       </element>
     </datatype>
   </dependency>
-  <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
-    <datatype name="Tree" type="TREE" refId="1"></datatype>
+  <dependency target="/shared/ASAssets/Utilities/repository/updateResourcesSqlTable" type="PROCEDURE">
+    <datatype type="PROCEDURE" refId="1">
+      <element name="fullResourcePath" direction="IN">
+        <datatype referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+      </element>
+      <element name="inScripttext" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="annotation" direction="IN">
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="columnList" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="childResourceType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="childResourceType" type="TREE" refId="2">
+              <element name="resourceName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="resourcePath">
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+              </element>
+              <element name="resourceType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="columnName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="columnType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="annotation">
+                <datatype name="LONGVARCHAR" type="STRING" maxLength="2147483647"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="sqlIndexList" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="sqlIndexType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="sqlIndexType" type="TREE" refId="3">
+              <element name="sqlIndexName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="sqlIndexType">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="sqlIndexUnique">
+                <datatype name="BIT" type="INTEGER" minValue="0" maxValue="1"/>
+              </element>
+              <element name="sqlIndexColName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="sqlIndexColOrder">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="foreignKeyList" direction="IN">
+        <datatype type="ARRAY" maxLength="0">
+          <itemDatatype>
+            <datatype name="foreignKeyType" referenceDefinitionSet="/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions" referenceType="foreignKeyType" type="TREE" refId="4">
+              <element name="fkName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="fkPrimaryKeyName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="fkPrimaryKeyTable">
+                <datatype name="VARCHAR" referenceDefinitionSet="/shared/ASAssets/Utilities/TypeDefinitions" referenceType="pathType" type="STRING" maxLength="1000"/>
+              </element>
+              <element name="fkForeignKeyColumnName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+              <element name="fkPrimaryKeyColumnName">
+                <datatype name="VARCHAR" type="STRING" maxLength="255"/>
+              </element>
+            </datatype>
+          </itemDatatype>
+        </datatype>
+      </element>
+      <element name="success" direction="OUT">
+        <datatype type="INTEGER" minValue="0" maxValue="1"/>
+      </element>
+      <element name="createResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <datatype name="XML" type="TREE" refId="5"></datatype>
+          </schemaDatatype>
+        </datatype>
+      </element>
+      <element name="faultResponse" direction="OUT">
+        <datatype name="XML" referenceType="XML" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="TYPE" componentName="XML">
+          <schemaDatatype>
+            <reference refId="5"/>
+          </schemaDatatype>
+        </datatype>
+      </element>
+    </datatype>
   </dependency>
   <dependency target="/system/customfunctions/resourceExists" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1"></datatype>
@@ -141,6 +235,7 @@ PROCEDURE test_updateResourcesSqlTable(
 	OUT faultResponse	XML
 )
 BEGIN
+	DECLARE basePath		VARCHAR(2048) DEFAULT &apos;/shared/ASAssets&apos;;
 	DECLARE resourcePath	VARCHAR(2048);
 	DECLARE resourceName	VARCHAR;
 	DECLARE resourceType	VARCHAR;
@@ -149,12 +244,13 @@ BEGIN
 	DECLARE annotation		LONGVARCHAR;
 	DECLARE columnList		VECTOR(/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.childResourceType);
 	DECLARE sqlIndexList	VECTOR(/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.sqlIndexType);
+	DECLARE foreignKeyList	VECTOR(/shared/ASAssets/Utilities/repository/definitions/RepositoryDefinitions.foreignKeyType);
 
-	set resourcePath = &apos;/shared/Utilities/examples/repository/target&apos;;
+	set resourcePath = basePath||&apos;/Utilities/examples/repository/target&apos;;
 	set resourceName = &apos;PRODUCT_VIEW2&apos;;
 	set resourceType = &apos;TABLE&apos;;
 	set resourceSubType = &apos;SQL_TABLE&apos;;
-	set scriptext = &apos;SELECT * FROM /shared/examples/ds_inventory/products products&apos;;
+	set scriptext = &apos;SELECT * FROM /shared/examples/ds_inventory/tutorial/products products&apos;;
 	set annotation = &apos;product information&apos;;
 /*	DECLARE PUBLIC TYPE childResourceType ROW (
 		resourceName 		VARCHAR, 
@@ -164,14 +260,14 @@ BEGIN
 		columnType 			VARCHAR	);
 */
 	set columnList = VECTOR[
-(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;ProductID&apos;,&apos;INTEGER&apos;,&apos;Product Identifier&apos;),
-(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;ProductName&apos;,&apos;VARCHAR(50)&apos;,&apos;Product Name&apos;),
-(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;ProductDescription&apos;,&apos;VARCHAR(255)&apos;,&apos;Product Description&apos;),
-(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;CategoryID&apos;,&apos;INTEGER&apos;,&apos;Category Identifier&apos;),
-(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;SerialNumber&apos;,&apos;VARCHAR(50)&apos;,&apos;Serial Number&apos;),
-(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;UnitPrice&apos;,&apos;DECIMAL(12,2)&apos;,&apos;Unit Price&apos;),
-(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;ReorderLevel&apos;,&apos;INTEGER&apos;,&apos;Reorder Level&apos;),
-(&apos;products&apos;,&apos;/shared/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;LeadTime&apos;,&apos;VARCHAR(30)&apos;,&apos;Lead Time&apos;)
+(&apos;products&apos;,basePath||&apos;/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;productid&apos;,&apos;INTEGER&apos;,&apos;Product Identifier&apos;),
+(&apos;products&apos;,basePath||&apos;/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;productname&apos;,&apos;VARCHAR(50)&apos;,&apos;Product Name&apos;),
+(&apos;products&apos;,basePath||&apos;/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;productdescription&apos;,&apos;VARCHAR(255)&apos;,&apos;Product Description&apos;),
+(&apos;products&apos;,basePath||&apos;/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;categoryid&apos;,&apos;INTEGER&apos;,&apos;Category Identifier&apos;),
+(&apos;products&apos;,basePath||&apos;/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;serialnumber&apos;,&apos;VARCHAR(50)&apos;,&apos;Serial Number&apos;),
+(&apos;products&apos;,basePath||&apos;/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;unitprice&apos;,&apos;DECIMAL(12,2)&apos;,&apos;Unit Price&apos;),
+(&apos;products&apos;,basePath||&apos;/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;reorderlevel&apos;,&apos;INTEGER&apos;,&apos;Reorder Level&apos;),
+(&apos;products&apos;,basePath||&apos;/Utilities/examples/repository/source/ds_inventory/products&apos;,&apos;TABLE&apos;,&apos;leadtime&apos;,&apos;VARCHAR(30)&apos;,&apos;Lead Time&apos;)
 ];
 /*	DECLARE PUBLIC TYPE sqlIndexType ROW (
 		sqlIndexName 		VARCHAR(255), 
@@ -181,11 +277,23 @@ BEGIN
 		sqlIndexColOrder 	VARCHAR(255) );
 */
 	set sqlIndexList = VECTOR[
-(&apos;categoryIDX&apos;,&apos;UNKNOWN&apos;,0,&apos;CategoryID&apos;,&apos;ASCENDING&apos;),
-(&apos;productsPK&apos;,&apos;PRIMARY_KEY&apos;,1,&apos;ProductID&apos;,&apos;ASCENDING&apos;),
-(&apos;productsPK&apos;,&apos;PRIMARY_KEY&apos;,1,&apos;ProductName&apos;,&apos;ASCENDING&apos;)
+(&apos;categoryIDX&apos;,&apos;UNKNOWN&apos;,0,&apos;categoryid&apos;,&apos;ASCENDING&apos;),
+(&apos;productsPK&apos;,&apos;PRIMARY_KEY&apos;,1,&apos;productid&apos;,&apos;ASCENDING&apos;),
+(&apos;productsPK&apos;,&apos;PRIMARY_KEY&apos;,1,&apos;productname&apos;,&apos;ASCENDING&apos;)
 ];
 
+/*
+	DECLARE PUBLIC TYPE foreignKeyType ROW (
+		fkName 					VARCHAR(255), --name of the foreign key
+		fkPrimaryKeyName 		VARCHAR(255), --name of the primary key index
+		fkPrimaryKeyTable 		/shared/ASAssets/Utilities/TypeDefinitions.pathType, --fully qualified path to the primary table
+		fkForeignKeyColumnName 	VARCHAR(255), --column name in the foreign table
+		fkPrimaryKeyColumnName 	VARCHAR(255)  --matching column name in the primary table
+	);
+*/
+	set foreignKeyList = VECTOR[
+(&apos;categoryFK&apos;,&apos;categories_pkey&apos;,&apos;/shared/examples/ds_inventory/tutorial/categories&apos;,&apos;categoryid&apos;,&apos;categoryid&apos;)
+];
 
 	call /shared/ASAssets/Utilities/repository/createAllFolders(resourcePath, success, faultResponse);
 
@@ -196,8 +304,9 @@ BEGIN
 	end if;
 
 	if (success = 1) then
---		CALL /shared/Utilities/repository/updateResourcesSqlTable(resourcePath||&apos;/&apos;||resourceName, scriptext, annotation, columnList, sqlIndexList, success, createResponse, faultResponse);
+		CALL /shared/ASAssets/Utilities/repository/updateResourcesSqlTable(resourcePath||&apos;/&apos;||resourceName, scriptext, annotation, columnList, sqlIndexList, foreignKeyList, success, createResponse, faultResponse);
 	end if;
+
 END</attribute>
   <attribute name="creationDate" type="LONG">0</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
@@ -205,12 +314,12 @@ END</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
   <attribute name="impactLevel" type="INTEGER">0</attribute>
   <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1446754792505</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1496279981398</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="p:1:Customized" type="STRING">datatype.changed</attribute>
-  <attribute name="p:2:Customized" type="STRING">datatype.changed</attribute>
+  <attribute name="p:1:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
+  <attribute name="p:2:Customized" type="STRING">datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed;datatype.changed</attribute>
   <attribute name="references" type="NULL"/>
 </metadata>

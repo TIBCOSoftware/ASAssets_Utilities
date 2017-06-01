@@ -13,6 +13,6 @@
   <attribute name="name" type="STRING">TestUtils</attribute>
   <attribute name="selectionState" type="INTEGER">1</attribute>
   <attribute name="type" type="STRING">CustomProc</attribute>
-  <attribute name="url" type="STRING">file:///usr/local/Composite_Software/CIS_6.2.0/conf/customjars/TestUtils.jar</attribute>
+  <attribute name="url" type="STRING">file:///C:/CiscoSystems/CIS7.0.5/conf/customjars/TestUtils_1.jar</attribute>
   <attribute name="userDeletedSet" type="SET"></attribute>
 </metadata>
