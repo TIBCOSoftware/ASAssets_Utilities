@@ -47,6 +47,7 @@ EncryptWithCISPubKey()
 import java.sql.SQLException;
 import java.sql.Types;
 
+import com.compositesw.extension.CustomProcedure;
 import com.compositesw.extension.CustomProcedureException;
 import com.compositesw.extension.ParameterInfo;
 
@@ -83,10 +84,39 @@ public class EncryptWithCISPubKey extends EncodingUtilTemplate {
 	public int execute(Object[] args) throws Exception {
 		String plainText = args.length > 0 ? (String)args[0] : null ;
 		String password = args.length > 1 && args[1].toString().trim().length() > 0 ? (String)args[1] : EncryptDecryptX509.DEFAULT_CIS_PASSWORD ;
-		
+
 		encMessage = new EncryptDecryptX509(cjpenv).encrypt(plainText,password) ;
 		hexString = EncryptDecryptX509.hex(encMessage) ;
 		return 0 ;
 	}
-	
+
+	public static void main(String[] args) {
+		
+		CustomProcedure cp = new EncryptWithCISPubKey();
+		/*
+		 * Parameters:
+    			new ParameterInfo("plain text", Types.VARCHAR, DIRECTION_IN),
+    			new ParameterInfo("keystore password", Types.VARCHAR, DIRECTION_IN),
+    			new ParameterInfo("encrypted raw bytes", Types.VARBINARY, DIRECTION_OUT),
+    			new ParameterInfo("encrypted hex string", Types.VARCHAR, DIRECTION_OUT)
+		 */
+		String plain_string = "This is a plain text string"; 
+		String keystore_password = "changeit";
+
+        try {
+	        cp.initialize(null);
+	        System.out.println("invoke "+cp.getName());
+	        cp.invoke(new Object[] {
+	        		new String (plain_string),
+	        		new String (keystore_password)
+	        });
+       
+	        String result = cp.getOutputValues()[1].toString();
+	        System.out.println("EncryptWithCISPubKey Result:");
+	        System.out.println(result);
+	        
+		} catch (Exception ex) {
+			System.out.print(ex.toString());
+		}
+	}
 }

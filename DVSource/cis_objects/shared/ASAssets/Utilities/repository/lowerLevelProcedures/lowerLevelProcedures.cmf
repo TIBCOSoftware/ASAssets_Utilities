@@ -2,6 +2,7 @@
 <metadata name="lowerLevelProcedures" path="/shared/ASAssets/Utilities/repository/lowerLevelProcedures" type="CONTAINER" subtype="FOLDER" changeToken="0">
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
   <attribute name="creationDate" type="LONG">0</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>

@@ -147,8 +147,6 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="lastModifiedDate" type="LONG">1424295451157</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
@@ -156,7 +154,7 @@ END</attribute>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">18/55</key>
+      <key type="STRING">18/45</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -165,14 +163,6 @@ END</attribute>
     </item>
     <item>
       <key type="STRING">18/53</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/45</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -189,6 +179,14 @@ END</attribute>
     </item>
     <item>
       <key type="STRING">18/60</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/55</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>

@@ -2,6 +2,7 @@
 <metadata name="string" path="/shared/ASAssets/Utilities/examples/string" type="CONTAINER" subtype="FOLDER" changeToken="0">
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
   <attribute name="creationDate" type="LONG">1382029188046</attribute>
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>

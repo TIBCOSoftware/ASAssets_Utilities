@@ -55,6 +55,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/lib/debug/Log" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -275,6 +276,7 @@
 	01/18/2011		Mike Tinius			5.2.0			Created new.
 	10/20/2014		Mike Tinius			6.2.6			Updated to add annotation.
 	11/21/2014		Mike Tinius			6.2.6			Removed use of /XML/escapeXML() in favor of XMLTEXT which does the same thing.
+	04/22/2017		Mike Tinius			7.0.5			Removed the condition &quot; AND groupDomain_ = &apos;composite&apos;&quot; so that LDAP groups can be created.
 
     © 2010, 2014 Cisco and/or its affiliates. All rights reserved.
 
@@ -335,7 +337,7 @@ BEGIN
 
 		call /shared/ASAssets/Utilities/repository/&quot;user&quot;/getGroup(debug, groupName_, groupDomain_, groupExists, groupExplicitRights, groupEffectiveRights, groupInheritedRights);
 
-		IF groupExists = 0 AND groupDomain_ = &apos;composite&apos; THEN
+		IF groupExists = 0 THEN
             BEGIN
 				set request =
                    &apos;&lt;ns1:createGroup xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/user&quot;
@@ -400,77 +402,10 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1493255922085</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">11/119</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/97</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">9/133</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/96</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/102</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">9/134</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">11/120</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/125</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-  </attribute>
+  <attribute name="references" type="NULL"/>
 </metadata>

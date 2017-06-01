@@ -65,6 +65,7 @@ CSW Version: 4.6.0
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.xml.DeleteElementSpareChildren</attribute>
   <attribute name="creationDate" type="LONG">1383622342553</attribute>

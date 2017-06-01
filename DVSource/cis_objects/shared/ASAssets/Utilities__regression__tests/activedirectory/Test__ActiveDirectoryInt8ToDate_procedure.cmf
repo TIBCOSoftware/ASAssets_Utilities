@@ -47,6 +47,7 @@ BEGIN
     DECLARE args System.Text;
     DECLARE expectedResultCSV System.Text;
     DECLARE result System.Text;
+	DECLARE GMTOffset INTEGER DEFAULT 5; -- 5 hours if on East Coast
 
     SET numTests = 0;
     SET numErrors = 0;
@@ -54,7 +55,7 @@ BEGIN
 
     -- start test
     --
-    SET args = &apos;129296016000000000, 0&apos;;
+    SET args = &apos;129296016000000000, &apos;||GMTOffset||&apos;&apos;;
     SET expectedResultCSV = &apos;2010-09-21&apos;;
 
     BEGIN
@@ -82,14 +83,28 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1495756049792</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
+    <item>
+      <key type="STRING">10/34</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>debug</item>
+        <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/8</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
     <item>
       <key type="STRING">20/10</key>
       <value type="STRING_ARRAY">
@@ -100,22 +115,6 @@ END</attribute>
     </item>
     <item>
       <key type="STRING">31/9</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/33</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/8</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>

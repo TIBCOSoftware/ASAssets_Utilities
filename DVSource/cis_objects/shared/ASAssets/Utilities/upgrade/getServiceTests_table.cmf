@@ -25,7 +25,7 @@
       </security>
     </column>
     <column name="Operation Path" nullable="true">
-      <datatype type="STRING" minLength="7" maxLength="65797"/>
+      <datatype type="STRING" minLength="7" maxLength="2147483909"/>
       <security>
         <owner user="admin" domain="composite"/>
       </security>
@@ -47,6 +47,7 @@
   <foreignKeys></foreignKeys>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ SELECT"/>
   </security>
   <dependency target="/services/databases/system/ALL_WSDL_OPERATIONS" type="TABLE">
     <datatype type="TABLE" refId="1">
@@ -62,8 +63,11 @@
       <element name="DATASOURCE_NAME">
         <datatype type="STRING" maxLength="255"/>
       </element>
+      <element name="GUID">
+        <datatype type="STRING" maxLength="36"/>
+      </element>
       <element name="ANNOTATION">
-        <datatype type="STRING" maxLength="65535"/>
+        <datatype type="STRING" maxLength="2147483647"/>
       </element>
       <element name="OWNER_ID">
         <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
@@ -72,7 +76,19 @@
         <datatype type="STRING" maxLength="255"/>
       </element>
       <element name="PARENT_PATH">
-        <datatype type="STRING" maxLength="65535"/>
+        <datatype type="STRING" maxLength="2147483647"/>
+      </element>
+      <element name="OPERATION_CREATOR_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="OPERATION_CREATION_TIMESTAMP">
+        <datatype type="INTEGER"/>
+      </element>
+      <element name="OPERATION_MODIFIER_ID">
+        <datatype type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+      </element>
+      <element name="OPERATION_MODIFICATION_TIMESTAMP">
+        <datatype type="INTEGER"/>
       </element>
     </datatype>
   </dependency>

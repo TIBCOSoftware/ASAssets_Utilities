@@ -30,6 +30,7 @@
   <parameters></parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/lib/resource" type="CONTAINER">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
@@ -167,8 +168,6 @@ END
   <attribute name="creatorUserDomain" type="STRING">composite</attribute>
   <attribute name="creatorUserName" type="STRING">admin</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
@@ -229,12 +228,6 @@ DgBuAGEAdABpAHYAZQBCAGEAcwBlAFQAeQBwAGUDLwAAAAEDFgAAAAADGgAAAAEDGwAAAAEDIP//
 AAABAxsAAAABAyD/////AyIAAAAAAxIAAAAE/////w==</value>
     </item>
     <item>
-      <key type="STRING">xmlStringType</key>
-      <value type="BYTE_ARRAY">EBsGAgALAEwATwBOAEcAVgBBAFIAQwBIAEEAUgYpACoALwBzAGgAYQByAGUAZAAvAEEAUwBBAHMA
-cwBlAHQAcwAvAFUAdABpAGwAaQB0AGkAZQBzAC8AVAB5AHAAZQBEAGUAZgBpAG4AaQB0AGkAbwBu
-AHMGKgANAHgAbQBsAFMAdAByAGkAbgBnAFQAeQBwAGUDEgAAAAEEBAAAAAB/////ARMB//8=</value>
-    </item>
-    <item>
       <key type="STRING">ChildInfosVectorType</key>
       <value type="BYTE_ARRAY">ECMGAgAUAEMAaABpAGwAZABJAG4AZgBvAHMAVgBlAGMAdABvAHIAVAB5AHAAZQYpACoALwBzAGgA
 YQByAGUAZAAvAEEAUwBBAHMAcwBlAHQAcwAvAFUAdABpAGwAaQB0AGkAZQBzAC8AVAB5AHAAZQBE
@@ -250,6 +243,12 @@ AC8AUgBlAHMAbwB1AHIAYwBlAEQAZQBmAHMGKgAMAFIAZQBzAG8AdQByAGMAZQBUAHkAcABlAxIA
 AAAEBAQAAAAAAAAAKAETAf////8QIQYVABQAYwBoAGkAbABkAEkAbgB0AHIAbwBzAHAAZQBjAHQA
 UwB0AGEAdABlAy8AAAABAxYAAAAAAxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAcAVgBB
 AFIAQwBIAEEAUgMSAAAABQQEAAAAAAAAABQBEwH//////////w==</value>
+    </item>
+    <item>
+      <key type="STRING">xmlStringType</key>
+      <value type="BYTE_ARRAY">EBsGAgALAEwATwBOAEcAVgBBAFIAQwBIAEEAUgYpACoALwBzAGgAYQByAGUAZAAvAEEAUwBBAHMA
+cwBlAHQAcwAvAFUAdABpAGwAaQB0AGkAZQBzAC8AVAB5AHAAZQBEAGUAZgBpAG4AaQB0AGkAbwBu
+AHMGKgANAHgAbQBsAFMAdAByAGkAbgBnAFQAeQBwAGUDEgAAAAEEBAAAAAB/////ARMB//8=</value>
     </item>
     <item>
       <key type="STRING">IntrospectionPlanVectorType</key>
@@ -308,22 +307,16 @@ YQBsAHUAZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBsGAgALAEwATwBO
 AEcAVgBBAFIAQwBIAEEAUgMSAAAACAQEAAAAAH////8BEwH///////////////8=</value>
     </item>
     <item>
-      <key type="STRING">moduleNameType</key>
-      <value type="BYTE_ARRAY">EBsGAgAHAFYAQQBSAEMASABBAFIGKQAqAC8AcwBoAGEAcgBlAGQALwBBAFMAQQBzAHMAZQB0AHMA
-LwBVAHQAaQBsAGkAdABpAGUAcwAvAFQAeQBwAGUARABlAGYAaQBuAGkAdABpAG8AbgBzBioADgBt
-AG8AZAB1AGwAZQBOAGEAbQBlAFQAeQBwAGUDEgAAAAEEBAAAAAAAABAAARMB//8=</value>
-    </item>
-    <item>
       <key type="STRING">messageType</key>
       <value type="BYTE_ARRAY">EBsGAgAHAFYAQQBSAEMASABBAFIGKQAqAC8AcwBoAGEAcgBlAGQALwBBAFMAQQBzAHMAZQB0AHMA
 LwBVAHQAaQBsAGkAdABpAGUAcwAvAFQAeQBwAGUARABlAGYAaQBuAGkAdABpAG8AbgBzBioACwBt
 AGUAcwBzAGEAZwBlAFQAeQBwAGUDEgAAAAEEBAAAAAAAACcQARMB//8=</value>
     </item>
     <item>
-      <key type="STRING">pathType</key>
+      <key type="STRING">moduleNameType</key>
       <value type="BYTE_ARRAY">EBsGAgAHAFYAQQBSAEMASABBAFIGKQAqAC8AcwBoAGEAcgBlAGQALwBBAFMAQQBzAHMAZQB0AHMA
-LwBVAHQAaQBsAGkAdABpAGUAcwAvAFQAeQBwAGUARABlAGYAaQBuAGkAdABpAG8AbgBzBioACABw
-AGEAdABoAFQAeQBwAGUDEgAAAAEEBAAAAAAAAAPoARMB//8=</value>
+LwBVAHQAaQBsAGkAdABpAGUAcwAvAFQAeQBwAGUARABlAGYAaQBuAGkAdABpAG8AbgBzBioADgBt
+AG8AZAB1AGwAZQBOAGEAbQBlAFQAeQBwAGUDEgAAAAEEBAAAAAAAABAAARMB//8=</value>
     </item>
     <item>
       <key type="STRING">ElemAttrValuesType</key>
@@ -336,6 +329,12 @@ CAABEwH/////ECEGFQAIAHEAdQBhAGwAQQB0AHQAcgMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg
 /////wMiAAAAAAMSAAAAAv//ECEGFQAHAGkAbgB2AGEAbAB1AGUDLwAAAAEDFgAAAAADGgAAAAED
 GwAAAAEDIP////8DIgAAAAAIGRAbBgIABwBWAEEAUgBDAEgAQQBSAxIAAAADBAQAAAAAAAAA/wET
 Af///////w==</value>
+    </item>
+    <item>
+      <key type="STRING">pathType</key>
+      <value type="BYTE_ARRAY">EBsGAgAHAFYAQQBSAEMASABBAFIGKQAqAC8AcwBoAGEAcgBlAGQALwBBAFMAQQBzAHMAZQB0AHMA
+LwBVAHQAaQBsAGkAdABpAGUAcwAvAFQAeQBwAGUARABlAGYAaQBuAGkAdABpAG8AbgBzBioACABw
+AGEAdABoAFQAeQBwAGUDEgAAAAEEBAAAAAAAAAPoARMB//8=</value>
     </item>
     <item>
       <key type="STRING">AttributesVectorType</key>
@@ -433,86 +432,5 @@ AxoAAAABAxsAAAABAyD/////AyIAAAAACBkQGwYCAAcAVgBBAFIAQwBIAEEAUgMSAAAABAQEAAAA
 AAAAAP8BEwH//////////w==</value>
     </item>
   </attribute>
-  <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">29/118</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">28/74</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">33/100</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">33/101</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">29/117</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">29/116</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">28/90</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">20/70</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">33/59</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">33/58</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-  </attribute>
+  <attribute name="references" type="NULL"/>
 </metadata>

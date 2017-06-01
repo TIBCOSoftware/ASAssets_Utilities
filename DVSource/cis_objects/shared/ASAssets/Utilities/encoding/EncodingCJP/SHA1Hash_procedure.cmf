@@ -47,6 +47,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.encoding.SHA1Hash</attribute>
   <attribute name="creationDate" type="LONG">1392851631271</attribute>

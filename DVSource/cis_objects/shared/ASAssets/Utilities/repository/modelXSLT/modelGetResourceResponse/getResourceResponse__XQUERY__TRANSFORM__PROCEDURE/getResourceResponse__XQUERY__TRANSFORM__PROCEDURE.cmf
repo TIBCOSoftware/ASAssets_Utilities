@@ -19,6 +19,7 @@
 </annotation>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
   <attribute name="autoAddChildren" type="BOOLEAN">false</attribute>
   <attribute name="charset" type="STRING">&lt;auto detect&gt;</attribute>

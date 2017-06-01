@@ -75,11 +75,11 @@ public class RegexReplace implements CustomProcedure {
    */
   public ParameterInfo[] getParameterInfo() {
     return new ParameterInfo[] {
-      new ParameterInfo ("Input Text", Types.VARCHAR, DIRECTION_IN),
-      new ParameterInfo ("Regular Expression", Types.VARCHAR, DIRECTION_IN),
-      new ParameterInfo ("Replacement Text", Types.VARCHAR, DIRECTION_IN),
+      new ParameterInfo ("Input Text", Types.LONGVARCHAR, DIRECTION_IN),
+      new ParameterInfo ("Regular Expression", Types.LONGVARCHAR, DIRECTION_IN),
+      new ParameterInfo ("Replacement Text", Types.LONGVARCHAR, DIRECTION_IN),
       new ParameterInfo ("Occurrence", Types.INTEGER, DIRECTION_IN),
-      new ParameterInfo ("result", Types.VARCHAR, DIRECTION_OUT)
+      new ParameterInfo ("result", Types.LONGVARCHAR, DIRECTION_OUT)
     };
   }
 
@@ -115,7 +115,7 @@ public class RegexReplace implements CustomProcedure {
     } catch (ClassCastException cce) {
       // this shouldn't happen
       //
-      throw new CustomProcedureException ("Input value for \"Input Text\" is not a VARCHAR type.");
+      throw new CustomProcedureException ("Input value for \"Input Text\" is not a LONGVARCHAR type.");
     }
     
     // get the regular expression
@@ -130,7 +130,7 @@ public class RegexReplace implements CustomProcedure {
     } catch (ClassCastException cce) {
       // this shouldn't happen
       //
-      throw new CustomProcedureException ("Input value for \"Regular Expression\" is not a VARCHAR type.");
+      throw new CustomProcedureException ("Input value for \"Regular Expression\" is not a LONGVARCHAR type.");
     }
     
     // get the replacement text
@@ -145,7 +145,7 @@ public class RegexReplace implements CustomProcedure {
     } catch (ClassCastException cce) {
       // this shouldn't happen
       //
-      throw new CustomProcedureException ("Input value for \"Replacement Text\" is not a VARCHAR type.");
+      throw new CustomProcedureException ("Input value for \"Replacement Text\" is not a LONGVARCHAR type.");
     }
     
     // get the occurrence number

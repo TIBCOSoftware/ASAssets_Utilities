@@ -312,6 +312,7 @@ RESOURCE_SUBTYPE_FOLDER,CONSTANT_DEFINITION,VARCHAR(40),FOLDER_CONTAINER
 RESOURCE_SUBTYPE_JAVA_PROCEDURE,CONSTANT_DEFINITION,VARCHAR(40),JAVA_PROCEDURE
 RESOURCE_SUBTYPE_NATIVE_FUNCTION,CONSTANT_DEFINITION,VARCHAR(40),NATIVE_FUNCTION
 RESOURCE_SUBTYPE_NONE,CONSTANT_DEFINITION,VARCHAR(40),NONE
+RESOURCE_SUBTYPE_OLAP_CUBE,CONSTANT_DEFINITION,VARCHAR(40),OLAP_CUBE
 RESOURCE_SUBTYPE_OPERATION,CONSTANT_DEFINITION,VARCHAR(40),OPERATION_PROCEDURE
 RESOURCE_SUBTYPE_PORT,CONSTANT_DEFINITION,VARCHAR(40),PORT_CONTAINER
 RESOURCE_SUBTYPE_RELATIONAL_DATA_SOURCE,CONSTANT_DEFINITION,VARCHAR(40),RELATIONAL_DATA_SOURCE
@@ -375,53 +376,10 @@ END
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1446763840344</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1495744490375</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">10/315</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">20/11</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/174</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/9</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">31/10</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-  </attribute>
+  <attribute name="references" type="NULL"/>
 </metadata>

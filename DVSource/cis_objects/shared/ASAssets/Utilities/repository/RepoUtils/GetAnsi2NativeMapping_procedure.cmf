@@ -162,7 +162,7 @@ CSW Version: 5.2.0
       <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
     </parameter>
     <parameter name="result" direction="OUT" nullable="true">
-      <datatype subType="DATASOURCE_TYPE" type="TABLE" caseSensitive="false" refId="1">
+      <datatype type="TABLE" caseSensitive="false" refId="1">
         <element name="cisType">
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
         </element>
@@ -173,13 +173,13 @@ CSW Version: 5.2.0
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
         </element>
         <element name="cisScale">
-          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
         </element>
         <element name="cisPrecision">
-          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
         </element>
         <element name="dataTypeId">
-          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
         </element>
         <element name="dataTypeName">
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
@@ -191,16 +191,17 @@ CSW Version: 5.2.0
           <datatype name="VARCHAR" subType="DATASOURCE_TYPE" type="STRING" maxLength="2147483647"/>
         </element>
         <element name="nativeScale">
-          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
         </element>
         <element name="nativePrecision">
-          <datatype name="INTEGER" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
+          <datatype name="INTEGER" subType="DATASOURCE_TYPE" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
         </element>
       </datatype>
     </parameter>
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.repository.GetAnsi2NativeMapping</attribute>
   <attribute name="creationDate" type="LONG">1383622341815</attribute>

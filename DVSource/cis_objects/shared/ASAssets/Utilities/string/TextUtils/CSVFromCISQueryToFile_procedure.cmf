@@ -104,6 +104,7 @@ Reason:      Updated to buffer writing rows to the file to improve write perform
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.text.CSVFromCISQueryToFile</attribute>
   <attribute name="creationDate" type="LONG">1383622340769</attribute>

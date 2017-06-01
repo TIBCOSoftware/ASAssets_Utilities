@@ -164,7 +164,7 @@ Welcome.html,1,0&apos;;
     BEGIN
         SET numTests = numTests + 1;
         CALL /shared/ASAssets/Utilities_regression_tests/TestUtils/QueryTest(
-            &apos;SELECT fileName, isFile, isDir FROM /shared/ASAssets/Utilities/file/FileProcessingCJP/getFileInfo(&apos; || args || &apos;) WHERE fileName &lt;&gt; &apos;&apos;.DS_Store&apos;&apos; ORDER BY fileName&apos;, -- frickin&apos; MacOS keeps putting this in there when I browse from Finder
+            &apos;SELECT {OPTION CASE_SENSITIVE=&quot;FALSE&quot;} fileName, isFile, isDir FROM /shared/ASAssets/Utilities/file/FileProcessingCJP/getFileInfo(&apos; || args || &apos;) WHERE fileName &lt;&gt; &apos;&apos;.DS_Store&apos;&apos; ORDER BY fileName&apos;, -- frickin&apos; MacOS keeps putting this in there when I browse from Finder
             expectedResultCSV,
             result
         );
@@ -188,20 +188,18 @@ END
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1424303466068</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1495757283788</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">10/108</key>
+      <key type="STRING">20/13</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
+        <item>util</item>
+        <item>System</item>
       </value>
     </item>
     <item>
@@ -213,11 +211,11 @@ END
       </value>
     </item>
     <item>
-      <key type="STRING">20/13</key>
+      <key type="STRING">10/108</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
-        <item>util</item>
-        <item>System</item>
+        <item>debug</item>
+        <item>Print</item>
       </value>
     </item>
     <item>

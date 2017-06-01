@@ -252,14 +252,14 @@ BEGIN
         SET resourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_view&apos;;
         SET resourceType = ResourceDefs.RESOURCE_TYPE_TABLE;
         SET annotation = &apos;view annotation test&apos;;
-        SET childAnnotations = VECTOR [
+ 
+		CASE (SUBSTRING(getCisVersion(), 1, 3))
+		    WHEN &apos;6.2&apos; THEN
+		       SET childAnnotations = VECTOR [
                                    (&apos;ProductID&apos;, &apos;INTEGER&apos;, &apos;ProductID annotation&apos;),
                                    (&apos;CategoryID&apos;, &apos;INTEGER&apos;, &apos;CategoryID annotation&apos;),
                                    (&apos;ProductName&apos;, &apos;VARCHAR(50)&apos;, &apos;ProductName annotation&apos;)
                                ];
-
-		CASE (SUBSTRING(getCisVersion(), 1, 3))
-		    WHEN &apos;6.2&apos; THEN
 		        SET expectedResultCSV =
 &apos;,,view annotation test
 ProductID,INTEGER,ProductID annotation
@@ -271,6 +271,11 @@ UnitPrice,&quot;DECIMAL(12,2)&quot;,
 ReorderLevel,INTEGER,
 LeadTime,VARCHAR(30),&apos;;
             ELSE
+		       SET childAnnotations = VECTOR [
+                                   (&apos;productid&apos;, &apos;INTEGER&apos;, &apos;ProductID annotation&apos;),
+                                   (&apos;categoryid&apos;, &apos;INTEGER&apos;, &apos;CategoryID annotation&apos;),
+                                   (&apos;productname&apos;, &apos;VARCHAR(50)&apos;, &apos;ProductName annotation&apos;)
+                               ];
 		        SET expectedResultCSV =
 &apos;,,view annotation test
 productid,INTEGER,ProductID annotation
@@ -449,7 +454,7 @@ leadtime,VARCHAR(30),&apos;;
         --
         SET resourcePath = /shared/ASAssets/Utilities_regression_tests/Constants.TMP_FOLDER || &apos;/test_folder/test_sql_def_set&apos;;
         SET resourceType = ResourceDefs.RESOURCE_TYPE_DEFINITION_SET;
-        SET annotation = &apos;procedure annotation test&apos;;
+        SET annotation = &apos;definition set annotation test&apos;;
         SET childAnnotations = NULL;
 
         SET args = &apos;&apos;&apos;&apos; || resourcePath || &apos;&apos;&apos;, &apos; ||
@@ -515,117 +520,10 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1424305677656</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1495754490726</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
-  <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">10/88</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">28/34</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">28/103</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">18/19</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">20/21</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/286</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">31/20</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/355</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">26/14</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">26/13</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/180</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">28/301</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">28/211</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>resource</item>
-        <item>ResourceDefs</item>
-      </value>
-    </item>
-  </attribute>
+  <attribute name="references" type="NULL"/>
 </metadata>

@@ -16,19 +16,22 @@
     Any support for this software by Cisco would be covered by paid consulting agreements, and would be billable work.</annotation>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
+  <attribute name="OAuthConfig" type="NULL"/>
   <attribute name="autoAddChildren" type="BOOLEAN">true</attribute>
+  <attribute name="cacheStatusAndTrackingDS" type="STRING"/>
   <attribute name="classpath" type="STRING"/>
   <attribute name="creationDate" type="LONG">0</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="driverName" type="STRING">Custom Java Procedure</attribute>
-  <attribute name="lastModifiedDate" type="LONG">1424295614509</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1493176467667</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="name" type="STRING">EncodingCJP</attribute>
   <attribute name="selectionState" type="INTEGER">1</attribute>
   <attribute name="type" type="STRING">CustomProc</attribute>
-  <attribute name="url" type="STRING">file:///usr/local/Composite_Software/CIS_6.2.0/conf/customjars/EncodingUtils.jar</attribute>
+  <attribute name="url" type="STRING">file:///C:/CiscoSystems/CIS7.0.5/conf/customjars/EncodingUtils.jar</attribute>
   <attribute name="userDeletedSet" type="SET"></attribute>
 </metadata>

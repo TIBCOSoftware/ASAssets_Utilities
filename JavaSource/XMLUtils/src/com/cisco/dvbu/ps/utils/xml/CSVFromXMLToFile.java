@@ -512,7 +512,7 @@ public class CSVFromXMLToFile extends XMLUtilTemplate implements CustomProcedure
 		String qualifier_character = "\"";
 		String create_column_headers = "true";
 		int total_columns = 12;
-		String file_Path = "D:/tmp/CSVFromXML.txt";
+		String file_Path = "C:/temp/CSVFromXML.txt";
 		int append = 0;
 
         try {

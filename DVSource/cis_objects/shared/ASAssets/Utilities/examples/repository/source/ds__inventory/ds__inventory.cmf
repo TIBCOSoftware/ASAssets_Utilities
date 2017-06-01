@@ -19,6 +19,7 @@
 </annotation>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE SELECT"/>
   </security>
   <attribute name="autoAddChildren" type="BOOLEAN">true</attribute>
   <attribute name="cacheStatusTable" type="STRING"/>
@@ -33,8 +34,6 @@
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="driverName" type="STRING">MySQL 5.0</attribute>
   <attribute name="execTimeout" type="INTEGER">0</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="isPassThrough" type="STRING">Disabled</attribute>
   <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>

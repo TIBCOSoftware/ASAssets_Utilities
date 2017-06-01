@@ -56,6 +56,7 @@ CSW Version: 6.0.0
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <attribute name="className" type="STRING">com.cisco.dvbu.ps.utils.request.ReadInEqClause</attribute>
   <attribute name="creationDate" type="LONG">1383622342459</attribute>

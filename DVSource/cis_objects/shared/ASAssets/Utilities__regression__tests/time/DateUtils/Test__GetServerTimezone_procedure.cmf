@@ -55,7 +55,7 @@ BEGIN
     -- start test w/ &apos;ID&apos; arg
     --
     SET args = &apos;&apos;&apos;ID&apos;&apos;&apos;;
-    SET expectedResultCSV = &apos;America/Los_Angeles&apos;;
+    SET expectedResultCSV = &apos;America/New_York&apos;;
 
     BEGIN
         SET numTests = numTests + 1;
@@ -80,7 +80,7 @@ BEGIN
     -- start test w/ &apos;SHORT_NAME&apos; arg
     --
     SET args = &apos;&apos;&apos;SHORT_NAME&apos;&apos;&apos;;
-    SET expectedResultCSV = &apos;PDT&apos;;
+    SET expectedResultCSV = &apos;EDT&apos;;
 
     BEGIN
         SET numTests = numTests + 1;
@@ -107,20 +107,26 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1397495870437</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1495739613321</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
     <item>
-      <key type="STRING">10/58</key>
+      <key type="STRING">10/33</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
         <item>Print</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">18/8</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
       </value>
     </item>
     <item>
@@ -132,15 +138,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">31/9</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">10/33</key>
+      <key type="STRING">10/58</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>debug</item>
@@ -148,7 +146,7 @@ END</attribute>
       </value>
     </item>
     <item>
-      <key type="STRING">18/8</key>
+      <key type="STRING">31/9</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>

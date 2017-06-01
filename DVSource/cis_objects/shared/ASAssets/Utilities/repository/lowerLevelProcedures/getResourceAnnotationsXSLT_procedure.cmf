@@ -24,10 +24,10 @@
               <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
             </element>
             <element name="type" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-              <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              <datatype name="resourceType" namespace="http://www.compositesw.com/services/system/admin/resource" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
             </element>
             <element name="detail" namespace="http://www.compositesw.com/services/system/admin/resource">
-              <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
+              <datatype name="detailLevel" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
             </element>
           </datatype>
         </schemaDatatype>
@@ -50,6 +50,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/services/webservices/system/admin/resource/operations/ResourceSchema" type="DEFINITION_SET">
     <datatype name="Tree" type="TREE" refId="1"></datatype>
@@ -97,7 +98,7 @@
                         <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
                       </element>
                       <element name="changeId" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                        <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2207" maxValue="2147483647"/>
+                        <datatype name="int" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="long" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="-2147483648" maxValue="2147483647"/>
                       </element>
                       <element name="version" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
                         <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
@@ -167,45 +168,17 @@
                                           <element name="entry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
                                             <datatype superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="12">
                                               <element name="key" namespace="http://www.compositesw.com/services/system/util/common">
-                                                <datatype name="attributeTypeValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="13">
-                                                  <element name="type" namespace="http://www.compositesw.com/services/system/util/common">
-                                                    <datatype name="attributeType" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                                                  </element>
-                                                  <element name="value" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                                    <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                                                  </element>
-                                                  <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                                    <datatype name="attributeTypeValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="14">
-                                                      <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                                                        <reference refId="13"/>
-                                                      </element>
-                                                    </datatype>
-                                                  </element>
-                                                  <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                                    <datatype name="attributeTypeValueMap" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="15">
-                                                      <element name="entry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                                                        <reference refId="12"/>
-                                                      </element>
-                                                    </datatype>
-                                                  </element>
-                                                  <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                                    <datatype name="attributeSimpleValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="16">
-                                                      <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                                                        <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                                                      </element>
-                                                    </datatype>
-                                                  </element>
-                                                </datatype>
+                                                <reference refId="10"/>
                                               </element>
                                               <element name="value" namespace="http://www.compositesw.com/services/system/util/common">
-                                                <reference refId="13"/>
+                                                <reference refId="10"/>
                                               </element>
                                             </datatype>
                                           </element>
                                         </datatype>
                                       </element>
                                       <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                        <datatype name="attributeSimpleValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="17">
+                                        <datatype name="attributeSimpleValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="13">
                                           <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
                                             <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
                                           </element>
@@ -219,7 +192,7 @@
                                 <reference refId="11"/>
                               </element>
                               <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                <reference refId="17"/>
+                                <reference refId="13"/>
                               </element>
                               <element name="unset" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
                                 <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
@@ -232,9 +205,9 @@
                         <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
                       </element>
                       <element name="attributes" namespace="http://www.compositesw.com/services/system/admin/resource" minOccurs="0">
-                        <datatype name="attributeList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="18">
+                        <datatype name="attributeList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="14">
                           <element name="attribute" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                            <datatype name="attribute" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="19">
+                            <datatype name="attribute" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="15">
                               <element name="name" namespace="http://www.compositesw.com/services/system/util/common">
                                 <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
                               </element>
@@ -245,21 +218,13 @@
                                 <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
                               </element>
                               <element name="valueList" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                <datatype name="attributeTypeValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="20">
-                                  <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                                    <reference refId="10"/>
-                                  </element>
-                                </datatype>
+                                <reference refId="9"/>
                               </element>
                               <element name="valueMap" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
                                 <reference refId="11"/>
                               </element>
                               <element name="valueArray" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
-                                <datatype name="attributeSimpleValueList" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="attributeComplexValue" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="COMPLEX_TYPE" type="TREE" refId="21">
-                                  <element name="item" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                                    <datatype name="attributeSimpleValue" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="string" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="SIMPLE_TYPE" type="STRING" maxLength="2147483647"/>
-                                  </element>
-                                </datatype>
+                                <reference refId="13"/>
                               </element>
                               <element name="unset" namespace="http://www.compositesw.com/services/system/util/common" minOccurs="0">
                                 <datatype name="boolean" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="INTEGER" minValue="0" maxValue="1"/>
@@ -279,9 +244,9 @@
       <element name="fault" direction="OUT">
         <datatype name="fault" extendedName="{http://www.compositesw.com/services/system/util/common}fault" namespace="http://www.compositesw.com/services/system/util/common" referenceDefinitionSet="/services/webservices/system/util/common/operations/CommonSchema" referenceType="{http://www.compositesw.com/services/system/util/common}fault" subType="ELEMENT_DECL" type="XML" contentConstraint="SEQUENCE" schemaConstraint="ANY" componentType="ELEMENT" componentName="{http://www.compositesw.com/services/system/util/common}fault">
           <schemaDatatype>
-            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="22">
+            <datatype name="fault" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="fault" superTypeNamespace="http://www.compositesw.com/services/system/util/common" subType="ELEMENT_DECL" type="TREE" refId="16">
               <element name="errorEntry" namespace="http://www.compositesw.com/services/system/util/common" maxOccurs="2147483647" minOccurs="0">
-                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="23">
+                <datatype name="messageEntry" namespace="http://www.compositesw.com/services/system/util/common" superTypeName="anyType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" subType="COMPLEX_TYPE" type="TREE" refId="17">
                   <element name="code" namespace="http://www.compositesw.com/services/system/util/common">
                     <datatype name="string" namespace="http://www.w3.org/2001/XMLSchema" superTypeName="anySimpleType" superTypeNamespace="http://www.w3.org/2001/XMLSchema" type="STRING" maxLength="2147483647"/>
                   </element>
@@ -309,16 +274,14 @@
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">true</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
   <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="p:1:Customized" type="STRING">metadata.added;datatype.changed</attribute>
   <attribute name="sourcePath" type="STRING">/services/webservices/system/admin/resource/operations/getResource</attribute>
   <attribute name="sourceType" type="SHORT">3</attribute>
-  <attribute name="transformModel" type="BYTE_ARRAY">UEsDBBQACAgIAIBzZjoAAAAAAAAAAAAAAAABAAAAc+1cX3PaOBB/76dgmJu+pQ5J2jQpZCZHmF5m
-CMkF2mmfOo5RwFNjU0tOyN3cd7+VbdmWLBvZKEAZ8hDAllar/e0/r2S9aRPfdPGj589uvDFyGlaA
+  <attribute name="transformModel" type="BYTE_ARRAY">UEsDBBQACAgIAICLZjoAAAAAAAAAAAAAAAABAAAAc+1c3XPaOBB/71/BMDd9Sx2StvkoZCZHmF5m
+CMkF2mmfOo5RwFNjU0tOyN3c/34r27ItWTayUYAy5CGALa1W+9svr2S9aRPfdPGj589uvDFyGlaA
 iTez/0HjTpP4AWpevGk02tieuCYJfER/we+xSUzyMkcN+q/THN33es2Gjx6voVcr7BI2Qw6aIZc0
 XHMGrWx3HhCc3M2S4RrIiB5lukFHnvAEkXuEvcC3EHzOPRejZjgmnpsWDDwlZH5uGM/Pz+8sbzb3
 sE0QDr8bGPlPtoWwgV8wQTPDHM9s1/BjakAlcBzzwQEij6YDZKP508nRv1QO0QSkjKAFQe4YjQeh
@@ -326,39 +289,39 @@ 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
-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</attribute>
+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</attribute>
   <attribute name="xqueryModel" type="NULL"/>
   <attribute name="xslt" type="STRING">&lt;xslt:stylesheet xmlns:xslt=&quot;http://www.w3.org/1999/XSL/Transform&quot; xmlns:csw-xform=&quot;http://www.compositesw.com/2003/xform&quot; xmlns:ns1=&quot;http://www.compositesw.com/services/system/admin/resource&quot; xmlns:ns2=&quot;http://www.compositesw.com/services/system/util/common&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; version=&quot;1.0&quot;&gt;
   &lt;xslt:template match=&quot;/&quot;&gt;

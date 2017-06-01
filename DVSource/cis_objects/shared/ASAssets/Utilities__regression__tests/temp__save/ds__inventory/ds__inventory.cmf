@@ -1,0 +1,59 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<metadata name="ds_inventory" path="/shared/ASAssets/Utilities_regression_tests/temp_save/ds_inventory" type="DATA_SOURCE" subtype="RELATIONAL" changeToken="0">
+  <annotation>sample data source</annotation>
+  <security>
+    <owner user="admin" domain="composite"/>
+  </security>
+  <attribute name="LowerBoundForDataShip" type="LONG">50000</attribute>
+  <attribute name="UpperBoundForDataShip" type="LONG">5000000</attribute>
+  <attribute name="anyCharWildcard" type="STRING">%</attribute>
+  <attribute name="autoAddChildren" type="BOOLEAN">false</attribute>
+  <attribute name="collationSensitive" type="BOOLEAN">false</attribute>
+  <attribute name="commitOnFetchDone" type="BOOLEAN">true</attribute>
+  <attribute name="connPoolMaxSize" type="INTEGER">100</attribute>
+  <attribute name="connPoolMinSize" type="INTEGER">0</attribute>
+  <attribute name="connPoolTimeout" type="INTEGER">30</attribute>
+  <attribute name="connProperties" type="MAP">
+    <item>
+      <key type="STRING">LoginTimeout</key>
+      <value type="STRING">60</value>
+    </item>
+  </attribute>
+  <attribute name="connStaleTimeout" type="INTEGER">60</attribute>
+  <attribute name="connValidateQuery" type="STRING">SELECT 1</attribute>
+  <attribute name="creationDate" type="LONG">1395102476158</attribute>
+  <attribute name="creatorUserDomain" type="STRING">composite</attribute>
+  <attribute name="creatorUserName" type="STRING">admin</attribute>
+  <attribute name="dataShipTempTablePrefix" type="STRING">T</attribute>
+  <attribute name="driverName" type="STRING">PostgreSQL 9.1</attribute>
+  <attribute name="execTimeout" type="INTEGER">0</attribute>
+  <attribute name="isPassThrough" type="STRING">Disabled</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1395102476177</attribute>
+  <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
+  <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
+  <attribute name="login" type="STRING">tutorial</attribute>
+  <attribute name="maxNumberForOrSyntax" type="INTEGER">2147483647</attribute>
+  <attribute name="maxSourceSideCardinalityForSJ" type="STRING"/>
+  <attribute name="maximumContainerDepth" type="INTEGER">1</attribute>
+  <attribute name="minTargetToSourceRatioForSJ" type="STRING"/>
+  <attribute name="name" type="STRING">ds_inventory</attribute>
+  <attribute name="nativeDataLoadingEnabled" type="BOOLEAN">true</attribute>
+  <attribute name="password" type="STRING">A49A5A0FAFF13F4A</attribute>
+  <attribute name="patternSeparator" type="STRING">,</attribute>
+  <attribute name="persistPassword" type="BOOLEAN">true</attribute>
+  <attribute name="postgresqlEnableBulkLoad" type="BOOLEAN">true</attribute>
+  <attribute name="searchCaseSensitively" type="BOOLEAN">false</attribute>
+  <attribute name="searchEscape" type="STRING">\</attribute>
+  <attribute name="singleCharWildcard" type="STRING">_</attribute>
+  <attribute name="supportsDBLink" type="BOOLEAN">false</attribute>
+  <attribute name="supportsDataship" type="BOOLEAN">false</attribute>
+  <attribute name="supportsDatashipAsTarget" type="BOOLEAN">false</attribute>
+  <attribute name="supportsStarSchema" type="BOOLEAN">false</attribute>
+  <attribute name="txnIsolationLevel" type="STRING">Read Committed</attribute>
+  <attribute name="type" type="STRING">PostgreSQL</attribute>
+  <attribute name="url" type="STRING">jdbc:postgresql://localhost:9508/inventory</attribute>
+  <attribute name="urlDatabaseName" type="STRING">inventory</attribute>
+  <attribute name="urlIP" type="STRING">localhost</attribute>
+  <attribute name="urlPatternStr" type="STRING">jdbc:postgresql://&lt;HOST&gt;:&lt;PORT&gt;/&lt;DATABASE_NAME&gt;</attribute>
+  <attribute name="urlPort" type="INTEGER">9508</attribute>
+</metadata>

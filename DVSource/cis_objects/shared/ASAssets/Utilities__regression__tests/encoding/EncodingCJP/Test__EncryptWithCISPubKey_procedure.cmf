@@ -58,7 +58,7 @@ BEGIN
     -- start test
     --
     SET args = &apos;&apos;&apos;This is a plain text string&apos;&apos;, &apos;&apos;changeit&apos;&apos;&apos;;
-    SET expectedResultCSV = &apos;35F3B28AC2CCC73F1552BB06E66A62EAF2B6C5BD3A2E8D0D17958004238FAC1CBC203BFFEB577140F583022C83B4A8136A051DC2477E81113BAF455BDA718FE58908FC19506B03CCC1AED36ADB2F4B8AAE244EF2E174212AD7B4D9737C93BEDC08538355BD134264860D594C805C128AF747D9C6BBA7691D8383331E02C79E86&apos;;
+    SET expectedResultCSV = &apos;5F585862B4EF420858972E7DBD4585E3BAE4E1B0A5C6D67BA07AC4C9930B2BAED508920B4BC83CACC82AD9723987CF25812B9A8D1C6548237E840DAEA25D73A2311A68EA69CB82C85AE717A8953F72FEC0463613B779547138CF94EA3B5C746A021B18415DD198FBE17423CED3CD45F03DBB9A856DEAF0227AD954C9BACBE163&apos;;
 
     BEGIN
         SET numTests = numTests + 1;
@@ -85,22 +85,12 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING"/>
   <attribute name="creatorUserName" type="STRING"/>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1431368665254</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1496279872656</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
   <attribute name="native_only" type="STRING">false</attribute>
   <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">20/13</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>util</item>
-        <item>System</item>
-      </value>
-    </item>
     <item>
       <key type="STRING">10/36</key>
       <value type="STRING_ARRAY">
@@ -111,6 +101,14 @@ END</attribute>
     </item>
     <item>
       <key type="STRING">31/12</key>
+      <value type="STRING_ARRAY">
+        <item>lib</item>
+        <item>util</item>
+        <item>System</item>
+      </value>
+    </item>
+    <item>
+      <key type="STRING">20/13</key>
       <value type="STRING_ARRAY">
         <item>lib</item>
         <item>util</item>

@@ -155,6 +155,7 @@
   </parameters>
   <security>
     <owner user="admin" domain="composite"/>
+    <privilege group="all" domain="composite" privileges="READ EXECUTE"/>
   </security>
   <dependency target="/lib/debug/Log" type="PROCEDURE">
     <datatype type="PROCEDURE" refId="1">
@@ -728,9 +729,7 @@ END</attribute>
   <attribute name="creatorUserDomain" type="STRING">ldap</attribute>
   <attribute name="creatorUserName" type="STRING">nbklsvb</attribute>
   <attribute name="explicitly.designed" type="BOOLEAN">false</attribute>
-  <attribute name="impactLevel" type="INTEGER">0</attribute>
-  <attribute name="impactMessage" type="NULL"/>
-  <attribute name="lastModifiedDate" type="LONG">1416603624220</attribute>
+  <attribute name="lastModifiedDate" type="LONG">1492901175993</attribute>
   <attribute name="lastModifiedUserDomain" type="STRING">composite</attribute>
   <attribute name="lastModifiedUserName" type="STRING">admin</attribute>
   <attribute name="model" type="NULL"/>
@@ -749,38 +748,5 @@ dAByAFYAYQBsAHUAZQMvAAAAAQMWAAAAAAMaAAAAAQMbAAAAAQMg/////wMiAAAAAAgZEBsGAgAL
 AEwATwBOAEcAVgBBAFIAQwBIAEEAUgMSAAAAAwQEAAAAAH////8BEwH///////8=</value>
     </item>
   </attribute>
-  <attribute name="references" type="MAP">
-    <item>
-      <key type="STRING">9/251</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Log</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">8/265</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">9/248</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>LogError</item>
-      </value>
-    </item>
-    <item>
-      <key type="STRING">8/361</key>
-      <value type="STRING_ARRAY">
-        <item>lib</item>
-        <item>debug</item>
-        <item>Print</item>
-      </value>
-    </item>
-  </attribute>
+  <attribute name="references" type="NULL"/>
 </metadata>
