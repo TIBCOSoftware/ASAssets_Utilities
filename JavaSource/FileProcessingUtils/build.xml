@@ -13,6 +13,9 @@
 		<fileset dir="../lib">
 			<include name="**/*.jar"/>
 		</fileset>
+		<fileset dir="${DV_HOME}/apps/extension/lib">
+			<include name="log4j-1.2.17.jar"/>
+		</fileset>
 	</path>
 
 	<target name="init">

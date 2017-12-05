@@ -24,6 +24,6 @@
 	<classpathentry kind="lib" path="lib/jaxen.jar"/>
 	<classpathentry kind="lib" path="lib/customproc-2611.jar"/>
 	<classpathentry kind="lib" path="lib/csserver-2611.jar"/>
-	<classpathentry kind="var" path="CIS_HOME/apps/common/lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="var" path="DV_HOME/apps/common/lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
