@@ -91,7 +91,7 @@ public class RepoUtilsPropertiesFactory {
 		"                      octet_length|of|offset|oj|on|only|open|option|or|order|others|out|outer|output|over|overlaps|\\\n" + 
 		"                      pad|partial|partition|passing|path|pipe|position|preceding|precision|prepare|preserve|primary|prior|privileges|procedure|public|quarter|\\\n" + 
 		"                      raise|range|read|real|recursive|ref|references|relative|repeat|replace|restrict|returning|revoke|right|rollback|row|rows|\\\n" + 
-		"                      schema|scroll|search|second|seconds|section|select|sequence|session|session_user|set|size|smallint|some|source|space|\\\n" + 
+		"                      schema|scroll|search|second|seconds|section|select|sequence|session|session_user|set|size|smallint|some|space|\\\n" + 
 		"                      sql|sql_bigint|sql_binary|sql_bit|sql_char|sql_date|sql_decimal|sql_double|sql_float|sql_guid|sql_integer|sql_interval_day|\\\n" + 
 		"                      sql_interval_day_to_hour|sql_interval_day_to_minute|sql_interval_day_to_second|sql_interval_hour|\\\n" + 
 		"                      sql_interval_hour_to_minute|sql_interval_hour_to_second|sql_interval_minute|sql_interval_minute_to_second|\\\n" + 

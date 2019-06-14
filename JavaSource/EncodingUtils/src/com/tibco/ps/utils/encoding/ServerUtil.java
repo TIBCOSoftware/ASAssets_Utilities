@@ -56,9 +56,15 @@ public class ServerUtil {
 			+ "		<server:path>"+ SERVER_ATTRIBUTE_TAG + "</server:path>"
 			+ "	</server:paths>"
 			+ "</server:getServerAttributes>";
-	public static final String KEYSTORE_LOCATION_ATTR = "/server/communications/strongKeystoreLocation";
-	public static final String KEYSTORE_PASSWORD_ATTR = "/server/communications/strongKeystorePassword";
-	public static final String KEYSTORE_KEY_ALIAS_ATTR = "/server/communications/strongKeystoreKeyAlias";
+	public static final String VERSION = "/server/config/info/version";
+	// Version 7.x
+	public static final String STRONG_KEYSTORE_LOCATION_ATTR = "/server/communications/strongKeystoreLocation";
+	public static final String STRONG_KEYSTORE_PASSWORD_ATTR = "/server/communications/strongKeystorePassword";
+	public static final String STRONG_KEYSTORE_KEY_ALIAS_ATTR = "/server/communications/strongKeystoreKeyAlias";
+	// Version 8.x
+	public static final String KEYSTORE_LOCATION_ATTR = "/server/communications/keystoreLocation";
+	public static final String KEYSTORE_PASSWORD_ATTR = "/server/communications/keystorePassword";
+	public static final String KEYSTORE_KEY_ALIAS_ATTR = "/server/communications/keystoreKeyAlias";
 	
 	// Get the server attribute using the ASAssets getServerAttribute which returns a string value instead of XML.
 	public static String getServerAttributeAS(ExecutionEnvironment ee, String request) throws CustomProcedureException, SQLException {

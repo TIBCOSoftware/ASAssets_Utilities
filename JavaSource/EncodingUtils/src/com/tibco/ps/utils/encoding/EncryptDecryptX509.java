@@ -73,8 +73,11 @@ public class EncryptDecryptX509 {
         return data;
     }
 
-    public static final String DEFAULT_CIS_KEYSTORE = "C:/MySW/CIS7.0.5/conf/server/security/cis_server_keystore_strong.jks" ;
-    public static final String DEFAULT_CIS_KEY_ALIAS = "cis_server_strong" ;
+    public static final String STRONG_DEFAULT_CIS_KEYSTORE = "C:/MySW/CIS7.0.8/conf/server/security/cis_server_keystore_strong.jks" ;
+    public static final String STRONG_DEFAULT_CIS_KEY_ALIAS = "cis_server_strong" ;
+    public static final String STRONG_DEFAULT_CIS_PASSWORD = "changeit" ;
+    public static final String DEFAULT_CIS_KEYSTORE = "C:/MySW/CIS8.0/conf/server/security/cis_server_keystore.jks" ;
+    public static final String DEFAULT_CIS_KEY_ALIAS = "cis_server" ;
     public static final String DEFAULT_CIS_PASSWORD = "changeit" ;
     
 	public byte[] encrypt(String message, String password) throws Exception {
@@ -99,50 +102,87 @@ public class EncryptDecryptX509 {
         String result6 = ServerUtil.executeQuery(env, "getValueFromXML", 
         		"/shared/ASAssets/Utilities/\"xml\"/getValueFromXML", "N","xmlns:server=\"http://www.compositesw.com/services/system/admin/server\"","/server:getServerAttributes/server:paths/server:path",request);
 */
-        
-      	String certFile = (env == null ? DEFAULT_CIS_KEYSTORE : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_LOCATION_ATTR));
-      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] certFile=" + certFile);
-        
-      //System.out.println( "EncryptDecryptX509: certFile=" + certFile );
-      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] certFile=" + certFile);
-        InputStream inStream = new FileInputStream(certFile);
-        KeyStore keystore = KeyStore.getInstance( KeyStore.getDefaultType() );
-        keystore.load(inStream, password.toCharArray());
-        String alias = (env == null ? DEFAULT_CIS_KEY_ALIAS : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_KEY_ALIAS_ATTR));
-      //System.out.println( "EncryptDecryptX509: alias=" + alias );
-      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] alias=" + alias);
+	  // Get sever version
+		String version = ServerUtil.getServerAttributeAS(env, ServerUtil.VERSION);
+
+		String certFile = null;
+		if (version.substring(0,1).equalsIgnoreCase("6") || version.substring(0,1).equalsIgnoreCase("7")) {
+			// Version 7
+			certFile = (env == null ? STRONG_DEFAULT_CIS_KEYSTORE : ServerUtil.getServerAttributeAS(env, ServerUtil.STRONG_KEYSTORE_LOCATION_ATTR));
+		} else {
+			// Version 8
+			certFile = (env == null ? DEFAULT_CIS_KEYSTORE : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_LOCATION_ATTR));
+		}
+
+		//System.out.println( "EncryptDecryptX509: certFile=" + certFile );
+		if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] certFile=" + certFile);
+		InputStream inStream = new FileInputStream(certFile);
+		KeyStore keystore = KeyStore.getInstance( KeyStore.getDefaultType() );
+		keystore.load(inStream, password.toCharArray());
+
+		String alias = null;
+		if (version.substring(0,1).equalsIgnoreCase("6") || version.substring(0,1).equalsIgnoreCase("7")) {
+			// Version 7
+			alias = (env == null ? STRONG_DEFAULT_CIS_KEY_ALIAS : ServerUtil.getServerAttributeAS(env, ServerUtil.STRONG_KEYSTORE_KEY_ALIAS_ATTR));
+		} else {
+			// Version 8
+			alias = (env == null ? DEFAULT_CIS_KEY_ALIAS : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_KEY_ALIAS_ATTR));				
+		}
+		
+		//System.out.println( "EncryptDecryptX509: alias=" + alias );
+		if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] alias=" + alias);
         Certificate cert = keystore.getCertificate(alias);
         PublicKey pubKey = cert.getPublicKey();
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-      //System.out.println( "EncryptDecryptX509: Start encryption using " + cipher.getProvider().getInfo() );
-      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] Start encryption using " + cipher.getProvider().getInfo());
+        //System.out.println( "EncryptDecryptX509: Start encryption using " + cipher.getProvider().getInfo() );
+        if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] Start encryption using " + cipher.getProvider().getInfo());
         byte[] cipherText = cipher.doFinal(message.getBytes());
-      //System.out.println( "EncryptDecryptX509: Finish encryption: [" + hex(cipherText) + "]");
-      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] Finish encryption: [" + hex(cipherText) + "]");
+        //System.out.println( "EncryptDecryptX509: Finish encryption: [" + hex(cipherText) + "]");
+        if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [encrypt] Finish encryption: [" + hex(cipherText) + "]");
         return cipherText ;
 	}
 
 	public String decrypt(byte[] message, String password) throws Exception {
 
-        String certFile = (env == null ? DEFAULT_CIS_KEYSTORE : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_LOCATION_ATTR));
-      //System.out.println( "EncryptDecryptX509: certFile=" + certFile );
-      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [decrypt] certFile=" + certFile);
-        InputStream inStream = new FileInputStream(certFile);
-        KeyStore keystore = KeyStore.getInstance( KeyStore.getDefaultType() );
-        keystore.load(inStream, password.toCharArray());
-        String alias = (env == null ? DEFAULT_CIS_KEY_ALIAS : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_KEY_ALIAS_ATTR));
-      //System.out.println( "EncryptDecryptX509: alias=" + alias );
-      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [decrypt] alias=" + alias);
-       PrivateKey privKey = (PrivateKey)keystore.getKey(alias, password.toCharArray());
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.DECRYPT_MODE, privKey);
-      //System.out.println( "EncryptDecryptX509: Start decryption using " + cipher.getProvider() + " algorithm " + cipher.getAlgorithm() );
-      if (env != null) env.log (ProcedureConstants.LOG_DEBUG, "EncryptDecryptX509: [decrypt] Start decryption using " + cipher.getProvider().getInfo());
-       byte[] plainText = cipher.doFinal(message);
-      //System.out.println( "EncryptDecryptX509: Finish decryption: [" + new String(plainText, "UTF8") + "]");
-      if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [decrypt] Finish decryption: [" + new String(plainText, "UTF8") + "]");
-        return new String(plainText,"UTF8") ;
+		// Get sever version
+		String version = ServerUtil.getServerAttributeAS(env, ServerUtil.VERSION);
+		
+        String certFile = null;
+		if (version.substring(0,1).equalsIgnoreCase("6") || version.substring(0,1).equalsIgnoreCase("7")) {
+			// Version 7
+			certFile = (env == null ? STRONG_DEFAULT_CIS_KEYSTORE : ServerUtil.getServerAttributeAS(env, ServerUtil.STRONG_KEYSTORE_LOCATION_ATTR));
+		} else {
+			// Version 8
+			certFile = (env == null ? DEFAULT_CIS_KEYSTORE : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_LOCATION_ATTR));
+		}
+
+		//System.out.println( "EncryptDecryptX509: certFile=" + certFile );
+		if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [decrypt] certFile=" + certFile);
+		InputStream inStream = new FileInputStream(certFile);
+		KeyStore keystore = KeyStore.getInstance( KeyStore.getDefaultType() );
+		keystore.load(inStream, password.toCharArray());
+		        
+		String alias = null;
+		if (version.substring(0,1).equalsIgnoreCase("6") || version.substring(0,1).equalsIgnoreCase("7")) {
+			// Version 7
+			alias = (env == null ? STRONG_DEFAULT_CIS_KEY_ALIAS : ServerUtil.getServerAttributeAS(env, ServerUtil.STRONG_KEYSTORE_KEY_ALIAS_ATTR));
+		} else {
+			// Version 8
+			alias = (env == null ? DEFAULT_CIS_KEY_ALIAS : ServerUtil.getServerAttributeAS(env, ServerUtil.KEYSTORE_KEY_ALIAS_ATTR));				
+		}
+
+		//System.out.println( "EncryptDecryptX509: alias=" + alias );
+		if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [decrypt] alias=" + alias);
+		PrivateKey privKey = (PrivateKey)keystore.getKey(alias, password.toCharArray());
+		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+		cipher.init(Cipher.DECRYPT_MODE, privKey);
+		//System.out.println( "EncryptDecryptX509: Start decryption using " + cipher.getProvider() + " algorithm " + cipher.getAlgorithm() );
+		if (env != null) env.log (ProcedureConstants.LOG_DEBUG, "EncryptDecryptX509: [decrypt] Start decryption using " + cipher.getProvider().getInfo());
+		byte[] plainText = cipher.doFinal(message);
+		//System.out.println( "EncryptDecryptX509: Finish decryption: [" + new String(plainText, "UTF8") + "]");
+		if (env != null) env.log (ServerUtil.LOG_TYPE, "EncryptDecryptX509: [decrypt] Finish decryption: [" + new String(plainText, "UTF8") + "]");
+		return new String(plainText,"UTF8") ;
 	}
 	
     
@@ -152,12 +192,23 @@ public class EncryptDecryptX509 {
      */
     public static void main(String [] args){
         String message = args.length > 1 ? (String)args[1] : "This message was encrypted with CIS public key" ;
+        String version = "7.0.8"; // Change the version to 7 for TDV 7.x testing.  Change the version to 8 for TDV 8.x testing.
         try {   
-            byte[] cipherText = new EncryptDecryptX509().encrypt(message,DEFAULT_CIS_PASSWORD);
-            System.out.println( "Encrypted: [" + hex(cipherText) + "]");
-            String plainText = new EncryptDecryptX509().decrypt(cipherText,DEFAULT_CIS_PASSWORD);
-            System.out.println( "Decrypted: [" + plainText + "]");
-
+    		if (version.substring(0,1).equalsIgnoreCase("6") || version.substring(0,1).equalsIgnoreCase("7")) {
+	            System.out.println( "Encrypting:");
+	            byte[] cipherText = new EncryptDecryptX509().encrypt(message,STRONG_DEFAULT_CIS_PASSWORD);
+	            System.out.println( "Encrypted: [" + hex(cipherText) + "]");
+	            System.out.println( "Decrypting:");
+	            String plainText = new EncryptDecryptX509().decrypt(cipherText,STRONG_DEFAULT_CIS_PASSWORD);
+	            System.out.println( "Decrypted: [" + plainText + "]");
+    		} else {
+	            System.out.println( "Encrypting:");
+	            byte[] cipherText = new EncryptDecryptX509().encrypt(message,DEFAULT_CIS_PASSWORD);
+	            System.out.println( "Encrypted: [" + hex(cipherText) + "]");
+	            System.out.println( "Decrypting:");
+	            String plainText = new EncryptDecryptX509().decrypt(cipherText,DEFAULT_CIS_PASSWORD);
+	            System.out.println( "Decrypted: [" + plainText + "]");
+    		}
         } catch (Throwable t) {
             System.out.println( "BOOM!!! " + t );
             t.printStackTrace(System.err);
