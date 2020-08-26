@@ -51,8 +51,8 @@ DecryptFromAES()
 
 import java.sql.SQLException;
 import java.sql.Types;
-
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
+//import javax.xml.bind.DatatypeConverter;
 
 import com.compositesw.extension.CustomProcedureException;
 import com.compositesw.extension.ParameterInfo;
@@ -90,8 +90,9 @@ public class DecryptFromAES extends EncodingUtilTemplate {
 		String encText = args.length > 0 ? (String)args[0] : null ;
 		String aesKey = (args.length > 1 && args[1] != null) ? (String)args[1] : "1234567812345678" ;
 		String aesIV = (args.length > 2 && args[2] != null) ? (String)args[2] : String.format("%08X%08X",aesKey.substring(0,8).hashCode(),aesKey.substring(8).hashCode()) ;
-
-		byte[] bytes = DatatypeConverter.parseBase64Binary(encText) ;
+//MODIFIED
+		byte[] bytes = Base64.getUrlDecoder().decode(encText.getBytes());
+//		byte[] bytes = DatatypeConverter.parseBase64Binary(encText) ;
 
 		decMessage = new String(new EncryptDecryptAES().decrypt(bytes,aesKey.getBytes(),aesIV)) ;
 		return 0 ;

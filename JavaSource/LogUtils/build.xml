@@ -24,6 +24,7 @@
 	<property name="dist" location="../dist"/>
 	<property name="lib" location="../lib"/>
 	<property name="project-name" value="LogUtils"/>
+	<property name="DV_HOME" value="C:/MySW/TIBCO/DV8.2"/>
 
 	<path id="project.class.path">
 		<fileset dir="../lib">

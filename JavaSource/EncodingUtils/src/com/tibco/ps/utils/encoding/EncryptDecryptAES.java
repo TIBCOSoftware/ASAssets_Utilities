@@ -21,11 +21,11 @@ package com.tibco.ps.utils.encoding;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-
+import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
+//import javax.xml.bind.DatatypeConverter;
 
 public class EncryptDecryptAES {
 
@@ -62,13 +62,27 @@ public class EncryptDecryptAES {
 				
 		byte[] codedtext = new EncryptDecryptAES().encrypt(text,seed.getBytes("utf-8"),initVector);
 		System.out.println("Encrypted:" + new String(codedtext, "utf-8"));
-		String display = DatatypeConverter.printBase64Binary(codedtext) ;
-		System.out.println("Encrypted:" + display) ;
-		String decodedtext = new EncryptDecryptAES().decrypt(DatatypeConverter.parseBase64Binary(display),seed.getBytes("utf-8"),initVector);
+
+//MODIFIED
+		String display =  Base64.getEncoder().encodeToString(codedtext);
+//		String display = DatatypeConverter.printBase64Binary(codedtext) ;
+		System.out.println("Encrypted:" + display);
+		
+//MODIFIED
+		byte[] bytes = Base64.getUrlDecoder().decode(display.getBytes());
+		String decodedtext = new EncryptDecryptAES().decrypt(bytes,seed.getBytes("utf-8"),initVector);
+//		String decodedtext = new EncryptDecryptAES().decrypt(DatatypeConverter.parseBase64Binary(display),seed.getBytes("utf-8"),initVector);
 		System.out.println("Decrypted:" + decodedtext);	
-		display = DatatypeConverter.printHexBinary(codedtext) ;
-		System.out.println("Encrypted:" + display) ;
-		decodedtext = new EncryptDecryptAES().decrypt(DatatypeConverter.parseHexBinary(display),seed.getBytes("utf-8"),initVector);
+
+//MODIFIED
+		display =  Base64.getEncoder().encodeToString(codedtext);
+//		display = DatatypeConverter.printHexBinary(codedtext);
+		System.out.println("Encrypted:" + display);
+
+//MODIFIED
+		bytes = Base64.getUrlDecoder().decode(display.getBytes());
+		decodedtext = new EncryptDecryptAES().decrypt(bytes,seed.getBytes("utf-8"),initVector);
+//		decodedtext = new EncryptDecryptAES().decrypt(DatatypeConverter.parseHexBinary(display),seed.getBytes("utf-8"),initVector);
 		System.out.println("Decrypted:" + decodedtext);
 	}
 

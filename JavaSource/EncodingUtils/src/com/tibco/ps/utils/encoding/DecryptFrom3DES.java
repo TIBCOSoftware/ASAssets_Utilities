@@ -51,7 +51,8 @@ DecryptFrom3DES()
 import java.sql.SQLException;
 import java.sql.Types;
 
-import javax.xml.bind.DatatypeConverter;
+//import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 
 import com.compositesw.extension.CustomProcedureException;
 import com.compositesw.extension.ParameterInfo;
@@ -87,7 +88,9 @@ public class DecryptFrom3DES extends EncodingUtilTemplate {
 	public int execute(Object[] args) throws Exception {
 		String encText = args.length > 0 ? (String)args[0] : null ;
 		String mdInput = (args.length > 1 && args[1] != null) ? (String)args[1] : "ZKZH1W7" ;
-		byte[] bytes = DatatypeConverter.parseHexBinary(encText) ;
+//MODIFICATION
+		byte[] bytes = Base64.getUrlDecoder().decode(encText.getBytes());
+//		byte[] bytes = DatatypeConverter.parseHexBinary(encText) ;
 		decMessage = new String(new EncryptDecrypt3DES().decrypt(bytes,mdInput.getBytes())) ;
 		return 0 ;
 	}

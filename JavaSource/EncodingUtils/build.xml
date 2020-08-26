@@ -24,12 +24,13 @@
 	<property name="dist" location="../dist"/>
 	<property name="lib" location="../lib"/>
 	<property name="project-name" value="EncodingUtils"/>
+	<property name="DV_HOME" value="C:/MySW/TIBCO/DV8.2"/>
 
 	<path id="project.class.path">
 		<fileset dir="../lib">
 			<include name="**/*.jar"/>
 		</fileset>
-<!--
+
 		<fileset dir="${DV_HOME}/apps/common/lib">
 			<include name="log4j-1.2.17.jar"/>
 			<include name="commons-io-2.4.jar"/>
@@ -40,7 +41,7 @@
 		<fileset dir="${DV_HOME}/apps/dlm/cis_customproc/lib">
 			<include name="customproc.jar"/>
 		</fileset>
--->
+
 	</path>
 
 	<target name="init">

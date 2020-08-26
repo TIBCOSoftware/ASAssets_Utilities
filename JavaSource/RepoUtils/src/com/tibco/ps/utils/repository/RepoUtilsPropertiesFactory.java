@@ -83,13 +83,13 @@ public class RepoUtilsPropertiesFactory {
 		"                      delete|dense_rank|depth|desc|describe|descriptor|diagnostics|disconnect|distinct|do|document|domain|double|dow|doy|drop|\\\n" + 
 		"                      element|else|elseif|empty|end|end-exec|epoch|escape|except|exception|exclude|exec|execute|exists|explain|external|extract|\\\n" + 
 		"                      false|fetch|first|float|fn|following|for|foreign|from|full|\\\n" + 
-		"                      get|global|go|goto|grant|group|having|hex|hour|hours|\\\n" + 
+		"                      get|global|go|goto|grant|group|having|hex|host|hour|hours|\\\n" + 
 		"                      id|identity|if|ignore|immediate|in|independent|index|indicator|initially|inner|inout|input|insensitive|insert|int|integer|intersect|interval|into|is|isolation|iterate|\\\n" + 
 		"                      join|keep|key|language|last|latest|leading|leave|left|level|like|local|location|longvarchar|loop|lower|\\\n" + 
 		"                      match|max|microsecond|microseconds|millisecond|milliseconds|min|minute|minutes|module|month|months|\\\n" + 
 		"                      name|names|namespace|national|natural|nchar|next|nil|no|not|null|nullif|nulls|numeric|\\\n" + 
 		"                      octet_length|of|offset|oj|on|only|open|option|or|order|others|out|outer|output|over|overlaps|\\\n" + 
-		"                      pad|partial|partition|passing|path|pipe|position|preceding|precision|prepare|preserve|primary|prior|privileges|procedure|public|quarter|\\\n" + 
+		"                      pad|partial|partition|passing|path|pipe|port|position|preceding|precision|prepare|preserve|primary|prior|privileges|procedure|public|quarter|\\\n" + 
 		"                      raise|range|read|real|recursive|ref|references|relative|repeat|replace|restrict|returning|revoke|right|rollback|row|rows|\\\n" + 
 		"                      schema|scroll|search|second|seconds|section|select|sequence|session|session_user|set|size|smallint|some|space|\\\n" + 
 		"                      sql|sql_bigint|sql_binary|sql_bit|sql_char|sql_date|sql_decimal|sql_double|sql_float|sql_guid|sql_integer|sql_interval_day|\\\n" + 

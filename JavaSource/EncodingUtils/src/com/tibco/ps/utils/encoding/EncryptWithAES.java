@@ -54,8 +54,8 @@ EncryptWithAES()
 
 import java.sql.SQLException;
 import java.sql.Types;
-
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
+//import javax.xml.bind.DatatypeConverter;
 
 import com.compositesw.extension.CustomProcedureException;
 import com.compositesw.extension.ParameterInfo;
@@ -97,7 +97,9 @@ public class EncryptWithAES extends EncodingUtilTemplate {
 		String aesIV = (args.length > 2 && args[2] != null) ? (String)args[2] : String.format("%08X%08X",aesKey.substring(0,8).hashCode(),aesKey.substring(8).hashCode()) ;
 
 		encMessage = new EncryptDecryptAES().encrypt(plainText,aesKey.getBytes(),aesIV) ;
-		hexString = DatatypeConverter.printBase64Binary(encMessage) ;
+//MODIFIED
+		hexString =  Base64.getEncoder().encodeToString(encMessage);
+//		hexString = DatatypeConverter.printBase64Binary(encMessage) ;
 		return 0 ;
 	}
 	

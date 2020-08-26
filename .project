@@ -3,7 +3,6 @@
 	<name>ASAssets_Utilities</name>
 	<comment></comment>
 	<projects>
-		<project>ASAssets_Utilities_JavaSource</project>
 	</projects>
 	<buildSpec>
 	</buildSpec>
